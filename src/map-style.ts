@@ -293,7 +293,7 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
     // selected：是否选中了作品（其余地标淡化）；selectedColor：选中作品的主题色，由组件设置。
     // 默认值必须与主题无关，换主题时样式才能按 diff 更新，而不是整体重载
-    state: { selected: { default: false }, selectedColor: { default: "#000000" } },
+    state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" } },
     sources: {
       [SOURCE]: { type: "vector", url: "https://tiles.openfreemap.org/planet" },
       [DEM]: {
@@ -320,6 +320,8 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
 
 const SELECTED: ExpressionSpecification = ["global-state", "selected"];
 const FOCUS: ExpressionSpecification = ["boolean", ["feature-state", "focus"], false];
+/** 过滤器里不能用 feature-state，选中地标的专属图层用全局状态 focus（地标 id）筛选 */
+const IS_FOCUS: ExpressionSpecification = ["==", ["get", "p"], ["global-state", "focus"]];
 
 /**
  * 缩小时的热度晕染：极低密度处透明，按密度由淡紫、品红、珊瑚橙渐变到暖金，最密集处最亮。
@@ -378,17 +380,6 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       },
     },
     {
-      id: "selected-halo",
-      type: "circle",
-      source: "selected",
-      // 过滤器里不能用 feature-state，非焦点地标靠半径 0 隐藏
-      paint: {
-        "circle-color": ["global-state", "selectedColor"],
-        "circle-radius": ["case", FOCUS, 17, 0],
-        "circle-opacity": 0.22,
-      },
-    },
-    {
       id: "selected-point",
       type: "circle",
       source: "selected",
@@ -415,7 +406,55 @@ function overlayLayers(c: Palette): LayerSpecification[] {
         "text-padding": 4,
         "text-optional": true,
       },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.6 },
+      // 有选中地标时，其他地标的名字淡一些，把注意力留给选中的那个
+      paint: {
+        "text-color": c.label,
+        "text-halo-color": c.land,
+        "text-halo-width": 1.6,
+        "text-opacity": ["case", ["==", ["global-state", "focus"], ""], 1, 0.55],
+      },
+    },
+    // ---- 当前选中的地标：单独画在最上层，大一圈、带光晕，名字加粗且不会被避让掉 ----
+    {
+      id: "focus-halo",
+      type: "circle",
+      source: "selected",
+      filter: IS_FOCUS,
+      paint: {
+        "circle-color": ["global-state", "selectedColor"],
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 18, 16, 26],
+        "circle-opacity": 0.32,
+        "circle-blur": 0.25,
+      },
+    },
+    {
+      id: "focus-point",
+      type: "circle",
+      source: "selected",
+      filter: IS_FOCUS,
+      paint: {
+        "circle-color": ["global-state", "selectedColor"],
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 9, 16, 13, 18, 15],
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 4,
+      },
+    },
+    {
+      id: "focus-label",
+      type: "symbol",
+      source: "selected",
+      filter: IS_FOCUS,
+      layout: {
+        "text-field": ["get", "name"],
+        "text-font": FONT_BOLD,
+        "text-size": 14,
+        "text-offset": [0, 1.5],
+        "text-anchor": "top",
+        "text-max-width": 10,
+        "text-allow-overlap": true,
+        "text-ignore-placement": true,
+      },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 2 },
     },
   ];
 }

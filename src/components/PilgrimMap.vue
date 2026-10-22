@@ -69,7 +69,9 @@ function syncSelected() {
     })),
   });
   map.setGlobalStateProperty("selected", sel != null);
-  map.setGlobalStateProperty("selectedColor", sel?.color ?? readPalette().accent);
+  const color = sel?.color ?? readPalette().accent;
+  map.setGlobalStateProperty("selectedColor", color);
+  el.value?.style.setProperty("--focus-color", color); // 选中地标的截图描边用作品色
 }
 
 /** 焦点变化：只改 feature-state，不重建数据 */
@@ -77,6 +79,8 @@ function syncFocus(next: string | null, prev: string | null) {
   if (!ready.value || !map) return;
   if (prev) map.setFeatureState({ source: "selected", id: prev }, { focus: false });
   if (next) map.setFeatureState({ source: "selected", id: next }, { focus: true });
+  map.setGlobalStateProperty("focus", next ?? "");
+  for (const [key, marker] of photoMarkers) marker.getElement().classList.toggle("focus", key.endsWith(`:${next}`));
 }
 
 // 相机由「作品:焦点」决定，同一个 key 只移动一次；地图就绪前的选择会在就绪后补上
@@ -162,7 +166,7 @@ async function syncPhotos() {
     keep.add(key);
     if (photoMarkers.has(key)) continue;
     const el = document.createElement("button");
-    el.className = "photo-pin";
+    el.className = props.focusPointId === q.p ? "photo-pin focus" : "photo-pin";
     el.title = "";
     el.innerHTML = `<img alt="" referrerpolicy="no-referrer" src="${imageUrl(src)}">`;
     el.addEventListener("click", (ev) => {
@@ -295,6 +299,14 @@ watch(() => props.focusPointId, (next, prev) => {
   border-radius: 10px;
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
   cursor: pointer;
+}
+/* 当前选中地标的截图：作品色描边，并压在其他截图上面 */
+.map :deep(.maplibregl-marker:has(.photo-pin.focus)) {
+  z-index: 1;
+}
+.map :deep(.photo-pin.focus),
+.map :deep(.photo-pin.focus)::after {
+  background: var(--focus-color, var(--accent));
 }
 .map :deep(.photo-pin)::after {
   /* 指向地标的小尖角 */
