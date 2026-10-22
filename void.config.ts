@@ -5,6 +5,12 @@ export default defineConfig({
   "worker": {
     "compatibility_date": "2026-02-24"
   },
+  "cloudflare": {
+    "name": "junrei",
+    "account_id": "ad02684d0205554549c21cd8bfc41d48", // CI 部署要固定账号
+    // 自定义域名：Cloudflare 自动管理 DNS 记录与证书（jannchie.com 在同一账号下）
+    "routes": [{ "pattern": "junrei.jannchie.com", "custom_domain": true }]
+  },
   "head": {
     "htmlAttrs": { "lang": "zh-Hans" },
     "meta": [

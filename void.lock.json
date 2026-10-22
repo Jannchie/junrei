@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "source": {
+    "name": "junrei",
+    "routes": [
+      {
+        "pattern": "junrei.jannchie.com",
+        "custom_domain": true
+      }
+    ]
+  },
+  "resolved": {
+    "name": "junrei",
+    "account_id": "ad02684d0205554549c21cd8bfc41d48",
+    "compatibility_date": "2026-02-24",
+    "routes": [
+      {
+        "pattern": "junrei.jannchie.com",
+        "custom_domain": true
+      }
+    ],
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "junrei-db",
+        "database_id": "9b1520f8-e4f5-47ec-b7da-6d6468f6bf39",
+        "migrations_dir": "./db/migrations"
+      }
+    ],
+    "kv_namespaces": [
+      {
+        "binding": "ISR_CACHE",
+        "id": "e2b62efa67ed4958bf2bdd236f3e68d9"
+      }
+    ]
+  },
+  "text": "{\n  \"name\": \"junrei\",\n  \"account_id\": \"ad02684d0205554549c21cd8bfc41d48\",\n  \"compatibility_date\": \"2026-02-24\",\n  \"routes\": [\n    {\n      \"pattern\": \"junrei.jannchie.com\",\n      \"custom_domain\": true\n    }\n  ],\n  \"d1_databases\": [\n    {\n      \"binding\": \"DB\",\n      \"database_name\": \"junrei-db\",\n      \"database_id\": \"9b1520f8-e4f5-47ec-b7da-6d6468f6bf39\",\n      \"migrations_dir\": \"./db/migrations\"\n    }\n  ],\n  \"kv_namespaces\": [\n    {\n      \"binding\": \"ISR_CACHE\",\n      \"id\": \"e2b62efa67ed4958bf2bdd236f3e68d9\"\n    }\n  ]\n}\n"
+}

@@ -22,7 +22,8 @@ from sync.llm import clean_text
 from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
-ROWS_PER_INSERT = 200  # D1 单条语句有长度上限，分批插入
+ROWS_PER_INSERT = 200  # 分批插入
+MAX_STATEMENT_BYTES = 90_000  # D1 单条语句上限 100 KB
 LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
 # 同一语言有多条时：原文混了别的语言时的纯净版本（llm_fix）最优先，其次人工数据、复核过的机翻、机翻、繁简转换；
 # 置信度太低的机翻排到最后，只在这种语言没有别的文本时兜底，保证每条都有四种语言
@@ -83,10 +84,20 @@ def sql_value(v) -> str:
 
 
 def insert_statements(table: str, cols: list[str], rows: list[tuple]):
+    """按字节数分批：D1 单条语句上限 100 KB，个别地标备注很长，按行数分批不够稳"""
     head = f"INSERT INTO {table} ({', '.join(cols)}) VALUES\n"
-    for i in range(0, len(rows), ROWS_PER_INSERT):
-        chunk = rows[i : i + ROWS_PER_INSERT]
-        yield head + ",\n".join("(" + ", ".join(sql_value(v) for v in r) + ")" for r in chunk) + ";\n"
+    chunk: list[str] = []
+    size = 0
+    for r in rows:
+        values = "(" + ", ".join(sql_value(v) for v in r) + ")"
+        n = len(values.encode()) + 2
+        if chunk and (size + n > MAX_STATEMENT_BYTES or len(chunk) >= ROWS_PER_INSERT):
+            yield head + ",\n".join(chunk) + ";\n"
+            chunk, size = [], 0
+        chunk.append(values)
+        size += n
+    if chunk:
+        yield head + ",\n".join(chunk) + ";\n"
 
 
 def main():
