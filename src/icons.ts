@@ -13,7 +13,7 @@ import {
   IconLocate,
   IconMapPin,
   IconMoon,
-  IconContrast,
+  IconTheme,
   IconSun,
   IconMinus,
   IconPlus,
@@ -43,7 +43,7 @@ export const ICONS = {
   language: IconLanguages,
   info: IconInfo,
   github: IconGithub,
-  themeAuto: IconContrast,
+  themeAuto: IconTheme, // 专门表示「跟随系统」：太阳与月亮各占一半
   themeLight: IconSun,
   themeDark: IconMoon,
 } satisfies Record<string, Icon>;
