@@ -6,5 +6,5 @@ defineProps<Props>();
 </script>
 
 <template>
-  <JunreiApp :initial-detail="detail" />
+  <JunreiApp :lang="lang" :initial-detail="detail" />
 </template>

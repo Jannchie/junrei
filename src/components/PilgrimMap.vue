@@ -4,7 +4,7 @@ import type { Point } from "geojson";
 import maplibregl, { type GeoJSONSource, type LngLatLike, type PaddingOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { locale, t } from "../i18n";
+import { useI18n } from "../i18n";
 import { ICONS } from "../icons";
 import { fetchDetail } from "../detail";
 import { imageUrl } from "../format";
@@ -32,6 +32,7 @@ const emit = defineEmits<{
   view: [bounds: { west: number; south: number; east: number; north: number }];
 }>();
 
+const { locale, t } = useI18n();
 const el = ref<HTMLDivElement>();
 let map: maplibregl.Map | null = null;
 let geolocate: maplibregl.GeolocateControl | null = null;

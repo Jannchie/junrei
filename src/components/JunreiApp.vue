@@ -3,7 +3,7 @@ import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatEpisode, formatTime, imageUrl } from "../format";
-import { initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
+import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, stripLocale } from "../i18n";
 import { ICONS } from "../icons";
 import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
@@ -14,12 +14,20 @@ import "../theme.css";
 
 /** 首页与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
 const props = defineProps<{
+  /** 页面语言，由 URL 决定（简体中文无前缀，其余为 /zh-hant、/ja、/en） */
+  lang: Locale;
   initialDetail?: BangumiDetail | null;
   /** 概览里展示的热门作品 */
   popular?: { id: number; cn: string | null; title: string | null; en: string | null; cover: string | null; pointCount: number }[];
 }>();
 
 provideIconDefaults({ size: 16 });
+const { locale, t, pickName, subName } = provideLocale(props.lang);
+
+/** 换语言就是去另一种语言的同一个页面（服务端按语言渲染），作品、地标、搜索词、视野都保留 */
+function switchLocale(next: Locale) {
+  location.href = localePath(next, stripLocale(location.pathname)) + location.search + location.hash;
+}
 
 // 名称里有假名就标为日语，让日文原名始终用日文字体（汉字在中日文字体里字形不同）
 const KANA = /[぀-ヿ]/;
@@ -165,7 +173,7 @@ watch(query, (q) => {
   queryTimer = setTimeout(() => (debouncedQuery.value = q.trim()), 400);
 });
 watch([detail, focusPointId, debouncedQuery], () => {
-  const url = new URL(detail.value ? `/b/${detail.value.id}` : "/", location.origin);
+  const url = new URL(localePath(locale.value, detail.value ? `/b/${detail.value.id}` : "/"), location.origin);
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
   if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
   url.hash = location.hash;
@@ -202,7 +210,6 @@ let panelObserver: ResizeObserver | undefined;
 
 onMounted(() => {
   mounted.value = true;
-  initLocale();
   initTheme();
   panelObserver = new ResizeObserver(() => {
     const a = app.value!.getBoundingClientRect();
@@ -362,7 +369,7 @@ onBeforeUnmount(() => {
         <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
-            <a :href="`/b/${b.id}`" @click.prevent="select(b.id)">
+            <a :href="localePath(locale, `/b/${b.id}`)" @click.prevent="select(b.id)">
               <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
               <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
@@ -414,7 +421,7 @@ onBeforeUnmount(() => {
         </button>
         <label class="lang" :title="t('language')">
           <JIcon :icon="ICONS.language" :size="14" />
-          <select v-model="locale" :aria-label="t('language')">
+          <select :value="locale" :aria-label="t('language')" @change="switchLocale(($event.target as HTMLSelectElement).value as Locale)">
             <option v-for="l in LOCALES" :key="l" :value="l">{{ LOCALE_NAMES[l] }}</option>
           </select>
         </label>

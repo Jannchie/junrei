@@ -1,5 +1,5 @@
 // 界面语言：简体、繁体、日语、英语。界面文字很少（多为图标的无障碍名称），重点是作品名与地标名按语言取值。
-import { computed, ref, watch } from "vue";
+import { inject, type InjectionKey, provide, type Ref, ref } from "vue";
 
 export const LOCALES = ["zh-Hans", "zh-Hant", "ja", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -77,57 +77,65 @@ const MESSAGES = {
 
 export type MessageKey = keyof (typeof MESSAGES)["zh-Hans"];
 
-const STORAGE_KEY = "junrei:locale";
+// ---- 路径：语言写在 URL 里，简体中文是默认语言、不带前缀 ----
 
-function detect(): Locale {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (LOCALES.includes(saved as Locale)) return saved as Locale;
-  } catch {}
-  for (const tag of navigator.languages) {
-    const t = tag.toLowerCase();
-    if (t.startsWith("zh")) return /hant|tw|hk|mo/.test(t) ? "zh-Hant" : "zh-Hans";
-    if (t.startsWith("ja")) return "ja";
-    if (t.startsWith("en")) return "en";
-  }
-  return "zh-Hans";
+/** 各语言的路径前缀 */
+export const LOCALE_PREFIX: Record<Locale, string> = { "zh-Hans": "", "zh-Hant": "/zh-hant", ja: "/ja", en: "/en" };
+
+/** URL 第一段（如 "ja"）→ 语言；不是语言前缀时返回 null */
+export function localeFromSegment(segment: string | undefined): Locale | null {
+  return LOCALES.find((l) => l !== "zh-Hans" && LOCALE_PREFIX[l] === `/${segment?.toLowerCase()}`) ?? null;
 }
 
-// 服务端渲染统一用简体中文，浏览器挂载后再按用户偏好切换（见 initLocale）
-export const locale = ref<Locale>("zh-Hans");
-
-let initialized = false;
-
-export function initLocale() {
-  if (initialized) return;
-  initialized = true;
-  locale.value = detect();
-  document.documentElement.lang = locale.value;
-  watch(locale, (l) => {
-    document.documentElement.lang = l;
-    try {
-      localStorage.setItem(STORAGE_KEY, l);
-    } catch {}
-  });
+/** 去掉语言前缀后的路径（"/ja/b/1" → "/b/1"） */
+export function stripLocale(pathname: string): string {
+  const first = pathname.split("/")[1];
+  return localeFromSegment(first) ? pathname.slice(first.length + 1) || "/" : pathname;
 }
 
-export const t = (key: MessageKey) => MESSAGES[locale.value][key];
+/** 某语言下的路径（"/b/1" → "/ja/b/1"） */
+export const localePath = (locale: Locale, path: string) => `${LOCALE_PREFIX[locale]}${path === "/" && LOCALE_PREFIX[locale] ? "" : path}` || "/";
 
-export const isChinese = computed(() => locale.value.startsWith("zh"));
+// ---- 按名称挑语言（纯函数，服务端生成 head 时也用） ----
+
+type Names = { cn?: string | null; original?: string | null; en?: string | null };
 
 /**
  * 按界面语言挑名称：中文界面优先中文名，日语界面优先原名，英语界面优先英文名，都没有时依次回退。
  * 繁体译名还没有数据时回退到简体。
  */
-export function pickName(n: { cn?: string | null; original?: string | null; en?: string | null }): string {
-  const order = isChinese.value ? [n.cn, n.original, n.en] : locale.value === "en" ? [n.en, n.original, n.cn] : [n.original, n.cn, n.en];
+export function pickNameFor(locale: Locale, n: Names): string {
+  const order = locale.startsWith("zh") ? [n.cn, n.original, n.en] : locale === "en" ? [n.en, n.original, n.cn] : [n.original, n.cn, n.en];
   return order.find((s) => s) ?? "";
 }
 
 /** 主名称之外再显示的副名称：中文界面显示原名，其他界面显示中文名；与主名称相同则不显示 */
-export function subName(n: { cn?: string | null; original?: string | null; en?: string | null }): string | null {
-  const main = pickName(n);
-  const sub = isChinese.value ? n.original : n.original !== main ? n.original : null;
+export function subNameFor(locale: Locale, n: Names): string | null {
+  const main = pickNameFor(locale, n);
+  const sub = locale.startsWith("zh") ? n.original : n.original !== main ? n.original : null;
   return sub && sub !== main ? sub : null;
 }
 
+export const translate = (locale: Locale, key: MessageKey) => MESSAGES[locale][key];
+
+// ---- 组件里用：当前语言由页面按 URL 提供，每次渲染各自一份（服务端并发渲染时不会串语言） ----
+
+const LOCALE_KEY: InjectionKey<Ref<Locale>> = Symbol("locale");
+
+/** 页面根组件调用：把语言交给子组件，并返回自己用的 i18n（组件拿不到自己 provide 的值） */
+export function provideLocale(initial: Locale) {
+  const locale = ref(initial);
+  provide(LOCALE_KEY, locale);
+  return i18n(locale);
+}
+
+export const useI18n = () => i18n(inject(LOCALE_KEY, ref<Locale>("zh-Hans")));
+
+function i18n(locale: Ref<Locale>) {
+  return {
+    locale,
+    t: (key: MessageKey) => translate(locale.value, key),
+    pickName: (n: Names) => pickNameFor(locale.value, n),
+    subName: (n: Names) => subNameFor(locale.value, n),
+  };
+}
