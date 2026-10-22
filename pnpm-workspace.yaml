@@ -1,0 +1,10 @@
+allowBuilds:
+  better-sqlite3: false
+  esbuild: true
+  sharp: true
+  workerd: true
+# pnpm 10.11 还不认 allowBuilds，用旧字段兜底
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

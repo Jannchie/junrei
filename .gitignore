@@ -1,0 +1,18 @@
+# 同步产物，由 sync/ 下的脚本生成
+data/
+public/data/
+
+node_modules
+dist
+.void
+.wrangler
+.void-wrangler.jsonc
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+.DS_Store
+
+__pycache__/
+*.pyc
+.venv/

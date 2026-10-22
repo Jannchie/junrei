@@ -1,0 +1,61 @@
+/* junrei 的全部配色：「和纸与墨」。面板用 --*，地图皮肤用 --map-*（src/map-style.ts 读取）。
+   亮暗切换只靠这里的媒体查询，JS 不再保存第二份颜色。 */
+:root {
+  --bg: #fbf9f4;
+  --fg: #1f1d19;
+  --muted: #7d776b;
+  --line: #e6e0d3;
+  --hover: #f2eee5;
+  --accent: #d9452b;
+
+  --map-land: #f5f2ea;
+  --map-wood: #e8eadb;
+  --map-grass: #edeee0;
+  --map-park: #e5e9d8;
+  --map-water: #c8d7dd;
+  --map-building: #ebe6da;
+  --map-building-line: #ddd5c4;
+  --map-road: #ffffff;
+  --map-road-casing: #e2dacb;
+  --map-major: #fffdf7;
+  --map-major-casing: #d6ccb8;
+  --map-rail: #7d776b;
+  --map-boundary: #b5aa94;
+  --map-label: #47433b;
+  --map-label-muted: #8a8477;
+  --map-water-label: #6b8792;
+  --map-focus-ring: #1f1d19;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1d21;
+    --fg: #ece8df;
+    --muted: #8b8f96;
+    --line: #2a2d32;
+    --hover: #24272c;
+    --accent: #ec5a3c;
+
+    --map-land: #15171a;
+    --map-wood: #171b18;
+    --map-grass: #181b19;
+    --map-park: #192019;
+    --map-water: #0b1217;
+    --map-building: #1c1f23;
+    --map-building-line: #24282d;
+    --map-road: #24272c;
+    --map-road-casing: #15171a;
+    --map-major: #2e3237;
+    --map-major-casing: #15171a;
+    --map-rail: #666b73;
+    --map-boundary: #3d4147;
+    --map-label: #cdc8bd;
+    --map-label-muted: #7c8087;
+    --map-water-label: #4d6976;
+    --map-focus-ring: #f5f2ea;
+
+    color-scheme: dark;
+  }
+}
