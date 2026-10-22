@@ -280,7 +280,7 @@ watch(() => props.focusPointId, (next, prev) => {
   display: none;
 }
 .map :deep(.photo-pin) {
-  position: relative;
+  /* 不要设 position：maplibre 靠 .maplibregl-marker 的 absolute 与 transform 定位标记 */
   display: block;
   width: 72px;
   height: 44px;
