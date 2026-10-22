@@ -5,6 +5,7 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { formatEpisode, formatTime, imageUrl } from "../format";
 import { initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
 import { ICONS } from "../icons";
+import { bangumiInView, searchBangumi } from "../bangumi-index";
 import type { BangumiDetail } from "../server/bangumi";
 import "../theme.css";
 
@@ -17,11 +18,19 @@ const props = defineProps<{
 
 provideIconDefaults({ size: 16 });
 
+// 名称里有假名就标为日语，让日文原名始终用日文字体（汉字在中日文字体里字形不同）
+const KANA = /[぀-ヿ]/;
+const setLang = (el: HTMLElement) => (KANA.test(el.textContent ?? "") ? (el.lang = "ja") : el.removeAttribute("lang"));
+const vAutoLang = { mounted: setLang, updated: setLang };
+
 // maplibre 体积大且只在浏览器里用，单独分包，也不进服务端 bundle
 const PilgrimMap = defineAsyncComponent(() => import("./PilgrimMap.vue"));
 const mounted = ref(false);
 
-type SearchResult = Awaited<ReturnType<typeof fetchSearch>>;
+interface SearchResult {
+  bangumis: Awaited<ReturnType<typeof searchBangumi>>;
+  points: Awaited<ReturnType<typeof fetchSearch>>["points"];
+}
 const fetchDetail = (id: number): Promise<BangumiDetail> => fetch("/v1/bangumi/:id", { params: { id: String(id) } });
 const fetchSearch = (q: string) => fetch("/v1/search", { query: { q } });
 
@@ -114,8 +123,9 @@ watch(query, (q) => {
     const id = ++seq;
     searching.value = true;
     try {
-      const r = await fetchSearch(q.trim());
-      if (id === seq) results.value = r;
+      // 作品在浏览器里模糊匹配（全语种、即时）；地标五万多条，交给服务端的全文索引
+      const [bangumis, { points }] = await Promise.all([searchBangumi(q), fetchSearch(q.trim())]);
+      if (id === seq) results.value = { bangumis, points };
     } finally {
       if (id === seq) searching.value = false;
     }
@@ -150,6 +160,16 @@ function onCreditsToggle(e: Event) {
   const r = creditsBtn.value!.getBoundingClientRect();
   Object.assign(creditsPop.value!.style, { left: `${r.left - 4}px`, bottom: `${innerHeight - r.top + 8}px` });
 }
+
+type Bounds = { west: number; south: number; east: number; north: number };
+const inView = shallowRef<Awaited<ReturnType<typeof bangumiInView>> | null>(null);
+let viewSeq = 0;
+async function onView(bounds: Bounds) {
+  const id = ++viewSeq;
+  const list = await bangumiInView(bounds);
+  if (id === viewSeq) inView.value = list;
+}
+const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({ ...b, inView: b.pointCount })) ?? []);
 
 let panelObserver: ResizeObserver | undefined;
 
@@ -186,6 +206,7 @@ onBeforeUnmount(() => {
       :focus-point-id="focusPointId"
       :padding="mapPadding"
       @pick="(b, p) => select(b, p)"
+      @view="onView"
     />
 
     <aside
@@ -220,8 +241,8 @@ onBeforeUnmount(() => {
             <img v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
-              <strong>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
-              <small v-if="subName({ cn: b.cn, original: b.title, en: b.en })">{{ subName({ cn: b.cn, original: b.title, en: b.en }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
+              <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en })">{{ subName({ cn: b.cn, original: b.title, en: b.en }) }}</small>
             </span>
             <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
           </button>
@@ -235,8 +256,8 @@ onBeforeUnmount(() => {
             <img v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
-              <strong>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
-              <small>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
+              <small v-auto-lang>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn }) }}</small>
             </span>
           </button>
         </template>
@@ -251,8 +272,8 @@ onBeforeUnmount(() => {
           <div class="title-row">
             <img v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
-              <h2>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
-              <p v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en })" class="sub">
+              <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
+              <p v-auto-lang v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en })" class="sub">
                 {{ subName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
               </p>
               <p class="meta">
@@ -289,8 +310,8 @@ onBeforeUnmount(() => {
               </figcaption>
             </figure>
             <div class="point-body">
-              <strong>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
-              <small v-if="subName({ cn: p.cn, original: p.name })">{{ subName({ cn: p.cn, original: p.name }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
+              <small v-auto-lang v-if="subName({ cn: p.cn, original: p.name })">{{ subName({ cn: p.cn, original: p.name }) }}</small>
               <span v-if="p.ep || p.s" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
@@ -306,12 +327,12 @@ onBeforeUnmount(() => {
       <section v-else class="scroll overview">
         <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" /><span class="tx">{{ t("brand") }}</span></h1>
         <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
-        <ul v-if="popular?.length" class="popular">
-          <li v-for="b in popular" :key="b.id">
+        <ul v-if="overviewList.length" class="popular">
+          <li v-for="b in overviewList" :key="b.id">
             <a :href="`/b/${b.id}`" @click.prevent="select(b.id)">
               <img v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
-              <span class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
-              <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.pointCount }}</span></span>
+              <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
+              <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
           </li>
         </ul>
@@ -370,7 +391,20 @@ body {
   height: 100%;
   background: var(--bg-solid);
   color: var(--fg);
-  font-family: system-ui, -apple-system, "PingFang SC", "Hiragino Sans", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+}
+/* 中日文共用汉字编码但字形不同，按语言挑字体：系统字体优先，再落到思源/Noto */
+:root,
+:lang(zh-Hans) {
+  font-family: -apple-system, system-ui, "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+}
+:lang(zh-Hant) {
+  font-family: -apple-system, system-ui, "PingFang TC", "Microsoft JhengHei UI", "Microsoft JhengHei", "Noto Sans TC", "Source Han Sans TC", sans-serif;
+}
+:lang(ja) {
+  font-family: -apple-system, system-ui, "Hiragino Sans", "Yu Gothic UI", "Meiryo UI", "Noto Sans JP", "Source Han Sans JP", sans-serif;
+}
+:lang(en) {
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 }
 a {
   color: inherit;

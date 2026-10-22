@@ -1,8 +1,10 @@
 // junrei 的地图皮肤，参照 Apple 地图：素净的底、明亮的水与青绿、水深渐变与淡山影、白色道路、暖黄高速、细灰铁路。
 // 矢量瓦片来自 OpenFreeMap（OpenMapTiles schema），只保留巡礼用得上的要素：
 // 水、绿地、市街地、道路、铁路与车站、地名。配色在 src/theme.css。
-// 刻意不画任何政治要素：没有国界、省界、国名，也没有存在命名争议的海域名称。
+// 刻意不画任何政治要素：没有国界、省界、国名，也没有存在命名争议的海域名称；
+// 地名按界面语言显示（与 Apple 地图一致），避免在争议地区显示实际管辖方的文字。
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
+import type { Locale } from "./i18n";
 
 const PALETTE_KEYS = [
   "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
@@ -31,14 +33,19 @@ const FONT = ["Noto Sans Regular"];
 const FONT_BOLD = ["Noto Sans Bold"];
 const FONT_ITALIC = ["Noto Sans Italic"];
 const CLUSTER_RADIUS: ExpressionSpecification = ["step", ["get", "point_count"], 11, 50, 14, 500, 18, 5000, 24];
-/** 当地名称：日本境内即日文原名，与作品里的地名一致 */
-const NAME: ExpressionSpecification = ["get", "name"];
+const NAME_FIELDS: Record<Locale, string[]> = {
+  "zh-Hans": ["name:zh-Hans", "name:zh"],
+  "zh-Hant": ["name:zh-Hant", "name:zh"],
+  ja: ["name:ja"],
+  en: ["name:en", "name:latin"],
+};
 
 /** 线宽随缩放指数增长 */
 const width = (pairs: [number, number][]): ExpressionSpecification =>
   ["interpolate", ["exponential", 1.6], ["zoom"], ...pairs.flat()] as ExpressionSpecification;
 
-export function createStyle(c: Palette): StyleSpecification {
+export function createStyle(c: Palette, locale: Locale): StyleSpecification {
+  const NAME: ExpressionSpecification = ["coalesce", ...NAME_FIELDS[locale].map((f): ExpressionSpecification => ["get", f]), ["get", "name"]];
   const roadClasses = (classes: string[]): ExpressionSpecification => [
     "all",
     ["match", ["get", "class"], classes, true, false],

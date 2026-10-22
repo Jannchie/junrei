@@ -8,7 +8,7 @@
 
 ## 本地开发
 
-需要 Node.js 24+、pnpm、Python 3.10+（同步脚本只用标准库）。
+需要 Node.js 24+、pnpm、Python 3.10+。同步只用标准库；导出时生成搜索索引需要 `pip install -r sync/requirements.txt`（OpenCC 做简繁归一、pykakasi 生成罗马音）。
 
 ```bash
 pnpm install
@@ -22,7 +22,7 @@ pnpm dev               # http://localhost:5173
 | 命令 | 作用 |
 |---|---|
 | `pnpm data:sync` | `python -m sync.sync`：全量 / 增量同步并规范化到 `data/anitabi.sqlite`，生成质量报告 `data/report.md` |
-| `pnpm data:export` | `python -m sync.export`：生成 `data/d1-import.sql`、地图点位 `public/data/points.geojson` |
+| `pnpm data:export` | `python -m sync.export`：生成 `data/d1-import.sql`、搜索折叠表 `data/fold.json`、地图点位 `public/data/points.geojson`、作品索引 `public/data/bangumi.json` |
 | `pnpm data:import` | 把 `data/d1-import.sql` 全量覆盖导入本地 D1，并重建地标名全文索引 |
 
 `data/` 和 `public/data/` 都是生成物，不进 git；构建前需要先跑过 `pnpm data`。
@@ -39,7 +39,8 @@ public/data/     地图点位 points.geojson（gzip 后约 0.7 MB）
 ```
 
 - 地图上的 5 万多个点位是静态 GeoJSON，MapLibre 在 worker 里加载并聚合。
-- 搜索和作品详情查 D1：地标名用 FTS5 trigram 全文索引，响应按查询词缓存在边缘，直到下次部署。
+- 搜索是全语种、模糊的：名称都先「折叠」（简繁、平片假名、全半角、大小写、标点归一，日文另加罗马音），规则在 `sync/fold.py` 与 `src/fold.ts` 两处保持一致。作品在浏览器里用 `bangumi.json` 本地匹配；地标查 D1，折叠后的文本上建了 FTS5 trigram 索引，响应按查询词缓存在边缘，直到下次部署。
+- 概览的封面墙跟随地图视口：浏览器用 `points.geojson` 统计视野内各作品的地标数。
 - 数据更新的流程是 `pnpm data` → 导入远程 D1 → 部署；部署会清空边缘缓存。
 
 ## 数据来源与授权

@@ -1,7 +1,9 @@
 """把 sync.sync 同步下来的 data/anitabi.sqlite 转成应用使用的数据（只做格式转换，规范化在 sync.sync 里）：
 
   data/d1-import.sql          全量覆盖 D1 的 bangumi / point 表并重建全文索引（pnpm data:import）
-  public/data/points.geojson  地图点位，maplibre 在 worker 里直接加载并聚合
+  data/fold.json              搜索折叠用的汉字映射表（繁/日→简），前后端共用，见 sync/fold.py
+  public/data/points.geojson  地图点位，maplibre 在 worker 里直接加载并聚合；前端也用它按视口筛选作品
+  public/data/bangumi.json    全部作品的轻量索引（名称、封面、地标数、搜索键），前端本地模糊搜索用
 
   python -m sync.export
 """
@@ -11,6 +13,7 @@ from __future__ import annotations
 import sqlite3
 import sys
 
+from sync.fold import build_char_map, fold, romaji
 from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
@@ -50,19 +53,26 @@ def main():
     counts: dict[int, int] = {}
     for p in points:
         counts[p[0]] = counts.get(p[0], 0) + 1
+    rows = src.execute(
+        "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
+
+    # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
+    char_map = build_char_map([t for r in rows for t in r[1:5]] + [t for p in points for t in p[2:4]])
+    def keys(*texts):
+        return "|".join(dict.fromkeys(k for k in (fold(t, char_map) for t in texts) if k))
     bangumi = [
-        (*row, counts.get(row[0], 0))
-        for row in src.execute(
-            "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id")
+        (*r, counts.get(r[0], 0), keys(r[1], r[2], r[3], r[4], romaji(r[2])))
+        for r in rows
     ]
+    points = [(*p, keys(p[2], p[3])) for p in points]
 
     out_sql = DEFAULT_OUT / "d1-import.sql"
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
-        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count"]
+        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "search"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
-                "origin_link", "mark"]
+                "origin_link", "mark", "search"]
         f.writelines(insert_statements("point", cols, points))
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
 
@@ -77,6 +87,10 @@ def main():
             for p in points
         ],
     })
+
+    write_json(DEFAULT_OUT / "fold.json", char_map)
+    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键]
+    write_json(PUBLIC_DATA / "bangumi.json", [[b[0], b[1], b[2], b[3], b[7], b[8], b[9]] for b in bangumi])
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

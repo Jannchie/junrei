@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7f88bbd6-4d0b-4b1c-8e1e-a222ac826c80",
+  "id": "ffe8d9eb-6811-4f2b-883f-2b45bcf6326e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bangumi": {
@@ -68,6 +68,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "search": {
+          "name": "search",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         }
       },
@@ -166,6 +173,13 @@
         },
         "mark": {
           "name": "mark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "search": {
+          "name": "search",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

@@ -4,7 +4,7 @@ import type { Point } from "geojson";
 import maplibregl, { type GeoJSONSource, type LngLatLike, type PaddingOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { t } from "../i18n";
+import { locale, t } from "../i18n";
 import { ICONS } from "../icons";
 import { CJK_FONT_FAMILY, createStyle, readPalette } from "../map-style";
 
@@ -23,7 +23,11 @@ const props = defineProps<{
   padding: PaddingOptions;
 }>();
 
-const emit = defineEmits<{ pick: [bangumiId: number, pointId: string] }>();
+const emit = defineEmits<{
+  pick: [bangumiId: number, pointId: string];
+  /** 视口范围变化（拖动、缩放结束后） */
+  view: [bounds: { west: number; south: number; east: number; north: number }];
+}>();
 
 const el = ref<HTMLDivElement>();
 let map: maplibregl.Map | null = null;
@@ -31,10 +35,10 @@ let geolocate: maplibregl.GeolocateControl | null = null;
 const ready = ref(false);
 const dark = matchMedia("(prefers-color-scheme: dark)");
 
-// 换主题只换颜色：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
+// 换主题或语言只换颜色和地名字段：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
 // 否则 diff 会把它们当成新源，重新加载、重新聚合 5 万个点）
 function restyle() {
-  map?.setStyle(createStyle(readPalette()), {
+  map?.setStyle(createStyle(readPalette(), locale.value), {
     transformStyle: (prev, next) => ({
       ...next,
       sources: { ...next.sources, points: prev!.sources.points, selected: prev!.sources.selected },
@@ -88,7 +92,7 @@ function syncCamera() {
 onMounted(() => {
   const m = (map = new maplibregl.Map({
     container: el.value!,
-    style: createStyle(readPalette()),
+    style: createStyle(readPalette(), locale.value),
     center: [137.5, 36.2],
     zoom: 4.6,
     padding: props.padding,
@@ -112,6 +116,13 @@ onMounted(() => {
     syncFocus(props.focusPointId, null);
     syncCamera();
   });
+
+  const reportView = () => {
+    const b = m.getBounds();
+    emit("view", { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() });
+  };
+  m.on("moveend", reportView);
+  m.once("load", reportView);
 
   m.on("click", "clusters", async (e) => {
     const f = e.features?.[0];
@@ -137,6 +148,7 @@ onBeforeUnmount(() => {
   map?.remove();
 });
 
+watch(locale, restyle);
 watch(() => props.padding, () => {
   if (!map) return;
   if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));
