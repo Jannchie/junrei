@@ -19,6 +19,11 @@ export const head = defineHead(() =>
       alternateName: ["聖地巡礼マップ", "聖地巡禮地圖", "Anime Pilgrimage Map", "junrei"],
       url: `${SITE}/`,
       inLanguage: ["zh-Hans", "zh-Hant", "ja", "en"],
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: `${SITE}/?q={search_term_string}` },
+        "query-input": "required name=search_term_string",
+      },
     },
   }),
 );

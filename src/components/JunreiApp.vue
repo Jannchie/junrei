@@ -138,10 +138,19 @@ async function pickResult(bangumiId: number, pointId: string | null = null) {
   await select(bangumiId, pointId);
 }
 
-// 选中状态写进 URL（作品页 /b/:id 由服务端渲染，可被搜索引擎收录），标题同步
-watch([detail, focusPointId], () => {
+// 状态写进 URL，链接即可分享、收藏：路径是作品（/b/:id 由服务端渲染，可被收录），?p 是地标，
+// ?q 是搜索词（也是 OpenSearch 的入口），#map 是地图视野（由 maplibre 维护，这里原样保留）
+const debouncedQuery = ref("");
+let queryTimer: ReturnType<typeof setTimeout> | undefined;
+watch(query, (q) => {
+  clearTimeout(queryTimer);
+  queryTimer = setTimeout(() => (debouncedQuery.value = q.trim()), 400);
+});
+watch([detail, focusPointId, debouncedQuery], () => {
   const url = new URL(detail.value ? `/b/${detail.value.id}` : "/", location.origin);
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
+  if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
+  url.hash = location.hash;
   history.replaceState(null, "", url);
   document.title = detail.value
     ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en })} · ${t("brand")}`
@@ -190,6 +199,11 @@ onMounted(() => {
   const params = new URLSearchParams(location.search);
   const b = Number(params.get("b")) || detail.value?.id;
   if (b) void select(b, params.get("p"));
+  const q = params.get("q");
+  if (q) {
+    query.value = q;
+    sheet.value = "full";
+  }
   if (import.meta.env.PROD && "serviceWorker" in navigator) void navigator.serviceWorker.register("/sw.js");
 });
 onBeforeUnmount(() => {

@@ -12,6 +12,8 @@
 ## 网页
 
 - [地图首页](https://junrei.jannchie.com/)
+- 搜索结果页：`https://junrei.jannchie.com/?q={关键词}`，全语种、模糊匹配（中文、日文、英文、罗马音都可以）
+- 任意页面可加 `#map={缩放}/{纬度}/{经度}` 指定地图视野
 - 作品页：`https://junrei.jannchie.com/b/{id}`，可加 `?p={地标 id}` 定位到某个取景地
 - [站点地图](https://junrei.jannchie.com/sitemap.xml)
 

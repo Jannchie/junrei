@@ -71,12 +71,18 @@ function syncFocus(next: string | null, prev: string | null) {
 
 // 相机由「作品:焦点」决定，同一个 key 只移动一次；地图就绪前的选择会在就绪后补上
 let cameraKey = "";
+// 链接里带了视野（#map=…）时，首次选中不移动相机，尊重链接里的视野
+let keepLinkedView = typeof location !== "undefined" && location.hash.includes("map=");
 function syncCamera() {
   const sel = props.selected;
   if (!ready.value || !map || !sel?.points.length) return;
   const key = `${sel.bangumiId}:${props.focusPointId ?? ""}`;
   if (key === cameraKey) return;
   cameraKey = key;
+  if (keepLinkedView) {
+    keepLinkedView = false;
+    return;
+  }
   const focus = sel.points.find((p) => p.id === props.focusPointId);
   // setPadding 会打断进行中的动画，所以只在相机空闲时或发起新动作前调用（见下方 padding 的 watch）
   map.setPadding(props.padding);
@@ -95,6 +101,8 @@ onMounted(() => {
     style: createStyle(readPalette(), locale.value),
     center: [137.5, 36.2],
     zoom: 4.6,
+    // 视野写进 URL 的 #map=缩放/纬度/经度，链接打开就是同一片区域
+    hash: "map",
     padding: props.padding,
     localIdeographFontFamily: CJK_FONT_FAMILY,
     attributionControl: false, // 署名放在面板底部

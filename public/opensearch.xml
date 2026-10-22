@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>圣地巡礼地图</ShortName>
+  <Description>搜索动画、游戏的取景地（圣地巡礼）</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="32" height="32" type="image/png">https://junrei.jannchie.com/icons/favicon-32.png</Image>
+  <Url type="text/html" method="get" template="https://junrei.jannchie.com/?q={searchTerms}"/>
+  <Url type="application/json" method="get" template="https://junrei.jannchie.com/v1/search?q={searchTerms}"/>
+</OpenSearchDescription>
