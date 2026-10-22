@@ -19,13 +19,11 @@ import {
   IconPlus,
   IconSearch,
   IconSearchX,
-  IconTorii,
   IconTv,
   IconX,
 } from "@jannchie/icons";
 
 export const ICONS = {
-  logo: IconTorii,
   search: IconSearch,
   clear: IconX,
   noResult: IconSearchX,

@@ -5,6 +5,7 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { formatEpisode, formatTime, imageUrl } from "../format";
 import { initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
 import { ICONS } from "../icons";
+import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail } from "../detail";
@@ -357,7 +358,7 @@ onBeforeUnmount(() => {
 
       <!-- 概览 -->
       <section v-else class="scroll overview">
-        <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" /><span class="tx">{{ t("brand") }}</span></h1>
+        <h1><LogoMark :size="26" /><span class="tx">{{ t("brand") }}</span></h1>
         <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
