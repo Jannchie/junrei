@@ -10,6 +10,7 @@
   python -m sync.translate --dry-run
   python -m sync.translate --fields name --mode sync --limit 200
   python -m sync.translate --wait
+  python -m sync.translate --wait --field-model title=claude-sonnet-5-5   # 作品标题用更强的模型
 
 LLM 步骤需要 `pip install anthropic`；繁体转换需要 `pip install opencc-python-reimplemented`（或 opencc），没装则跳过繁体。
 """
@@ -184,6 +185,8 @@ def main():
     add_data_arg(ap)
     ap.add_argument("--fields", default=",".join(FIELDS), help="要跑 LLM 的字段，逗号分隔：name,mark,title")
     ap.add_argument("--model", default=llm.DEFAULT_MODEL)
+    ap.add_argument("--field-model", action="append", default=[], metavar="FIELD=MODEL",
+                    help="某个字段改用别的模型，可重复，如 --field-model title=claude-sonnet-5-5")
     ap.add_argument("--mode", choices=["batch", "sync"], default="batch")
     ap.add_argument("--limit", type=int, help="每个字段最多请求多少条不同文本（试跑用）")
     ap.add_argument("--wait", action="store_true", help="提交批次后轮询直到结束")
@@ -194,8 +197,9 @@ def main():
     data = Path(args.data)
     db = open_db(data)
     started = now_iso()
-    opts = dict(model=args.model, mode=args.mode, dry_run=args.dry_run, limit=args.limit, wait=args.wait)
-    run = lambda f, texts: llm.run(db, TASKS[f], texts, **opts) if f in fields else {}  # noqa: E731
+    models = {f: args.model for f in FIELDS} | dict(fm.split("=", 1) for fm in args.field_model)
+    opts = dict(mode=args.mode, dry_run=args.dry_run, limit=args.limit, wait=args.wait)
+    run = lambda f, texts: llm.run(db, TASKS[f], texts, model=models[f], **opts) if f in fields else {}  # noqa: E731
 
     points = [(f"{b}:{p}", llm.clean_text(n or ""), cn, llm.clean_text(m or "")) for b, p, n, cn, m in db.execute(
         """SELECT p.bangumi_id, p.id, p.name, p.cn, p.mark FROM src.point p JOIN src.bangumi b ON b.id = p.bangumi_id
@@ -256,7 +260,7 @@ def main():
     for k in R.rows:
         by[f"{k[0]}.{k[2]}/{k[3]}/{k[4]}"] += 1
     stats = {"rows": len(R.rows), "by": dict(sorted(by.items()))}
-    log_run(db, "translate", started, {"model": args.model, "fields": fields, "opencc": args.opencc_config,
+    log_run(db, "translate", started, {"models": models, "fields": fields, "opencc": args.opencc_config,
                                        "prompt_versions": {f: TASKS[f].prompt_version for f in fields}}, stats)
     print(json.dumps(stats, ensure_ascii=False, indent=2))
     write_report(db, data)
