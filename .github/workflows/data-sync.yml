@@ -1,0 +1,111 @@
+# 每天同步一次数据：Anitabi（增量）+ Bangumi 全部动画（官方每周数据包）→ 导出 → 导入远程 D1 → 部署。
+# 补全数据（data/ 下的 anitabi.sqlite、enrich.sqlite、cache.sqlite：翻译表、LLM 缓存、城市名等）
+# 存在本仓库的 data-snapshot Release 里，开始时取回、结束时更新。
+# 需要的仓库 Secrets：CLOUDFLARE_API_TOKEN（必需）；ANTHROPIC_API_KEY（可选，有就给新地标做机器翻译）。
+name: Sync data
+on:
+  schedule:
+    - cron: "0 19 * * *" # 每天日本时间 4:00
+  workflow_dispatch:
+
+concurrency:
+  group: data-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: sync/requirements.txt
+      - run: pip install -r sync/requirements.txt
+      - run: pnpm install --frozen-lockfile
+
+      - name: Restore data snapshot
+        run: |
+          mkdir -p data
+          if gh release download data-snapshot -p data-snapshot.zip -D "$RUNNER_TEMP"; then
+            unzip -o "$RUNNER_TEMP/data-snapshot.zip" -d data
+          else
+            echo "没有数据快照，从头同步（没有翻译与城市名）"
+          fi
+
+      - name: Sync Anitabi
+        run: python -m sync.sync
+      - name: Bangumi anime metadata
+        run: python -m sync.bgm_archive
+      - name: City names
+        run: python -m sync.cities
+      - name: Translations
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            pip install anthropic
+            # 只翻译新出现的文本（已翻译的走缓存），同步模式，一次最多 500 条
+            python -m sync.translate --mode sync --limit 500 --review --field-model title=claude-sonnet-5-5
+          else
+            # 没有 API 凭据：只用缓存重建翻译表，新文本暂时没有译文
+            python -m sync.translate --limit 0 --review --field-model title=claude-sonnet-5-5
+          fi
+      - name: Export
+        run: python -m sync.export
+
+      - name: Detect changes
+        id: changes
+        run: |
+          sha=$(sha256sum data/d1-import.sql | cut -d' ' -f1)
+          last=$(cat data/last-import.sha256 2>/dev/null || true)
+          git add -A public/data src/fold-map.json
+          if [ "$sha" != "$last" ] || ! git diff --cached --quiet; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "$sha" > data/last-import.sha256.new
+          else
+            echo "数据没有变化"
+          fi
+
+      - name: Commit static data
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "data: sync $(date -u +%F)"
+            git push
+          fi
+
+      # 先部署（应用迁移、上传新的静态数据），再导入 D1
+      - name: Deploy
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm exec void deploy --platform cloudflare
+      - name: Import D1
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm exec wrangler d1 execute junrei-db --remote --file data/d1-import.sql --yes -c .void-wrangler.jsonc
+          mv data/last-import.sha256.new data/last-import.sha256
+
+      - name: Save data snapshot
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          (cd data && zip -q -9 "$RUNNER_TEMP/data-snapshot.zip" anitabi.sqlite enrich.sqlite cache.sqlite last-import.sha256)
+          gh release upload data-snapshot "$RUNNER_TEMP/data-snapshot.zip" --clobber
