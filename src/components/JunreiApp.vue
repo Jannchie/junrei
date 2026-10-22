@@ -368,8 +368,17 @@ onBeforeUnmount(() => {
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
               </span>
               <p v-if="p.id === focusPointId && p.mark" class="mark">{{ p.mark }}</p>
-              <a v-if="p.id === focusPointId" :href="mapsUrl(p)" target="_blank" rel="noopener" class="open-maps" @click.stop>
-                <JIcon :icon="ICONS.navigate" :size="14" /><span class="tx">{{ t("openInMaps") }}</span>
+              <a
+                v-if="p.id === focusPointId"
+                :href="mapsUrl(p)"
+                target="_blank"
+                rel="noopener"
+                class="open-maps"
+                :title="t('openInMaps')"
+                :aria-label="t('openInMaps')"
+                @click.stop
+              >
+                <JIcon :icon="ICONS.navigate" :size="16" />
               </a>
             </div>
           </li>
@@ -808,18 +817,24 @@ figcaption a {
 .more {
   height: 1px;
 }
+/* 选中地标标题右侧的小圆按钮，不额外占一行 */
+.point-body {
+  position: relative;
+}
+.points li.active .point-body {
+  padding-right: 36px;
+}
 .open-maps {
-  display: inline-flex;
-  align-self: flex-start;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  padding: 6px 10px;
-  font-size: 13px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
   color: #fff;
-  text-decoration: none;
   background: var(--accent);
-  border-radius: 8px;
+  border-radius: 50%;
 }
 .mark {
   margin: 4px 0 0;
