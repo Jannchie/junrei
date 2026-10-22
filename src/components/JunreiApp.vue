@@ -489,8 +489,9 @@ onBeforeUnmount(() => {
 
       <!-- 概览 -->
       <section v-else class="scroll overview">
-        <h1><LogoMark :size="26" /><span class="tx">{{ t("brand") }}</span></h1>
-        <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
+        <h1><LogoMark :size="24" /><span class="tx">{{ t("brand") }}</span></h1>
+        <!-- 起初是热门作品（服务端渲染的真实链接，爬虫能走到每个作品页）；地图一动就换成视野内的作品 -->
+        <h2 class="section-label">{{ t(inView ? "inView" : "popular") }}</h2>
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
             <a :href="localePath(locale, `/b/${b.id}`)" @click.prevent="select(b.id)">
@@ -503,16 +504,9 @@ onBeforeUnmount(() => {
       </section>
 
       <footer class="foot">
-        <!-- OSM 要求地图署名始终可见；其余来源收进原生 popover（点外部或 Esc 自动关闭） -->
-        <button
-          ref="creditsBtn"
-          type="button"
-          class="credits-btn"
-          popovertarget="credits"
-          :title="t('credits')"
-          :aria-label="t('credits')"
-        >
-          <JIcon :icon="ICONS.info" :size="14" />
+        <!-- OSM 要求地图署名始终可见：署名本身就是按钮，点开是全部来源、源代码与快捷键（原生 popover，点外部或 Esc 关闭） -->
+        <button ref="creditsBtn" type="button" class="credits-btn" popovertarget="credits" :title="t('credits')">
+          <JIcon :icon="ICONS.info" :size="14" /><span class="tx">© OpenStreetMap</span>
         </button>
         <div id="credits" ref="creditsPop" popover class="credits-pop" @toggle="onCreditsToggle">
           <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
@@ -522,10 +516,14 @@ onBeforeUnmount(() => {
           <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
           <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
           <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
+          <hr />
+          <a class="stat" href="https://github.com/Jannchie/junrei" target="_blank" rel="noopener">
+            <JIcon :icon="ICONS.github" :size="14" /><span class="tx">{{ t("source") }}</span>
+          </a>
+          <button type="button" class="stat kb-btn" popovertarget="shortcuts">
+            <JIcon :icon="ICONS.keyboard" :size="14" /><span class="tx">{{ t("shortcuts") }}</span>
+          </button>
         </div>
-        <button type="button" class="icon-link kb-btn" popovertarget="shortcuts" :title="`${t('shortcuts')} (?)`" :aria-label="t('shortcuts')">
-          <JIcon :icon="ICONS.keyboard" :size="14" />
-        </button>
         <div id="shortcuts" ref="shortcutsPop" popover class="shortcuts-pop">
           <h3>{{ t("shortcuts") }}</h3>
           <dl>
@@ -535,17 +533,6 @@ onBeforeUnmount(() => {
             </template>
           </dl>
         </div>
-        <a class="osm" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
-        <a
-          class="icon-link"
-          href="https://github.com/Jannchie/junrei"
-          target="_blank"
-          rel="noopener"
-          :title="t('source')"
-          :aria-label="t('source')"
-        >
-          <JIcon :icon="ICONS.github" :size="14" />
-        </a>
         <button
           type="button"
           class="icon-link"
@@ -700,8 +687,7 @@ img.img-failed {
   font-variant-numeric: tabular-nums;
 }
 /* 图标与文字垂直居中：把文字行盒裁到大写字母高度与基线，否则字体上下留白不对称，图标会显得偏上 */
-.tx,
-.osm {
+.tx {
   text-box: trim-both cap alphabetic;
 }
 .icon-btn {
@@ -1006,14 +992,20 @@ figcaption a {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 14px 0;
-  font-size: 22px;
+  margin: 12px 0 18px;
+  font-size: 20px;
+}
+.section-label {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
 }
 .popular {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px 10px;
-  margin: 20px 0 16px;
+  margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
@@ -1056,16 +1048,20 @@ figcaption a {
 }
 .credits-btn {
   anchor-name: --credits;
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 4px 6px;
+  margin-left: -6px;
+  font: inherit;
   color: inherit;
   background: none;
   border: 0;
   border-radius: 6px;
   cursor: pointer;
+  justify-self: start;
 }
 .icon-link {
   display: grid;
@@ -1107,10 +1103,26 @@ figcaption a {
 .credits-pop:popover-open {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
 }
-.osm {
-  flex: 1;
+.credits-pop hr {
+  align-self: stretch;
+  margin: 4px 0;
+}
+.credits-pop a,
+.credits-pop button {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.credits-pop a:hover,
+.credits-pop button:hover {
+  color: var(--fg);
 }
 /* 触屏设备没有键盘，不显示快捷键入口 */
 @media (hover: none) {

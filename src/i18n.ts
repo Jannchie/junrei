@@ -33,6 +33,8 @@ const MESSAGES = {
     kbSearch: "搜索",
     kbPoints: "上一个 / 下一个地标",
     kbTheme: "切换外观",
+    popular: "热门作品",
+    inView: "这片区域的作品",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -54,6 +56,8 @@ const MESSAGES = {
     kbSearch: "搜尋",
     kbPoints: "上一個 / 下一個地標",
     kbTheme: "切換外觀",
+    popular: "熱門作品",
+    inView: "這片區域的作品",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -75,6 +79,8 @@ const MESSAGES = {
     kbSearch: "検索",
     kbPoints: "前 / 次のスポット",
     kbTheme: "外観を切り替え",
+    popular: "人気の作品",
+    inView: "このエリアの作品",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -96,6 +102,8 @@ const MESSAGES = {
     kbSearch: "Search",
     kbPoints: "Previous / next spot",
     kbTheme: "Switch appearance",
+    popular: "Popular",
+    inView: "In this area",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

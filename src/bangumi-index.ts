@@ -29,5 +29,5 @@ function call<T>(req: WithoutId<Request>): Promise<T> {
 export const searchBangumi = (query: string, limit = 20) => call<BangumiLite[]>({ type: "search", query, limit });
 
 /** 视口内有地标的作品，按视口内地标数排序 */
-export const bangumiInView = (bounds: Bounds, limit = 24) =>
+export const bangumiInView = (bounds: Bounds, limit = 48) =>
   call<(BangumiLite & { inView: number })[]>({ type: "inView", bounds, limit });

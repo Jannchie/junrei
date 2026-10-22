@@ -16,10 +16,16 @@ media?.addEventListener("change", (e) => (systemDark.value = e.matches));
 export const isDark = computed(() => (themePref.value === "auto" ? systemDark.value : themePref.value === "dark"));
 
 function apply(pref: ThemePref) {
+  // 切换瞬间完成：临时关掉页面上所有 CSS 过渡，下一帧再恢复
+  const style = document.createElement("style");
+  style.textContent = "*,*::before,*::after{transition:none!important}";
+  document.head.appendChild(style);
   // 先改属性再改状态：依赖 isDark 的监听（地图重读配色）触发时，新配色已经生效
   if (pref === "auto") delete document.documentElement.dataset.theme;
   else document.documentElement.dataset.theme = pref;
   themePref.value = pref;
+  getComputedStyle(document.documentElement).color; // 强制按新配色算一次样式，再撤掉禁用
+  requestAnimationFrame(() => style.remove());
 }
 
 export function initTheme() {

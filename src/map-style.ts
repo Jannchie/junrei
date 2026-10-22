@@ -280,6 +280,8 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
 
   return {
     version: 8,
+    // 切换外观、语言时新样式一次到位，不做颜色渐变
+    transition: { duration: 0, delay: 0 },
     projection: { type: "globe" },
     // 缩到最小是地球：球外是「太空」底色，边缘一圈大气光
     sky: {
