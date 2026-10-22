@@ -22,6 +22,7 @@ const MESSAGES = {
     zoomIn: "放大",
     zoomOut: "缩小",
     language: "语言",
+    credits: "数据来源与授权",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -32,6 +33,7 @@ const MESSAGES = {
     zoomIn: "放大",
     zoomOut: "縮小",
     language: "語言",
+    credits: "資料來源與授權",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -42,6 +44,7 @@ const MESSAGES = {
     zoomIn: "拡大",
     zoomOut: "縮小",
     language: "言語",
+    credits: "データ出典・ライセンス",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -52,6 +55,7 @@ const MESSAGES = {
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
     language: "Language",
+    credits: "Sources and licenses",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

@@ -309,14 +309,20 @@ onBeforeUnmount(() => {
       </section>
 
       <footer class="foot">
-        <span class="credits">
-          <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
-          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA</a>
-          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
-          <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>
-          <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
-          <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
-        </span>
+        <!-- OSM 要求地图署名始终可见；其余来源收进信息浮层 -->
+        <details class="credits-more">
+          <summary :title="t('credits')" :aria-label="t('credits')"><JIcon :icon="ICONS.info" :size="14" /></summary>
+          <div class="credits-pop">
+            <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+            <a href="https://bgm.tv/" target="_blank" rel="noopener">Bangumi</a>
+            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
+            <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
+            <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
+            <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
+          </div>
+        </details>
+        <a class="osm" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
         <label class="lang" :title="t('language')">
           <JIcon :icon="ICONS.language" :size="14" />
           <select v-model="locale" :aria-label="t('language')">
@@ -732,12 +738,42 @@ figcaption a {
   color: var(--muted);
   border-top: 1px solid var(--line);
 }
-.credits {
-  flex: 1;
-  min-width: 0;
+.credits-more {
+  position: relative;
+}
+.credits-more summary {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  list-style: none;
+  cursor: pointer;
+}
+.credits-more summary::-webkit-details-marker {
+  display: none;
+}
+.credits-more summary:hover,
+.credits-more[open] summary {
+  color: var(--fg);
+  background: var(--hover);
+}
+.credits-pop {
+  position: absolute;
+  left: -4px;
+  bottom: calc(100% + 8px);
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px 8px;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+  padding: 10px 12px;
+  font-size: 12px;
+  background: var(--bg-solid);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.osm {
+  flex: 1;
 }
 .foot a {
   text-decoration: none;
