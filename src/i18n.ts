@@ -29,6 +29,10 @@ const MESSAGES = {
     themeDark: "外观：深色",
     openInMaps: "在地图 App 中打开",
     exportKml: "导出 KML，可导入 Google 地图",
+    shortcuts: "键盘快捷键",
+    kbSearch: "搜索",
+    kbPoints: "上一个 / 下一个地标",
+    kbTheme: "切换外观",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -46,6 +50,10 @@ const MESSAGES = {
     themeDark: "外觀：深色",
     openInMaps: "在地圖 App 中開啟",
     exportKml: "匯出 KML，可匯入 Google 地圖",
+    shortcuts: "鍵盤快速鍵",
+    kbSearch: "搜尋",
+    kbPoints: "上一個 / 下一個地標",
+    kbTheme: "切換外觀",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -63,6 +71,10 @@ const MESSAGES = {
     themeDark: "外観：ダーク",
     openInMaps: "地図アプリで開く",
     exportKml: "KML を書き出す（Google マップに取り込めます）",
+    shortcuts: "キーボードショートカット",
+    kbSearch: "検索",
+    kbPoints: "前 / 次のスポット",
+    kbTheme: "外観を切り替え",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -80,6 +92,10 @@ const MESSAGES = {
     themeDark: "Appearance: dark",
     openInMaps: "Open in Maps",
     exportKml: "Export KML (import into Google My Maps)",
+    shortcuts: "Keyboard shortcuts",
+    kbSearch: "Search",
+    kbPoints: "Previous / next spot",
+    kbTheme: "Switch appearance",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

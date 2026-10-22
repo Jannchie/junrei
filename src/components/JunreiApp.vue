@@ -5,6 +5,7 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { formatEpisode, formatTime, imageUrl } from "../format";
 import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, stripLocale } from "../i18n";
 import { ICONS } from "../icons";
+import { onShortcuts } from "../keyboard";
 import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
@@ -96,6 +97,18 @@ watch(moreSentinel, (el) => {
     if (e.isIntersecting) visibleCount.value += PAGE * 2;
   }, { rootMargin: "400px" });
   moreObserver.observe(el);
+});
+
+// 作品标题区滚出可视范围时，顶栏显示作品名
+const titleRow = ref<HTMLElement>();
+const headHidden = ref(false);
+let headObserver: IntersectionObserver | undefined;
+watch(titleRow, (el) => {
+  headObserver?.disconnect();
+  headHidden.value = false;
+  if (!el) return;
+  headObserver = new IntersectionObserver(([e]) => (headHidden.value = !e.isIntersecting), { rootMargin: "-44px 0px 0px 0px" });
+  headObserver.observe(el);
 });
 
 async function select(bangumiId: number, pointId: string | null = null) {
@@ -215,8 +228,83 @@ const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({
 
 let panelObserver: ResizeObserver | undefined;
 
+// ---- 键盘快捷键（按 ? 查看）----
+const mapView = ref<{ zoomIn(): void; zoomOut(): void; locate(): void }>();
+const searchInput = ref<HTMLInputElement>();
+const shortcutsPop = ref<HTMLElement>();
+
+function focusSearch() {
+  searchInput.value?.focus();
+  searchInput.value?.select();
+}
+/** Esc 逐层退出：清空搜索 → 离开输入框 → 取消选中地标 → 返回概览 */
+function escape(e: KeyboardEvent) {
+  if (shortcutsPop.value?.matches(":popover-open")) return false; // popover 自己会关
+  if (query.value) query.value = "";
+  else if (e.target === searchInput.value) searchInput.value!.blur();
+  else if (focusPointId.value) focusPointId.value = null;
+  else if (detail.value) clearSelection();
+  else return false;
+}
+/** 在作品的地标之间移动；没有选中地标时从第一个开始 */
+function stepPoint(delta: number) {
+  const points = detail.value?.points;
+  if (!points?.length) return false;
+  const i = points.findIndex((p) => p.id === focusPointId.value);
+  const next = i < 0 ? 0 : Math.min(points.length - 1, Math.max(0, i + delta));
+  void select(detail.value!.id, points[next].id);
+}
+/** 搜索结果：↑↓ 在输入框与结果之间移动焦点，回车即点击 */
+function stepRow(e: KeyboardEvent, delta: number) {
+  const list = [...panel.value!.querySelectorAll<HTMLElement>(".row")];
+  if (!list.length) return false;
+  const i = list.indexOf(e.target as HTMLElement);
+  if (i + delta < 0) searchInput.value?.focus();
+  else list[Math.min(list.length - 1, i + delta)].focus();
+}
+const arrow = (delta: number) => (e: KeyboardEvent) => {
+  if ((e.target as HTMLElement).closest?.(".maplibregl-map")) return false; // 地图有焦点时方向键平移地图
+  return query.value.trim() ? stepRow(e, delta) : stepPoint(delta);
+};
+
+let offShortcuts: (() => void) | undefined;
+function bindShortcuts() {
+  offShortcuts = onShortcuts({
+    "/": focusSearch,
+    "mod+k": focusSearch,
+    Escape: escape,
+    ArrowDown: arrow(1),
+    ArrowUp: arrow(-1),
+    j: () => stepPoint(1),
+    k: () => stepPoint(-1),
+    o: () => {
+      const p = detail.value?.points.find((p) => p.id === focusPointId.value);
+      if (!p) return false;
+      open(mapsUrl(p), "_blank", "noopener");
+    },
+    "+": () => mapView.value?.zoomIn(),
+    "=": () => mapView.value?.zoomIn(),
+    "-": () => mapView.value?.zoomOut(),
+    l: () => mapView.value?.locate(),
+    t: () => cycleTheme(),
+    "?": () => shortcutsPop.value?.togglePopover(),
+  });
+}
+
+const SHORTCUTS = computed(() => [
+  { keys: ["/", "Ctrl K"], label: t("kbSearch") },
+  { keys: ["Esc"], label: t("back") },
+  { keys: ["J", "K", "↓", "↑"], label: t("kbPoints") },
+  { keys: ["O"], label: t("openInMaps") },
+  { keys: ["+", "−"], label: `${t("zoomIn")} / ${t("zoomOut")}` },
+  { keys: ["L"], label: t("locate") },
+  { keys: ["T"], label: t("kbTheme") },
+  { keys: ["?"], label: t("shortcuts") },
+]);
+
 onMounted(() => {
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
+  bindShortcuts();
   mounted.value = true;
   initTheme();
   panelObserver = new ResizeObserver(() => {
@@ -243,6 +331,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   panelObserver?.disconnect();
   moreObserver?.disconnect();
+  headObserver?.disconnect();
+  offShortcuts?.();
 });
 </script>
 
@@ -250,6 +340,7 @@ onBeforeUnmount(() => {
   <div ref="app" class="app" :style="{ '--panel-inset-bottom': `${mapPadding.bottom}px` }">
     <PilgrimMap
       v-if="mounted"
+      ref="mapView"
       :selected="selected"
       :focus-point-id="focusPointId"
       :padding="mapPadding"
@@ -272,7 +363,7 @@ onBeforeUnmount(() => {
       />
       <label class="search">
         <JIcon :icon="ICONS.search" class="muted" />
-        <input v-model="query" type="search" :aria-label="t('search')" autocomplete="off" @focus="sheet = 'full'" />
+        <input ref="searchInput" v-model="query" type="search" :aria-label="t('search')" autocomplete="off" @focus="sheet = 'full'" />
         <button v-if="query" class="icon-btn" :title="t('clear')" :aria-label="t('clear')" @click="query = ''">
           <JIcon :icon="ICONS.clear" />
         </button>
@@ -313,11 +404,17 @@ onBeforeUnmount(() => {
 
       <!-- 作品详情 -->
       <section v-else-if="detail" class="scroll">
-        <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
-          <button class="icon-btn back" :title="t('back')" :aria-label="t('back')" @click="clearSelection">
+        <!-- 顶栏常驻：返回按钮始终可点；标题区滚出去后，作品名在这里出现 -->
+        <div class="detail-bar">
+          <button class="icon-btn" :title="`${t('back')} (Esc)`" :aria-label="t('back')" @click="clearSelection">
             <JIcon :icon="ICONS.back" :size="18" />
           </button>
-          <div class="title-row">
+          <span v-auto-lang class="bar-title" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
+            {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
+          </span>
+        </div>
+        <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
+          <div ref="titleRow" class="title-row">
             <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
               <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
@@ -421,6 +518,18 @@ onBeforeUnmount(() => {
           <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
           <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
           <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
+        </div>
+        <button type="button" class="icon-link kb-btn" popovertarget="shortcuts" :title="`${t('shortcuts')} (?)`" :aria-label="t('shortcuts')">
+          <JIcon :icon="ICONS.keyboard" :size="14" />
+        </button>
+        <div id="shortcuts" ref="shortcutsPop" popover class="shortcuts-pop">
+          <h3>{{ t("shortcuts") }}</h3>
+          <dl>
+            <template v-for="s in SHORTCUTS" :key="s.label">
+              <dt><kbd v-for="k in s.keys" :key="k">{{ k }}</kbd></dt>
+              <dd>{{ s.label }}</dd>
+            </template>
+          </dl>
         </div>
         <a class="osm" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
         <a
@@ -704,12 +813,34 @@ hr {
   color: var(--muted);
   background: var(--hover);
 }
-.detail-head {
-  padding: 8px 16px 14px;
-  border-bottom: 3px solid var(--bangumi-color);
+.detail-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px 6px 10px;
+  /* 面板本身半透明；顶栏叠一层同色并模糊下方滚过的内容 */
+  background: var(--bg);
+  backdrop-filter: blur(16px);
 }
-.back {
-  margin: 0 0 6px -6px;
+.bar-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.bar-title.shown {
+  opacity: 1;
+}
+.detail-head {
+  padding: 2px 16px 14px;
+  border-bottom: 3px solid var(--bangumi-color);
 }
 .title-row {
   display: flex;
@@ -953,6 +1084,56 @@ figcaption a {
 }
 .osm {
   flex: 1;
+}
+/* 触屏设备没有键盘，不显示快捷键入口 */
+@media (hover: none) {
+  .kb-btn {
+    display: none;
+  }
+}
+.shortcuts-pop {
+  padding: 16px 20px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 0;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+.shortcuts-pop::backdrop {
+  background: rgb(0 0 0 / 0.15);
+}
+.shortcuts-pop h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+.shortcuts-pop dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  align-items: center;
+  margin: 0;
+  font-size: 13px;
+}
+.shortcuts-pop dt {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.shortcuts-pop dd {
+  margin: 0;
+  color: var(--muted);
+}
+kbd {
+  min-width: 22px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  background: var(--hover);
+  border-radius: 5px;
+  box-shadow: inset 0 -1px 0 var(--line);
 }
 .foot a {
   text-decoration: none;

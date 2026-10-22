@@ -35,6 +35,13 @@ const emit = defineEmits<{
 const { locale, t } = useI18n();
 const el = ref<HTMLDivElement>();
 let map: maplibregl.Map | null = null;
+
+// 给页面的键盘快捷键用
+defineExpose({
+  zoomIn: () => map?.zoomIn(),
+  zoomOut: () => map?.zoomOut(),
+  locate: () => geolocate?.trigger(),
+});
 let geolocate: maplibregl.GeolocateControl | null = null;
 const ready = ref(false);
 
