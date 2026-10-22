@@ -8,6 +8,7 @@
   python -m sync.notes --dry-run          # 只看要发多少请求、请求长什么样
   python -m sync.notes --wait             # 提交 Message Batch 并等待结果
   python -m sync.notes --mode sync --limit 200   # 同步小规模试跑
+  python -m sync.notes --wait --review   # 再用 Opus 复核低置信度的分类
 """
 
 from __future__ import annotations
@@ -59,6 +60,19 @@ TASK = llm.Task(
     chunk_size=40,
 )
 
+REVIEW_TASK = llm.Task(
+    name="note_tags_review",
+    version="v1",
+    system=SYSTEM + """
+
+你现在是复核者：每条输入是 JSON，text 为备注原文，draft 为另一个模型给出的初步标签和集数（可能有误）。
+请按上述规则独立判断，给出最终的 tags 和 episode；draft 正确就照抄。""",
+    item_properties=TASK.item_properties,
+    chunk_size=30,
+)
+REVIEW_MODEL = "claude-opus-5-5"
+REVIEW_BAND = (0.4, 0.7)  # 初分类里有标签的置信度落在这个区间才复核
+
 SCHEMA = """
 DROP TABLE IF EXISTS note_class;
 DROP TABLE IF EXISTS note_tag;
@@ -68,6 +82,7 @@ CREATE TABLE note_class (
   tags TEXT,                  -- [{"tag":…, "confidence":…}]
   episode_hint TEXT,          -- 备注中识别出的集数，空则 NULL
   model TEXT, served_model TEXT, prompt_version TEXT, created_at TEXT,
+  reviewed INTEGER NOT NULL DEFAULT 0,  -- 1：tags / episode 来自复核模型（model、prompt_version 也是复核的）
   PRIMARY KEY (bangumi_id, point_id)
 );
 CREATE TABLE note_tag (
@@ -87,6 +102,9 @@ def main():
     ap.add_argument("--limit", type=int, help="最多请求多少条不同文本（试跑用）")
     ap.add_argument("--wait", action="store_true", help="提交批次后轮询直到结束")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--review", action="store_true",
+                    help=f"用更强的模型复核初分类里置信度在 {REVIEW_BAND[0]}–{REVIEW_BAND[1]} 之间的备注")
+    ap.add_argument("--review-model", default=REVIEW_MODEL)
     args = ap.parse_args()
     data = Path(args.data)
     db = open_db(data)
@@ -95,8 +113,20 @@ def main():
     points = [(b, p, llm.clean_text(m)) for b, p, m in db.execute(
         """SELECT p.bangumi_id, p.id, p.mark FROM src.point p JOIN src.bangumi b ON b.id = p.bangumi_id
            WHERE b.deleted = 0 AND p.mark IS NOT NULL""")]
-    results = llm.run(db, TASK, [m for _, _, m in points], model=args.model, mode=args.mode,
-                      dry_run=args.dry_run, limit=args.limit, wait=args.wait)
+    opts = dict(mode=args.mode, dry_run=args.dry_run, limit=args.limit, wait=args.wait)
+    results = llm.run(db, TASK, [m for _, _, m in points], model=args.model, **opts)
+    final = {s: (out, served, args.model, TASK.prompt_version, 0) for s, (out, served) in results.items()}
+    if args.review:
+        payloads = {}
+        for s, (out, _) in results.items():
+            if any(REVIEW_BAND[0] <= float(t.get("confidence", 0)) < REVIEW_BAND[1] for t in out.get("tags", [])):
+                mark = db.execute("SELECT input FROM cache.llm_cache WHERE input_sha=? LIMIT 1", (s,)).fetchone()[0]
+                payloads[s] = json.dumps({"text": mark, "draft": out}, ensure_ascii=False)
+        reviewed = llm.run(db, REVIEW_TASK, list(payloads.values()), model=args.review_model, **opts)
+        for s, payload in payloads.items():
+            if (r := reviewed.get(llm.sha(payload))) is not None:
+                final[s] = (r[0], r[1], args.review_model, REVIEW_TASK.prompt_version, 1)
+        print(f"复核 {len(payloads)} 条不同备注，已完成 {sum(1 for v in final.values() if v[4])} 条")
     if args.dry_run:
         return
 
@@ -104,23 +134,25 @@ def main():
     ts = now_iso()
     classes, tags = [], []
     for b, p, m in points:
-        r = results.get(llm.sha(m))
+        r = final.get(llm.sha(m))
         if r is None:
             continue
-        out, served = r
+        out, served, model, pv, rev = r
         seen = {}
         for t in out.get("tags", []):
             if t.get("tag") in TAGS:
                 seen[t["tag"]] = max(seen.get(t["tag"], 0), min(max(float(t.get("confidence", 0)), 0), 1))
         tag_json = json.dumps([{"tag": k, "confidence": v} for k, v in seen.items()], ensure_ascii=False)
-        classes.append((b, p, llm.sha(m), tag_json, out.get("episode") or None, args.model, served,
-                        TASK.prompt_version, ts))
-        tags += [(b, p, k, v, served, TASK.prompt_version) for k, v in seen.items()]
-    db.executemany("INSERT INTO note_class VALUES (?,?,?,?,?,?,?,?,?)", classes)
+        classes.append((b, p, llm.sha(m), tag_json, out.get("episode") or None, model, served, pv, ts, rev))
+        tags += [(b, p, k, v, served, pv) for k, v in seen.items()]
+    db.executemany("INSERT INTO note_class VALUES (?,?,?,?,?,?,?,?,?,?)", classes)
     db.executemany("INSERT INTO note_tag VALUES (?,?,?,?,?,?)", tags)
     db.commit()
-    stats = {"points_with_mark": len(points), "classified": len(classes), "tags": len(tags)}
-    log_run(db, "notes", started, {"model": args.model, "prompt_version": TASK.prompt_version}, stats)
+    stats = {"points_with_mark": len(points), "classified": len(classes), "tags": len(tags),
+             "reviewed": sum(1 for c in classes if c[-1])}
+    log_run(db, "notes", started, {"model": args.model, "prompt_version": TASK.prompt_version,
+                                   "review": args.review and {"model": args.review_model, "band": REVIEW_BAND,
+                                                              "prompt_version": REVIEW_TASK.prompt_version}}, stats)
     print(stats)
     write_report(db, data)
 

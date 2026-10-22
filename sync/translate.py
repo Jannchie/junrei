@@ -4,6 +4,7 @@
   anitabi  原始数据：point.name（语言由模型或文字判断）、point.cn、bangumi.title / cn / en
   bangumi  Bangumi API（先跑 sync.bgm）：name / name_cn / 英文名 / 罗马音（ja-Latn）
   llm      Claude 翻译：地标名、备注全部过一遍；作品标题只补前两者都缺的语言
+  llm_review  --review 时用更强的模型复核 llm 行（作品标题全部、其余低置信度的），确认或改正，优先于 llm
   opencc   繁体由最优先的简体按 OpenCC 规则转换，不调用 LLM
 同一语言已有 anitabi / bangumi 的人工数据时不再写 llm 行。原始字段不改。
 
@@ -11,6 +12,7 @@
   python -m sync.translate --fields name --mode sync --limit 200
   python -m sync.translate --wait
   python -m sync.translate --wait --field-model title=claude-sonnet-5-5   # 作品标题用更强的模型
+  python -m sync.translate --wait --field-model title=claude-sonnet-5-5 --review   # 再用 Opus 复核
 
 LLM 步骤需要 `pip install anthropic`；繁体转换需要 `pip install opencc-python-reimplemented`（或 opencc），没装则跳过繁体。
 """
@@ -30,7 +32,10 @@ from sync.enrich_report import has, write_report
 
 LANGS = ["zh-Hans", "zh-Hant", "ja", "en"]
 LLM_LANGS = {"ja": "ja", "zh_hans": "zh-Hans", "en": "en"}  # 结构化输出字段 → 语言代码
-SOURCE_RANK = {"anitabi": 0, "bangumi": 1, "llm": 2}
+SOURCE_RANK = {"anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3}
+MACHINE = {"llm", "llm_review", "opencc"}
+REVIEW_MODEL = "claude-opus-5-5"
+LANG_KEY = {v: k for k, v in LLM_LANGS.items()}
 FIELDS = ["name", "mark", "title"]
 
 # 取自 Anitabi 现有的人工中文名，只挑了译法规范的；英文按常见写法补
@@ -85,6 +90,20 @@ STRUCT = {"ja": {"type": "string"}, "zh_hans": {"type": "string"}, "en": {"type"
           "confidence": {"type": "number"}}
 SOURCE_LANG = {"source_lang": {"type": "string", "enum": ["ja", "zh-Hans", "zh-Hant", "en", "ko", "other"]}}
 
+REVIEW_SYSTEM = """你是动画圣地巡礼地图的多语言审校。每条输入是一个条目：field 是类型（title 作品标题、name 地标名、mark 地标备注），
+original 是人工数据（按语言列出原文和已有的人工译名），machine 是待审校的机器翻译（键为 ja / zh_hans / en）。
+
+逐条检查 machine 里的译文：误译、漏译或增添内容、专有名词和官方译名错误（作品标题优先用官方或通行的中文、英文名）、
+译成了错误的语言或繁简混用、日文写法不自然。
+- verdict：全部正确为 ok，有任何修改为 fixed。
+- ja / zh_hans / en：最终译文。只填 machine 里出现的键，其余给空字符串；没有问题的原样返回。
+- 不确定官方名称时不要编造：作品没有官方英文名时用通行的罗马字标题；地名用赫本式罗马字加英文通用名。
+- 备注只改错误，不润色、不增删内容，保留集数标记、数字、分行。
+- confidence：0 到 1，对最终译文的把握。"""
+
+REVIEW_TASK = llm.Task("translation_review", "v1", REVIEW_SYSTEM,
+                       {"verdict": {"type": "string", "enum": ["ok", "fixed"]}, **STRUCT}, chunk_size=25, chunk_chars=6000)
+
 TASKS = {
     "name": llm.Task("point_name_i18n", "v1", NAME_SYSTEM, {**SOURCE_LANG, **STRUCT}, chunk_size=60),
     "mark": llm.Task("point_mark_i18n", "v1", MARK_SYSTEM, {**SOURCE_LANG, **STRUCT}, chunk_size=20, chunk_chars=2500),
@@ -99,11 +118,11 @@ CREATE TABLE translation (
   field TEXT NOT NULL,          -- title / name / mark
   lang TEXT NOT NULL,           -- zh-Hans / zh-Hant / ja / en；原文语言不在其中时如实记录（ko、und），罗马音为 ja-Latn
   text TEXT NOT NULL,
-  source TEXT NOT NULL,         -- anitabi / bangumi / llm / opencc
-  machine_translated INTEGER NOT NULL,  -- llm、opencc 为 1
+  source TEXT NOT NULL,         -- anitabi / bangumi / llm / llm_review / opencc
+  machine_translated INTEGER NOT NULL,  -- llm、llm_review、opencc 为 1
   confidence REAL,              -- llm：译文可靠度；anitabi 原文：语言判断的把握
   model TEXT, prompt_version TEXT,
-  derived_from TEXT,            -- opencc：转换自哪一行（如 "zh-Hans/llm"）
+  derived_from TEXT,            -- opencc：转换自哪一行（如 "zh-Hans/llm"）；llm_review："llm:ok" 确认无误 / "llm:fixed" 已改正
   created_at TEXT,
   PRIMARY KEY (entity, entity_id, field, lang, source)
 );
@@ -142,7 +161,7 @@ class Rows:
         key = (entity, str(eid), field, lang, source)
         if not text or key in self.rows:
             return
-        mt = int(source in ("llm", "opencc"))
+        mt = int(source in MACHINE)
         self.rows[key] = (*key[:4], text, source, mt, conf, served, pv, derived, self.ts)
         self.by_entity[key[:3]][lang].add(source)
 
@@ -158,6 +177,31 @@ class Rows:
         for key, lang in LLM_LANGS.items():
             if lang != skip_lang and lang not in have:
                 self.add(entity, eid, field, lang, out.get(key), "llm", conf, pv, served=served)
+
+    def review_payloads(self, below: float) -> dict[str, list[tuple]]:
+        """待复核的条目：作品标题全部复核，其余只复核 llm 置信度低于 below 的。返回 {输入 JSON: [条目, …]}（同内容去重）。"""
+        out = defaultdict(list)
+        for ent, langs in self.by_entity.items():
+            mt = {lang: self.rows[(*ent, lang, "llm")] for lang, srcs in langs.items() if "llm" in srcs}
+            if not mt or (ent[0] != "bangumi" and min(r[7] for r in mt.values()) >= below):
+                continue
+            human = {lang: self.rows[(*ent, lang, min(srcs & {"anitabi", "bangumi"}, key=SOURCE_RANK.__getitem__))][4]
+                     for lang, srcs in langs.items() if srcs & {"anitabi", "bangumi"}}
+            payload = {"field": ent[2], "original": human, "machine": {LANG_KEY[lang]: r[4] for lang, r in mt.items()}}
+            out[json.dumps(payload, ensure_ascii=False, sort_keys=True)].append(ent)
+        return out
+
+    def add_review(self, ent, payload: str, result, pv) -> str | None:
+        if result is None:
+            return None
+        out, served = result
+        conf = min(max(float(out.get("confidence", 0)), 0), 1)
+        verdict = "fixed" if out.get("verdict") == "fixed" else "ok"
+        for key, old in json.loads(payload)["machine"].items():
+            new = (out.get(key) or "").strip() or old
+            self.add(*ent, LLM_LANGS[key], new, "llm_review", conf, REVIEW_TASK.prompt_version,
+                     f"llm:{'fixed' if new != old else 'ok'}", served)
+        return verdict
 
     def add_opencc(self, convert, config: str):
         for ent, langs in list(self.by_entity.items()):
@@ -191,6 +235,10 @@ def main():
     ap.add_argument("--limit", type=int, help="每个字段最多请求多少条不同文本（试跑用）")
     ap.add_argument("--wait", action="store_true", help="提交批次后轮询直到结束")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--review", action="store_true",
+                    help=f"用更强的模型复核机器翻译：作品标题全部、其余置信度低于 --review-below 的（默认 {REVIEW_MODEL}）")
+    ap.add_argument("--review-model", default=REVIEW_MODEL)
+    ap.add_argument("--review-below", type=float, default=0.7)
     ap.add_argument("--opencc-config", default="s2t", help="简→繁转换配置：s2t（通用）/ s2tw / s2twp / s2hk")
     args = ap.parse_args()
     fields = [f for f in args.fields.split(",") if f]
@@ -246,6 +294,16 @@ def main():
     titles = run("title", list(missing.values()))
     for bid, text in missing.items():
         R.add_llm("bangumi", bid, "title", titles.get(llm.sha(text)), TASKS["title"].prompt_version)
+    reviews = {}
+    if args.review:
+        payloads = R.review_payloads(args.review_below)
+        results = llm.run(db, REVIEW_TASK, list(payloads), model=args.review_model, **opts)
+        for payload, ents in payloads.items():
+            for ent in ents:
+                v = R.add_review(ent, payload, results.get(llm.sha(payload)), REVIEW_TASK.prompt_version)
+                if v:
+                    reviews[v] = reviews.get(v, 0) + 1
+        print(f"复核：{sum(len(e) for e in payloads.values())} 个条目（{len(payloads)} 条不同内容），结果 {reviews}")
     if args.dry_run:
         print(f"作品标题缺语言、需要 LLM 补的：{len(missing)} 部")
         return
@@ -259,9 +317,11 @@ def main():
     by = defaultdict(int)
     for k in R.rows:
         by[f"{k[0]}.{k[2]}/{k[3]}/{k[4]}"] += 1
-    stats = {"rows": len(R.rows), "by": dict(sorted(by.items()))}
+    stats = {"rows": len(R.rows), "reviews": reviews, "by": dict(sorted(by.items()))}
     log_run(db, "translate", started, {"models": models, "fields": fields, "opencc": args.opencc_config,
-                                       "prompt_versions": {f: TASKS[f].prompt_version for f in fields}}, stats)
+                                       "prompt_versions": {f: TASKS[f].prompt_version for f in fields},
+                                       "review": args.review and {"model": args.review_model, "below": args.review_below,
+                                                                  "prompt_version": REVIEW_TASK.prompt_version}}, stats)
     print(json.dumps(stats, ensure_ascii=False, indent=2))
     write_report(db, data)
 
