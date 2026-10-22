@@ -1,6 +1,7 @@
 // 作品索引的 Web Worker：下载并解析 points.geojson（约 6 MB）与 bangumi.json，
 // 在这里做作品模糊搜索和视口统计，主线程只收结果，不会因为解析大 JSON 而卡顿。
 import { fold } from "./fold";
+import type { I18n } from "./i18n";
 
 export interface BangumiLite {
   id: number;
@@ -9,6 +10,7 @@ export interface BangumiLite {
   en: string | null;
   cover: string | null;
   pointCount: number;
+  i18n: I18n | null;
 }
 interface Entry extends BangumiLite {
   keys: string[];
@@ -18,11 +20,15 @@ export type Request =
   | { id: number; type: "search"; query: string; limit: number }
   | { id: number; type: "inView"; bounds: Bounds; limit: number };
 
-type Raw = [number, string | null, string | null, string | null, string | null, number, string];
+type Raw = [number, string | null, string | null, string | null, string | null, number, string, I18n["name"] | null];
 
 const bangumi: Promise<Entry[]> = fetch("/data/bangumi.json")
   .then((r) => r.json() as Promise<Raw[]>)
-  .then((rows) => rows.map(([id, cn, title, en, cover, pointCount, keys]) => ({ id, cn, title, en, cover, pointCount, keys: keys.split("|") })));
+  .then((rows) =>
+    rows.map(([id, cn, title, en, cover, pointCount, keys, names]) => ({
+      id, cn, title, en, cover, pointCount, i18n: names ? { name: names } : null, keys: keys.split("|"),
+    })),
+  );
 
 const points = fetch("/data/points.geojson")
   .then((r) => r.json() as Promise<{ features: { geometry: { coordinates: [number, number] }; properties: { b: number } }[] }>)

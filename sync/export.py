@@ -5,11 +5,15 @@
   public/data/points.geojson  地图点位，maplibre 在 worker 里直接加载并聚合；前端也用它按视口筛选作品
   public/data/bangumi.json    全部作品的轻量索引（名称、封面、地标数、搜索键），前端本地模糊搜索用
 
+多语言：data/enrich.sqlite 的 translation 表（sync.translate 生成）存在时，每个作品标题、地标名、备注
+按语言挑最可信的一条写进 i18n 列，并把各语言名称都加进搜索键。
+
   python -m sync.export
 """
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import sys
 
@@ -18,6 +22,46 @@ from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
 ROWS_PER_INSERT = 200  # D1 单条语句有长度上限，分批插入
+LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
+# 同一语言有多条时：人工数据优先，其次复核过的机翻、机翻、繁简转换；置信度太低的机翻不用
+SOURCE_RANK = {"anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3, "opencc": 4}
+MIN_CONFIDENCE = 0.5
+FIELD_KEY = {"title": "name", "name": "name", "mark": "mark"}
+
+
+def load_i18n() -> dict[tuple[str, str], dict]:
+    """(entity, entity_id) → {"name": {lang: text}, "mark": {...}, "mt": ["name.en", ...]}"""
+    path = DEFAULT_OUT / "enrich.sqlite"
+    if not path.exists():
+        print("没有 data/enrich.sqlite，跳过多语言（先跑 pnpm enrich:translate）")
+        return {}
+    best: dict[tuple, tuple] = {}
+    with sqlite3.connect(path) as db:
+        for entity, eid, field, lang, text, source, mt, conf in db.execute(
+            "SELECT entity, entity_id, field, lang, text, source, machine_translated, confidence FROM translation"):
+            if lang not in LANGS or field not in FIELD_KEY or not text or source not in SOURCE_RANK:
+                continue
+            if mt and conf is not None and conf < MIN_CONFIDENCE:
+                continue
+            key = (entity, eid, FIELD_KEY[field], lang)
+            rank = SOURCE_RANK[source]
+            if key not in best or rank < best[key][0]:
+                best[key] = (rank, text.strip(), bool(mt))
+    out: dict[tuple[str, str], dict] = {}
+    for (entity, eid, field, lang), (_, text, mt) in best.items():
+        item = out.setdefault((entity, eid), {})
+        item.setdefault(field, {})[lang] = text
+        if mt:
+            item.setdefault("mt", []).append(f"{field}.{lang}")
+    return out
+
+
+def i18n_json(item: dict | None) -> str | None:
+    if not item:
+        return None
+    if "mt" in item:
+        item["mt"].sort()
+    return json.dumps(item, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
 def sql_value(v) -> str:
@@ -50,6 +94,8 @@ def main():
             origin, link = attribution(bid, pid, origin, link)
         points.append((bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark))
 
+    i18n = load_i18n()
+
     counts: dict[int, int] = {}
     for p in points:
         counts[p[0]] = counts.get(p[0], 0) + 1
@@ -57,22 +103,28 @@ def main():
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
 
     # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
-    char_map = build_char_map([t for r in rows for t in r[1:5]] + [t for p in points for t in p[2:4]])
+    titles = {r[0]: i18n.get(("bangumi", str(r[0]))) for r in rows}
+    spots = {(p[0], p[1]): i18n.get(("point", f"{p[0]}:{p[1]}")) for p in points}
+    names = lambda item: list((item or {}).get("name", {}).values())  # noqa: E731
+    char_map = build_char_map(
+        [t for r in rows for t in [*r[1:5], *names(titles[r[0]])]]
+        + [t for p in points for t in [*p[2:4], *names(spots[(p[0], p[1])])]])
     def keys(*texts):
         return "|".join(dict.fromkeys(k for k in (fold(t, char_map) for t in texts) if k))
     bangumi = [
-        (*r, counts.get(r[0], 0), keys(r[1], r[2], r[3], r[4], romaji(r[2])))
+        (*r, counts.get(r[0], 0), i18n_json(titles[r[0]]),
+         keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]])))
         for r in rows
     ]
-    points = [(*p, keys(p[2], p[3])) for p in points]
+    points = [(*p, i18n_json(spots[(p[0], p[1])]), keys(p[2], p[3], *names(spots[(p[0], p[1])]))) for p in points]
 
     out_sql = DEFAULT_OUT / "d1-import.sql"
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
-        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "search"]
+        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "i18n", "search"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
-                "origin_link", "mark", "search"]
+                "origin_link", "mark", "i18n", "search"]
         f.writelines(insert_statements("point", cols, points))
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
 
@@ -89,8 +141,9 @@ def main():
     })
 
     write_json(DEFAULT_OUT / "fold.json", char_map)
-    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键]
-    write_json(PUBLIC_DATA / "bangumi.json", [[b[0], b[1], b[2], b[3], b[7], b[8], b[9]] for b in bangumi])
+    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题]
+    write_json(PUBLIC_DATA / "bangumi.json",
+               [[b[0], b[1], b[2], b[3], b[7], b[8], b[10], (titles[b[0]] or {}).get("name")] for b in bangumi])
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

@@ -20,6 +20,7 @@ export async function getBangumi(id: number) {
         origin: point.origin,
         originLink: point.originLink,
         mark: point.mark,
+        i18n: point.i18n,
       })
       .from(point)
       .where(eq(point.bangumiId, id))
@@ -33,7 +34,7 @@ export type BangumiDetail = NonNullable<Awaited<ReturnType<typeof getBangumi>>>;
 /** 按地标数排序的作品列表；limit 省略即全部（sitemap、Markdown 索引用） */
 export function listBangumi(limit?: number) {
   const q = db
-    .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, city: bangumi.city, cover: bangumi.cover, pointCount: bangumi.pointCount })
+    .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, city: bangumi.city, cover: bangumi.cover, pointCount: bangumi.pointCount, i18n: bangumi.i18n })
     .from(bangumi)
     .orderBy(desc(bangumi.pointCount), asc(bangumi.id));
   return limit ? q.limit(limit) : q;

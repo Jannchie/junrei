@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 provideIconDefaults({ size: 16 });
-const { locale, t, pickName, subName } = provideLocale(props.lang);
+const { locale, t, pickName, subName, markOf } = provideLocale(props.lang);
 
 /** 换语言就是去另一种语言的同一个页面（服务端按语言渲染），作品、地标、搜索词、视野都保留 */
 function switchLocale(next: Locale) {
@@ -59,7 +59,7 @@ const mounted = ref(false);
 const appleMaps = ref(false);
 const mapsUrl = (p: { lat: number; lng: number; name: string | null; cn: string | null }) =>
   appleMaps.value
-    ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent(pickName({ cn: p.cn, original: p.name }) || `${p.lat},${p.lng}`)}`
+    ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent(pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) || `${p.lat},${p.lng}`)}`
     : `https://www.google.com/maps/search/?api=1&query=${p.lat}%2C${p.lng}`;
 
 interface SearchResult {
@@ -79,7 +79,7 @@ const selected = computed(() =>
     ? {
         bangumiId: detail.value.id,
         color: detail.value.color,
-        points: detail.value.points.map((p) => ({ id: p.id, name: pickName({ cn: p.cn, original: p.name }), lng: p.lng, lat: p.lat })),
+        points: detail.value.points.map((p) => ({ id: p.id, name: pickName({ cn: p.cn, original: p.name, i18n: p.i18n }), lng: p.lng, lat: p.lat })),
       }
     : null,
 );
@@ -197,7 +197,7 @@ watch([detail, focusPointId, debouncedQuery], () => {
   url.hash = location.hash;
   history.replaceState(null, "", url);
   document.title = detail.value
-    ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en })} · ${t("brand")}`
+    ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en, i18n: detail.value.i18n })} · ${t("brand")}`
     : t("brand");
 });
 
@@ -387,8 +387,8 @@ onBeforeUnmount(() => {
             <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
-              <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
-              <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en })">{{ subName({ cn: b.cn, original: b.title, en: b.en }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</strong>
+              <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</small>
             </span>
             <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
           </button>
@@ -402,8 +402,8 @@ onBeforeUnmount(() => {
             <img @error="retryImage" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
-              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
-              <small v-auto-lang>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
+              <small v-auto-lang>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn, i18n: p.bangumiI18n }) }}</small>
             </span>
           </button>
         </template>
@@ -414,16 +414,16 @@ onBeforeUnmount(() => {
         <!-- 标题区滚出去后，作品名浮在列表顶部；点一下回到顶部 -->
         <div class="detail-bar" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
           <button v-auto-lang type="button" class="bar-title" tabindex="-1" @click="($event.currentTarget as HTMLElement).closest('.scroll')!.scrollTo({ top: 0, behavior: 'smooth' })">
-            {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
+            {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
           </button>
         </div>
         <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
           <div ref="titleRow" class="title-row">
             <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
-              <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
-              <p v-auto-lang v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en })" class="sub">
-                {{ subName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
+              <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}</h2>
+              <p v-auto-lang v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n })" class="sub">
+                {{ subName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
               </p>
               <p class="meta">
                 <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" /><span class="tx">{{ detail.cat }}</span></span>
@@ -462,13 +462,14 @@ onBeforeUnmount(() => {
               </figcaption>
             </figure>
             <div class="point-body">
-              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
-              <small v-auto-lang v-if="subName({ cn: p.cn, original: p.name })">{{ subName({ cn: p.cn, original: p.name }) }}</small>
+              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
+              <small v-auto-lang v-if="subName({ cn: p.cn, original: p.name, i18n: p.i18n })">{{ subName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</small>
               <span v-if="p.ep || p.s" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
               </span>
-              <p v-if="p.id === focusPointId && p.mark" class="mark">{{ p.mark }}</p>
+              <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
+              <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
               <a
                 v-if="p.id === focusPointId"
                 :href="mapsUrl(p)"
@@ -496,7 +497,7 @@ onBeforeUnmount(() => {
           <li v-for="b in overviewList" :key="b.id">
             <a :href="localePath(locale, `/b/${b.id}`)" @click.prevent="select(b.id)">
               <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
-              <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
+              <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
           </li>
@@ -979,6 +980,10 @@ figcaption a {
   color: #fff;
   background: var(--accent);
   border-radius: 50%;
+}
+.mt {
+  font-size: 11px;
+  color: var(--muted);
 }
 .mark {
   margin: 4px 0 0;

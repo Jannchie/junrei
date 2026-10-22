@@ -89,12 +89,12 @@ export function homeHead(locale: Locale): HeadDescriptor {
 }
 
 export function bangumiHead(locale: Locale, d: BangumiDetail): HeadDescriptor {
-  const names = { cn: d.cn, original: d.title, en: d.en };
+  const names = { cn: d.cn, original: d.title, en: d.en, i18n: d.i18n };
   const name = pickNameFor(locale, names);
   const path = `/b/${d.id}`;
   const spots = d.points
     .slice(0, 6)
-    .map((p) => pickNameFor(locale, { cn: p.cn, original: p.name }))
+    .map((p) => pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }))
     .filter(Boolean)
     .join(locale === "en" ? ", " : "、");
   const url = SITE + localePath(locale, path);
@@ -115,7 +115,7 @@ export function bangumiHead(locale: Locale, d: BangumiDetail): HeadDescriptor {
         position: i + 1,
         item: {
           "@type": "TouristAttraction",
-          name: pickNameFor(locale, { cn: p.cn, original: p.name }),
+          name: pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }),
           alternateName: p.cn && p.name ? p.name : undefined,
           url: `${url}?p=${p.id}`,
           geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lng },

@@ -35,6 +35,7 @@ const MESSAGES = {
     kbTheme: "切换外观",
     popular: "热门作品",
     inView: "这片区域的作品",
+    machineTranslated: "机器翻译",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -58,6 +59,7 @@ const MESSAGES = {
     kbTheme: "切換外觀",
     popular: "熱門作品",
     inView: "這片區域的作品",
+    machineTranslated: "機器翻譯",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -81,6 +83,7 @@ const MESSAGES = {
     kbTheme: "外観を切り替え",
     popular: "人気の作品",
     inView: "このエリアの作品",
+    machineTranslated: "機械翻訳",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -104,6 +107,7 @@ const MESSAGES = {
     kbTheme: "Switch appearance",
     popular: "Popular",
     inView: "In this area",
+    machineTranslated: "Machine translated",
   },
 } satisfies Record<Locale, Record<string, string>>;
 
@@ -130,13 +134,22 @@ export const localePath = (locale: Locale, path: string) => `${LOCALE_PREFIX[loc
 
 // ---- 按名称挑语言（纯函数，服务端生成 head 时也用） ----
 
-type Names = { cn?: string | null; original?: string | null; en?: string | null };
+/** 多语言文本（同 db/schema.ts 的 I18n）：name 名称、mark 备注、mt 机器翻译的条目（如 "name.en"） */
+export interface I18n {
+  name?: Partial<Record<Locale, string>>;
+  mark?: Partial<Record<Locale, string>>;
+  mt?: string[];
+}
+
+type Names = { cn?: string | null; original?: string | null; en?: string | null; i18n?: I18n | null };
 
 /**
- * 按界面语言挑名称：中文界面优先中文名，日语界面优先原名，英语界面优先英文名，都没有时依次回退。
- * 繁体译名还没有数据时回退到简体。
+ * 按界面语言挑名称：先用翻译表里该语言的文本（人工优先，其次机翻）；没有时按
+ * 中文界面优先中文名、日语界面优先原名、英语界面优先英文名依次回退。
  */
 export function pickNameFor(locale: Locale, n: Names): string {
+  const translated = n.i18n?.name?.[locale];
+  if (translated) return translated;
   const order = locale.startsWith("zh") ? [n.cn, n.original, n.en] : locale === "en" ? [n.en, n.original, n.cn] : [n.original, n.cn, n.en];
   return order.find((s) => s) ?? "";
 }
@@ -149,6 +162,12 @@ export function subNameFor(locale: Locale, n: Names): string | null {
 }
 
 export const translate = (locale: Locale, key: MessageKey) => MESSAGES[locale][key];
+
+/** 地标备注：该语言的译文（没有就用原文），以及它是不是机器翻译的 */
+export function markFor(locale: Locale, p: { mark: string | null; i18n?: I18n | null }) {
+  const text = p.i18n?.mark?.[locale];
+  return text ? { text, machine: !!p.i18n?.mt?.includes(`mark.${locale}`) } : { text: p.mark, machine: false };
+}
 
 // ---- 组件里用：当前语言由页面按 URL 提供，每次渲染各自一份（服务端并发渲染时不会串语言） ----
 
@@ -168,6 +187,7 @@ function i18n(locale: Ref<Locale>) {
     locale,
     t: (key: MessageKey) => translate(locale.value, key),
     pickName: (n: Names) => pickNameFor(locale.value, n),
+    markOf: (p: Parameters<typeof markFor>[1]) => markFor(locale.value, p),
     subName: (n: Names) => subNameFor(locale.value, n),
   };
 }
