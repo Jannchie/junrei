@@ -39,8 +39,12 @@
   --map-hillshade-shadow: light-dark(rgb(40 55 80 / 0.15), rgb(0 0 0 / 0.35));
   --map-hillshade-highlight: light-dark(rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.04));
   --map-focus-ring: light-dark(#1d1d1f, #f5f5f7);
-  --map-heat-low: light-dark(#b9a6ff, #7d6bd6);
-  --map-heat-high: light-dark(#4b2fc9, #c9bcff);
+  /* 热力图色带：淡紫 → 品红 → 珊瑚橙 → 暖金，越密越亮，像城市夜景的灯光 */
+  --map-heat-1: light-dark(#8f74ff, #7a62ff);
+  --map-heat-2: light-dark(#c45bd8, #c25be0);
+  --map-heat-3: light-dark(#f2668f, #ff6f9a);
+  --map-heat-4: light-dark(#ff9a5c, #ffa860);
+  --map-heat-5: light-dark(#ffd36b, #ffe08a);
   --map-space: light-dark(#e4e9f0, #07090d);
   --map-horizon: light-dark(#cfe3f5, #1d3c5c);
 

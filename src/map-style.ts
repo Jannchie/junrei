@@ -9,7 +9,7 @@ import type { Locale } from "./i18n";
 const PALETTE_KEYS = [
   "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
   "major", "majorCasing", "motorway", "motorwayCasing", "rail", "label", "labelMuted", "waterLabel",
-  "focusRing", "space", "horizon", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight", "heatLow", "heatHigh",
+  "focusRing", "space", "horizon", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight", "heat1", "heat2", "heat3", "heat4", "heat5",
 ] as const;
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
@@ -27,7 +27,7 @@ export function readPalette(): Palette {
     return getComputedStyle(probe).color;
   };
   const palette = { accent: read("--accent") } as Palette;
-  for (const key of PALETTE_KEYS) palette[key] = read(`--map-${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`);
+  for (const key of PALETTE_KEYS) palette[key] = read(`--map-${key.replace(/[A-Z]|\d/g, (m) => `-${m.toLowerCase()}`)}`);
   probe.remove();
   return palette;
 }
@@ -306,12 +306,51 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       // 选中作品的地标，焦点用 feature-state 标记
       selected: { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "p" },
     },
-    layers: [...layers, ...overlayLayers(c)],
+    // 热力图插在第一个文字图层之前，地名浮在光晕上面
+    layers: [
+      ...layers.filter((l) => l.type !== "symbol"),
+      heatLayer(c),
+      ...layers.filter((l) => l.type === "symbol"),
+      ...overlayLayers(c),
+    ],
   };
 }
 
 const SELECTED: ExpressionSpecification = ["global-state", "selected"];
 const FOCUS: ExpressionSpecification = ["boolean", ["feature-state", "focus"], false];
+
+/**
+ * 缩小时的热度晕染：极低密度处透明，按密度由淡紫、品红、珊瑚橙渐变到暖金，最密集处最亮。
+ * 放大到 HEAT_FADE 区间淡出，由可点击的单个地标接替。选中作品后隐藏。
+ */
+function heatLayer(c: Palette): LayerSpecification {
+  const [fadeFrom, fadeTo] = HEAT_FADE;
+  return {
+    id: "heat",
+    type: "heatmap",
+    source: "points",
+    maxzoom: fadeTo + 0.5,
+    filter: ["!", SELECTED],
+    paint: {
+      "heatmap-weight": 1,
+      // 半径偏小，相邻城市不会连成一片
+      "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 0.02, 4, 0.04, 6, 0.08, 8, 0.18, fadeTo, 0.5],
+      "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 3, 4, 6, 6, 9, 8, 14, fadeTo, 24],
+      // 节点按指数间隔分布，相当于对密度取对数：东京上万个点、小城几十个点也能分出层次，而不是只剩「有/没有」
+      "heatmap-color": [
+        "interpolate", ["linear"], ["heatmap-density"],
+        0, alpha(c.heat1, 0),
+        0.015, alpha(c.heat1, 0),
+        0.04, alpha(c.heat1, 0.18),
+        0.1, alpha(c.heat2, 0.3),
+        0.22, alpha(c.heat3, 0.42),
+        0.45, alpha(c.heat4, 0.55),
+        1, alpha(c.heat5, 0.68),
+      ],
+      "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, fadeTo, 0],
+    },
+  };
+}
 
 /**
  * 地标与选中高亮。缩小时是柔和的热度晕染（不显示数字），放大到 HEAT_FADE 区间渐变为可点击的单个地标。
@@ -321,29 +360,6 @@ function overlayLayers(c: Palette): LayerSpecification[] {
   const unselected: ExpressionSpecification = ["!", SELECTED];
   const [fadeFrom, fadeTo] = HEAT_FADE;
   return [
-    {
-      id: "heat",
-      type: "heatmap",
-      source: "points",
-      maxzoom: fadeTo + 0.5,
-      filter: unselected,
-      paint: {
-        "heatmap-weight": 1,
-        // 5 万多个点在小比例尺下很容易叠满：半径放大、单点强度压低，斑点融成柔和的云团，只有真正密集处变深
-        "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 0.03, 4, 0.07, 7, 0.25, fadeTo, 0.8],
-        "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 5, 4, 12, 7, 20, fadeTo, 28],
-        "heatmap-color": [
-          "interpolate", ["linear"], ["heatmap-density"],
-          // 由淡紫渐变到深靛紫：深浅有层次，而不只是同一颜色的透明度变化
-          0, alpha(c.accent, 0),
-          0.08, alpha(c.heatLow, 0.12),
-          0.3, alpha(c.heatLow, 0.28),
-          0.6, alpha(c.accent, 0.42),
-          1, alpha(c.heatHigh, 0.6),
-        ],
-        "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, fadeTo, 0],
-      },
-    },
     {
       id: "point",
       type: "circle",
