@@ -72,7 +72,7 @@ def section_names(db, L, out):
     totals = {
         ("bangumi", "title"): one(db, "SELECT count(*) FROM src.bangumi WHERE deleted=0"),
         ("point", "name"): one(db, "SELECT count(*) FROM src.point p JOIN src.bangumi b ON b.id=p.bangumi_id "
-                                   "WHERE b.deleted=0 AND p.name IS NOT NULL"),
+                                   "WHERE b.deleted=0 AND (p.name IS NOT NULL OR p.cn IS NOT NULL)"),
         ("point", "mark"): one(db, "SELECT count(*) FROM src.point p JOIN src.bangumi b ON b.id=p.bangumi_id "
                                    "WHERE b.deleted=0 AND p.mark IS NOT NULL"),
     }
