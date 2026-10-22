@@ -69,6 +69,7 @@ pnpm enrich:notes --wait             # 全量走 Message Batches（半价、异�
   `bangumi`（Bangumi API 的原名 / 中文名 / 英文名，罗马音记为 `ja-Latn`，需先跑 `enrich:bgm`）、
   `llm`（只补没有人工数据的语言）、`opencc`（繁体由最优先的简体按 OpenCC `s2t` 规则转换，`derived_from` 记录转换自哪行）。
 - 作品标题只对 Anitabi + Bangumi 仍缺语言的作品调用 LLM；地标名和备注全部过 LLM。`--fields name,mark,title` 选择要跑的部分，`--fields ""` 只整理已有数据和繁体转换。
+- 作品标题建议用 `--field-model title=claude-sonnet-5-5`：Haiku 常把官方英文名编错；Sonnet 拿不准时会给低置信度（<0.5），前端可据此不展示。
 - 繁体转换需要 `pip install opencc-python-reimplemented`（或 `opencc`），没装会跳过。
 
 如果 Python 访问 `api.bgm.tv` 报 `certificate has expired`（部分 Windows 的系统证书库问题），`pip install certifi` 后脚本会自动改用它的根证书，或用环境变量 `SSL_CERT_FILE` 指定证书文件。
