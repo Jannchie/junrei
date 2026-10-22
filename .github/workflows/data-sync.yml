@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: "0 19 * * *" # 每天日本时间 4:00
   workflow_dispatch:
+    inputs:
+      force:
+        description: 数据没有变化也导入 D1 并部署
+        type: boolean
+        default: false
 
 concurrency:
   group: data-sync
@@ -73,7 +78,7 @@ jobs:
           sha=$(sha256sum data/d1-import.sql | cut -d' ' -f1)
           last=$(cat data/last-import.sha256 2>/dev/null || true)
           git add -A public/data src/fold-map.json
-          if [ "$sha" != "$last" ] || ! git diff --cached --quiet; then
+          if [ "$sha" != "$last" ] || ! git diff --cached --quiet || [ "${{ inputs.force }}" = "true" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "$sha" > data/last-import.sha256.new
           else
