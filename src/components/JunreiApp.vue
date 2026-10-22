@@ -54,6 +54,13 @@ function retryImage(e: Event) {
 const PilgrimMap = defineAsyncComponent(() => import("./PilgrimMap.vue"));
 const mounted = ref(false);
 
+/** 苹果设备用 Apple 地图，其余用 Google 地图（服务端渲染时先按 Google 出链接，挂载后再判断） */
+const appleMaps = ref(false);
+const mapsUrl = (p: { lat: number; lng: number; name: string | null; cn: string | null }) =>
+  appleMaps.value
+    ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent(pickName({ cn: p.cn, original: p.name }) || `${p.lat},${p.lng}`)}`
+    : `https://www.google.com/maps/search/?api=1&query=${p.lat}%2C${p.lng}`;
+
 interface SearchResult {
   bangumis: Awaited<ReturnType<typeof searchBangumi>>;
   points: Awaited<ReturnType<typeof fetchSearch>>["points"];
@@ -209,6 +216,7 @@ const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({
 let panelObserver: ResizeObserver | undefined;
 
 onMounted(() => {
+  appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
   mounted.value = true;
   initTheme();
   panelObserver = new ResizeObserver(() => {
@@ -324,6 +332,9 @@ onBeforeUnmount(() => {
               <p class="links">
                 <a :href="`https://bgm.tv/subject/${detail.id}`" target="_blank" rel="noopener">Bangumi</a>
                 <a :href="`https://www.anitabi.cn/map?bangumiId=${detail.id}`" target="_blank" rel="noopener">Anitabi</a>
+                <a :href="`/v1/bangumi/${detail.id}/kml?lang=${locale}`" class="stat" :title="t('exportKml')" download>
+                  <JIcon :icon="ICONS.download" :size="14" /><span class="tx">KML</span>
+                </a>
               </p>
             </div>
           </div>
@@ -357,6 +368,9 @@ onBeforeUnmount(() => {
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
               </span>
               <p v-if="p.id === focusPointId && p.mark" class="mark">{{ p.mark }}</p>
+              <a v-if="p.id === focusPointId" :href="mapsUrl(p)" target="_blank" rel="noopener" class="open-maps" @click.stop>
+                <JIcon :icon="ICONS.navigate" :size="14" /><span class="tx">{{ t("openInMaps") }}</span>
+              </a>
             </div>
           </li>
         </ol>
@@ -793,6 +807,19 @@ figcaption a {
 }
 .more {
   height: 1px;
+}
+.open-maps {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #fff;
+  text-decoration: none;
+  background: var(--accent);
+  border-radius: 8px;
 }
 .mark {
   margin: 4px 0 0;

@@ -48,7 +48,7 @@ export default defineConfig({
       "/md/*": 31536000,
       "/sitemap.xml": 31536000
     },
-    "revalidateQueryAllowlist": { "/v1/search": ["q"] },
+    "revalidateQueryAllowlist": { "/v1/search": ["q"], "/v1/bangumi/*": ["lang"] },
     "headers": {
       "/v1/*": ["Cache-Control: public, max-age=3600"],
       "/data/*": ["Cache-Control: public, max-age=3600, stale-while-revalidate=86400"],
