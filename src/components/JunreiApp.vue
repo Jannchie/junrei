@@ -176,7 +176,10 @@ watch(query, (q) => {
     searching.value = true;
     try {
       // 作品在浏览器里模糊匹配（全语种、即时）；地标五万多条，交给服务端的全文索引
-      const [bangumis, { points }] = await Promise.all([searchBangumi(q), fetchSearch(q.trim())]);
+      const [local, { bangumis: remote, points }] = await Promise.all([searchBangumi(q), fetchSearch(q.trim())]);
+      // 本地索引只有带地标的作品（模糊匹配更好）；服务端还能搜到没有地标的作品，接在后面
+      const seen = new Set(local.map((b) => b.id));
+      const bangumis = [...local, ...remote.filter((b) => !seen.has(b.id))].slice(0, 30);
       if (id === seq) results.value = { bangumis, points };
     } finally {
       if (id === seq) searching.value = false;
@@ -392,14 +395,14 @@ onBeforeUnmount(() => {
           <div v-if="!results.bangumis.length && !results.points.length" class="empty">
             <JIcon :icon="ICONS.noResult" :size="28" />
           </div>
-          <button v-for="b in results.bangumis" :key="b.id" class="row" @click="pickResult(b.id)">
+          <button v-for="b in results.bangumis" :key="b.id" class="row" :class="{ dim: !b.pointCount }" @click="pickResult(b.id)">
             <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</strong>
               <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</small>
             </span>
-            <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
+            <span v-if="b.pointCount" class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
           </button>
           <hr v-if="results.bangumis.length && results.points.length" />
           <button
@@ -449,6 +452,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </div>
+        <p v-if="!detail.points.length" class="empty no-spots">{{ t("noSpots") }}</p>
         <ol class="points">
           <li
             v-for="p in visiblePoints"
@@ -767,6 +771,10 @@ hr {
   border: 0;
   border-top: 1px solid var(--line);
 }
+/* 没有地标的作品：封面淡一些，一眼能和有地标的区分 */
+.row.dim .cover-sm {
+  opacity: 0.5;
+}
 .row {
   display: flex;
   align-items: center;
@@ -971,6 +979,11 @@ figcaption a {
 }
 .more {
   height: 1px;
+}
+.no-spots {
+  padding: 32px 24px;
+  font-size: 13px;
+  text-align: center;
 }
 /* 选中地标标题右侧的小圆按钮，不额外占一行 */
 .point-body {

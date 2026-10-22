@@ -1,7 +1,7 @@
 // 搜索用的文本「折叠」，规则与 sync/fold.py 一致：
 // NFKC → 小写 → 汉字按映射表归一到简体 → 片假名转平假名 → 去掉空白、标点与符号
 // 这样「聖地巡禮」「圣地巡礼」「ｾｲﾁ」「せいち」之类不同写法能互相搜到。
-import charMap from "../data/fold.json";
+import charMap from "./fold-map.json";
 
 const MAP = charMap as Record<string, string>;
 const DROP = /[\p{P}\p{S}\p{Z}\p{C}]/u;

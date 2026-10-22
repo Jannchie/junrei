@@ -1,12 +1,15 @@
 """把 sync.sync 同步下来的 data/anitabi.sqlite 转成应用使用的数据（只做格式转换，规范化在 sync.sync 里）：
 
   data/d1-import.sql          全量覆盖 D1 的 bangumi / point 表并重建全文索引（pnpm data:import）
-  data/fold.json              搜索折叠用的汉字映射表（繁/日→简），前后端共用，见 sync/fold.py
+  src/fold-map.json           搜索折叠用的汉字映射表（繁/日→简），前后端共用，见 sync/fold.py
   public/data/points.geojson  地图点位，maplibre 在 worker 里直接加载并聚合；前端也用它按视口筛选作品
   public/data/bangumi.json    全部作品的轻量索引（名称、封面、地标数、搜索键），前端本地模糊搜索用
 
 多语言：data/enrich.sqlite 的 translation 表（sync.translate 生成）存在时，每个作品标题、地标名、备注
 按语言挑最可信的一条写进 i18n 列，并把各语言名称都加进搜索键；city_label 表（sync.cities）给出城市的各语言名称。
+
+全部动画：data/bgm-anime.json（sync.bgm_archive 生成）存在时，Bangumi 上所有动画条目都进作品表，
+没有地标的作品地标数为 0：能被搜到、有作品页，但不进前端的本地索引与 sitemap。
 
   python -m sync.export
 """
@@ -24,6 +27,9 @@ from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
 MANUAL = Path(__file__).resolve().parent / "manual.json"
+FOLD_MAP = DEFAULT_OUT.parent / "src" / "fold-map.json"
+BGM_ANIME = DEFAULT_OUT / "bgm-anime.json"
+BGM_COVER = "https://api.bgm.tv/v0/subjects/{}/image?type=common"  # 数据包里没有封面地址，用官方接口的跳转
 ROWS_PER_INSERT = 200  # 分批插入
 MAX_STATEMENT_BYTES = 90_000  # D1 单条语句上限 100 KB
 LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
@@ -97,6 +103,31 @@ def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -
     print(f"手动补充：{len(data.get('bangumi', []))} 部作品，{len(data.get('points', []))} 个地标")
 
 
+def merge_bgm(rows: list, i18n: dict) -> dict[int, dict]:
+    """并入 Bangumi 全部动画条目：已有的作品补上热度、首播日期和别名，没有的新增一行（地标数 0）"""
+    if not BGM_ANIME.exists():
+        print("没有 data/bgm-anime.json，只导出有地标的作品（先跑 python -m sync.bgm_archive）")
+        return {}
+    import opencc  # 繁体名由简体中文名转换（台湾用字）
+
+    to_hant = opencc.OpenCC("s2twp").convert
+    subjects = json.loads(BGM_ANIME.read_text(encoding="utf-8"))["subjects"]
+    known = {r[0] for r in rows}
+    extra = {}
+    for s in subjects:
+        extra[s["id"]] = s
+        if s["id"] in known:
+            continue
+        rows.append((s["id"], s["cn"], s["name"], s["en"], None, s["cat"], None, BGM_COVER.format(s["id"])))
+        name = {k: v for k, v in (("zh-Hans", s["cn"]), ("zh-Hant", s["cn"] and to_hant(s["cn"])), ("ja", s["name"]),
+                                  ("en", s["en"])) if v}
+        if name:
+            i18n[("bangumi", str(s["id"]))] = {"name": name}
+    rows.sort(key=lambda r: r[0])
+    print(f"Bangumi 动画：{len(subjects)} 部，其中 {len(subjects) - len(known & extra.keys())} 部没有地标")
+    return extra
+
+
 def sql_value(v) -> str:
     if v is None:
         return "NULL"
@@ -145,6 +176,7 @@ def main():
     rows = src.execute(
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
     merge_manual(rows, points, counts, i18n)
+    extra = merge_bgm(rows, i18n)
 
     # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
     titles = {r[0]: i18n.get(("bangumi", str(r[0]))) for r in rows}
@@ -165,13 +197,14 @@ def main():
         item.pop("_orig", None)
     names = lambda item: list((item or {}).get("name", {}).values())  # noqa: E731
     char_map = build_char_map(
-        [t for r in rows for t in [*r[1:5], *names(titles[r[0]])]]
+        [t for r in rows for t in [*r[1:5], *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", [])]]
         + [t for p in points for t in [*p[2:4], *names(spots[(p[0], p[1])])]])
     def keys(*texts):
         return "|".join(dict.fromkeys(k for k in (fold(t, char_map) for t in texts) if k))
     bangumi = [
-        (*r, counts.get(r[0], 0), i18n_json(titles[r[0]]),
-         keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]])))
+        (*r, counts.get(r[0], 0), extra.get(r[0], {}).get("popularity", 0), extra.get(r[0], {}).get("date"),
+         i18n_json(titles[r[0]]),
+         keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", [])))
         for r in rows
     ]
     points = [(*p, i18n_json(spots[(p[0], p[1])]), keys(p[2], p[3], *names(spots[(p[0], p[1])]))) for p in points]
@@ -179,12 +212,14 @@ def main():
     out_sql = DEFAULT_OUT / "d1-import.sql"
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
-        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "i18n", "search"]
+        cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "popularity", "air_date",
+                "i18n", "search"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
                 "origin_link", "mark", "i18n", "search"]
         f.writelines(insert_statements("point", cols, points))
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
+        f.write("INSERT INTO bangumi_fts(bangumi_fts) VALUES('rebuild');\n")
 
     # 坐标保留 5 位小数（约 1 m）；属性只留点击时需要的作品 id 和地标 id
     PUBLIC_DATA.mkdir(parents=True, exist_ok=True)
@@ -198,10 +233,10 @@ def main():
         ],
     })
 
-    write_json(DEFAULT_OUT / "fold.json", char_map)
-    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题]
+    write_json(FOLD_MAP, char_map)
+    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题]；只收有地标的作品，其余由服务端搜索
     write_json(PUBLIC_DATA / "bangumi.json",
-               [[b[0], b[1], b[2], b[3], b[7], b[8], b[10], (titles[b[0]] or {}).get("name")] for b in bangumi])
+               [[b[0], b[1], b[2], b[3], b[7], b[8], b[12], (titles[b[0]] or {}).get("name")] for b in bangumi if b[8]])
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

@@ -36,6 +36,7 @@ const MESSAGES = {
     popular: "热门作品",
     inView: "这片区域的作品",
     machineTranslated: "机器翻译",
+    noSpots: "还没有收录这部作品的巡礼地标",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -60,6 +61,7 @@ const MESSAGES = {
     popular: "熱門作品",
     inView: "這片區域的作品",
     machineTranslated: "機器翻譯",
+    noSpots: "還沒有收錄這部作品的巡禮地標",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -84,6 +86,7 @@ const MESSAGES = {
     popular: "人気の作品",
     inView: "このエリアの作品",
     machineTranslated: "機械翻訳",
+    noSpots: "この作品の聖地はまだ登録されていません",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -108,6 +111,7 @@ const MESSAGES = {
     popular: "Popular",
     inView: "In this area",
     machineTranslated: "Machine translated",
+    noSpots: "No pilgrimage spots for this title yet",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

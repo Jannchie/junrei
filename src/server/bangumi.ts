@@ -1,6 +1,6 @@
 // 作品查询，供 /v1 API、页面 loader、sitemap 与面向 LLM 的 Markdown 共用
 import { bangumi, point } from "@schema";
-import { asc, db, desc, eq } from "void/db";
+import { asc, db, desc, eq, gt } from "void/db";
 
 export const SITE = "https://junrei.jannchie.com";
 
@@ -31,11 +31,12 @@ export async function getBangumi(id: number) {
 
 export type BangumiDetail = NonNullable<Awaited<ReturnType<typeof getBangumi>>>;
 
-/** 按地标数排序的作品列表；limit 省略即全部（sitemap、Markdown 索引用） */
+/** 有地标的作品，按地标数排序；limit 省略即全部（sitemap、Markdown 索引用）。没有地标的作品只能搜到 */
 export function listBangumi(limit?: number) {
   const q = db
     .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, city: bangumi.city, cover: bangumi.cover, pointCount: bangumi.pointCount, i18n: bangumi.i18n })
     .from(bangumi)
+    .where(gt(bangumi.pointCount, 0))
     .orderBy(desc(bangumi.pointCount), asc(bangumi.id));
   return limit ? q.limit(limit) : q;
 }

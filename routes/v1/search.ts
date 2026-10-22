@@ -27,18 +27,38 @@ export const GET = defineHandler.withValidator({
   const pattern = `%${q.replace(/[\\%_]/g, (m) => `\\${m}`)}%`;
   const has = (col: Parameters<typeof like>[0]) => sql`${col} LIKE ${pattern} ESCAPE '\\'`;
 
-  const [bangumis, points] = await Promise.all([
-    // 作品只有一千多行，直接扫（网页端在浏览器里做模糊搜索，这里给 API 与 LLM 用）
-    db
-      .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cover: bangumi.cover, pointCount: bangumi.pointCount, i18n: bangumi.i18n })
-      .from(bangumi)
-      .where(has(bangumi.search))
-      .orderBy(desc(bangumi.pointCount))
-      .limit(20),
-    searchPoints(q, has),
-  ]);
+  const [bangumis, points] = await Promise.all([searchBangumi(q, has), searchPoints(q, has)]);
   return { bangumis, points };
 });
+
+interface BangumiHit {
+  id: number;
+  cn: string | null;
+  title: string | null;
+  en: string | null;
+  cover: string | null;
+  pointCount: number;
+  i18n: I18n | null;
+}
+
+/**
+ * 作品约 3 万行（Bangumi 全部动画，多数没有地标）：≥3 个字符走 FTS5 trigram 索引；
+ * 更短的查询只能 LIKE 扫描。有地标的排前面，其余按 Bangumi 热度。
+ */
+async function searchBangumi(q: string, has: (col: Parameters<typeof like>[0]) => ReturnType<typeof sql>): Promise<BangumiHit[]> {
+  const order = [desc(bangumi.pointCount), desc(bangumi.popularity)];
+  const cols = { id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cover: bangumi.cover, pointCount: bangumi.pointCount, i18n: bangumi.i18n };
+  if ([...q].length >= 3) {
+    const rows = await db.all<Omit<BangumiHit, "i18n"> & { i18n: string | null }>(sql`
+      SELECT b.id, b.cn, b.title, b.en, b.cover, b.point_count AS pointCount, b.i18n
+      FROM bangumi_fts JOIN bangumi b ON b.rowid = bangumi_fts.rowid
+      WHERE bangumi_fts MATCH ${`"${q}"`}
+      ORDER BY b.point_count DESC, b.popularity DESC
+      LIMIT 20`);
+    return rows.map((r) => ({ ...r, i18n: r.i18n ? JSON.parse(r.i18n) : null }));
+  }
+  return db.select(cols).from(bangumi).where(has(bangumi.search)).orderBy(...order).limit(20);
+}
 
 /** 地标 5 万多行：≥3 个字符走 FTS5 trigram 索引，只读命中的行；更短的查询只能 LIKE 扫描 */
 async function searchPoints(q: string, has: (col: Parameters<typeof like>[0]) => ReturnType<typeof sql>): Promise<PointHit[]> {

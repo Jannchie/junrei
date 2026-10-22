@@ -41,7 +41,7 @@ function bangumiDescription(locale: Locale, b: BangumiDetail, name: string, orig
 }
 
 /** 页面通用的 SEO head：语言、description、canonical、各语言互链、Open Graph、Twitter 卡片与 JSON-LD */
-function siteHead(locale: Locale, path: string, o: { title: string; description: string; image?: string; jsonLd?: object }): HeadDescriptor {
+function siteHead(locale: Locale, path: string, o: { title: string; description: string; image?: string; jsonLd?: object; noindex?: boolean }): HeadDescriptor {
   const url = SITE + localePath(locale, path);
   return {
     title: o.title,
@@ -56,6 +56,7 @@ function siteHead(locale: Locale, path: string, o: { title: string; description:
       { property: "og:url", content: url },
       { property: "og:image", content: o.image ?? ogImage(locale) },
       { name: "twitter:card", content: "summary_large_image" },
+      ...(o.noindex ? [{ name: "robots", content: "noindex" }] : []),
     ],
     link: [
       { rel: "canonical", href: url },
@@ -102,7 +103,9 @@ export function bangumiHead(locale: Locale, d: BangumiDetail): HeadDescriptor {
   return siteHead(locale, path, {
     title: `${name} · ${translate(locale, "brand")}`,
     description: bangumiDescription(locale, d, name, subNameFor(locale, names), spots),
-    image: d.cover ? `${d.cover}?plan=h360` : undefined,
+    image: d.cover?.startsWith("https://image.anitabi.cn/") ? `${d.cover}?plan=h360` : (d.cover ?? undefined),
+    // 还没有地标的作品页内容很少，不让搜索引擎收录（也不在 sitemap 里）
+    noindex: d.points.length === 0,
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "ItemList",

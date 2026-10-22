@@ -25,6 +25,8 @@ export const bangumi = sqliteTable("bangumi", {
   color: text("color"),
   cover: text("cover"), // 不带尺寸参数，前端用 src/format.ts 的 imageUrl 生成
   pointCount: integer("point_count").notNull(),
+  popularity: integer("popularity").notNull().default(0), // Bangumi 上看过 + 在看 + 想看的人数，没有地标的作品按它排序
+  airDate: text("air_date"), // 首播日期 YYYY-MM-DD
   i18n: text("i18n", { mode: "json" }).$type<I18n>(), // 各语言标题（含机翻），见 sync/export.py
   search: text("search"), // 各语言名称折叠后的搜索键（sync/fold.py）
 });
