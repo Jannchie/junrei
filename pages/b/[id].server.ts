@@ -21,7 +21,7 @@ export const head = defineHead<Props>((_c, { detail }) => {
     .filter(Boolean)
     .join("、");
   return siteHead({
-    title: `${name} 圣地巡礼地图 · junrei`,
+    title: `${name} · 圣地巡礼地图`,
     description: [
       `${name}${detail.title && detail.title !== name ? `（${detail.title}）` : ""}的圣地巡礼地图`,
       detail.city ? `主要位于${detail.city}` : null,

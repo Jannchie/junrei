@@ -8,7 +8,7 @@ export function siteHead(o: { title: string; description: string; url: string; i
     meta: [
       { name: "description", content: o.description },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "junrei" },
+      { property: "og:site_name", content: "圣地巡礼地图" },
       { property: "og:title", content: o.title },
       { property: "og:description", content: o.description },
       { property: "og:url", content: o.url },

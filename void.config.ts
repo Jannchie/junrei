@@ -14,7 +14,7 @@ export default defineConfig({
       { "name": "theme-color", "content": "#212327", "media": "(prefers-color-scheme: dark)" },
       { "name": "apple-mobile-web-app-capable", "content": "yes" },
       { "name": "apple-mobile-web-app-status-bar-style", "content": "default" },
-      { "name": "apple-mobile-web-app-title", "content": "junrei" }
+      { "name": "apple-mobile-web-app-title", "content": "圣地巡礼" }
     ],
     "link": [
       { "rel": "manifest", "href": "/manifest.webmanifest" },

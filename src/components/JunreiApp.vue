@@ -135,8 +135,8 @@ watch([detail, focusPointId], () => {
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
   history.replaceState(null, "", url);
   document.title = detail.value
-    ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en })} · junrei`
-    : "junrei";
+    ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en })} · ${t("brand")}`
+    : t("brand");
 });
 
 // 面板浮在地图上：量出它挡住的区域，交给地图做 padding，并给地图控件留出位置
@@ -296,7 +296,7 @@ onBeforeUnmount(() => {
 
       <!-- 概览 -->
       <section v-else class="scroll overview">
-        <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" />junrei</h1>
+        <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" />{{ t("brand") }}</h1>
         <div class="stats">
           <span class="stat" :title="t('bangumi')"><JIcon :icon="ICONS.bangumi" />{{ stats.bangumi.toLocaleString() }}</span>
           <span class="stat" :title="t('points')"><JIcon :icon="ICONS.point" />{{ stats.points.toLocaleString() }}</span>

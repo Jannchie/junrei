@@ -14,6 +14,7 @@ export const LOCALE_NAMES: Record<Locale, string> = {
 
 const MESSAGES = {
   "zh-Hans": {
+    brand: "圣地巡礼地图",
     search: "搜索",
     clear: "清除",
     back: "返回",
@@ -26,6 +27,7 @@ const MESSAGES = {
     language: "语言",
   },
   "zh-Hant": {
+    brand: "聖地巡禮地圖",
     search: "搜尋",
     clear: "清除",
     back: "返回",
@@ -38,6 +40,7 @@ const MESSAGES = {
     language: "語言",
   },
   ja: {
+    brand: "聖地巡礼マップ",
     search: "検索",
     clear: "クリア",
     back: "戻る",
@@ -50,6 +53,7 @@ const MESSAGES = {
     language: "言語",
   },
   en: {
+    brand: "Anime Pilgrimage Map",
     search: "Search",
     clear: "Clear",
     back: "Back",

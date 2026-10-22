@@ -6,7 +6,7 @@ import { markdownResponse } from "../../src/server/markdown";
 export const GET = defineHandler(async () => {
   const rows = await listBangumi();
   const body = [
-    "# junrei 作品索引",
+    "# 圣地巡礼地图 · 作品索引",
     "",
     `共 ${rows.length} 部作品。每行链接到该作品取景地的 Markdown 页面。`,
     "",

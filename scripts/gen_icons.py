@@ -57,12 +57,14 @@ def main():
     d = ImageDraw.Draw(og)
     og.paste(plain.resize((220, 220), Image.Resampling.LANCZOS), (150, 205), plain.resize((220, 220), Image.Resampling.LANCZOS))
     try:
-        title = ImageFont.truetype("C:/Windows/Fonts/segoeuib.ttf", 120)
-        sub = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", 40)
+        title = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", 92)
+        sub = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", 36)
+        small = ImageFont.truetype("C:/Windows/Fonts/segoeui.ttf", 28)
     except OSError:
-        title = sub = ImageFont.load_default()
-    d.text((420, 190), "junrei", font=title, fill=INK)
-    d.text((426, 375), "聖地巡礼マップ · 圣地巡礼地图", font=sub, fill=(110, 110, 115))
+        title = sub = small = ImageFont.load_default()
+    d.text((420, 222), "圣地巡礼地图", font=title, fill=INK)
+    d.text((424, 348), "聖地巡礼マップ · Anime Pilgrimage Map", font=sub, fill=(110, 110, 115))
+    d.text((1150, 580), "junrei.jannchie.com", font=small, fill=(150, 150, 155), anchor="rs")
     og.save(OUT / "og.png", optimize=True)
     print("icons ->", OUT)
 

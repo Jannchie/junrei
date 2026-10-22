@@ -9,13 +9,14 @@ export const loader = defineHandler(async () => ({ popular: await listBangumi(24
 
 export const head = defineHead(() =>
   siteHead({
-    title: "junrei · 动画圣地巡礼地图",
+    title: "圣地巡礼地图 · 动画与游戏取景地",
     description: "在地图上浏览和搜索动画、游戏取景地（圣地巡礼）：数千部作品、数万个地标，附截图、集数与时间点。",
     url: `${SITE}/`,
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "junrei",
+      name: "圣地巡礼地图",
+      alternateName: ["聖地巡礼マップ", "聖地巡禮地圖", "Anime Pilgrimage Map", "junrei"],
       url: `${SITE}/`,
       inLanguage: ["zh-Hans", "zh-Hant", "ja", "en"],
     },
