@@ -9,7 +9,9 @@ interface PointHit {
   name: string | null;
   cn: string | null;
   image: string | null;
-  bangumiName: string;
+  bangumiCn: string | null;
+  bangumiTitle: string | null;
+  bangumiEn: string | null;
 }
 
 // 路径不在 /api 下，才能被 Void 的 ISR 按 q 缓存（见 void.config.ts）
@@ -27,6 +29,7 @@ export const GET = defineHandler.withValidator({
         id: bangumi.id,
         cn: bangumi.cn,
         title: bangumi.title,
+        en: bangumi.en,
         cover: bangumi.cover,
         pointCount: bangumi.pointCount,
       })
@@ -44,7 +47,8 @@ function searchPoints(q: string, has: (col: Parameters<typeof like>[0]) => Retur
   if ([...q].length >= 3) {
     const phrase = `"${q.replace(/"/g, '""')}"`;
     return db.all<PointHit>(sql`
-      SELECT p.bangumi_id AS bangumiId, p.id, p.name, p.cn, p.image, coalesce(b.cn, b.title) AS bangumiName
+      SELECT p.bangumi_id AS bangumiId, p.id, p.name, p.cn, p.image,
+             b.cn AS bangumiCn, b.title AS bangumiTitle, b.en AS bangumiEn
       FROM point_fts JOIN point p ON p.rowid = point_fts.rowid JOIN bangumi b ON b.id = p.bangumi_id
       WHERE point_fts MATCH ${phrase}
       LIMIT 30`);
@@ -56,7 +60,9 @@ function searchPoints(q: string, has: (col: Parameters<typeof like>[0]) => Retur
       name: point.name,
       cn: point.cn,
       image: point.image,
-      bangumiName: sql<string>`coalesce(${bangumi.cn}, ${bangumi.title})`,
+      bangumiCn: bangumi.cn,
+      bangumiTitle: bangumi.title,
+      bangumiEn: bangumi.en,
     })
     .from(point)
     .innerJoin(bangumi, eq(bangumi.id, point.bangumiId))

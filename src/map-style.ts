@@ -1,11 +1,13 @@
-// junrei 的地图皮肤「和纸与墨」：亮色是和纸，暗色是墨。
+// junrei 的地图皮肤，参照 Apple 地图：素净的底、明亮的水与草绿、白色道路、暖黄高速、细灰铁路。
 // 矢量瓦片来自 OpenFreeMap（OpenMapTiles schema），只保留巡礼用得上的要素：
-// 水、绿地、道路细线、铁路（JR 式黑白相间）、车站、地名。
+// 水、绿地、市街地、道路、铁路与车站、地名。配色在 src/theme.css。
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
+import type { Locale } from "./i18n";
 
 const PALETTE_KEYS = [
-  "land", "wood", "grass", "park", "water", "building", "buildingLine", "road", "roadCasing", "major",
-  "majorCasing", "rail", "boundary", "label", "labelMuted", "waterLabel", "focusRing",
+  "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
+  "major", "majorCasing", "motorway", "motorwayCasing", "rail", "boundary", "label", "labelMuted", "waterLabel",
+  "focusRing",
 ] as const;
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
@@ -19,12 +21,13 @@ export function readPalette(): Palette {
   return palette;
 }
 
-/** 中日文字由浏览器本地字体绘制：用明朝体，拉丁字母走 glyph 服务的 Noto Sans */
-export const CJK_FONT_FAMILY = "'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', 'Noto Serif JP', 'Noto Serif CJK JP', serif";
+/** 中日文字由浏览器本地字体绘制（与 Apple 地图一致用无衬线体），拉丁字母走 glyph 服务的 Noto Sans */
+export const CJK_FONT_FAMILY = "'Hiragino Sans', 'PingFang SC', 'Yu Gothic', 'YuGothic', 'Noto Sans JP', 'Noto Sans CJK JP', sans-serif";
 
 const SOURCE = "openmaptiles";
 const FONT = ["Noto Sans Regular"];
 const FONT_BOLD = ["Noto Sans Bold"];
+const FONT_ITALIC = ["Noto Sans Italic"];
 const CLUSTER_RADIUS: ExpressionSpecification = ["step", ["get", "point_count"], 11, 50, 14, 500, 18, 5000, 24];
 /** 当地名称：日本境内即日文原名，与作品里的地名一致 */
 const NAME: ExpressionSpecification = ["get", "name"];
@@ -33,12 +36,26 @@ const NAME: ExpressionSpecification = ["get", "name"];
 const width = (pairs: [number, number][]): ExpressionSpecification =>
   ["interpolate", ["exponential", 1.6], ["zoom"], ...pairs.flat()] as ExpressionSpecification;
 
-export function createStyle(c: Palette): StyleSpecification {
+/** 国名按界面语言显示；地名保持当地原名 */
+const COUNTRY_NAME_FIELD: Record<Locale, string> = { "zh-Hans": "name:zh", "zh-Hant": "name:zh-Hant", ja: "name:ja", en: "name:en" };
+
+export function createStyle(c: Palette, locale: Locale): StyleSpecification {
   const roadClasses = (classes: string[]): ExpressionSpecification => [
     "all",
     ["match", ["get", "class"], classes, true, false],
     ["!=", ["get", "brunnel"], "tunnel"],
   ];
+  const railClasses = roadClasses(["rail", "transit"]);
+  const line = (id: string, minzoom: number, filter: ExpressionSpecification, color: string, w: [number, number][]): LayerSpecification => ({
+    id,
+    type: "line",
+    source: SOURCE,
+    "source-layer": "transportation",
+    minzoom,
+    filter,
+    layout: { "line-cap": "round", "line-join": "round" },
+    paint: { "line-color": color, "line-width": width(w) },
+  });
 
   const layers: LayerSpecification[] = [
     { id: "land", type: "background", paint: { "background-color": c.land } },
@@ -49,11 +66,20 @@ export function createStyle(c: Palette): StyleSpecification {
       type: "fill",
       source: SOURCE,
       "source-layer": "landcover",
-      filter: ["match", ["get", "class"], ["wood", "grass", "farmland", "wetland"], true, false],
+      filter: ["match", ["get", "class"], ["wood", "grass", "farmland", "wetland", "sand"], true, false],
       paint: {
-        "fill-color": ["match", ["get", "class"], "wood", c.wood, c.grass],
-        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0.5, 12, 1],
+        "fill-color": ["match", ["get", "class"], "wood", c.wood, "sand", c.sand, c.grass],
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0.6, 12, 1],
       },
+    },
+    {
+      id: "urban",
+      type: "fill",
+      source: SOURCE,
+      "source-layer": "landuse",
+      minzoom: 9,
+      filter: ["match", ["get", "class"], ["residential", "commercial", "industrial", "retail"], true, false],
+      paint: { "fill-color": c.urban },
     },
     {
       id: "park",
@@ -101,7 +127,7 @@ export function createStyle(c: Palette): StyleSpecification {
       "source-layer": "boundary",
       minzoom: 5,
       filter: ["all", ["==", ["get", "admin_level"], 4], ["!=", ["get", "maritime"], 1]],
-      paint: { "line-color": c.boundary, "line-width": 0.6, "line-dasharray": [2, 2], "line-opacity": 0.6 },
+      paint: { "line-color": c.boundary, "line-width": 0.8, "line-dasharray": [3, 2], "line-opacity": 0.7 },
     },
     {
       id: "boundary-country",
@@ -112,78 +138,16 @@ export function createStyle(c: Palette): StyleSpecification {
       paint: { "line-color": c.boundary, "line-width": width([[3, 0.6], [10, 1.4]]) },
     },
 
-    // ---- 道路：克制的细线 ----
-    {
-      id: "road-minor-casing",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 13,
-      filter: roadClasses(["minor", "service", "tertiary"]),
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": c.roadCasing, "line-width": width([[13, 1.5], [16, 6], [19, 22]]) },
-    },
-    {
-      id: "road-major-casing",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 9,
-      filter: roadClasses(["primary", "secondary", "trunk", "motorway"]),
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": c.majorCasing, "line-width": width([[9, 1.2], [13, 3.5], [16, 9], [19, 28]]) },
-    },
-    {
-      id: "road-minor",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 13,
-      filter: roadClasses(["minor", "service", "tertiary"]),
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": c.road, "line-width": width([[13, 0.6], [16, 4], [19, 18]]) },
-    },
-    {
-      id: "road-major",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 6,
-      filter: roadClasses(["primary", "secondary", "trunk", "motorway"]),
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: {
-        "line-color": c.major,
-        "line-width": width([[6, 0.4], [9, 0.8], [13, 2.4], [16, 7], [19, 24]]),
-        "line-opacity": ["interpolate", ["linear"], ["zoom"], 6, 0.5, 9, 1],
-      },
-    },
+    // ---- 道路：白色加淡描边，高速暖黄 ----
+    line("road-minor-casing", 13, roadClasses(["minor", "service"]), c.roadCasing, [[13, 1.5], [16, 6], [19, 22]]),
+    line("road-major-casing", 9, roadClasses(["primary", "secondary", "tertiary"]), c.majorCasing, [[9, 1.2], [13, 3.5], [16, 9], [19, 28]]),
+    line("road-motorway-casing", 7, roadClasses(["motorway", "trunk"]), c.motorwayCasing, [[7, 1.4], [10, 2.6], [13, 4.5], [16, 11], [19, 32]]),
+    line("road-minor", 13, roadClasses(["minor", "service"]), c.road, [[13, 0.6], [16, 4], [19, 18]]),
+    line("road-major", 8, roadClasses(["primary", "secondary", "tertiary"]), c.major, [[8, 0.5], [10, 1], [13, 2.4], [16, 7], [19, 24]]),
+    line("road-motorway", 5, roadClasses(["motorway", "trunk"]), c.motorway, [[5, 0.6], [7, 1], [10, 1.8], [13, 3.2], [16, 9], [19, 28]]),
 
-    // ---- 铁路：巡礼的主角，JR 式黑白相间 ----
-    {
-      id: "rail",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 7,
-      filter: ["all", ["match", ["get", "class"], ["rail", "transit"], true, false], ["!=", ["get", "brunnel"], "tunnel"]],
-      paint: {
-        "line-color": c.rail,
-        "line-width": width([[7, 0.5], [11, 1.2], [14, 2.6], [18, 5]]),
-      },
-    },
-    {
-      id: "rail-dash",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "transportation",
-      minzoom: 12,
-      filter: ["all", ["match", ["get", "class"], ["rail", "transit"], true, false], ["!=", ["get", "brunnel"], "tunnel"]],
-      paint: {
-        "line-color": c.land,
-        "line-width": width([[12, 0.4], [14, 1.4], [18, 3]]),
-        "line-dasharray": [3, 3],
-      },
-    },
+    // ---- 铁路：细灰线，车站带圆点 ----
+    line("rail", 7, railClasses, c.rail, [[7, 0.4], [11, 0.9], [14, 1.6], [18, 3]]),
 
     // ---- 文字 ----
     {
@@ -193,9 +157,9 @@ export function createStyle(c: Palette): StyleSpecification {
       "source-layer": "water_name",
       layout: {
         "text-field": NAME,
-        "text-font": FONT,
+        "text-font": FONT_ITALIC,
         "text-size": ["match", ["get", "class"], "ocean", 15, "sea", 13, 11],
-        "text-letter-spacing": 0.3,
+        "text-letter-spacing": 0.15,
         "text-max-width": 6,
       },
       paint: { "text-color": c.waterLabel },
@@ -208,7 +172,7 @@ export function createStyle(c: Palette): StyleSpecification {
       minzoom: 15,
       filter: ["match", ["get", "class"], ["primary", "secondary", "tertiary", "minor"], true, false],
       layout: { "text-field": NAME, "text-font": FONT, "text-size": 10, "symbol-placement": "line" },
-      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.5 },
+      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.2 },
     },
     {
       id: "station-dot",
@@ -219,8 +183,8 @@ export function createStyle(c: Palette): StyleSpecification {
       filter: ["all", ["==", ["get", "class"], "railway"], ["match", ["get", "subclass"], ["station", "halt"], true, false]],
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 12, 2.5, 16, 5],
-        "circle-color": c.land,
-        "circle-stroke-color": c.rail,
+        "circle-color": c.road,
+        "circle-stroke-color": c.labelMuted,
         "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 12, 1.2, 16, 2],
       },
     },
@@ -239,7 +203,7 @@ export function createStyle(c: Palette): StyleSpecification {
         "text-anchor": "top",
         "text-optional": true,
       },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.6 },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.4 },
     },
     {
       id: "place-minor",
@@ -249,7 +213,7 @@ export function createStyle(c: Palette): StyleSpecification {
       minzoom: 11,
       filter: ["match", ["get", "class"], ["village", "suburb", "quarter"], true, false],
       layout: { "text-field": NAME, "text-font": FONT, "text-size": 11, "text-max-width": 6 },
-      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.5 },
+      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.2 },
     },
     {
       id: "place-town",
@@ -259,7 +223,7 @@ export function createStyle(c: Palette): StyleSpecification {
       minzoom: 8,
       filter: ["==", ["get", "class"], "town"],
       layout: { "text-field": NAME, "text-font": FONT, "text-size": ["interpolate", ["linear"], ["zoom"], 8, 11, 14, 14] },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.5 },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.2 },
     },
     {
       id: "place-city",
@@ -276,7 +240,7 @@ export function createStyle(c: Palette): StyleSpecification {
         "text-letter-spacing": 0.08,
         "symbol-sort-key": ["get", "rank"],
       },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.8 },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.4 },
     },
     {
       id: "place-country",
@@ -286,13 +250,13 @@ export function createStyle(c: Palette): StyleSpecification {
       maxzoom: 7,
       filter: ["==", ["get", "class"], "country"],
       layout: {
-        "text-field": ["coalesce", ["get", "name:zh"], ["get", "name"]],
+        "text-field": ["coalesce", ["get", COUNTRY_NAME_FIELD[locale]], ["get", "name:zh"], ["get", "name"]],
         "text-font": FONT_BOLD,
         "text-size": ["interpolate", ["linear"], ["zoom"], 2, 12, 6, 18],
-        "text-letter-spacing": 0.4,
+        "text-letter-spacing": 0.25,
         "text-transform": "uppercase",
       },
-      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.5 },
+      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.2 },
     },
   ];
 
@@ -392,7 +356,7 @@ function overlayLayers(c: Palette): LayerSpecification[] {
         "text-anchor": "top",
         "text-optional": true,
       },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.8 },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.4 },
     },
   ];
 }

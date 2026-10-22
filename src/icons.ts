@@ -8,6 +8,7 @@ import {
   IconCamera,
   IconClock,
   IconLoadingGlobe,
+  IconLanguages,
   IconLocate,
   IconMapPin,
   IconMinus,
@@ -36,4 +37,5 @@ export const ICONS = {
   zoomIn: IconPlus,
   zoomOut: IconMinus,
   locate: IconLocate,
+  language: IconLanguages,
 } satisfies Record<string, Icon>;

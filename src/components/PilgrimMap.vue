@@ -4,6 +4,7 @@ import type { Point } from "geojson";
 import maplibregl, { type GeoJSONSource, type LngLatLike, type PaddingOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { locale, t } from "../i18n";
 import { ICONS } from "../icons";
 import { CJK_FONT_FAMILY, createStyle, readPalette } from "../map-style";
 
@@ -30,10 +31,10 @@ let geolocate: maplibregl.GeolocateControl | null = null;
 const ready = ref(false);
 const dark = matchMedia("(prefers-color-scheme: dark)");
 
-// 换主题只换颜色：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
+// 换主题或语言只换颜色和国名：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
 // 否则 diff 会把它们当成新源，重新加载、重新聚合 5 万个点）
-function onThemeChange() {
-  map?.setStyle(createStyle(readPalette()), {
+function restyle() {
+  map?.setStyle(createStyle(readPalette(), locale.value), {
     transformStyle: (prev, next) => ({
       ...next,
       sources: { ...next.sources, points: prev!.sources.points, selected: prev!.sources.selected },
@@ -87,18 +88,18 @@ function syncCamera() {
 onMounted(() => {
   const m = (map = new maplibregl.Map({
     container: el.value!,
-    style: createStyle(readPalette()),
+    style: createStyle(readPalette(), locale.value),
     center: [137.5, 36.2],
     zoom: 4.6,
     padding: props.padding,
     localIdeographFontFamily: CJK_FONT_FAMILY,
-    attributionControl: { compact: true },
+    attributionControl: false, // 署名放在面板底部
   }));
   if (import.meta.env.DEV) {
     Object.assign(window, { __map: m }); // 调试用
     m.on("error", (e) => console.error("[map]", e.error));
   }
-  dark.addEventListener("change", onThemeChange);
+  dark.addEventListener("change", restyle);
 
   // 定位用 maplibre 自带的控件画位置点，按钮换成自己的（见模板），原按钮用 CSS 隐藏
   geolocate = new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true });
@@ -132,10 +133,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  dark.removeEventListener("change", onThemeChange);
+  dark.removeEventListener("change", restyle);
   map?.remove();
 });
 
+watch(locale, restyle);
 watch(() => props.padding, () => {
   if (!map) return;
   if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));
@@ -155,10 +157,10 @@ watch(() => props.focusPointId, (next, prev) => {
 <template>
   <div ref="el" class="map" />
   <div class="controls">
-    <button title="定位" aria-label="定位" @click="geolocate?.trigger()"><JIcon :icon="ICONS.locate" /></button>
+    <button :title="t('locate')" :aria-label="t('locate')" @click="geolocate?.trigger()"><JIcon :icon="ICONS.locate" /></button>
     <div class="group">
-      <button title="放大" aria-label="放大" @click="map?.zoomIn()"><JIcon :icon="ICONS.zoomIn" /></button>
-      <button title="缩小" aria-label="缩小" @click="map?.zoomOut()"><JIcon :icon="ICONS.zoomOut" /></button>
+      <button :title="t('zoomIn')" :aria-label="t('zoomIn')" @click="map?.zoomIn()"><JIcon :icon="ICONS.zoomIn" /></button>
+      <button :title="t('zoomOut')" :aria-label="t('zoomOut')" @click="map?.zoomOut()"><JIcon :icon="ICONS.zoomOut" /></button>
     </div>
   </div>
 </template>
@@ -191,14 +193,15 @@ watch(() => props.focusPointId, (next, prev) => {
   padding: 0;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow);
+  backdrop-filter: saturate(180%) blur(20px);
   cursor: pointer;
 }
 .group button:first-child {
   border-radius: 10px 10px 0 0;
-  border-bottom: 0;
+  box-shadow: var(--shadow), inset 0 -0.5px 0 var(--line);
 }
 .group button:last-child {
   border-radius: 0 0 10px 10px;

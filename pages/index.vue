@@ -3,7 +3,8 @@ import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import stats from "../data/stats.json";
-import { formatDate, formatEpisode, formatTime, imageUrl } from "../src/format";
+import { formatEpisode, formatTime, imageUrl } from "../src/format";
+import { formatDate, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../src/i18n";
 import { ICONS } from "../src/icons";
 import "../src/theme.css";
 
@@ -28,7 +29,7 @@ const selected = computed(() =>
     ? {
         bangumiId: detail.value.id,
         color: detail.value.color,
-        points: detail.value.points.map((p) => ({ id: p.id, name: p.cn ?? p.name, lng: p.lng, lat: p.lat })),
+        points: detail.value.points.map((p) => ({ id: p.id, name: pickName({ cn: p.cn, original: p.name }), lng: p.lng, lat: p.lat })),
       }
     : null,
 );
@@ -118,8 +119,8 @@ onBeforeUnmount(() => panelObserver.disconnect());
     <aside ref="panel" class="panel">
       <label class="search">
         <JIcon :icon="ICONS.search" class="muted" />
-        <input v-model="query" type="search" aria-label="搜索" autocomplete="off" />
-        <button v-if="query" class="icon-btn" title="清除" aria-label="清除" @click="query = ''">
+        <input v-model="query" type="search" :aria-label="t('search')" autocomplete="off" />
+        <button v-if="query" class="icon-btn" :title="t('clear')" :aria-label="t('clear')" @click="query = ''">
           <JIcon :icon="ICONS.clear" />
         </button>
       </label>
@@ -135,8 +136,8 @@ onBeforeUnmount(() => panelObserver.disconnect());
             <img v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
-              <strong>{{ b.cn ?? b.title }}</strong>
-              <small v-if="b.cn && b.title">{{ b.title }}</small>
+              <strong>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
+              <small v-if="subName({ cn: b.cn, original: b.title, en: b.en })">{{ subName({ cn: b.cn, original: b.title, en: b.en }) }}</small>
             </span>
             <span class="stat"><JIcon :icon="ICONS.point" :size="14" />{{ b.pointCount }}</span>
           </button>
@@ -150,8 +151,8 @@ onBeforeUnmount(() => panelObserver.disconnect());
             <img v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
-              <strong>{{ p.cn ?? p.name }}</strong>
-              <small>{{ p.bangumiName }}</small>
+              <strong>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
+              <small>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn }) }}</small>
             </span>
           </button>
         </template>
@@ -160,14 +161,16 @@ onBeforeUnmount(() => panelObserver.disconnect());
       <!-- 作品详情 -->
       <section v-else-if="detail" class="scroll">
         <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
-          <button class="icon-btn back" title="返回" aria-label="返回" @click="clearSelection">
+          <button class="icon-btn back" :title="t('back')" :aria-label="t('back')" @click="clearSelection">
             <JIcon :icon="ICONS.back" :size="18" />
           </button>
           <div class="title-row">
             <img v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
-              <h2>{{ detail.cn ?? detail.title }}</h2>
-              <p v-if="detail.cn && detail.title" class="sub">{{ detail.title }}</p>
+              <h2>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
+              <p v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en })" class="sub">
+                {{ subName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
+              </p>
               <p class="meta">
                 <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" />{{ detail.cat }}</span>
                 <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" />{{ detail.city }}</span>
@@ -202,8 +205,8 @@ onBeforeUnmount(() => panelObserver.disconnect());
               </figcaption>
             </figure>
             <div class="point-body">
-              <strong>{{ p.cn ?? p.name }}</strong>
-              <small v-if="p.cn && p.name">{{ p.name }}</small>
+              <strong>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
+              <small v-if="subName({ cn: p.cn, original: p.name })">{{ subName({ cn: p.cn, original: p.name }) }}</small>
               <span v-if="p.ep || p.s" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" />{{ formatEpisode(p.ep) }}</span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" />{{ formatTime(p.s) }}</span>
@@ -218,16 +221,26 @@ onBeforeUnmount(() => panelObserver.disconnect());
       <section v-else class="scroll overview">
         <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" />junrei</h1>
         <div class="stats">
-          <span class="stat" title="作品"><JIcon :icon="ICONS.bangumi" />{{ stats.bangumi.toLocaleString() }}</span>
-          <span class="stat" title="地标"><JIcon :icon="ICONS.point" />{{ stats.points.toLocaleString() }}</span>
-          <span class="stat" title="数据更新"><JIcon :icon="ICONS.updated" />{{ formatDate(stats.modified) }}</span>
+          <span class="stat" :title="t('bangumi')"><JIcon :icon="ICONS.bangumi" />{{ stats.bangumi.toLocaleString() }}</span>
+          <span class="stat" :title="t('points')"><JIcon :icon="ICONS.point" />{{ stats.points.toLocaleString() }}</span>
+          <span class="stat" :title="t('updated')"><JIcon :icon="ICONS.updated" />{{ formatDate(stats.modified) }}</span>
         </div>
       </section>
 
       <footer class="foot">
-        <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
-        <span>·</span>
-        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+        <span class="credits">
+          <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA</a>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
+          <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>
+          <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
+        </span>
+        <label class="lang" :title="t('language')">
+          <JIcon :icon="ICONS.language" :size="14" />
+          <select v-model="locale" :aria-label="t('language')">
+            <option v-for="l in LOCALES" :key="l" :value="l">{{ LOCALE_NAMES[l] }}</option>
+          </select>
+        </label>
       </footer>
     </aside>
   </div>
@@ -241,7 +254,7 @@ html,
 body {
   margin: 0;
   height: 100%;
-  background: var(--bg);
+  background: var(--bg-solid);
   color: var(--fg);
   font-family: system-ui, -apple-system, "PingFang SC", "Hiragino Sans", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 }
@@ -264,9 +277,9 @@ a {
   display: flex;
   flex-direction: column;
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 8px 30px rgb(0 0 0 / 0.12);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: saturate(180%) blur(24px);
   overflow: hidden;
 }
 @media (max-width: 640px) {
@@ -277,7 +290,7 @@ a {
     bottom: 0;
     width: auto;
     height: 46vh;
-    border-radius: 14px 14px 0 0;
+    border-radius: 16px 16px 0 0;
   }
 }
 .muted {
@@ -538,16 +551,46 @@ figcaption a {
 }
 .foot {
   display: flex;
-  gap: 6px;
-  padding: 8px 16px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 8px 16px;
   font-size: 11px;
   color: var(--muted);
   border-top: 1px solid var(--line);
+}
+.credits {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
 }
 .foot a {
   text-decoration: none;
 }
 .foot a:hover {
-  text-decoration: underline;
+  color: var(--fg);
+}
+.lang {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.lang:hover {
+  color: var(--fg);
+  background: var(--hover);
+}
+.lang select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
 }
 </style>

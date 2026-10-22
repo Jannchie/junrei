@@ -12,7 +12,3 @@ export function formatTime(s: number): string {
 export function imageUrl(url: string, plan: "h160" | "h360" = "h160"): string {
   return url.startsWith("https://image.anitabi.cn/") ? `${url}?plan=${plan}` : url;
 }
-
-export function formatDate(ms: number | null): string {
-  return ms ? new Date(ms).toLocaleDateString("zh-CN") : "—";
-}
