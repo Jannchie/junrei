@@ -1,0 +1,47 @@
+{
+  "_comment": "手动补充的作品与地标（Anitabi 没有收录的）。sync/export.py 导出时合并进去；地标 id 以 m- 开头，避免与 Anitabi 冲突。截图只放有授权的，没有就留空。",
+  "bangumi": [
+    {
+      "id": 472741,
+      "title": "呪術廻戦 死滅回游 前編",
+      "cn": "咒术回战 死灭回游 前篇",
+      "en": "Jujutsu Kaisen: The Culling Game Part 1",
+      "names": {
+        "zh-Hans": "咒术回战 死灭回游 前篇",
+        "zh-Hant": "咒術迴戰 死滅迴游 前篇",
+        "ja": "呪術廻戦 死滅回游 前編",
+        "en": "Jujutsu Kaisen: The Culling Game Part 1"
+      },
+      "city": "东京都",
+      "cat": "TV",
+      "color": "#ffdb29",
+      "cover": "https://lain.bgm.tv/pic/cover/l/ab/77/472741_MqsB8.jpg"
+    }
+  ],
+  "points": [
+    {
+      "bangumi": 472741,
+      "id": "m-tokyo-geigeki",
+      "name": "東京芸術劇場",
+      "cn": "东京艺术剧场",
+      "lat": 35.72966,
+      "lng": 139.70858,
+      "ep": "8",
+      "s": 844,
+      "src": "ja",
+      "names": {
+        "zh-Hans": "东京艺术剧场",
+        "zh-Hant": "東京藝術劇場",
+        "ja": "東京芸術劇場",
+        "en": "Tokyo Metropolitan Theatre"
+      },
+      "marks": {
+        "zh-Hans": "从池袋西口公园望向剧场的玻璃幕墙。集数与时间点经 trace.moe 识别。",
+        "zh-Hant": "從池袋西口公園望向劇場的玻璃帷幕。集數與時間點經 trace.moe 識別。",
+        "ja": "池袋西口公園から劇場のガラス張りの外観を望む。話数と時間は trace.moe で特定。",
+        "en": "Looking at the theatre's glass facade from Ikebukuro West Gate Park. Episode and timestamp identified with trace.moe."
+      },
+      "reference": "https://www.instagram.com/p/DVgDsYhk4Q1/"
+    }
+  ]
+}

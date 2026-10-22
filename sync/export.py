@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from pathlib import Path
 import sys
 
 from sync.fold import build_char_map, fold, romaji
@@ -22,6 +23,7 @@ from sync.llm import clean_text
 from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
+MANUAL = Path(__file__).resolve().parent / "manual.json"
 ROWS_PER_INSERT = 200  # 分批插入
 MAX_STATEMENT_BYTES = 90_000  # D1 单条语句上限 100 KB
 LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
@@ -75,6 +77,26 @@ def i18n_json(item: dict | None) -> str | None:
     return json.dumps(item, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
+def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -> None:
+    """合并 sync/manual.json：Anitabi 没有收录的作品与地标。多语言名称直接写在文件里。"""
+    data = json.loads(MANUAL.read_text(encoding="utf-8"))
+    known = {r[0] for r in rows}
+    for b in data.get("bangumi", []):
+        if b["id"] not in known:
+            rows.append((b["id"], b.get("cn"), b.get("title"), b.get("en"), b.get("city"), b.get("cat"), b.get("color"), b.get("cover")))
+        if b.get("names"):
+            i18n[("bangumi", str(b["id"]))] = {"name": b["names"]}
+    for p in data.get("points", []):
+        points.append((p["bangumi"], p["id"], p.get("name"), p.get("cn"), p["lat"], p["lng"], p.get("priority", 0),
+                       p.get("ep"), p.get("s"), p.get("image"), p.get("origin"), p.get("origin_link"), p.get("mark")))
+        counts[p["bangumi"]] = counts.get(p["bangumi"], 0) + 1
+        item = {k: v for k, v in (("name", p.get("names")), ("mark", p.get("marks")), ("src", p.get("src"))) if v}
+        if item:
+            i18n[("point", f"{p['bangumi']}:{p['id']}")] = item
+    rows.sort(key=lambda r: r[0])
+    print(f"手动补充：{len(data.get('bangumi', []))} 部作品，{len(data.get('points', []))} 个地标")
+
+
 def sql_value(v) -> str:
     if v is None:
         return "NULL"
@@ -122,6 +144,7 @@ def main():
         counts[p[0]] = counts.get(p[0], 0) + 1
     rows = src.execute(
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
+    merge_manual(rows, points, counts, i18n)
 
     # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
     titles = {r[0]: i18n.get(("bangumi", str(r[0]))) for r in rows}
@@ -132,7 +155,7 @@ def main():
     # 原文语言：原名（没有原名时是中文名）是哪种语言。列表里展开地标时，用这种语言的版本作为「当地原名」对照
     for p in points:
         item = spots[(p[0], p[1])]
-        if not item:
+        if not item or "_orig" not in item:  # 手动补充的地标自带 src
             continue
         source = clean_text(p[2] or p[3] or "")
         item["src"] = next((lang for lang, text in item.pop("_orig", {}).items() if text == source), None)
