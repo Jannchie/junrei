@@ -1,4 +1,4 @@
-// junrei 的地图皮肤，参照 Apple 地图：素净的底、明亮的水与草绿、白色道路、暖黄高速、细灰铁路。
+// junrei 的地图皮肤，参照 Apple 地图：素净的底、明亮的水与青绿、水深渐变与淡山影、白色道路、暖黄高速、细灰铁路。
 // 矢量瓦片来自 OpenFreeMap（OpenMapTiles schema），只保留巡礼用得上的要素：
 // 水、绿地、市街地、道路、铁路与车站、地名。配色在 src/theme.css。
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
@@ -7,7 +7,7 @@ import type { Locale } from "./i18n";
 const PALETTE_KEYS = [
   "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
   "major", "majorCasing", "motorway", "motorwayCasing", "rail", "boundary", "label", "labelMuted", "waterLabel",
-  "focusRing",
+  "focusRing", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight",
 ] as const;
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
@@ -25,6 +25,8 @@ export function readPalette(): Palette {
 export const CJK_FONT_FAMILY = "'Hiragino Sans', 'PingFang SC', 'Yu Gothic', 'YuGothic', 'Noto Sans JP', 'Noto Sans CJK JP', sans-serif";
 
 const SOURCE = "openmaptiles";
+/** AWS 开放地形瓦片（Terrarium 编码），含陆地高程与海底水深；只取到 z10，再放大就复用低层级瓦片 */
+const DEM = "terrain";
 const FONT = ["Noto Sans Regular"];
 const FONT_BOLD = ["Noto Sans Bold"];
 const FONT_ITALIC = ["Noto Sans Italic"];
@@ -96,6 +98,35 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       "source-layer": "water",
       filter: ["!=", ["get", "brunnel"], "tunnel"],
       paint: { "fill-color": c.water },
+    },
+    // 水深：近岸一段保持透明，避免低分辨率高程把海岸线附近的陆地染蓝；放大到城市级别后淡出
+    {
+      id: "bathymetry",
+      type: "color-relief",
+      source: DEM,
+      maxzoom: 10,
+      paint: {
+        "color-relief-color": [
+          "interpolate", ["linear"], ["elevation"],
+          -8000, c.depthDeep,
+          -3000, c.depthMid,
+          -400, c.depthShelf,
+          -60, "rgba(0, 0, 0, 0)",
+        ],
+        "color-relief-opacity": ["interpolate", ["linear"], ["zoom"], 7, 1, 9.5, 0],
+      },
+    },
+    {
+      id: "hillshade",
+      type: "hillshade",
+      source: DEM,
+      maxzoom: 14,
+      paint: {
+        "hillshade-shadow-color": c.hillshadeShadow,
+        "hillshade-highlight-color": c.hillshadeHighlight,
+        "hillshade-accent-color": "rgba(0, 0, 0, 0)",
+        "hillshade-exaggeration": 0.35,
+      },
     },
     {
       id: "waterway",
@@ -268,6 +299,13 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     state: { selected: { default: false }, selectedColor: { default: "#000000" } },
     sources: {
       [SOURCE]: { type: "vector", url: "https://tiles.openfreemap.org/planet" },
+      [DEM]: {
+        type: "raster-dem",
+        tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+        encoding: "terrarium",
+        tileSize: 256,
+        maxzoom: 10,
+      },
       // 全部地标：maplibre 在 worker 里抓取、解析并聚合，主线程不碰这 5 万个点
       points: { type: "geojson", data: "/data/points.geojson", cluster: true, clusterRadius: 44, clusterMaxZoom: 13 },
       // 选中作品的地标，焦点用 feature-state 标记

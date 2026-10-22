@@ -1,4 +1,4 @@
-/* junrei 的全部配色，参照 Apple 地图：温暖素净的底、明亮的水与草绿、白色道路、暖黄高速、毛玻璃面板。
+/* junrei 的全部配色，参照 Apple 地图：冷调素净的底、明亮的水与草绿、白色道路、暖黄高速、毛玻璃面板。
    面板用 --*，地图皮肤用 --map-*（src/map-style.ts 读取）。亮暗切换只靠这里的媒体查询。 */
 :root {
   --bg: rgb(255 255 255 / 0.78);
@@ -10,26 +10,31 @@
   --accent: #f0462d;
   --shadow: 0 10px 40px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
 
-  --map-land: #f6f4ef;
-  --map-urban: #f0ede7;
-  --map-wood: #cfe6bd;
-  --map-grass: #dbecc9;
-  --map-park: #c9e4b3;
+  --map-land: #f2f4f6;
+  --map-urban: #eaedf0;
+  --map-wood: #c3e6cf;
+  --map-grass: #d3ecda;
+  --map-park: #bde3c9;
   --map-sand: #f2e7ca;
   --map-water: #a7d3f2;
-  --map-building: #e8e5df;
-  --map-building-line: #dedad3;
+  --map-building: #e1e4e8;
+  --map-building-line: #d6dadf;
   --map-road: #ffffff;
-  --map-road-casing: #e4e0d8;
+  --map-road-casing: #dde1e6;
   --map-major: #ffffff;
-  --map-major-casing: #d8d3ca;
+  --map-major-casing: #d0d5dc;
   --map-motorway: #fcd26a;
   --map-motorway-casing: #e8b44a;
-  --map-rail: #b9b5ae;
+  --map-rail: #b0b5bc;
   --map-boundary: #c3b5cc;
   --map-label: #3a3a3c;
   --map-label-muted: #8e8e93;
   --map-water-label: #3f86bf;
+  --map-depth-shelf: #93c6ec;
+  --map-depth-mid: #7db4e1;
+  --map-depth-deep: #5d95cc;
+  --map-hillshade-shadow: rgb(40 55 80 / 0.15);
+  --map-hillshade-highlight: rgb(255 255 255 / 0.25);
   --map-focus-ring: #1d1d1f;
 
   color-scheme: light;
@@ -46,26 +51,31 @@
     --accent: #ff5a40;
     --shadow: 0 10px 40px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
 
-    --map-land: #242426;
-    --map-urban: #29292b;
-    --map-wood: #1f3122;
-    --map-grass: #223326;
-    --map-park: #213a26;
+    --map-land: #212327;
+    --map-urban: #26292d;
+    --map-wood: #1b332a;
+    --map-grass: #1e342c;
+    --map-park: #1c3a2e;
     --map-sand: #3a3529;
     --map-water: #1b3a55;
-    --map-building: #333336;
-    --map-building-line: #3c3c3f;
+    --map-building: #2f3237;
+    --map-building-line: #383c42;
     --map-road: #3b3b3e;
-    --map-road-casing: #242426;
+    --map-road-casing: #212327;
     --map-major: #4a4a4e;
-    --map-major-casing: #242426;
+    --map-major-casing: #212327;
     --map-motorway: #8a7140;
-    --map-motorway-casing: #242426;
+    --map-motorway-casing: #212327;
     --map-rail: #5a5a5e;
     --map-boundary: #5c5266;
     --map-label: #ebebf0;
     --map-label-muted: #98989d;
     --map-water-label: #6aa6d6;
+    --map-depth-shelf: #173450;
+    --map-depth-mid: #122a42;
+    --map-depth-deep: #0c1f33;
+    --map-hillshade-shadow: rgb(0 0 0 / 0.35);
+    --map-hillshade-highlight: rgb(255 255 255 / 0.04);
     --map-focus-ring: #f5f5f7;
 
     color-scheme: dark;
