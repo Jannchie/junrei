@@ -9,7 +9,7 @@ import type { Locale } from "./i18n";
 const PALETTE_KEYS = [
   "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
   "major", "majorCasing", "motorway", "motorwayCasing", "rail", "label", "labelMuted", "waterLabel",
-  "focusRing", "space", "horizon", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight",
+  "focusRing", "space", "horizon", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight", "heatLow", "heatHigh",
 ] as const;
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
@@ -32,8 +32,14 @@ const DEM = "terrain";
 const FONT = ["Noto Sans Regular"];
 const FONT_BOLD = ["Noto Sans Bold"];
 const FONT_ITALIC = ["Noto Sans Italic"];
-/** 聚合圈半径按数量的平方根平缓增长，大聚合不会大得压住地图 */
-const CLUSTER_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "point_count"]], 1, 9, 10, 13, 40, 18, 150, 23];
+/** 热力图淡出、单个地标淡入的缩放区间 */
+export const HEAT_FADE: [number, number] = [9, 11];
+
+/** #rrggbb + 透明度 → rgba()，热力图的色带要在同一个颜色上渐变透明度 */
+function alpha(hex: string, a: number) {
+  const n = Number.parseInt(hex.replace("#", ""), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
 const NAME_FIELDS: Record<Locale, string[]> = {
   "zh-Hans": ["name:zh-Hans", "name:zh"],
   "zh-Hant": ["name:zh-Hant", "name:zh"],
@@ -287,7 +293,7 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
         maxzoom: 10,
       },
       // 全部地标：maplibre 在 worker 里抓取、解析并聚合，主线程不碰这 5 万个点
-      points: { type: "geojson", data: "/data/points.geojson", cluster: true, clusterRadius: 44, clusterMaxZoom: 13 },
+      points: { type: "geojson", data: "/data/points.geojson" },
       // 选中作品的地标，焦点用 feature-state 标记
       selected: { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "p" },
     },
@@ -299,66 +305,49 @@ const SELECTED: ExpressionSpecification = ["global-state", "selected"];
 const FOCUS: ExpressionSpecification = ["boolean", ["feature-state", "focus"], false];
 
 /**
- * 地标、聚合与选中高亮，参照 Apple 地图的标注：实心圆、白色细描边、很淡的投影。
- * 选中作品后，其余地标退成灰色小点，只留位置感；选中作品用它的主题色，焦点地标外加一圈同色光环。
+ * 地标与选中高亮。缩小时是柔和的热度晕染（不显示数字），放大到 HEAT_FADE 区间渐变为可点击的单个地标。
+ * 选中作品后，其余作品的热度与地标直接隐藏（用过滤条件，隐藏后也点不到），只留当前作品的地标。
  */
 function overlayLayers(c: Palette): LayerSpecification[] {
-  const dim = (normal: number, selected: number): ExpressionSpecification => ["case", SELECTED, selected, normal];
-  const markerColor: ExpressionSpecification = ["case", SELECTED, c.labelMuted, c.accent];
-  const isCluster: ExpressionSpecification = ["has", "point_count"];
+  const unselected: ExpressionSpecification = ["!", SELECTED];
+  const [fadeFrom, fadeTo] = HEAT_FADE;
   return [
     {
-      id: "cluster-shadow",
-      type: "circle",
+      id: "heat",
+      type: "heatmap",
       source: "points",
-      filter: isCluster,
+      maxzoom: fadeTo + 0.5,
+      filter: unselected,
       paint: {
-        "circle-color": "#000000",
-        "circle-radius": ["+", CLUSTER_RADIUS, 1.5],
-        "circle-blur": 0.8,
-        "circle-opacity": dim(0.2, 0),
-        "circle-translate": [0, 1.5],
+        "heatmap-weight": 1,
+        // 5 万多个点在小比例尺下很容易叠满：半径放大、单点强度压低，斑点融成柔和的云团，只有真正密集处变深
+        "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 0.03, 4, 0.07, 7, 0.25, fadeTo, 0.8],
+        "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 5, 4, 12, 7, 20, fadeTo, 28],
+        "heatmap-color": [
+          "interpolate", ["linear"], ["heatmap-density"],
+          // 由淡紫渐变到深靛紫：深浅有层次，而不只是同一颜色的透明度变化
+          0, alpha(c.accent, 0),
+          0.08, alpha(c.heatLow, 0.12),
+          0.3, alpha(c.heatLow, 0.28),
+          0.6, alpha(c.accent, 0.42),
+          1, alpha(c.heatHigh, 0.6),
+        ],
+        "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, fadeTo, 0],
       },
-    },
-    {
-      id: "clusters",
-      type: "circle",
-      source: "points",
-      filter: isCluster,
-      paint: {
-        "circle-color": markerColor,
-        "circle-radius": CLUSTER_RADIUS,
-        "circle-opacity": dim(1, 0.3),
-        "circle-stroke-color": "#ffffff",
-        "circle-stroke-width": 1.5,
-        "circle-stroke-opacity": dim(0.95, 0),
-      },
-    },
-    {
-      id: "cluster-count",
-      type: "symbol",
-      source: "points",
-      filter: isCluster,
-      layout: {
-        "text-field": ["get", "point_count_abbreviated"],
-        "text-font": FONT_BOLD,
-        "text-size": ["interpolate", ["linear"], ["get", "point_count"], 2, 10, 1000, 12],
-        "text-allow-overlap": true,
-      },
-      paint: { "text-color": "#ffffff", "text-opacity": dim(1, 0) },
     },
     {
       id: "point",
       type: "circle",
       source: "points",
-      filter: ["!", isCluster],
+      minzoom: fadeFrom - 0.5,
+      filter: unselected,
       paint: {
-        "circle-color": markerColor,
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 3, 12, 4, 16, 6.5],
-        "circle-opacity": dim(1, 0.35),
+        "circle-color": c.accent,
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], fadeFrom, 3, 12, 4.5, 16, 6.5],
+        "circle-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
         "circle-stroke-color": "#ffffff",
-        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 1, 16, 2],
-        "circle-stroke-opacity": dim(0.95, 0),
+        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, 16, 2],
+        "circle-stroke-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
       },
     },
     {

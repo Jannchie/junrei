@@ -23,6 +23,20 @@ const KANA = /[぀-ヿ]/;
 const setLang = (el: HTMLElement) => (KANA.test(el.textContent ?? "") ? (el.lang = "ja") : el.removeAttribute("lang"));
 const vAutoLang = { mounted: setLang, updated: setLang };
 
+// 图片偶尔会因为图床限流或网络抖动加载失败：隔一会儿重试两次，仍失败就显示占位底色，不出现破图图标
+function retryImage(e: Event) {
+  const img = e.target as HTMLImageElement;
+  const tries = Number(img.dataset.tries ?? 0);
+  if (tries >= 2) {
+    img.classList.add("img-failed");
+    return;
+  }
+  img.dataset.tries = String(tries + 1);
+  const url = new URL(img.src);
+  url.searchParams.set("retry", String(tries + 1));
+  setTimeout(() => (img.src = url.href), 800 * (tries + 1));
+}
+
 // maplibre 体积大且只在浏览器里用，单独分包，也不进服务端 bundle
 const PilgrimMap = defineAsyncComponent(() => import("./PilgrimMap.vue"));
 const mounted = ref(false);
@@ -252,7 +266,7 @@ onBeforeUnmount(() => {
             <JIcon :icon="ICONS.noResult" :size="28" />
           </div>
           <button v-for="b in results.bangumis" :key="b.id" class="row" @click="pickResult(b.id)">
-            <img v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
@@ -267,7 +281,7 @@ onBeforeUnmount(() => {
             class="row"
             @click="pickResult(p.bangumiId, p.id)"
           >
-            <img v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <img @error="retryImage" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
@@ -284,7 +298,7 @@ onBeforeUnmount(() => {
             <JIcon :icon="ICONS.back" :size="18" />
           </button>
           <div class="title-row">
-            <img v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
+            <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
               <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}</h2>
               <p v-auto-lang v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en })" class="sub">
@@ -311,7 +325,7 @@ onBeforeUnmount(() => {
             @click="select(detail.id, p.id)"
           >
             <figure v-if="p.image">
-              <img
+              <img @error="retryImage"
                 :src="imageUrl(p.image, p.id === focusPointId ? 'h360' : 'h160')"
                 loading="lazy"
                 referrerpolicy="no-referrer"
@@ -344,7 +358,7 @@ onBeforeUnmount(() => {
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
             <a :href="`/b/${b.id}`" @click.prevent="select(b.id)">
-              <img v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
+              <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
               <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
@@ -422,6 +436,12 @@ body {
 }
 a {
   color: inherit;
+}
+img.img-failed {
+  /* 隐藏破图图标与替代文字，只留占位底色 */
+  color: transparent;
+  font-size: 0;
+  background: var(--hover);
 }
 
 /* 滚动条：各系统统一成细的半透明样式。标准属性给 Firefox 与新版 Chromium，
@@ -788,10 +808,6 @@ figcaption a {
   object-fit: cover;
   border-radius: 8px;
   background: var(--hover);
-  transition: transform 0.2s;
-}
-.popular a:hover img {
-  transform: translateY(-2px);
 }
 .popular-name {
   font-size: 12px;

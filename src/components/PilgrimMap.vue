@@ -6,7 +6,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { locale, t } from "../i18n";
 import { ICONS } from "../icons";
-import { CJK_FONT_FAMILY, createStyle, readPalette } from "../map-style";
+import { imageUrl } from "../format";
+import { CJK_FONT_FAMILY, createStyle, HEAT_FADE, readPalette } from "../map-style";
 
 export interface SelectedPoint {
   id: string;
@@ -71,6 +72,7 @@ function syncFocus(next: string | null, prev: string | null) {
 
 // 相机由「作品:焦点」决定，同一个 key 只移动一次；地图就绪前的选择会在就绪后补上
 let cameraKey = "";
+let pickedOnMap = "";
 // 链接里带了视野（#map=…）时，首次选中不移动相机，尊重链接里的视野
 let keepLinkedView = typeof location !== "undefined" && location.hash.includes("map=");
 function syncCamera() {
@@ -83,15 +85,94 @@ function syncCamera() {
     keepLinkedView = false;
     return;
   }
+  // 在地图上直接点的地标：它就在眼前，镜头不动
+  if (key === pickedOnMap) return;
   const focus = sel.points.find((p) => p.id === props.focusPointId);
   // setPadding 会打断进行中的动画，所以只在相机空闲时或发起新动作前调用（见下方 padding 的 watch）
   map.setPadding(props.padding);
+  // 都用 easeTo（fitBounds 设 linear）：flyTo 途中会先拉远再推近，像跳了一下
   if (focus) {
-    map.flyTo({ center: [focus.lng, focus.lat], zoom: Math.max(map.getZoom(), 15) });
+    map.easeTo({ center: [focus.lng, focus.lat], zoom: Math.max(map.getZoom(), 15), duration: 800 });
   } else {
-    const bounds = new maplibregl.LngLatBounds();
-    for (const p of sel.points) bounds.extend([p.lng, p.lat]);
-    map.fitBounds(bounds, { padding: 80, maxZoom: 15 });
+    map.fitBounds(coreBounds(sel.points), { padding: 80, maxZoom: 15, linear: true, duration: 800 });
+  }
+}
+
+/** 作品的主要区域：去掉经纬度两端各 10% 的离群地标（外地零星的点不该把镜头拉远） */
+function coreBounds(points: SelectedPoint[]) {
+  const pick = (values: number[]) => {
+    const v = [...values].sort((a, b) => a - b);
+    const cut = v.length >= 10 ? Math.floor(v.length * 0.1) : 0;
+    return [v[cut], v[v.length - 1 - cut]] as const;
+  };
+  const [w, e] = pick(points.map((p) => p.lng));
+  const [s, n] = pick(points.map((p) => p.lat));
+  return new maplibregl.LngLatBounds([w, s], [e, n]);
+}
+
+// ---- 放大到街区级别时，视野里的地标直接显示截图 ----
+const PHOTO_ZOOM = 15.5;
+const PHOTO_MAX = 40;
+const PHOTO_GAP = 64; // 屏幕上两张截图中心的最小距离（px），太近的跳过
+type PointImages = Map<string, string>; // 地标 id → 截图地址
+const imagesByBangumi = new Map<number, Promise<PointImages>>();
+function pointImages(bangumiId: number) {
+  let p = imagesByBangumi.get(bangumiId);
+  if (!p) {
+    p = fetch(`/v1/bangumi/${bangumiId}`)
+      .then((r) => (r.ok ? r.json() : { points: [] }))
+      .then((d: { points: { id: string; image: string | null }[] }) => new Map(d.points.flatMap((x) => (x.image ? [[x.id, x.image]] : []))));
+    imagesByBangumi.set(bangumiId, p);
+  }
+  return p;
+}
+
+const photoMarkers = new Map<string, maplibregl.Marker>();
+let photoSeq = 0;
+async function syncPhotos() {
+  const m = map;
+  if (!m) return;
+  const seq = ++photoSeq;
+  if (m.getZoom() < PHOTO_ZOOM) {
+    for (const marker of photoMarkers.values()) marker.remove();
+    photoMarkers.clear();
+    return;
+  }
+  // 按屏幕位置挑出互不重叠的地标
+  const picked: { b: number; p: string; lngLat: [number, number]; x: number; y: number }[] = [];
+  for (const f of m.queryRenderedFeatures({ layers: ["selected-point", "point"] })) {
+    const { b, p } = f.properties as { b: number; p: string };
+    const lngLat = (f.geometry as Point).coordinates as [number, number];
+    const { x, y } = m.project(lngLat);
+    if (picked.some((q) => q.p === p || Math.hypot(q.x - x, q.y - y) < PHOTO_GAP)) continue;
+    picked.push({ b: Number(b), p: String(p), lngLat, x, y });
+    if (picked.length >= PHOTO_MAX) break;
+  }
+  const images = new Map(await Promise.all([...new Set(picked.map((q) => q.b))].map(async (b) => [b, await pointImages(b)] as const)));
+  if (seq !== photoSeq) return;
+  const keep = new Set<string>();
+  for (const q of picked) {
+    const src = images.get(q.b)?.get(q.p);
+    if (!src) continue;
+    const key = `${q.b}:${q.p}`;
+    keep.add(key);
+    if (photoMarkers.has(key)) continue;
+    const el = document.createElement("button");
+    el.className = "photo-pin";
+    el.title = "";
+    el.innerHTML = `<img alt="" referrerpolicy="no-referrer" src="${imageUrl(src)}">`;
+    el.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      pickedOnMap = `${q.b}:${q.p}`;
+      emit("pick", q.b, q.p);
+    });
+    photoMarkers.set(key, new maplibregl.Marker({ element: el, anchor: "bottom", offset: [0, -8] }).setLngLat(q.lngLat).addTo(m));
+  }
+  for (const [key, marker] of photoMarkers) {
+    if (!keep.has(key)) {
+      marker.remove();
+      photoMarkers.delete(key);
+    }
   }
 }
 
@@ -132,26 +213,30 @@ onMounted(() => {
   m.on("moveend", reportView);
   m.once("load", reportView);
 
-  m.on("click", "clusters", async (e) => {
-    const f = e.features?.[0];
-    if (!f) return;
-    const zoom = await (m.getSource("points") as GeoJSONSource).getClusterExpansionZoom(f.properties.cluster_id as number);
-    // 展开级别常常只比当前大 1，大聚合要点很多次，至少放大两级
-    m.easeTo({ center: (f.geometry as Point).coordinates as LngLatLike, zoom: Math.max(zoom, m.getZoom() + 2) });
+  // 热力图阶段没有可点的地标：点击地图即以该处为中心放大两级
+  m.on("click", (e) => {
+    if (m.getZoom() >= HEAT_FADE[0]) return;
+    if (m.queryRenderedFeatures(e.point, { layers: ["selected-point"] }).length) return;
+    m.easeTo({ center: e.lngLat, zoom: m.getZoom() + 2 });
   });
+  m.on("moveend", syncPhotos);
+  m.once("idle", syncPhotos); // 直接从带视野的链接打开时没有 moveend
   for (const layer of ["point", "selected-point"]) {
     m.on("click", layer, (e) => {
       const p = e.features?.[0]?.properties;
-      if (p) emit("pick", Number(p.b), String(p.p));
+      if (!p) return;
+      pickedOnMap = `${p.b}:${p.p}`;
+      emit("pick", Number(p.b), String(p.p));
     });
   }
-  for (const layer of ["point", "selected-point", "clusters"]) {
+  for (const layer of ["point", "selected-point"]) {
     m.on("mouseenter", layer, () => (m.getCanvas().style.cursor = "pointer"));
     m.on("mouseleave", layer, () => (m.getCanvas().style.cursor = ""));
   }
 });
 
 onBeforeUnmount(() => {
+  for (const marker of photoMarkers.values()) marker.remove();
   dark.removeEventListener("change", restyle);
   map?.remove();
 });
@@ -193,6 +278,40 @@ watch(() => props.focusPointId, (next, prev) => {
 }
 .map :deep(.maplibregl-ctrl-geolocate) {
   display: none;
+}
+.map :deep(.photo-pin) {
+  position: relative;
+  display: block;
+  width: 72px;
+  height: 44px;
+  padding: 2px;
+  background: #ffffff;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
+.map :deep(.photo-pin)::after {
+  /* 指向地标的小尖角 */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 2px 0;
+}
+.map :deep(.photo-pin img) {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #e5e7eb;
 }
 .controls {
   position: absolute;
