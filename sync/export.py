@@ -23,9 +23,11 @@ from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
 ROWS_PER_INSERT = 200  # D1 单条语句有长度上限，分批插入
 LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
-# 同一语言有多条时：人工数据优先，其次复核过的机翻、机翻、繁简转换；置信度太低的机翻不用
-SOURCE_RANK = {"anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3, "opencc": 4}
+# 同一语言有多条时：原文混了别的语言时的纯净版本（llm_fix）最优先，其次人工数据、复核过的机翻、机翻、繁简转换；
+# 置信度太低的机翻排到最后，只在这种语言没有别的文本时兜底，保证每条都有四种语言
+SOURCE_RANK = {"llm_fix": -1, "anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3, "opencc": 4}
 MIN_CONFIDENCE = 0.5
+LOW_CONFIDENCE_RANK = 10
 FIELD_KEY = {"title": "name", "name": "name", "mark": "mark"}
 
 
@@ -41,10 +43,8 @@ def load_i18n() -> dict[tuple[str, str], dict]:
             "SELECT entity, entity_id, field, lang, text, source, machine_translated, confidence FROM translation"):
             if lang not in LANGS or field not in FIELD_KEY or not text or source not in SOURCE_RANK:
                 continue
-            if mt and conf is not None and conf < MIN_CONFIDENCE:
-                continue
             key = (entity, eid, FIELD_KEY[field], lang)
-            rank = SOURCE_RANK[source]
+            rank = SOURCE_RANK[source] + (LOW_CONFIDENCE_RANK if mt and conf is not None and conf < MIN_CONFIDENCE else 0)
             if key not in best or rank < best[key][0]:
                 best[key] = (rank, text.strip(), bool(mt))
     out: dict[tuple[str, str], dict] = {}

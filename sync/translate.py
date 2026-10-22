@@ -5,6 +5,7 @@
   bangumi  Bangumi API（先跑 sync.bgm）：name / name_cn / 英文名 / 罗马音（ja-Latn）
   llm      Claude 翻译：地标名、备注全部过一遍；作品标题只补前两者都缺的语言
   llm_review  --review 时用更强的模型复核 llm 行（作品标题全部、其余低置信度的），确认或改正，优先于 llm
+  llm_fix  原文混着别的语言（如日文地名里写了中文「秋千」）时，LLM 给出的同语言纯净版本；显示时优先于原文
   opencc   繁体由最优先的简体按 OpenCC 规则转换，不调用 LLM
 同一语言已有 anitabi / bangumi 的人工数据时不再写 llm 行。原始字段不改。
 
@@ -22,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -32,8 +34,8 @@ from sync.enrich_report import has, write_report
 
 LANGS = ["zh-Hans", "zh-Hant", "ja", "en"]
 LLM_LANGS = {"ja": "ja", "zh_hans": "zh-Hans", "en": "en"}  # 结构化输出字段 → 语言代码
-SOURCE_RANK = {"anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3}
-MACHINE = {"llm", "llm_review", "opencc"}
+SOURCE_RANK = {"llm_fix": -1, "anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3}
+MACHINE = {"llm", "llm_review", "llm_fix", "opencc"}
 REVIEW_MODEL = "claude-opus-5-5"
 LANG_KEY = {v: k for k, v in LLM_LANGS.items()}
 FIELDS = ["name", "mark", "title"]
@@ -138,6 +140,11 @@ SIMPLIFIED = set(
     "们说话东车站厅馆")
 
 
+def loose(text: str) -> str:
+    """比较用：忽略全半角、大小写、空白与标点差异，只看文字本身是否不同"""
+    return re.sub(r"[\s\W_]+", "", unicodedata.normalize("NFKC", text)).casefold()
+
+
 def guess_lang(text: str) -> tuple[str, float]:
     """没有模型判断时按文字猜原文语言。只有汉字时：含简体字判为 zh-Hans，否则多半是日文地名，但把握不大。"""
     lang = script_lang(text)
@@ -168,7 +175,7 @@ class Rows:
     def human_langs(self, entity, eid, field) -> set[str]:
         return {lang for lang, srcs in self.by_entity[(entity, str(eid), field)].items() if srcs & {"anitabi", "bangumi"}}
 
-    def add_llm(self, entity, eid, field, result, pv, skip_lang=None):
+    def add_llm(self, entity, eid, field, result, pv, skip_lang=None, original=None):
         if result is None:
             return
         out, served = result
@@ -177,6 +184,10 @@ class Rows:
         for key, lang in LLM_LANGS.items():
             if lang != skip_lang and lang not in have:
                 self.add(entity, eid, field, lang, out.get(key), "llm", conf, pv, served=served)
+        # 原文所在语言：模型给的版本与原文实质不同，说明原文混了别的语言，另记一行 llm_fix
+        fixed = out.get(LANG_KEY.get(skip_lang, ""))
+        if original and fixed and loose(fixed) != loose(original):
+            self.add(entity, eid, field, skip_lang, fixed, "llm_fix", conf, pv, served=served)
 
     def review_payloads(self, below: float) -> dict[str, list[tuple]]:
         """待复核的条目：作品标题全部复核，其余只复核 llm 置信度低于 below 的。返回 {输入 JSON: [条目, …]}（同内容去重）。"""
@@ -252,21 +263,22 @@ def main():
     points = [(f"{b}:{p}", llm.clean_text(n or ""), cn, llm.clean_text(m or "")) for b, p, n, cn, m in db.execute(
         """SELECT p.bangumi_id, p.id, p.name, p.cn, p.mark FROM src.point p JOIN src.bangumi b ON b.id = p.bangumi_id
            WHERE b.deleted = 0""")]
-    names = run("name", [n for _, n, _, _ in points])
+    names = run("name", [n or cn for _, n, cn, _ in points])
     marks = run("mark", [m for _, _, _, m in points])
 
     R = Rows()
     for eid, name, cn, mark in points:
-        r = names.get(llm.sha(name)) if name else None
-        lang, conf = (r[0]["source_lang"], 1.0) if r and r[0].get("source_lang") else guess_lang(name)
+        src = name or cn  # 只有中文名的地标，用中文名翻译出其他语言
+        r = names.get(llm.sha(src)) if src else None
+        lang, conf = (r[0]["source_lang"], 1.0) if r and r[0].get("source_lang") else guess_lang(src or "")
         R.add("point", eid, "name", "zh-Hans", cn, "anitabi", 1.0)  # 人工中文名优先于按原名判断出的中文
-        R.add("point", eid, "name", lang, name, "anitabi", conf)
-        R.add_llm("point", eid, "name", r, TASKS["name"].prompt_version, skip_lang=lang)
+        R.add("point", eid, "name", lang, src, "anitabi", conf)
+        R.add_llm("point", eid, "name", r, TASKS["name"].prompt_version, skip_lang=lang, original=src)
         if mark:
             r = marks.get(llm.sha(mark))
             lang, conf = (r[0]["source_lang"], 1.0) if r and r[0].get("source_lang") else guess_lang(mark)
             R.add("point", eid, "mark", lang, mark, "anitabi", conf)
-            R.add_llm("point", eid, "mark", r, TASKS["mark"].prompt_version, skip_lang=lang)
+            R.add_llm("point", eid, "mark", r, TASKS["mark"].prompt_version, skip_lang=lang, original=mark)
 
     bgm = {}
     if has(db, "bangumi_meta"):
