@@ -1,5 +1,5 @@
-// junrei 的标志：长着猫耳的定位针，中间是镂空圆环。坐标系 100×100。
-// 页面里的标志（LogoMark.vue）和 PWA 图标、分享图（scripts/gen-icons.ts）都从这里生成。
+// junrei 的标志：长着猫耳的定位针，耳朵里有耳毛，中间是镂空圆环。坐标系 100×100。
+// 页面里的标志（LogoMark.vue）和 PWA 图标、分享图（scripts/gen-icons.mts）都从这里生成。
 
 /** 定位针外形（含两只猫耳），左右对称 */
 const PIN =
@@ -8,12 +8,28 @@ const PIN =
   "C62 70 73.5 57 74.6 44C74.8 42 74.7 40 74.4 38.2C78 31 79.5 22 78.8 13C78.7 11.7 78 10.8 76.5 10.8" +
   "C69 11 62 13.5 56.5 19.75C55.4 19.2 53 18.75 50 18.75Z";
 
-/** 左耳的内耳：顺着耳朵轮廓、从耳尖延伸到耳根的一块圆润形状；右耳用镜像 */
-const INNER_EAR =
-  "M27.2 17.4C30.6 19 33.2 21.1 34.9 23.6C32.6 25 30.6 26.9 29.1 29.2C27.7 25.6 27.1 21.5 27.2 17.4Z";
+/** 左耳内侧的耳毛缺口；右耳用镜像 */
+const EAR_TUFT =
+  "M27.6 20.9C27.6 20.3 28.1 20 28.7 20.1C30.3 20.3 31.8 20.6 33.4 21.3C31.8 23.5 30.4 26.5 29.4 30.2" +
+  "C28.2 29.6 26.9 28.6 27.1 27.6C27.3 26.9 28.3 26.4 28.7 25.8C28.9 25.4 28.8 25 28.6 24.6C28.1 23.4 27.7 22.2 27.6 20.9Z";
+
+/** 左耳内侧的弧线 */
+const EAR_LINE = "M25.4 13.6C30 16.3 33.4 19.7 36.2 23.6";
+
+const MIRROR = "translate(100 0) scale(-1 1)";
+
+/** 镂空部分（耳毛、耳内弧线、圆环）都画成同一个颜色 */
+const cutouts = (color: string) =>
+  [
+    `<path d="${EAR_TUFT}" fill="${color}"/>`,
+    `<path d="${EAR_TUFT}" fill="${color}" transform="${MIRROR}"/>`,
+    `<path d="${EAR_LINE}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round"/>`,
+    `<path d="${EAR_LINE}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round" transform="${MIRROR}"/>`,
+    `<circle cx="50" cy="43.75" r="15.25" fill="${color}"/>`,
+  ].join("");
 
 export interface LogoOptions {
-  /** 底色（也是镂空部分的颜色） */
+  /** 底板颜色（也是镂空部分透出的颜色） */
   tile: string;
   /** 针的颜色 */
   mark: string;
@@ -21,19 +37,23 @@ export interface LogoOptions {
   bleed?: boolean;
 }
 
-/** 标志内部的 SVG 片段（不含外层 <svg>），坐标系 100×100 */
+/** 带底板的标志（应用图标、分享图），坐标系 100×100 */
 export function logoShapes({ tile, mark, bleed = false }: LogoOptions): string {
-  const mirror = "translate(100 0) scale(-1 1)";
-  const art = [
-    `<path d="${PIN}" fill="${mark}"/>`,
-    `<path d="${INNER_EAR}" fill="${tile}"/>`,
-    `<path d="${INNER_EAR}" fill="${tile}" transform="${mirror}"/>`,
-    `<circle cx="50" cy="43.75" r="15.25" fill="${tile}"/>`,
-    `<circle cx="50" cy="43.75" r="8.6" fill="${mark}"/>`,
-  ].join("");
+  const art = `<path d="${PIN}" fill="${mark}"/>${cutouts(tile)}<circle cx="50" cy="43.75" r="8.6" fill="${mark}"/>`;
   return bleed
     ? `<rect width="100" height="100" fill="${tile}"/><g transform="translate(50 50) scale(0.78) translate(-50 -47)">${art}</g>`
     : `<rect width="100" height="100" rx="16" fill="${tile}"/>${art}`;
+}
+
+/**
+ * 只有针的图形、没有底板（界面里与文字并排用）：镂空部分用遮罩做成透明，任何背景上都能透出底色。
+ * id 用于遮罩，同一页面里要唯一。
+ */
+export function markShapes(color: string, id = "junrei-mark"): string {
+  return (
+    `<mask id="${id}"><path d="${PIN}" fill="#fff"/>${cutouts("#000")}<circle cx="50" cy="43.75" r="8.6" fill="#fff"/></mask>` +
+    `<rect width="100" height="100" fill="${color}" mask="url(#${id})"/>`
+  );
 }
 
 export const logoSvg = (o: LogoOptions & { size?: number }) =>

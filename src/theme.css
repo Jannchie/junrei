@@ -10,7 +10,7 @@
   --muted: light-dark(#86868b, #98989d);
   --line: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.1));
   --hover: light-dark(rgb(0 0 0 / 0.045), rgb(255 255 255 / 0.07));
-  --accent: light-dark(#7a5af8, #9b87ff); /* 藤紫：与蓝水、青绿、黄高速都不冲突 */
+  --accent: light-dark(#d2405a, #ee6a80); /* 茜色：和蓝水、青绿地面形成冷暖对比 */
   --scroll-thumb: light-dark(rgb(0 0 0 / 0.16), rgb(255 255 255 / 0.18));
   --scroll-thumb-hover: light-dark(rgb(0 0 0 / 0.32), rgb(255 255 255 / 0.34));
 
@@ -40,9 +40,9 @@
   --map-hillshade-highlight: light-dark(rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.04));
   --map-focus-ring: light-dark(#1d1d1f, #f5f5f7);
   /* 热力图色带：淡紫 → 品红 → 珊瑚橙 → 暖金，越密越亮，像城市夜景的灯光 */
-  --map-heat-1: light-dark(#8f74ff, #7a62ff);
-  --map-heat-2: light-dark(#c45bd8, #c25be0);
-  --map-heat-3: light-dark(#f2668f, #ff6f9a);
+  --map-heat-1: light-dark(#c070a0, #b0609a);
+  --map-heat-2: light-dark(#d2405a, #e0506a);
+  --map-heat-3: light-dark(#ec6a48, #f87650);
   --map-heat-4: light-dark(#ff9a5c, #ffa860);
   --map-heat-5: light-dark(#ffd36b, #ffe08a);
   --map-space: light-dark(#e4e9f0, #07090d);

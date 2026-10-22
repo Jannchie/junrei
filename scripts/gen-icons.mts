@@ -9,8 +9,9 @@ import { logoSvg } from "../src/logo.ts";
 const OUT = fileURLToPath(new URL("../public/icons/", import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
-const TILE = "#7a5af8"; // 与 src/theme.css 的 --accent（亮色）一致
-const MARK = "#ffffff";
+// 白色底板、茜色的针（与 src/theme.css 的 --accent 亮色一致），镂空处透出白色
+const TILE = "#ffffff";
+const MARK = "#d2405a";
 
 async function png(name: string, size: number, bleed = false, flatten = false) {
   let img = sharp(Buffer.from(logoSvg({ tile: TILE, mark: MARK, bleed, size: 512 }))).resize(size, size);
