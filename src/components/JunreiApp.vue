@@ -349,6 +349,30 @@ body {
 a {
   color: inherit;
 }
+
+/* 滚动条：各系统统一成细的半透明样式。标准属性给 Firefox 与新版 Chromium，
+   ::-webkit-scrollbar 给 Safari 与旧版 Chromium（同时设置时 Chromium 以标准属性为准） */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  background-clip: padding-box;
+  border: 3px solid transparent; /* 用透明边框把滑块收窄并留出边距 */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll-thumb-hover);
+}
 </style>
 
 <style scoped>
@@ -470,6 +494,7 @@ a {
 .scroll {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain; /* 滚到头不带着整页回弹 */
   border-top: 1px solid var(--line);
 }
 .empty {
