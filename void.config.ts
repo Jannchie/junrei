@@ -16,6 +16,10 @@ export default defineConfig({
       { "name": "apple-mobile-web-app-status-bar-style", "content": "default" },
       { "name": "apple-mobile-web-app-title", "content": "圣地巡礼" }
     ],
+    // 首次绘制前应用用户保存的外观选择（src/theme.ts），避免刷新时闪一下
+    "script": [
+      { "innerHTML": "try{var t=localStorage.getItem('junrei:theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}" }
+    ],
     "link": [
       { "rel": "manifest", "href": "/manifest.webmanifest" },
       { "rel": "icon", "href": "/icons/favicon-32.png", "type": "image/png" },

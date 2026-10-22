@@ -14,12 +14,21 @@ const PALETTE_KEYS = [
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
 
-/** 配色只在 src/theme.css 里定义一份，这里按当前亮暗模式读出来 */
+/**
+ * 配色只在 src/theme.css 里定义一份，这里按当前亮暗模式读出来。
+ * 变量里是 light-dark(…)，要挂到一个元素的 color 上才会求值成具体的 rgb()。
+ */
 export function readPalette(): Palette {
-  const css = getComputedStyle(document.documentElement);
-  const read = (name: string) => css.getPropertyValue(name).trim();
+  const probe = document.createElement("span");
+  probe.style.display = "none";
+  document.body.appendChild(probe);
+  const read = (name: string) => {
+    probe.style.color = `var(${name})`;
+    return getComputedStyle(probe).color;
+  };
   const palette = { accent: read("--accent") } as Palette;
   for (const key of PALETTE_KEYS) palette[key] = read(`--map-${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`);
+  probe.remove();
   return palette;
 }
 
@@ -35,10 +44,10 @@ const FONT_ITALIC = ["Noto Sans Italic"];
 /** 热力图淡出、单个地标淡入的缩放区间 */
 export const HEAT_FADE: [number, number] = [9, 11];
 
-/** #rrggbb + 透明度 → rgba()，热力图的色带要在同一个颜色上渐变透明度 */
-function alpha(hex: string, a: number) {
-  const n = Number.parseInt(hex.replace("#", ""), 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+/** rgb() 颜色 + 透明度 → rgba()，热力图的色带要在同一个颜色上渐变透明度 */
+function alpha(color: string, a: number) {
+  const [r, g, b] = color.match(/[\d.]+/g)!.map(Number);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 const NAME_FIELDS: Record<Locale, string[]> = {
   "zh-Hans": ["name:zh-Hans", "name:zh"],
@@ -343,10 +352,10 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       filter: unselected,
       paint: {
         "circle-color": c.accent,
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], fadeFrom, 3, 12, 4.5, 16, 6.5],
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], fadeFrom, 3, 12, 5, 16, 8, 18, 10],
         "circle-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
         "circle-stroke-color": "#ffffff",
-        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, 16, 2],
+        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, 16, 2.5],
         "circle-stroke-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
       },
     },
@@ -368,7 +377,7 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       paint: {
         "circle-color": ["global-state", "selectedColor"],
         // zoom 只能出现在最外层的 interpolate 里，焦点与否放进每一档
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, ["case", FOCUS, 8.5, 4], 16, ["case", FOCUS, 9, 7]],
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, ["case", FOCUS, 8.5, 4], 16, ["case", FOCUS, 11, 8.5], 18, ["case", FOCUS, 13, 10]],
         "circle-stroke-color": "#ffffff",
         "circle-stroke-width": ["case", FOCUS, 3, 2],
       },
@@ -381,8 +390,8 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       layout: {
         "text-field": ["get", "name"],
         "text-font": FONT,
-        "text-size": 11,
-        "text-offset": [0, 1.1],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 14, 11, 17, 13],
+        "text-offset": [0, 1.2],
         "text-anchor": "top",
         "text-max-width": 8,
         "text-padding": 4,

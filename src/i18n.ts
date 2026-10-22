@@ -24,6 +24,9 @@ const MESSAGES = {
     language: "语言",
     credits: "数据来源与授权",
     source: "源代码",
+    themeAuto: "外观：跟随系统",
+    themeLight: "外观：浅色",
+    themeDark: "外观：深色",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -36,6 +39,9 @@ const MESSAGES = {
     language: "語言",
     credits: "資料來源與授權",
     source: "原始碼",
+    themeAuto: "外觀：跟隨系統",
+    themeLight: "外觀：淺色",
+    themeDark: "外觀：深色",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -48,6 +54,9 @@ const MESSAGES = {
     language: "言語",
     credits: "データ出典・ライセンス",
     source: "ソースコード",
+    themeAuto: "外観：システムに合わせる",
+    themeLight: "外観：ライト",
+    themeDark: "外観：ダーク",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -60,6 +69,9 @@ const MESSAGES = {
     language: "Language",
     credits: "Sources and licenses",
     source: "Source code",
+    themeAuto: "Appearance: system",
+    themeLight: "Appearance: light",
+    themeDark: "Appearance: dark",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

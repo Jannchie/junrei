@@ -6,8 +6,10 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { locale, t } from "../i18n";
 import { ICONS } from "../icons";
+import { fetchDetail } from "../detail";
 import { imageUrl } from "../format";
 import { CJK_FONT_FAMILY, createStyle, HEAT_FADE, readPalette } from "../map-style";
+import { isDark } from "../theme";
 
 export interface SelectedPoint {
   id: string;
@@ -34,7 +36,6 @@ const el = ref<HTMLDivElement>();
 let map: maplibregl.Map | null = null;
 let geolocate: maplibregl.GeolocateControl | null = null;
 const ready = ref(false);
-const dark = matchMedia("(prefers-color-scheme: dark)");
 
 // 换主题或语言只换颜色和地名字段：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
 // 否则 diff 会把它们当成新源，重新加载、重新聚合 5 万个点）
@@ -111,21 +112,16 @@ function coreBounds(points: SelectedPoint[]) {
 }
 
 // ---- 放大到街区级别时，视野里的地标直接显示截图 ----
-const PHOTO_ZOOM = 15.5;
-const PHOTO_MAX = 40;
-const PHOTO_GAP = 64; // 屏幕上两张截图中心的最小距离（px），太近的跳过
+const PHOTO_ZOOM = 17;
+const PHOTO_MAX = 30;
+const PHOTO_GAP = 120; // 屏幕上两张截图中心的最小距离（px），太近的跳过
 type PointImages = Map<string, string>; // 地标 id → 截图地址
-const imagesByBangumi = new Map<number, Promise<PointImages>>();
-function pointImages(bangumiId: number) {
-  let p = imagesByBangumi.get(bangumiId);
-  if (!p) {
-    p = fetch(`/v1/bangumi/${bangumiId}`)
-      .then((r) => (r.ok ? r.json() : { points: [] }))
-      .then((d: { points: { id: string; image: string | null }[] }) => new Map(d.points.flatMap((x) => (x.image ? [[x.id, x.image]] : []))));
-    imagesByBangumi.set(bangumiId, p);
-  }
-  return p;
-}
+// 与作品面板共用同一份详情请求（src/detail.ts）
+const pointImages = (bangumiId: number): Promise<PointImages> =>
+  fetchDetail(bangumiId).then(
+    (d) => new Map(d.points.flatMap((x) => (x.image ? [[x.id, x.image] as [string, string]] : []))),
+    () => new Map(),
+  );
 
 const photoMarkers = new Map<string, maplibregl.Marker>();
 let photoSeq = 0;
@@ -187,12 +183,14 @@ onMounted(() => {
     padding: props.padding,
     localIdeographFontFamily: CJK_FONT_FAMILY,
     attributionControl: false, // 署名放在面板底部
+    // 默认只在内存里留 5 个缩放级别的瓦片，来回缩放会重新加载；淡入时间也缩短，加载完更快显现
+    maxTileCacheZoomLevels: 10,
+    fadeDuration: 150,
   }));
   if (import.meta.env.DEV) {
     Object.assign(window, { __map: m }); // 调试用
     m.on("error", (e) => console.error("[map]", e.error));
   }
-  dark.addEventListener("change", restyle);
 
   // 定位用 maplibre 自带的控件画位置点，按钮换成自己的（见模板），原按钮用 CSS 隐藏
   geolocate = new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true });
@@ -237,11 +235,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   for (const marker of photoMarkers.values()) marker.remove();
-  dark.removeEventListener("change", restyle);
   map?.remove();
 });
 
-watch(locale, restyle);
+watch([locale, isDark], restyle);
 watch(() => props.padding, () => {
   if (!map) return;
   if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));
@@ -282,13 +279,13 @@ watch(() => props.focusPointId, (next, prev) => {
 .map :deep(.photo-pin) {
   /* 不要设 position：maplibre 靠 .maplibregl-marker 的 absolute 与 transform 定位标记 */
   display: block;
-  width: 72px;
-  height: 44px;
-  padding: 2px;
+  width: 128px;
+  height: 76px;
+  padding: 3px;
   background: #ffffff;
   border: 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.28);
   cursor: pointer;
 }
 .map :deep(.photo-pin)::after {
@@ -296,9 +293,9 @@ watch(() => props.focusPointId, (next, prev) => {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -5px;
-  width: 10px;
-  height: 10px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
   background: #ffffff;
   transform: translateX(-50%) rotate(45deg);
   border-radius: 0 0 2px 0;
@@ -310,7 +307,7 @@ watch(() => props.focusPointId, (next, prev) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 7px;
   background: #e5e7eb;
 }
 .controls {

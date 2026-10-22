@@ -12,6 +12,9 @@ import {
   IconLanguages,
   IconLocate,
   IconMapPin,
+  IconMoon,
+  IconContrast,
+  IconSun,
   IconMinus,
   IconPlus,
   IconSearch,
@@ -40,4 +43,7 @@ export const ICONS = {
   language: IconLanguages,
   info: IconInfo,
   github: IconGithub,
+  themeAuto: IconContrast,
+  themeLight: IconSun,
+  themeDark: IconMoon,
 } satisfies Record<string, Icon>;

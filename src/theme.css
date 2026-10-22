@@ -1,93 +1,56 @@
 /* junrei 的全部配色，参照 Apple 地图：冷调素净的底、明亮的水与草绿、白色道路、暖黄高速、毛玻璃面板。
-   面板用 --*，地图皮肤用 --map-*（src/map-style.ts 读取）。亮暗切换只靠这里的媒体查询。 */
+   面板用 --*，地图皮肤用 --map-*（src/map-style.ts 读取）。
+   每个颜色用 light-dark(亮色, 暗色) 只写一处；用哪一套由 color-scheme 决定：
+   默认跟随系统，用户手动选择后 <html data-theme="light|dark"> 固定（见 src/theme.ts）。 */
 :root {
-  --bg: rgb(255 255 255 / 0.78);
-  --bg-solid: #ffffff;
-  --fg: #1d1d1f;
-  --muted: #86868b;
-  --line: rgb(0 0 0 / 0.08);
-  --hover: rgb(0 0 0 / 0.045);
-  --accent: #7a5af8; /* 藤紫：与蓝水、青绿、黄高速都不冲突 */
-  --shadow: 0 10px 40px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
-  --scroll-thumb: rgb(0 0 0 / 0.16);
-  --scroll-thumb-hover: rgb(0 0 0 / 0.32);
+  color-scheme: light dark;
+  --bg: light-dark(rgb(255 255 255 / 0.78), rgb(30 30 32 / 0.76));
+  --bg-solid: light-dark(#ffffff, #1e1e20);
+  --fg: light-dark(#1d1d1f, #f5f5f7);
+  --muted: light-dark(#86868b, #98989d);
+  --line: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.1));
+  --hover: light-dark(rgb(0 0 0 / 0.045), rgb(255 255 255 / 0.07));
+  --accent: light-dark(#7a5af8, #9b87ff); /* 藤紫：与蓝水、青绿、黄高速都不冲突 */
+  --scroll-thumb: light-dark(rgb(0 0 0 / 0.16), rgb(255 255 255 / 0.18));
+  --scroll-thumb-hover: light-dark(rgb(0 0 0 / 0.32), rgb(255 255 255 / 0.34));
 
-  --map-land: #f2f4f6;
-  --map-urban: #eaedf0;
-  --map-wood: #c3e6cf;
-  --map-grass: #d3ecda;
-  --map-park: #bde3c9;
-  --map-sand: #f2e7ca;
-  --map-water: #a7d3f2;
-  --map-building: #e1e4e8;
-  --map-building-line: #d6dadf;
-  --map-road: #ffffff;
-  --map-road-casing: #dde1e6;
-  --map-major: #ffffff;
-  --map-major-casing: #d0d5dc;
-  --map-motorway: #fcd26a;
-  --map-motorway-casing: #e8b44a;
-  --map-rail: #b0b5bc;
-  --map-label: #3a3a3c;
-  --map-label-muted: #8e8e93;
-  --map-water-label: #3f86bf;
-  --map-depth-shelf: #93c6ec;
-  --map-depth-mid: #69a2d8;
-  --map-depth-deep: #346cb0;
-  --map-hillshade-shadow: rgb(40 55 80 / 0.15);
-  --map-hillshade-highlight: rgb(255 255 255 / 0.25);
-  --map-focus-ring: #1d1d1f;
-  --map-heat-low: #b9a6ff;
-  --map-heat-high: #4b2fc9;
-  --map-space: #e4e9f0;
-  --map-horizon: #cfe3f5;
+  --map-land: light-dark(#f2f4f6, #212327);
+  --map-urban: light-dark(#eaedf0, #26292d);
+  --map-wood: light-dark(#c3e6cf, #1b332a);
+  --map-grass: light-dark(#d3ecda, #1e342c);
+  --map-park: light-dark(#bde3c9, #1c3a2e);
+  --map-sand: light-dark(#f2e7ca, #3a3529);
+  --map-water: light-dark(#a7d3f2, #1b3a55);
+  --map-building: light-dark(#e1e4e8, #2f3237);
+  --map-building-line: light-dark(#d6dadf, #383c42);
+  --map-road: light-dark(#ffffff, #3b3b3e);
+  --map-road-casing: light-dark(#dde1e6, #212327);
+  --map-major: light-dark(#ffffff, #4a4a4e);
+  --map-major-casing: light-dark(#d0d5dc, #212327);
+  --map-motorway: light-dark(#fcd26a, #8a7140);
+  --map-motorway-casing: light-dark(#e8b44a, #212327);
+  --map-rail: light-dark(#b0b5bc, #5a5a5e);
+  --map-label: light-dark(#3a3a3c, #ebebf0);
+  --map-label-muted: light-dark(#8e8e93, #98989d);
+  --map-water-label: light-dark(#3f86bf, #6aa6d6);
+  --map-depth-shelf: light-dark(#93c6ec, #173450);
+  --map-depth-mid: light-dark(#69a2d8, #10273f);
+  --map-depth-deep: light-dark(#346cb0, #07172b);
+  --map-hillshade-shadow: light-dark(rgb(40 55 80 / 0.15), rgb(0 0 0 / 0.35));
+  --map-hillshade-highlight: light-dark(rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.04));
+  --map-focus-ring: light-dark(#1d1d1f, #f5f5f7);
+  --map-heat-low: light-dark(#b9a6ff, #7d6bd6);
+  --map-heat-high: light-dark(#4b2fc9, #c9bcff);
+  --map-space: light-dark(#e4e9f0, #07090d);
+  --map-horizon: light-dark(#cfe3f5, #1d3c5c);
 
+  --shadow-color: light-dark(rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.45));
+  --shadow-color-near: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.3));
+  --shadow: 0 10px 40px var(--shadow-color), 0 1px 3px var(--shadow-color-near);
+}
+:root[data-theme="light"] {
   color-scheme: light;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: rgb(30 30 32 / 0.76);
-    --bg-solid: #1e1e20;
-    --fg: #f5f5f7;
-    --muted: #98989d;
-    --line: rgb(255 255 255 / 0.1);
-    --hover: rgb(255 255 255 / 0.07);
-    --accent: #9b87ff;
-    --shadow: 0 10px 40px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
-    --scroll-thumb: rgb(255 255 255 / 0.18);
-    --scroll-thumb-hover: rgb(255 255 255 / 0.34);
-
-    --map-land: #212327;
-    --map-urban: #26292d;
-    --map-wood: #1b332a;
-    --map-grass: #1e342c;
-    --map-park: #1c3a2e;
-    --map-sand: #3a3529;
-    --map-water: #1b3a55;
-    --map-building: #2f3237;
-    --map-building-line: #383c42;
-    --map-road: #3b3b3e;
-    --map-road-casing: #212327;
-    --map-major: #4a4a4e;
-    --map-major-casing: #212327;
-    --map-motorway: #8a7140;
-    --map-motorway-casing: #212327;
-    --map-rail: #5a5a5e;
-    --map-label: #ebebf0;
-    --map-label-muted: #98989d;
-    --map-water-label: #6aa6d6;
-    --map-depth-shelf: #173450;
-    --map-depth-mid: #10273f;
-    --map-depth-deep: #07172b;
-    --map-hillshade-shadow: rgb(0 0 0 / 0.35);
-    --map-hillshade-highlight: rgb(255 255 255 / 0.04);
-    --map-focus-ring: #f5f5f7;
-    --map-heat-low: #7d6bd6;
-    --map-heat-high: #c9bcff;
-    --map-space: #07090d;
-    --map-horizon: #1d3c5c;
-
-    color-scheme: dark;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }

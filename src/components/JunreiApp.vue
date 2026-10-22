@@ -5,7 +5,9 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { formatEpisode, formatTime, imageUrl } from "../format";
 import { initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
 import { ICONS } from "../icons";
+import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
+import { fetchDetail } from "../detail";
 import type { BangumiDetail } from "../server/bangumi";
 import "../theme.css";
 
@@ -22,6 +24,8 @@ provideIconDefaults({ size: 16 });
 const KANA = /[぀-ヿ]/;
 const setLang = (el: HTMLElement) => (KANA.test(el.textContent ?? "") ? (el.lang = "ja") : el.removeAttribute("lang"));
 const vAutoLang = { mounted: setLang, updated: setLang };
+
+const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" } as const;
 
 // 图片偶尔会因为图床限流或网络抖动加载失败：隔一会儿重试两次，仍失败就显示占位底色，不出现破图图标
 function retryImage(e: Event) {
@@ -45,7 +49,6 @@ interface SearchResult {
   bangumis: Awaited<ReturnType<typeof searchBangumi>>;
   points: Awaited<ReturnType<typeof fetchSearch>>["points"];
 }
-const fetchDetail = (id: number): Promise<BangumiDetail> => fetch("/v1/bangumi/:id", { params: { id: String(id) } });
 const fetchSearch = (q: string) => fetch("/v1/search", { query: { q } });
 
 const detail = shallowRef<BangumiDetail | null>(props.initialDetail ?? null);
@@ -199,6 +202,7 @@ let panelObserver: ResizeObserver | undefined;
 onMounted(() => {
   mounted.value = true;
   initLocale();
+  initTheme();
   panelObserver = new ResizeObserver(() => {
     const a = app.value!.getBoundingClientRect();
     const r = panel.value!.getBoundingClientRect();
@@ -398,6 +402,15 @@ onBeforeUnmount(() => {
         >
           <JIcon :icon="ICONS.github" :size="14" />
         </a>
+        <button
+          type="button"
+          class="icon-link"
+          :title="t(THEME_LABEL[themePref])"
+          :aria-label="t(THEME_LABEL[themePref])"
+          @click="cycleTheme"
+        >
+          <JIcon :icon="ICONS[THEME_LABEL[themePref]]" :size="14" />
+        </button>
         <label class="lang" :title="t('language')">
           <JIcon :icon="ICONS.language" :size="14" />
           <select v-model="locale" :aria-label="t('language')">
@@ -851,7 +864,12 @@ figcaption a {
   place-items: center;
   width: 22px;
   height: 22px;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
   border-radius: 6px;
+  cursor: pointer;
 }
 .icon-link:hover {
   background: var(--hover);
@@ -906,7 +924,11 @@ figcaption a {
   background: var(--hover);
 }
 .lang select {
+  /* 可定制 select 的内容默认贴着顶部排，用 flex 居中，才能和图标对齐 */
+  display: inline-flex;
+  align-items: center;
   font: inherit;
+  line-height: 1; /* 要写在 font 简写之后，否则会被它重置 */
   color: inherit;
   background: none;
   border: 0;
