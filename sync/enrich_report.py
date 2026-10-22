@@ -67,14 +67,28 @@ def section_notes(db, L, out):
 
 
 def section_names(db, L, out):
-    if not has(db, "point_cn_mt"):
+    if not has(db, "translation"):
         return
-    need = one(db, "SELECT count(*) FROM src.point WHERE cn IS NULL AND name IS NOT NULL")
-    done = one(db, "SELECT count(*) FROM point_cn_mt")
-    low = one(db, "SELECT count(*) FROM point_cn_mt WHERE confidence < 0.6")
-    out["names"] = {"need": need, "translated": done, "low_confidence": low}
-    L += ["", "### 中文名机翻（point_cn_mt，machine_translated = 1）", "",
-          f"只有日文/外文名的地标 {need} 个，已机翻 {pct(done, need)}，其中置信度 <0.6 的 {low} 个。"]
+    totals = {
+        ("bangumi", "title"): one(db, "SELECT count(*) FROM src.bangumi WHERE deleted=0"),
+        ("point", "name"): one(db, "SELECT count(*) FROM src.point p JOIN src.bangumi b ON b.id=p.bangumi_id "
+                                   "WHERE b.deleted=0 AND p.name IS NOT NULL"),
+        ("point", "mark"): one(db, "SELECT count(*) FROM src.point p JOIN src.bangumi b ON b.id=p.bangumi_id "
+                                   "WHERE b.deleted=0 AND p.mark IS NOT NULL"),
+    }
+    cov = {(e, f, lang): (n, mt) for e, f, lang, n, mt in db.execute(
+        """SELECT entity, field, lang, count(DISTINCT entity_id),
+                  count(DISTINCT entity_id) - count(DISTINCT CASE WHEN machine_translated = 0 THEN entity_id END)
+           FROM translation GROUP BY 1, 2, 3""")}
+    src = db.execute("SELECT source, count(*) FROM translation GROUP BY 1 ORDER BY 2 DESC").fetchall()
+    langs = ["zh-Hans", "zh-Hant", "ja", "en"]
+    out["translation"] = {f"{e}.{f}": {lang: cov.get((e, f, lang), (0, 0))[0] for lang in langs} for e, f in totals}
+    L += ["", "### 多语言翻译（translation）", "",
+          "每格为「有该语言文本的条目数（其中仅有机器翻译 / 转换的条目数）」。来源：" + "、".join(f"{k} {v} 行" for k, v in src), "",
+          "| 字段 | 条目数 | " + " | ".join(langs) + " |", "|---|---|" + "---|" * len(langs)]
+    for (e, f), total in totals.items():
+        cells = [f"{pct(cov.get((e, f, lang), (0, 0))[0], total)}（{cov.get((e, f, lang), (0, 0))[1]}）" for lang in langs]
+        L.append(f"| {e}.{f} | {total} | " + " | ".join(cells) + " |")
 
 
 def section_bgm(db, L, out):

@@ -42,7 +42,7 @@ pnpm dev               # http://localhost:5173
 | `pnpm enrich:bgm` | 从 [Bangumi API](https://bangumi.github.io/api/) 补别名、原名、英文 / 罗马音标题、放送日期，生成 `bangumi_meta` / `bangumi_alias` | api.bgm.tv，1 次/秒，全量约 26 分钟 |
 | `pnpm enrich:geocheck` | 用国土地理院反向地理编码查地标所属市町村，与作品 `city` 比对，生成 `point_geo` / `review_city` 和复核清单 | GSI，1 次/秒，全量约 1.2 万次请求（可 `--max-requests N` 分批） |
 | `pnpm enrich:notes` | 用 Claude 把备注分类成标签（禁止进入、已消失、需购票/预约、季节限定、拍摄礼仪等），顺带识别集数，生成 `note_class` / `note_tag` | Claude API |
-| `pnpm enrich:translate` | 用 Claude 给只有日文 / 外文名的地标机翻中文名，生成 `point_cn_mt`（`machine_translated = 1`） | Claude API |
+| `pnpm enrich:translate` | 给作品标题、地标名、备注补齐 zh-Hans / zh-Hant / ja / en，生成 `translation` 表（见下文） | Claude API、OpenCC |
 | `pnpm enrich:report` | 只根据现有结果重新生成报告 | 无 |
 | `pnpm enrich` | 依次跑不花钱的三步：places → bgm → geocheck | |
 
@@ -60,6 +60,16 @@ pnpm enrich:notes --wait             # 全量走 Message Batches（半价、异�
 - 不加 `--wait` 时提交完批次就退出，批次 id 记在缓存库里，下次运行会先收取结果。
 - 同步模式开启了服务端 refusal fallback；Batches 不支持该参数。
 - 标签和置信度是模型给的，机翻名称前端展示时应标明「机翻」，人工录入的中文名永远优先。
+
+多语言翻译表 `translation(entity, entity_id, field, lang, text, source, machine_translated, confidence, …)`：
+
+- `entity` / `field`：`bangumi.title`、`point.name`、`point.mark`；`entity_id` 是作品 id 或 `作品id:地标id`。
+- `source` 区分来源，同一语言可以有多行，前端按 `anitabi > bangumi > llm > opencc` 取：
+  `anitabi`（原文；`point.name` 的语言由模型判断，没有模型结果时按文字猜，`confidence` 是语言判断的把握）、
+  `bangumi`（Bangumi API 的原名 / 中文名 / 英文名，罗马音记为 `ja-Latn`，需先跑 `enrich:bgm`）、
+  `llm`（只补没有人工数据的语言）、`opencc`（繁体由最优先的简体按 OpenCC `s2t` 规则转换，`derived_from` 记录转换自哪行）。
+- 作品标题只对 Anitabi + Bangumi 仍缺语言的作品调用 LLM；地标名和备注全部过 LLM。`--fields name,mark,title` 选择要跑的部分，`--fields ""` 只整理已有数据和繁体转换。
+- 繁体转换需要 `pip install opencc-python-reimplemented`（或 `opencc`），没装会跳过。
 
 如果 Python 访问 `api.bgm.tv` 报 `certificate has expired`（部分 Windows 的系统证书库问题），`pip install certifi` 后脚本会自动改用它的根证书，或用环境变量 `SSL_CERT_FILE` 指定证书文件。
 

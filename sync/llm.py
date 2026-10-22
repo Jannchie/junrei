@@ -42,6 +42,7 @@ class Task:
     system: str
     item_properties: dict  # 每条结果除 i 以外的字段（JSON schema properties）
     chunk_size: int = 40
+    chunk_chars: int | None = None  # 再按总字数切块（长文本任务，避免输出超过 max_tokens）
     max_tokens: int = 16000
     effort: str = "low"
     prompt_version: str = field(init=False)
@@ -144,6 +145,18 @@ def collect_batches(db, task: Task, model: str, texts: dict[str, str], wait: boo
     return in_flight
 
 
+def make_chunks(task: Task, shas: list[str], texts: dict[str, str]) -> list[list[str]]:
+    chunks, cur, chars = [], [], 0
+    for s in shas:
+        n = len(texts[s])
+        if cur and (len(cur) >= task.chunk_size or (task.chunk_chars and chars + n > task.chunk_chars)):
+            chunks.append(cur)
+            cur, chars = [], 0
+        cur.append(s)
+        chars += n
+    return chunks + [cur] if cur else chunks
+
+
 def run(db, task: Task, inputs: list[str], *, model: str = DEFAULT_MODEL, mode: str = "batch",
         dry_run: bool = False, limit: int | None = None, wait: bool = False, poll: float = 60) -> dict[str, tuple[dict, str]]:
     """对 inputs（已 clean_text）求结果，返回 {sha: (结果, 实际模型)}，只含已完成的条目。"""
@@ -153,7 +166,7 @@ def run(db, task: Task, inputs: list[str], *, model: str = DEFAULT_MODEL, mode: 
     pending = [s for s in texts if s not in done and s not in in_flight]
     if limit is not None:
         pending = pending[:limit]
-    chunks = [pending[i : i + task.chunk_size] for i in range(0, len(pending), task.chunk_size)]
+    chunks = make_chunks(task, pending, texts)
     print(f"{task.name}（{task.prompt_version}，{model}）：共 {len(texts)} 条不同文本，已缓存 {len(done)}，"
           f"处理中 {len(in_flight)}，待请求 {len(pending)} 条 / {len(chunks)} 个请求")
     if not chunks:
