@@ -759,7 +759,7 @@ img.img-failed {
   min-width: 0;
   padding: 10px 0;
   font: inherit;
-  font-size: 15px;
+  font-size: 16px; /* iOS 会在聚焦小于 16px 的输入框时自动放大页面 */
   color: inherit;
   background: none;
   border: 0;
@@ -1292,6 +1292,12 @@ kbd {
   outline: none;
   cursor: pointer;
   appearance: none;
+}
+/* 触屏设备：下拉框同样会触发 iOS 的自动放大，字号提到 16px */
+@media (hover: none) {
+  .lang select {
+    font-size: 16px;
+  }
 }
 /* 渐进增强：可定制 select（appearance: base-select）。不支持的浏览器用系统下拉，手机上即系统选择器 */
 @supports (appearance: base-select) {

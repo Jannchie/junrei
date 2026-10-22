@@ -20,7 +20,7 @@ def build_char_map(texts) -> dict[str, str]:
     chars = {c for t in texts if t for c in unicodedata.normalize("NFKC", t)}
     variants = chars | {v for c in chars for v in _s2t.convert(c)}
     out = {}
-    for c in variants:
+    for c in sorted(variants):  # 排序：集合遍历顺序每次运行都不同，输出要稳定，避免无意义的提交
         s = _t2s.convert(c)
         if len(s) == 1 and s != c:
             out[c] = s
