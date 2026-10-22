@@ -15,7 +15,7 @@ export const LOCALE_NAMES: Record<Locale, string> = {
 const MESSAGES = {
   "zh-Hans": {
     brand: "圣地巡礼地图",
-    search: "搜索",
+    search: "搜索作品或地标",
     clear: "清除",
     back: "返回",
     locate: "定位",
@@ -36,7 +36,7 @@ const MESSAGES = {
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
-    search: "搜尋",
+    search: "搜尋作品或地標",
     clear: "清除",
     back: "返回",
     locate: "定位",
@@ -57,7 +57,7 @@ const MESSAGES = {
   },
   ja: {
     brand: "聖地巡礼マップ",
-    search: "検索",
+    search: "作品やスポットを検索",
     clear: "クリア",
     back: "戻る",
     locate: "現在地",
@@ -78,7 +78,7 @@ const MESSAGES = {
   },
   en: {
     brand: "Anime Pilgrimage Map",
-    search: "Search",
+    search: "Search titles or spots",
     clear: "Clear",
     back: "Back",
     locate: "My location",

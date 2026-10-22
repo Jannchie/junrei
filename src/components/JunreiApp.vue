@@ -99,22 +99,19 @@ watch(moreSentinel, (el) => {
   moreObserver.observe(el);
 });
 
-// 作品标题区滚出可视范围时，顶栏显示作品名
+// 作品标题区滚出可视范围时，列表顶部浮出作品名
 const titleRow = ref<HTMLElement>();
 const headHidden = ref(false);
-let headObserver: IntersectionObserver | undefined;
-watch(titleRow, (el) => {
-  headObserver?.disconnect();
-  headHidden.value = false;
-  if (!el) return;
-  headObserver = new IntersectionObserver(([e]) => (headHidden.value = !e.isIntersecting), { rootMargin: "-44px 0px 0px 0px" });
-  headObserver.observe(el);
-});
+function onDetailScroll(e: Event) {
+  const row = titleRow.value;
+  headHidden.value = !!row && row.getBoundingClientRect().bottom < (e.target as HTMLElement).getBoundingClientRect().top;
+}
 
 async function select(bangumiId: number, pointId: string | null = null) {
   if (detail.value?.id !== bangumiId) {
     detail.value = await fetchDetail(bangumiId);
     visibleCount.value = PAGE;
+    headHidden.value = false;
   }
   const index = pointId ? detail.value.points.findIndex((p) => p.id === pointId) : -1;
   if (index >= visibleCount.value) visibleCount.value = index + PAGE;
@@ -127,6 +124,7 @@ async function select(bangumiId: number, pointId: string | null = null) {
 function clearSelection() {
   detail.value = null;
   focusPointId.value = null;
+  headHidden.value = false;
 }
 
 // ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏；拖动把手切换 ----
@@ -331,7 +329,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   panelObserver?.disconnect();
   moreObserver?.disconnect();
-  headObserver?.disconnect();
   offShortcuts?.();
 });
 </script>
@@ -362,8 +359,18 @@ onBeforeUnmount(() => {
         @pointercancel="onHandleUp"
       />
       <label class="search">
-        <JIcon :icon="ICONS.search" class="muted" />
-        <input ref="searchInput" v-model="query" type="search" :aria-label="t('search')" autocomplete="off" @focus="sheet = 'full'" />
+        <button
+          v-if="detail && !query.trim()"
+          type="button"
+          class="icon-btn lead"
+          :title="`${t('back')} (Esc)`"
+          :aria-label="t('back')"
+          @click.prevent="clearSelection"
+        >
+          <JIcon :icon="ICONS.back" :size="18" />
+        </button>
+        <JIcon v-else :icon="ICONS.search" class="muted" />
+        <input ref="searchInput" v-model="query" type="search" :placeholder="t('search')" :aria-label="t('search')" autocomplete="off" @focus="sheet = 'full'" />
         <button v-if="query" class="icon-btn" :title="t('clear')" :aria-label="t('clear')" @click="query = ''">
           <JIcon :icon="ICONS.clear" />
         </button>
@@ -403,15 +410,12 @@ onBeforeUnmount(() => {
       </section>
 
       <!-- 作品详情 -->
-      <section v-else-if="detail" class="scroll">
-        <!-- 顶栏常驻：返回按钮始终可点；标题区滚出去后，作品名在这里出现 -->
-        <div class="detail-bar">
-          <button class="icon-btn" :title="`${t('back')} (Esc)`" :aria-label="t('back')" @click="clearSelection">
-            <JIcon :icon="ICONS.back" :size="18" />
-          </button>
-          <span v-auto-lang class="bar-title" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
+      <section v-else-if="detail" :key="detail.id" class="scroll" @scroll.passive="onDetailScroll">
+        <!-- 标题区滚出去后，作品名浮在列表顶部；点一下回到顶部 -->
+        <div class="detail-bar" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
+          <button v-auto-lang type="button" class="bar-title" tabindex="-1" @click="($event.currentTarget as HTMLElement).closest('.scroll')!.scrollTo({ top: 0, behavior: 'smooth' })">
             {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
-          </span>
+          </button>
         </div>
         <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
           <div ref="titleRow" class="title-row">
@@ -726,6 +730,9 @@ img.img-failed {
   border: 1px solid transparent;
   border-radius: 10px;
 }
+.search:has(.lead) {
+  padding-left: 4px;
+}
 .search:focus-within {
   border-color: var(--accent);
 }
@@ -742,6 +749,9 @@ img.img-failed {
 }
 .search input::-webkit-search-cancel-button {
   display: none;
+}
+.search input::placeholder {
+  color: var(--muted);
 }
 .scroll {
   flex: 1;
@@ -813,33 +823,42 @@ hr {
   color: var(--muted);
   background: var(--hover);
 }
+/* 高度为 0 的吸顶容器，不占位置；作品名条叠在列表上方 */
 .detail-bar {
   position: sticky;
   top: 0;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px 6px 10px;
-  /* 面板本身半透明；顶栏叠一层同色并模糊下方滚过的内容 */
-  background: var(--bg);
-  backdrop-filter: blur(16px);
-}
-.bar-title {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  height: 0;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.15s;
 }
-.bar-title.shown {
+.detail-bar.shown {
   opacity: 1;
+  pointer-events: auto;
+}
+.bar-title {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  overflow: hidden;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: inherit;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  /* 面板本身半透明；这条叠一层同色并模糊下方滚过的内容 */
+  background: var(--bg);
+  backdrop-filter: blur(16px);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
 }
 .detail-head {
-  padding: 2px 16px 14px;
+  padding: 14px 16px;
   border-bottom: 3px solid var(--bangumi-color);
 }
 .title-row {
@@ -886,15 +905,23 @@ h2 {
   list-style: none;
 }
 .points li {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 6px 12px;
+  align-items: start;
   padding: 10px 16px;
   border-bottom: 1px solid var(--line);
   cursor: pointer;
 }
 .points li:hover {
   background: var(--hover);
+}
+.points li:not(:has(figure)),
+.points li.active {
+  grid-template-columns: minmax(0, 1fr);
+}
+.points li:not(.active) figcaption {
+  display: none;
 }
 .points li.active {
   background: var(--hover);
