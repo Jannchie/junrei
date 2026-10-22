@@ -396,6 +396,7 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       type: "symbol",
       source: "selected",
       minzoom: 14,
+      filter: ["!", IS_FOCUS], // 选中的地标由 focus-label 单独画，这里不再重复
       layout: {
         "text-field": ["get", "name"],
         "text-font": FONT,
@@ -414,19 +415,7 @@ function overlayLayers(c: Palette): LayerSpecification[] {
         "text-opacity": ["case", ["==", ["global-state", "focus"], ""], 1, 0.55],
       },
     },
-    // ---- 当前选中的地标：单独画在最上层，大一圈、带光晕，名字加粗且不会被避让掉 ----
-    {
-      id: "focus-halo",
-      type: "circle",
-      source: "selected",
-      filter: IS_FOCUS,
-      paint: {
-        "circle-color": ["global-state", "selectedColor"],
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 18, 16, 26],
-        "circle-opacity": 0.32,
-        "circle-blur": 0.25,
-      },
-    },
+    // ---- 当前选中的地标：单独画在最上层，稍大一圈，名字加粗且不会被避让掉 ----
     {
       id: "focus-point",
       type: "circle",
@@ -434,9 +423,9 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       filter: IS_FOCUS,
       paint: {
         "circle-color": ["global-state", "selectedColor"],
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 9, 16, 13, 18, 15],
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 7, 16, 10, 18, 12],
         "circle-stroke-color": "#ffffff",
-        "circle-stroke-width": 4,
+        "circle-stroke-width": 3,
       },
     },
     {
