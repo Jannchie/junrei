@@ -6,7 +6,7 @@
   public/data/bangumi.json    全部作品的轻量索引（名称、封面、地标数、搜索键），前端本地模糊搜索用
 
 多语言：data/enrich.sqlite 的 translation 表（sync.translate 生成）存在时，每个作品标题、地标名、备注
-按语言挑最可信的一条写进 i18n 列，并把各语言名称都加进搜索键。
+按语言挑最可信的一条写进 i18n 列，并把各语言名称都加进搜索键；city_label 表（sync.cities）给出城市的各语言名称。
 
   python -m sync.export
 """
@@ -48,6 +48,10 @@ def load_i18n() -> dict[tuple[str, str], dict]:
             if key not in best or rank < best[key][0]:
                 best[key] = (rank, text.strip(), bool(mt))
     out: dict[tuple[str, str], dict] = {}
+    with sqlite3.connect(path) as db:
+        has_cities = db.execute("SELECT 1 FROM sqlite_master WHERE name = 'city_label'").fetchone()
+        for city, labels in db.execute("SELECT city, labels FROM city_label WHERE labels IS NOT NULL") if has_cities else []:
+            out[("city", city)] = json.loads(labels)
     for (entity, eid, field, lang), (_, text, mt) in best.items():
         item = out.setdefault((entity, eid), {})
         item.setdefault(field, {})[lang] = text
@@ -104,6 +108,9 @@ def main():
 
     # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
     titles = {r[0]: i18n.get(("bangumi", str(r[0]))) for r in rows}
+    for r in rows:  # 城市名按作品写进同一个 i18n
+        if r[4] and ("city", r[4]) in i18n:
+            titles[r[0]] = {**(titles[r[0]] or {}), "city": i18n[("city", r[4])]}
     spots = {(p[0], p[1]): i18n.get(("point", f"{p[0]}:{p[1]}")) for p in points}
     names = lambda item: list((item or {}).get("name", {}).values())  # noqa: E731
     char_map = build_char_map(

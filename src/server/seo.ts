@@ -1,5 +1,5 @@
 import type { HeadDescriptor } from "void";
-import { type Locale, LOCALES, localePath, pickNameFor, subNameFor, translate } from "../i18n";
+import { cityFor, type Locale, LOCALES, localePath, pickNameFor, subNameFor, translate } from "../i18n";
 import { type BangumiDetail, SITE } from "./bangumi";
 
 /** 各语言的 Open Graph locale 与分享图 */
@@ -25,8 +25,9 @@ const HOME: Record<Locale, { title: string; description: string }> = {
   },
 };
 
-function bangumiDescription(locale: Locale, d: BangumiDetail, name: string, original: string | null, spots: string) {
-  const n = d.pointCount;
+function bangumiDescription(locale: Locale, b: BangumiDetail, name: string, original: string | null, spots: string) {
+  const n = b.pointCount;
+  const d = { city: cityFor(locale, b) };
   switch (locale) {
     case "zh-Hans":
       return `${name}${original ? `（${original}）` : ""}的圣地巡礼地图${d.city ? `，主要位于${d.city}` : ""}，共 ${n} 个取景地${spots ? `，包括${spots}等` : ""}。`;

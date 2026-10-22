@@ -138,6 +138,7 @@ export const localePath = (locale: Locale, path: string) => `${LOCALE_PREFIX[loc
 export interface I18n {
   name?: Partial<Record<Locale, string>>;
   mark?: Partial<Record<Locale, string>>;
+  city?: Partial<Record<Locale, string>>;
   mt?: string[];
 }
 
@@ -162,6 +163,36 @@ export function subNameFor(locale: Locale, n: Names): string | null {
 }
 
 export const translate = (locale: Locale, key: MessageKey) => MESSAGES[locale][key];
+
+/** 作品所在城市：该语言的名称，没有就用原文 */
+export const cityFor = (locale: Locale, b: { city: string | null; i18n?: I18n | null }) => b.i18n?.city?.[locale] ?? b.city;
+
+// 作品类别（Anitabi 的分类，简体中文）→ 各语言；没列出的原样显示
+const CATEGORIES: Record<string, Record<Exclude<Locale, "zh-Hans">, string>> = {
+  TV: { "zh-Hant": "TV", ja: "TV", en: "TV" },
+  WEB: { "zh-Hant": "WEB", ja: "WEB", en: "Web" },
+  OVA: { "zh-Hant": "OVA", ja: "OVA", en: "OVA" },
+  MV: { "zh-Hant": "MV", ja: "MV", en: "MV" },
+  AVG: { "zh-Hant": "AVG", ja: "ADV", en: "Visual novel" },
+  游戏: { "zh-Hant": "遊戲", ja: "ゲーム", en: "Game" },
+  剧场版: { "zh-Hant": "劇場版", ja: "劇場版", en: "Movie" },
+  电影: { "zh-Hant": "電影", ja: "映画", en: "Film" },
+  漫画: { "zh-Hant": "漫畫", ja: "漫画", en: "Manga" },
+  漫画系列: { "zh-Hant": "漫畫系列", ja: "漫画シリーズ", en: "Manga series" },
+  小说: { "zh-Hant": "小說", ja: "小説", en: "Novel" },
+  小说系列: { "zh-Hant": "小說系列", ja: "小説シリーズ", en: "Novel series" },
+  日剧: { "zh-Hant": "日劇", ja: "日本のドラマ", en: "Japanese drama" },
+  华语剧: { "zh-Hant": "華語劇", ja: "中国語ドラマ", en: "Chinese drama" },
+  欧美剧: { "zh-Hant": "歐美劇", ja: "海外ドラマ", en: "Western drama" },
+  电视剧: { "zh-Hant": "電視劇", ja: "テレビドラマ", en: "TV drama" },
+  音乐: { "zh-Hant": "音樂", ja: "音楽", en: "Music" },
+  演出: { "zh-Hant": "演出", ja: "公演", en: "Live show" },
+  画集: { "zh-Hant": "畫集", ja: "画集", en: "Art book" },
+  扩展包: { "zh-Hant": "擴充包", ja: "拡張パック", en: "Expansion" },
+  其他: { "zh-Hant": "其他", ja: "その他", en: "Other" },
+};
+export const categoryFor = (locale: Locale, cat: string | null) =>
+  cat && locale !== "zh-Hans" ? (CATEGORIES[cat]?.[locale] ?? cat) : cat;
 
 /** 地标备注：该语言的译文（没有就用原文），以及它是不是机器翻译的 */
 export function markFor(locale: Locale, p: { mark: string | null; i18n?: I18n | null }) {
@@ -188,6 +219,8 @@ function i18n(locale: Ref<Locale>) {
     t: (key: MessageKey) => translate(locale.value, key),
     pickName: (n: Names) => pickNameFor(locale.value, n),
     markOf: (p: Parameters<typeof markFor>[1]) => markFor(locale.value, p),
+    cityOf: (b: Parameters<typeof cityFor>[1]) => cityFor(locale.value, b),
+    categoryOf: (cat: string | null) => categoryFor(locale.value, cat),
     subName: (n: Names) => subNameFor(locale.value, n),
   };
 }

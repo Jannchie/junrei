@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 provideIconDefaults({ size: 16 });
-const { locale, t, pickName, subName, markOf } = provideLocale(props.lang);
+const { locale, t, pickName, subName, markOf, cityOf, categoryOf } = provideLocale(props.lang);
 
 /** 换语言就是去另一种语言的同一个页面（服务端按语言渲染），作品、地标、搜索词、视野都保留 */
 function switchLocale(next: Locale) {
@@ -426,8 +426,8 @@ onBeforeUnmount(() => {
                 {{ subName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
               </p>
               <p class="meta">
-                <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" /><span class="tx">{{ detail.cat }}</span></span>
-                <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" /><span class="tx">{{ detail.city }}</span></span>
+                <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" /><span class="tx">{{ categoryOf(detail.cat) }}</span></span>
+                <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" /><span v-auto-lang class="tx">{{ cityOf(detail) }}</span></span>
                 <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ detail.pointCount }}</span></span>
               </p>
               <p class="links">

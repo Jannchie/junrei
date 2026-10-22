@@ -43,6 +43,7 @@ pnpm dev               # http://localhost:5173
 | `pnpm enrich:geocheck` | 用国土地理院反向地理编码查地标所属市町村，与作品 `city` 比对，生成 `point_geo` / `review_city` 和复核清单 | GSI，1 次/秒，全量约 1.2 万次请求（可 `--max-requests N` 分批） |
 | `pnpm enrich:notes` | 用 Claude 把备注分类成标签（禁止进入、已消失、需购票/预约、季节限定、拍摄礼仪等），顺带识别集数，生成 `note_class` / `note_tag` | Claude API |
 | `pnpm enrich:translate` | 给作品标题、地标名、备注补齐 zh-Hans / zh-Hant / ja / en，生成 `translation` 表（见下文） | Claude API、OpenCC |
+| `pnpm enrich:cities` | 到 Wikidata 查作品所在城市的简繁日英名称，生成 `city_label` 表 | Wikidata API |
 | `pnpm enrich:report` | 只根据现有结果重新生成报告 | 无 |
 | `pnpm enrich` | 依次跑不花钱的三步：places → bgm → geocheck | |
 

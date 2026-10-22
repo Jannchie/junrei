@@ -5,11 +5,12 @@ import { integer, primaryKey, real, sqliteTable, text } from "void/schema-d1";
 
 /**
  * 多语言文本（sync/export.py 从 data/enrich.sqlite 的 translation 表挑出每种语言最可信的一条）。
- * name：作品标题或地标名；mark：地标备注；mt：机器翻译的条目，如 "name.en"。
+ * name：作品标题或地标名；mark：地标备注；city：作品所在城市（Wikidata）；mt：机器翻译的条目，如 "name.en"。
  */
 export interface I18n {
   name?: Partial<Record<"zh-Hans" | "zh-Hant" | "ja" | "en", string>>;
   mark?: Partial<Record<"zh-Hans" | "zh-Hant" | "ja" | "en", string>>;
+  city?: Partial<Record<"zh-Hans" | "zh-Hant" | "ja" | "en", string>>;
   mt?: string[];
 }
 

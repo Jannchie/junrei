@@ -239,7 +239,7 @@ def main():
                     help=f"用更强的模型复核机器翻译：作品标题全部、其余置信度低于 --review-below 的（默认 {REVIEW_MODEL}）")
     ap.add_argument("--review-model", default=REVIEW_MODEL)
     ap.add_argument("--review-below", type=float, default=0.7)
-    ap.add_argument("--opencc-config", default="s2t", help="简→繁转换配置：s2t（通用）/ s2tw / s2twp / s2hk")
+    ap.add_argument("--opencc-config", default="s2twp", help="简→繁转换配置：s2twp（台湾用字与用词，默认）/ s2t / s2tw / s2hk")
     args = ap.parse_args()
     fields = [f for f in args.fields.split(",") if f]
     data = Path(args.data)
