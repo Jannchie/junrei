@@ -32,7 +32,8 @@ const DEM = "terrain";
 const FONT = ["Noto Sans Regular"];
 const FONT_BOLD = ["Noto Sans Bold"];
 const FONT_ITALIC = ["Noto Sans Italic"];
-const CLUSTER_RADIUS: ExpressionSpecification = ["step", ["get", "point_count"], 11, 50, 14, 500, 18, 5000, 24];
+/** 聚合圈半径按数量的平方根平缓增长，大聚合不会大得压住地图 */
+const CLUSTER_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "point_count"]], 1, 9, 10, 13, 40, 18, 150, 23];
 const NAME_FIELDS: Record<Locale, string[]> = {
   "zh-Hans": ["name:zh-Hans", "name:zh"],
   "zh-Hant": ["name:zh-Hant", "name:zh"],
@@ -297,40 +298,51 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
 const SELECTED: ExpressionSpecification = ["global-state", "selected"];
 const FOCUS: ExpressionSpecification = ["boolean", ["feature-state", "focus"], false];
 
-/** 地标、聚合与选中高亮。选中作品后其余地标退成淡淡的点，只留位置感 */
+/**
+ * 地标、聚合与选中高亮，参照 Apple 地图的标注：实心圆、白色细描边、很淡的投影。
+ * 选中作品后，其余地标退成灰色小点，只留位置感；选中作品用它的主题色，焦点地标外加一圈同色光环。
+ */
 function overlayLayers(c: Palette): LayerSpecification[] {
   const dim = (normal: number, selected: number): ExpressionSpecification => ["case", SELECTED, selected, normal];
+  const markerColor: ExpressionSpecification = ["case", SELECTED, c.labelMuted, c.accent];
+  const isCluster: ExpressionSpecification = ["has", "point_count"];
   return [
     {
-      id: "cluster-halo",
+      id: "cluster-shadow",
       type: "circle",
       source: "points",
-      filter: ["has", "point_count"],
-      paint: { "circle-color": c.accent, "circle-opacity": dim(0.16, 0), "circle-radius": ["+", CLUSTER_RADIUS, 7] },
+      filter: isCluster,
+      paint: {
+        "circle-color": "#000000",
+        "circle-radius": ["+", CLUSTER_RADIUS, 1.5],
+        "circle-blur": 0.8,
+        "circle-opacity": dim(0.2, 0),
+        "circle-translate": [0, 1.5],
+      },
     },
     {
       id: "clusters",
       type: "circle",
       source: "points",
-      filter: ["has", "point_count"],
+      filter: isCluster,
       paint: {
-        "circle-color": c.accent,
+        "circle-color": markerColor,
         "circle-radius": CLUSTER_RADIUS,
-        "circle-opacity": dim(1, 0.12),
-        "circle-stroke-color": c.land,
+        "circle-opacity": dim(1, 0.3),
+        "circle-stroke-color": "#ffffff",
         "circle-stroke-width": 1.5,
-        "circle-stroke-opacity": dim(1, 0),
+        "circle-stroke-opacity": dim(0.95, 0),
       },
     },
     {
       id: "cluster-count",
       type: "symbol",
       source: "points",
-      filter: ["has", "point_count"],
+      filter: isCluster,
       layout: {
         "text-field": ["get", "point_count_abbreviated"],
         "text-font": FONT_BOLD,
-        "text-size": 11,
+        "text-size": ["interpolate", ["linear"], ["get", "point_count"], 2, 10, 1000, 12],
         "text-allow-overlap": true,
       },
       paint: { "text-color": "#ffffff", "text-opacity": dim(1, 0) },
@@ -339,14 +351,25 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       id: "point",
       type: "circle",
       source: "points",
-      filter: ["!", ["has", "point_count"]],
+      filter: ["!", isCluster],
       paint: {
-        "circle-color": c.accent,
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 3.5, 16, 6],
-        "circle-opacity": dim(1, 0.25),
-        "circle-stroke-color": c.land,
-        "circle-stroke-width": 1.5,
-        "circle-stroke-opacity": dim(1, 0),
+        "circle-color": markerColor,
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 3, 12, 4, 16, 6.5],
+        "circle-opacity": dim(1, 0.35),
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 1, 16, 2],
+        "circle-stroke-opacity": dim(0.95, 0),
+      },
+    },
+    {
+      id: "selected-halo",
+      type: "circle",
+      source: "selected",
+      // 过滤器里不能用 feature-state，非焦点地标靠半径 0 隐藏
+      paint: {
+        "circle-color": ["global-state", "selectedColor"],
+        "circle-radius": ["case", FOCUS, 17, 0],
+        "circle-opacity": 0.22,
       },
     },
     {
@@ -355,8 +378,9 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       source: "selected",
       paint: {
         "circle-color": ["global-state", "selectedColor"],
-        "circle-radius": ["case", FOCUS, 9, 6.5],
-        "circle-stroke-color": ["case", FOCUS, c.focusRing, c.land],
+        // zoom 只能出现在最外层的 interpolate 里，焦点与否放进每一档
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, ["case", FOCUS, 8.5, 4], 16, ["case", FOCUS, 9, 7]],
+        "circle-stroke-color": "#ffffff",
         "circle-stroke-width": ["case", FOCUS, 3, 2],
       },
     },
@@ -364,16 +388,18 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       id: "selected-label",
       type: "symbol",
       source: "selected",
-      minzoom: 12,
+      minzoom: 14,
       layout: {
         "text-field": ["get", "name"],
-        "text-font": FONT_BOLD,
-        "text-size": 12,
+        "text-font": FONT,
+        "text-size": 11,
         "text-offset": [0, 1.1],
         "text-anchor": "top",
+        "text-max-width": 8,
+        "text-padding": 4,
         "text-optional": true,
       },
-      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.4 },
+      paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.6 },
     },
   ];
 }
