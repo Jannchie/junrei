@@ -4,7 +4,6 @@ import type { Icon } from "@jannchie/icons";
 import {
   IconArrowLeft,
   IconBuilding,
-  IconCalendar,
   IconCamera,
   IconClock,
   IconLoadingGlobe,
@@ -32,7 +31,6 @@ export const ICONS = {
   city: IconBuilding,
   episode: IconTv,
   time: IconClock,
-  updated: IconCalendar,
   credit: IconCamera,
   zoomIn: IconPlus,
   zoomOut: IconMinus,

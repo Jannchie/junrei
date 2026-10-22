@@ -22,7 +22,7 @@ pnpm dev               # http://localhost:5173
 | 命令 | 作用 |
 |---|---|
 | `pnpm data:sync` | `python -m sync.sync`：全量 / 增量同步并规范化到 `data/anitabi.sqlite`，生成质量报告 `data/report.md` |
-| `pnpm data:export` | `python -m sync.export`：生成 `data/d1-import.sql`、首页统计 `data/stats.json`、地图点位 `public/data/points.geojson` |
+| `pnpm data:export` | `python -m sync.export`：生成 `data/d1-import.sql`、地图点位 `public/data/points.geojson` |
 | `pnpm data:import` | 把 `data/d1-import.sql` 全量覆盖导入本地 D1，并重建地标名全文索引 |
 
 `data/` 和 `public/data/` 都是生成物，不进 git；构建前需要先跑过 `pnpm data`。

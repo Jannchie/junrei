@@ -2,9 +2,8 @@
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
-import stats from "../../data/stats.json";
 import { formatEpisode, formatTime, imageUrl } from "../format";
-import { formatDate, initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
+import { initLocale, LOCALE_NAMES, LOCALES, locale, pickName, subName, t } from "../i18n";
 import { ICONS } from "../icons";
 import type { BangumiDetail } from "../server/bangumi";
 import "../theme.css";
@@ -297,11 +296,6 @@ onBeforeUnmount(() => {
       <!-- 概览 -->
       <section v-else class="scroll overview">
         <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" />{{ t("brand") }}</h1>
-        <div class="stats">
-          <span class="stat" :title="t('bangumi')"><JIcon :icon="ICONS.bangumi" />{{ stats.bangumi.toLocaleString() }}</span>
-          <span class="stat" :title="t('points')"><JIcon :icon="ICONS.point" />{{ stats.points.toLocaleString() }}</span>
-          <span class="stat" :title="t('updated')"><JIcon :icon="ICONS.updated" />{{ formatDate(stats.modified) }}</span>
-        </div>
         <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
         <ul v-if="popular?.length" class="popular">
           <li v-for="b in popular" :key="b.id">
@@ -688,16 +682,6 @@ figcaption a {
   gap: 8px;
   margin: 14px 0;
   font-size: 22px;
-}
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 18px;
-  font-size: 15px;
-  font-weight: 600;
-}
-.stats .stat :deep(svg) {
-  color: var(--muted);
 }
 .popular {
   display: grid;

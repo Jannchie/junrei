@@ -1,7 +1,6 @@
 """把 sync.sync 同步下来的 data/anitabi.sqlite 转成应用使用的数据（只做格式转换，规范化在 sync.sync 里）：
 
   data/d1-import.sql          全量覆盖 D1 的 bangumi / point 表并重建全文索引（pnpm data:import）
-  data/stats.json             首页统计，构建时打进前端，不必每次访问都查 D1
   public/data/points.geojson  地图点位，maplibre 在 worker 里直接加载并聚合
 
   python -m sync.export
@@ -78,9 +77,6 @@ def main():
             for p in points
         ],
     })
-
-    modified = src.execute("SELECT max(modified) FROM bangumi WHERE deleted = 0").fetchone()[0]
-    write_json(DEFAULT_OUT / "stats.json", {"bangumi": len(bangumi), "points": len(points), "modified": modified})
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

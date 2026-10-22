@@ -21,9 +21,6 @@ const MESSAGES = {
     locate: "定位",
     zoomIn: "放大",
     zoomOut: "缩小",
-    bangumi: "作品",
-    points: "地标",
-    updated: "数据更新",
     language: "语言",
   },
   "zh-Hant": {
@@ -34,9 +31,6 @@ const MESSAGES = {
     locate: "定位",
     zoomIn: "放大",
     zoomOut: "縮小",
-    bangumi: "作品",
-    points: "地標",
-    updated: "資料更新",
     language: "語言",
   },
   ja: {
@@ -47,9 +41,6 @@ const MESSAGES = {
     locate: "現在地",
     zoomIn: "拡大",
     zoomOut: "縮小",
-    bangumi: "作品",
-    points: "スポット",
-    updated: "データ更新",
     language: "言語",
   },
   en: {
@@ -60,9 +51,6 @@ const MESSAGES = {
     locate: "My location",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
-    bangumi: "Titles",
-    points: "Spots",
-    updated: "Updated",
     language: "Language",
   },
 } satisfies Record<Locale, Record<string, string>>;
@@ -123,6 +111,3 @@ export function subName(n: { cn?: string | null; original?: string | null; en?: 
   return sub && sub !== main ? sub : null;
 }
 
-export function formatDate(ms: number | null): string {
-  return ms ? new Date(ms).toLocaleDateString(locale.value) : "—";
-}
