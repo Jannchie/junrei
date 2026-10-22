@@ -38,17 +38,25 @@ const vAutoLang = { mounted: setLang, updated: setLang };
 const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" } as const;
 
 // 图片偶尔会因为图床限流或网络抖动加载失败：隔一会儿重试两次，仍失败就显示占位底色，不出现破图图标
-function retryImage(e: Event) {
+// 图片加载失败（网络抖动、图床短暂拒绝并发请求）时退避重试：1、2、4、8 秒后各试一次
+const IMAGE_RETRIES = 4;
+function retryImage(e: Event | { target: HTMLImageElement }) {
   const img = e.target as HTMLImageElement;
   const tries = Number(img.dataset.tries ?? 0);
-  if (tries >= 2) {
+  if (tries >= IMAGE_RETRIES) {
     img.classList.add("img-failed");
     return;
   }
   img.dataset.tries = String(tries + 1);
   const url = new URL(img.src);
   url.searchParams.set("retry", String(tries + 1));
-  setTimeout(() => (img.src = url.href), 800 * (tries + 1));
+  setTimeout(() => (img.src = url.href), 1000 * 2 ** tries);
+}
+/** 服务端渲染的图片在页面接管前就开始加载，那时失败的错误事件没人接住；接管后补一次重试 */
+function recoverImages() {
+  for (const img of document.querySelectorAll<HTMLImageElement>("img[src]")) {
+    if (img.complete && img.naturalWidth === 0 && !img.dataset.tries) retryImage({ target: img });
+  }
 }
 
 // maplibre 体积大且只在浏览器里用，单独分包，也不进服务端 bundle
@@ -302,6 +310,7 @@ const SHORTCUTS = computed(() => [
 
 onMounted(() => {
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
+  recoverImages();
   bindShortcuts();
   mounted.value = true;
   initTheme();
