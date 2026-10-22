@@ -629,7 +629,7 @@ img.img-failed {
   background: var(--bg);
   border-radius: 16px;
   box-shadow: var(--shadow);
-  backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: var(--glass);
   overflow: hidden;
 }
 .handle {
@@ -838,7 +838,7 @@ hr {
   text-overflow: ellipsis;
   /* 面板本身半透明；这条叠一层同色并模糊下方滚过的内容 */
   background: var(--bg);
-  backdrop-filter: blur(16px);
+  backdrop-filter: var(--glass);
   border: 0;
   border-bottom: 1px solid var(--line);
   cursor: pointer;
@@ -1098,7 +1098,7 @@ figcaption a {
   border: 0;
   border-radius: 12px;
   box-shadow: var(--shadow);
-  backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: var(--glass);
 }
 .credits-pop:popover-open {
   display: flex;
@@ -1137,7 +1137,7 @@ figcaption a {
   border: 0;
   border-radius: 16px;
   box-shadow: var(--shadow);
-  backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: var(--glass);
 }
 .shortcuts-pop::backdrop {
   background: rgb(0 0 0 / 0.15);
@@ -1227,7 +1227,7 @@ kbd {
     border: 0;
     border-radius: 12px;
     box-shadow: var(--shadow);
-    backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: var(--glass);
   }
   .lang option {
     padding: 7px 10px;

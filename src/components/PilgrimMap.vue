@@ -293,7 +293,7 @@ watch(() => props.focusPointId, (next, prev) => {
   background: #ffffff;
   border: 0;
   border-radius: 10px;
-  box-shadow: 0 3px 12px rgb(0 0 0 / 0.28);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
   cursor: pointer;
 }
 .map :deep(.photo-pin)::after {
@@ -341,7 +341,7 @@ watch(() => props.focusPointId, (next, prev) => {
   border: 0;
   border-radius: 10px;
   box-shadow: var(--shadow);
-  backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: var(--glass);
   cursor: pointer;
 }
 .group button:first-child {

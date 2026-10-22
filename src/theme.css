@@ -4,7 +4,9 @@
    默认跟随系统，用户手动选择后 <html data-theme="light|dark"> 固定（见 src/theme.ts）。 */
 :root {
   color-scheme: light dark;
-  --bg: light-dark(rgb(255 255 255 / 0.78), rgb(30 30 32 / 0.76));
+  /* 浮层底色：默认几乎不透明、不做磨砂（磨砂在地图移动时每帧都要重新模糊，弱 GPU 上会掉帧） */
+  --bg: light-dark(rgb(255 255 255 / 0.96), rgb(30 30 32 / 0.95));
+  --glass: none;
   --bg-solid: light-dark(#ffffff, #1e1e20);
   --fg: light-dark(#1d1d1f, #f5f5f7);
   --muted: light-dark(#86868b, #98989d);
@@ -48,13 +50,29 @@
   --map-space: light-dark(#e4e9f0, #07090d);
   --map-horizon: light-dark(#cfe3f5, #1d3c5c);
 
-  --shadow-color: light-dark(rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.45));
-  --shadow-color-near: light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.3));
-  --shadow: 0 10px 40px var(--shadow-color), 0 1px 3px var(--shadow-color-near);
+  /* 浮层与地图的分隔：一圈细描边 + 很淡的贴身投影，不要大面积的阴影 */
+  --shadow-color: light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.25));
+  --shadow-edge: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.08));
+  --shadow: 0 0 0 1px var(--shadow-edge), 0 2px 6px var(--shadow-color);
 }
 :root[data-theme="light"] {
   color-scheme: light;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
+}
+
+/* 鼠标设备（多为桌面）才用半透明磨砂 */
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --bg: light-dark(rgb(255 255 255 / 0.8), rgb(30 30 32 / 0.78));
+    --glass: blur(16px);
+  }
+}
+/* 用户在系统里要求降低透明度时退回不透明（不支持这个查询的浏览器会忽略这一段） */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --bg: light-dark(rgb(255 255 255 / 0.96), rgb(30 30 32 / 0.95));
+    --glass: none;
+  }
 }
