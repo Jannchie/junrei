@@ -12,6 +12,7 @@ export interface I18n {
   mark?: Partial<Record<"zh-Hans" | "zh-Hant" | "ja" | "en", string>>;
   city?: Partial<Record<"zh-Hans" | "zh-Hant" | "ja" | "en", string>>;
   mt?: string[];
+  src?: "zh-Hans" | "zh-Hant" | "ja" | "en"; // 地标原名的语言
 }
 
 export const bangumi = sqliteTable("bangumi", {

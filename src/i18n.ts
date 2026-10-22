@@ -140,6 +140,8 @@ export interface I18n {
   mark?: Partial<Record<Locale, string>>;
   city?: Partial<Record<Locale, string>>;
   mt?: string[];
+  /** 地标原名的语言（导出时判断）；原名本身见 name[src] */
+  src?: Locale;
 }
 
 type Names = { cn?: string | null; original?: string | null; en?: string | null; i18n?: I18n | null };
@@ -163,6 +165,13 @@ export function subNameFor(locale: Locale, n: Names): string | null {
 }
 
 export const translate = (locale: Locale, key: MessageKey) => MESSAGES[locale][key];
+
+/** 地标的当地原名（原文语言的纯净版本），与当前语言不同时才有，用作对照 */
+export function localNameFor(locale: Locale, p: { i18n?: I18n | null }) {
+  const src = p.i18n?.src;
+  const text = src && src !== locale ? p.i18n?.name?.[src] : null;
+  return text && text !== p.i18n?.name?.[locale] ? text : null;
+}
 
 /** 作品所在城市：该语言的名称，没有就用原文 */
 export const cityFor = (locale: Locale, b: { city: string | null; i18n?: I18n | null }) => b.i18n?.city?.[locale] ?? b.city;
@@ -220,6 +229,7 @@ function i18n(locale: Ref<Locale>) {
     pickName: (n: Names) => pickNameFor(locale.value, n),
     markOf: (p: Parameters<typeof markFor>[1]) => markFor(locale.value, p),
     cityOf: (b: Parameters<typeof cityFor>[1]) => cityFor(locale.value, b),
+    localName: (p: Parameters<typeof localNameFor>[1]) => localNameFor(locale.value, p),
     categoryOf: (cat: string | null) => categoryFor(locale.value, cat),
     subName: (n: Names) => subNameFor(locale.value, n),
   };

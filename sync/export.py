@@ -18,6 +18,7 @@ import sqlite3
 import sys
 
 from sync.fold import build_char_map, fold, romaji
+from sync.llm import clean_text
 from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
@@ -32,12 +33,15 @@ FIELD_KEY = {"title": "name", "name": "name", "mark": "mark"}
 
 
 def load_i18n() -> dict[tuple[str, str], dict]:
-    """(entity, entity_id) → {"name": {lang: text}, "mark": {...}, "mt": ["name.en", ...]}"""
+    """(entity, entity_id) → {"name": {lang: text}, "mark": {...}, "mt": ["name.en", ...], "_orig": {lang: 原文}}
+
+    _orig 是 Anitabi 原始名称按语言的分布，导出地标时据此判断原文语言（写成 src），用完删掉。"""
     path = DEFAULT_OUT / "enrich.sqlite"
     if not path.exists():
         print("没有 data/enrich.sqlite，跳过多语言（先跑 pnpm enrich:translate）")
         return {}
     best: dict[tuple, tuple] = {}
+    orig: dict[tuple, dict[str, str]] = {}
     with sqlite3.connect(path) as db:
         for entity, eid, field, lang, text, source, mt, conf in db.execute(
             "SELECT entity, entity_id, field, lang, text, source, machine_translated, confidence FROM translation"):
@@ -47,7 +51,9 @@ def load_i18n() -> dict[tuple[str, str], dict]:
             rank = SOURCE_RANK[source] + (LOW_CONFIDENCE_RANK if mt and conf is not None and conf < MIN_CONFIDENCE else 0)
             if key not in best or rank < best[key][0]:
                 best[key] = (rank, text.strip(), bool(mt))
-    out: dict[tuple[str, str], dict] = {}
+            if source == "anitabi" and field == "name" and entity == "point":
+                orig.setdefault((entity, eid), {})[lang] = text.strip()
+    out: dict[tuple[str, str], dict] = {(e, i): {"_orig": o} for (e, i), o in orig.items()}
     with sqlite3.connect(path) as db:
         has_cities = db.execute("SELECT 1 FROM sqlite_master WHERE name = 'city_label'").fetchone()
         for city, labels in db.execute("SELECT city, labels FROM city_label WHERE labels IS NOT NULL") if has_cities else []:
@@ -112,6 +118,17 @@ def main():
         if r[4] and ("city", r[4]) in i18n:
             titles[r[0]] = {**(titles[r[0]] or {}), "city": i18n[("city", r[4])]}
     spots = {(p[0], p[1]): i18n.get(("point", f"{p[0]}:{p[1]}")) for p in points}
+    # 原文语言：原名（没有原名时是中文名）是哪种语言。列表里展开地标时，用这种语言的版本作为「当地原名」对照
+    for p in points:
+        item = spots[(p[0], p[1])]
+        if not item:
+            continue
+        source = clean_text(p[2] or p[3] or "")
+        item["src"] = next((lang for lang, text in item.pop("_orig", {}).items() if text == source), None)
+        if not item["src"]:
+            del item["src"]
+    for item in i18n.values():
+        item.pop("_orig", None)
     names = lambda item: list((item or {}).get("name", {}).values())  # noqa: E731
     char_map = build_char_map(
         [t for r in rows for t in [*r[1:5], *names(titles[r[0]])]]

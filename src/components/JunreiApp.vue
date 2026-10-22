@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 provideIconDefaults({ size: 16 });
-const { locale, t, pickName, subName, markOf, cityOf, categoryOf } = provideLocale(props.lang);
+const { locale, t, pickName, subName, markOf, cityOf, categoryOf, localName } = provideLocale(props.lang);
 
 /** 换语言就是去另一种语言的同一个页面（服务端按语言渲染），作品、地标、搜索词、视野都保留 */
 function switchLocale(next: Locale) {
@@ -463,7 +463,8 @@ onBeforeUnmount(() => {
             </figure>
             <div class="point-body">
               <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
-              <small v-auto-lang v-if="subName({ cn: p.cn, original: p.name, i18n: p.i18n })">{{ subName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</small>
+              <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
+              <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
               <span v-if="p.ep || p.s" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
