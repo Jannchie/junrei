@@ -4,6 +4,9 @@
 只取动画（type=2）、排除 nsfw；每条只留名称、别名、首播日期、类型与热度。数据包约 450 MB，
 已下载过同一版本就不再下载。
 
+系列：按条目关系（前传、续集、总集篇、全集、番外篇、主线故事）把动画连成系列，
+每部作品记下所属系列的代表作（系列里最早播出的一部）的 id。「相同世界观」「衍生」太宽泛，不算。
+
   python -m sync.bgm_archive
 """
 
@@ -25,6 +28,7 @@ ARCHIVE_DIR = DEFAULT_OUT / "bgm-archive"
 OUT = DEFAULT_OUT / "bgm-anime.json"
 # Bangumi 动画条目的 platform → 与 Anitabi 一致的类别名（前端再按语言翻译）
 PLATFORM = {1: "TV", 2: "OVA", 3: "剧场版", 5: "WEB"}
+SERIES_RELATIONS = {2, 3, 4, 5, 6, 12}  # 前传、续集、总集篇、全集、番外篇、主线故事
 
 
 def fetch(url: str) -> bytes:
@@ -70,6 +74,36 @@ def english(names: list[str]) -> str | None:
     return None
 
 
+def add_series(z: zipfile.ZipFile, rows: list[dict]) -> None:
+    """按条目关系做连通分量（并查集），每部作品写上 series：代表作 id。只有一部的不写。"""
+    by_id = {r["id"]: r for r in rows}
+    parent = {i: i for i in by_id}
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    with z.open("subject-relations.jsonlines") as f:
+        for line in f:
+            r = json.loads(line)
+            a, b = r["subject_id"], r["related_subject_id"]
+            if r["relation_type"] in SERIES_RELATIONS and a in by_id and b in by_id:
+                parent[find(a)] = find(b)
+    groups: dict[int, list[dict]] = {}
+    for i, r in by_id.items():
+        groups.setdefault(find(i), []).append(r)
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        head = min(members, key=lambda r: (r["date"] or "9999", r["id"]))
+        for r in members:
+            r["series"] = head["id"]
+    sizes = sorted((len(m) for m in groups.values() if len(m) > 1), reverse=True)
+    print(f"系列：{len(sizes)} 个（最大 {sizes[:5]} 部）")
+
+
 def main():
     path = download()
     rows = []
@@ -92,6 +126,8 @@ def main():
                 "popularity": fav.get("done", 0) + fav.get("doing", 0) + fav.get("wish", 0),
             })
     rows.sort(key=lambda r: r["id"])
+    with zipfile.ZipFile(path) as z:
+        add_series(z, rows)
     OUT.write_text(json.dumps({"archive": path.name, "subjects": rows}, ensure_ascii=False, separators=(",", ":")),
                    encoding="utf-8")
     print(f"{OUT}：{len(rows)} 部动画（{OUT.stat().st_size / 1e6:.1f} MB）")

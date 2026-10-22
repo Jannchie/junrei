@@ -1,6 +1,6 @@
 // 作品查询，供 /v1 API、页面 loader、sitemap 与面向 LLM 的 Markdown 共用
 import { bangumi, point } from "@schema";
-import { asc, db, desc, eq, gt } from "void/db";
+import { asc, db, desc, eq, gt, sql } from "void/db";
 
 export const SITE = "https://junrei.jannchie.com";
 
@@ -26,7 +26,15 @@ export async function getBangumi(id: number) {
       .where(eq(point.bangumiId, id))
       .orderBy(asc(point.priority), asc(point.id)),
   ]);
-  return info ? { ...info, points } : null;
+  if (!info) return null;
+  const series = info.seriesId
+    ? await db
+        .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n })
+        .from(bangumi)
+        .where(eq(bangumi.seriesId, info.seriesId))
+        .orderBy(sql`${bangumi.airDate} IS NULL`, asc(bangumi.airDate), asc(bangumi.id))
+    : [];
+  return { ...info, points, series };
 }
 
 export type BangumiDetail = NonNullable<Awaited<ReturnType<typeof getBangumi>>>;

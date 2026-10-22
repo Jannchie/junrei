@@ -203,7 +203,7 @@ def main():
         return "|".join(dict.fromkeys(k for k in (fold(t, char_map) for t in texts) if k))
     bangumi = [
         (*r, counts.get(r[0], 0), extra.get(r[0], {}).get("popularity", 0), extra.get(r[0], {}).get("date"),
-         i18n_json(titles[r[0]]),
+         extra.get(r[0], {}).get("series"), i18n_json(titles[r[0]]),
          keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", [])))
         for r in rows
     ]
@@ -213,7 +213,7 @@ def main():
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
         cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "popularity", "air_date",
-                "i18n", "search"]
+                "series_id", "i18n", "search"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
                 "origin_link", "mark", "i18n", "search"]
@@ -236,7 +236,7 @@ def main():
     write_json(FOLD_MAP, char_map)
     # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题]；只收有地标的作品，其余由服务端搜索
     write_json(PUBLIC_DATA / "bangumi.json",
-               [[b[0], b[1], b[2], b[3], b[7], b[8], b[12], (titles[b[0]] or {}).get("name")] for b in bangumi if b[8]])
+               [[b[0], b[1], b[2], b[3], b[7], b[8], b[13], (titles[b[0]] or {}).get("name")] for b in bangumi if b[8]])
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

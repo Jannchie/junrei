@@ -452,6 +452,23 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </div>
+        <!-- 同系列作品（TV 各季、剧场版、OVA…）：横向一排，当前作品高亮，没有地标的淡一些 -->
+        <nav v-if="detail.series.length > 1" class="series" :aria-label="t('series')" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
+          <a
+            v-for="s in detail.series"
+            :key="s.id"
+            :href="localePath(locale, `/b/${s.id}`)"
+            :class="{ current: s.id === detail.id, dim: !s.pointCount }"
+            :aria-current="s.id === detail.id ? 'page' : undefined"
+            @click.prevent="select(s.id)"
+          >
+            <span v-auto-lang class="series-name">{{ pickName({ cn: s.cn, original: s.title, en: s.en, i18n: s.i18n }) }}</span>
+            <small class="stat">
+              <span class="tx">{{ s.airDate?.slice(0, 4) ?? categoryOf(s.cat) }}</span>
+              <template v-if="s.pointCount"><JIcon :icon="ICONS.point" :size="11" /><span class="tx">{{ s.pointCount }}</span></template>
+            </small>
+          </a>
+        </nav>
         <p v-if="!detail.points.length" class="empty no-spots">{{ t("noSpots") }}</p>
         <ol class="points">
           <li
@@ -979,6 +996,48 @@ figcaption a {
 }
 .more {
   height: 1px;
+}
+.series {
+  display: flex;
+  gap: 6px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+}
+.series a {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 140px;
+  padding: 6px 10px;
+  font-size: 12px;
+  text-decoration: none;
+  border-radius: 8px;
+  background: var(--hover);
+}
+.series a.current {
+  color: #fff;
+  background: var(--bangumi-color, var(--accent));
+}
+.series a.current .stat {
+  color: inherit;
+  opacity: 0.85;
+}
+.series a.dim:not(.current) {
+  opacity: 0.55;
+}
+.series-name {
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.series .stat {
+  gap: 3px;
+  font-size: 11px;
+  color: var(--muted);
 }
 .no-spots {
   padding: 32px 24px;
