@@ -26,16 +26,17 @@
   --map-motorway: #fcd26a;
   --map-motorway-casing: #e8b44a;
   --map-rail: #b0b5bc;
-  --map-boundary: #c3b5cc;
   --map-label: #3a3a3c;
   --map-label-muted: #8e8e93;
   --map-water-label: #3f86bf;
   --map-depth-shelf: #93c6ec;
-  --map-depth-mid: #7db4e1;
-  --map-depth-deep: #5d95cc;
+  --map-depth-mid: #69a2d8;
+  --map-depth-deep: #346cb0;
   --map-hillshade-shadow: rgb(40 55 80 / 0.15);
   --map-hillshade-highlight: rgb(255 255 255 / 0.25);
   --map-focus-ring: #1d1d1f;
+  --map-space: #e4e9f0;
+  --map-horizon: #cfe3f5;
 
   color-scheme: light;
 }
@@ -67,16 +68,17 @@
     --map-motorway: #8a7140;
     --map-motorway-casing: #212327;
     --map-rail: #5a5a5e;
-    --map-boundary: #5c5266;
     --map-label: #ebebf0;
     --map-label-muted: #98989d;
     --map-water-label: #6aa6d6;
     --map-depth-shelf: #173450;
-    --map-depth-mid: #122a42;
-    --map-depth-deep: #0c1f33;
+    --map-depth-mid: #10273f;
+    --map-depth-deep: #07172b;
     --map-hillshade-shadow: rgb(0 0 0 / 0.35);
     --map-hillshade-highlight: rgb(255 255 255 / 0.04);
     --map-focus-ring: #f5f5f7;
+    --map-space: #07090d;
+    --map-horizon: #1d3c5c;
 
     color-scheme: dark;
   }

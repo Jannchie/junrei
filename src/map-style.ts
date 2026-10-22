@@ -1,13 +1,13 @@
 // junrei 的地图皮肤，参照 Apple 地图：素净的底、明亮的水与青绿、水深渐变与淡山影、白色道路、暖黄高速、细灰铁路。
 // 矢量瓦片来自 OpenFreeMap（OpenMapTiles schema），只保留巡礼用得上的要素：
 // 水、绿地、市街地、道路、铁路与车站、地名。配色在 src/theme.css。
+// 刻意不画任何政治要素：没有国界、省界、国名，也没有存在命名争议的海域名称。
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
-import type { Locale } from "./i18n";
 
 const PALETTE_KEYS = [
   "land", "urban", "wood", "grass", "park", "sand", "water", "building", "buildingLine", "road", "roadCasing",
-  "major", "majorCasing", "motorway", "motorwayCasing", "rail", "boundary", "label", "labelMuted", "waterLabel",
-  "focusRing", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight",
+  "major", "majorCasing", "motorway", "motorwayCasing", "rail", "label", "labelMuted", "waterLabel",
+  "focusRing", "space", "horizon", "depthShelf", "depthMid", "depthDeep", "hillshadeShadow", "hillshadeHighlight",
 ] as const;
 
 export type Palette = Record<(typeof PALETTE_KEYS)[number] | "accent", string>;
@@ -38,10 +38,7 @@ const NAME: ExpressionSpecification = ["get", "name"];
 const width = (pairs: [number, number][]): ExpressionSpecification =>
   ["interpolate", ["exponential", 1.6], ["zoom"], ...pairs.flat()] as ExpressionSpecification;
 
-/** 国名按界面语言显示；地名保持当地原名 */
-const COUNTRY_NAME_FIELD: Record<Locale, string> = { "zh-Hans": "name:zh", "zh-Hant": "name:zh-Hant", ja: "name:ja", en: "name:en" };
-
-export function createStyle(c: Palette, locale: Locale): StyleSpecification {
+export function createStyle(c: Palette): StyleSpecification {
   const roadClasses = (classes: string[]): ExpressionSpecification => [
     "all",
     ["match", ["get", "class"], classes, true, false],
@@ -150,24 +147,6 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       },
     },
 
-    // ---- 边界 ----
-    {
-      id: "boundary-state",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "boundary",
-      minzoom: 5,
-      filter: ["all", ["==", ["get", "admin_level"], 4], ["!=", ["get", "maritime"], 1]],
-      paint: { "line-color": c.boundary, "line-width": 0.8, "line-dasharray": [3, 2], "line-opacity": 0.7 },
-    },
-    {
-      id: "boundary-country",
-      type: "line",
-      source: SOURCE,
-      "source-layer": "boundary",
-      filter: ["all", ["==", ["get", "admin_level"], 2], ["!=", ["get", "maritime"], 1]],
-      paint: { "line-color": c.boundary, "line-width": width([[3, 0.6], [10, 1.4]]) },
-    },
 
     // ---- 道路：白色加淡描边，高速暖黄 ----
     line("road-minor-casing", 13, roadClasses(["minor", "service"]), c.roadCasing, [[13, 1.5], [16, 6], [19, 22]]),
@@ -186,10 +165,11 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       type: "symbol",
       source: SOURCE,
       "source-layer": "water_name",
+      filter: ["!", ["match", ["get", "class"], ["ocean", "sea"], true, false]],
       layout: {
         "text-field": NAME,
         "text-font": FONT_ITALIC,
-        "text-size": ["match", ["get", "class"], "ocean", 15, "sea", 13, 11],
+        "text-size": 11,
         "text-letter-spacing": 0.15,
         "text-max-width": 6,
       },
@@ -273,26 +253,18 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       },
       paint: { "text-color": c.label, "text-halo-color": c.land, "text-halo-width": 1.4 },
     },
-    {
-      id: "place-country",
-      type: "symbol",
-      source: SOURCE,
-      "source-layer": "place",
-      maxzoom: 7,
-      filter: ["==", ["get", "class"], "country"],
-      layout: {
-        "text-field": ["coalesce", ["get", COUNTRY_NAME_FIELD[locale]], ["get", "name:zh"], ["get", "name"]],
-        "text-font": FONT_BOLD,
-        "text-size": ["interpolate", ["linear"], ["zoom"], 2, 12, 6, 18],
-        "text-letter-spacing": 0.25,
-        "text-transform": "uppercase",
-      },
-      paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.2 },
-    },
   ];
 
   return {
     version: 8,
+    projection: { type: "globe" },
+    // 缩到最小是地球：球外是「太空」底色，边缘一圈大气光
+    sky: {
+      "sky-color": c.space,
+      "horizon-color": c.horizon,
+      "sky-horizon-blend": 0.6,
+      "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 5, 1, 7, 0],
+    },
     glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
     // selected：是否选中了作品（其余地标淡化）；selectedColor：选中作品的主题色，由组件设置。
     // 默认值必须与主题无关，换主题时样式才能按 diff 更新，而不是整体重载

@@ -4,7 +4,7 @@ import type { Point } from "geojson";
 import maplibregl, { type GeoJSONSource, type LngLatLike, type PaddingOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { locale, t } from "../i18n";
+import { t } from "../i18n";
 import { ICONS } from "../icons";
 import { CJK_FONT_FAMILY, createStyle, readPalette } from "../map-style";
 
@@ -31,10 +31,10 @@ let geolocate: maplibregl.GeolocateControl | null = null;
 const ready = ref(false);
 const dark = matchMedia("(prefers-color-scheme: dark)");
 
-// 换主题或语言只换颜色和国名：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
+// 换主题只换颜色：样式按 diff 更新。两个 geojson 源沿用当前的定义（序列化后与 createStyle 的写法不同，
 // 否则 diff 会把它们当成新源，重新加载、重新聚合 5 万个点）
 function restyle() {
-  map?.setStyle(createStyle(readPalette(), locale.value), {
+  map?.setStyle(createStyle(readPalette()), {
     transformStyle: (prev, next) => ({
       ...next,
       sources: { ...next.sources, points: prev!.sources.points, selected: prev!.sources.selected },
@@ -88,7 +88,7 @@ function syncCamera() {
 onMounted(() => {
   const m = (map = new maplibregl.Map({
     container: el.value!,
-    style: createStyle(readPalette(), locale.value),
+    style: createStyle(readPalette()),
     center: [137.5, 36.2],
     zoom: 4.6,
     padding: props.padding,
@@ -137,7 +137,6 @@ onBeforeUnmount(() => {
   map?.remove();
 });
 
-watch(locale, restyle);
 watch(() => props.padding, () => {
   if (!map) return;
   if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));
@@ -169,6 +168,8 @@ watch(() => props.focusPointId, (next, prev) => {
 .map {
   position: absolute;
   inset: 0;
+  /* 缩到最小时地球之外露出的是容器背景 */
+  background: radial-gradient(circle at 60% 50%, var(--map-horizon), var(--map-space) 70%);
 }
 .map :deep(.maplibregl-ctrl-geolocate) {
   display: none;
