@@ -142,6 +142,15 @@ watch([detail, focusPointId], () => {
 const app = ref<HTMLElement>();
 const panel = ref<HTMLElement>();
 const mapPadding = ref({ top: 0, right: 0, bottom: 0, left: 0 });
+// 来源浮层：支持 CSS 锚点定位时由样式摆放；否则打开时按按钮位置算一次
+const creditsBtn = ref<HTMLElement>();
+const creditsPop = ref<HTMLElement>();
+function onCreditsToggle(e: Event) {
+  if ((e as ToggleEvent).newState !== "open" || CSS.supports("anchor-name: --a")) return;
+  const r = creditsBtn.value!.getBoundingClientRect();
+  Object.assign(creditsPop.value!.style, { left: `${r.left - 4}px`, bottom: `${innerHeight - r.top + 8}px` });
+}
+
 let panelObserver: ResizeObserver | undefined;
 
 onMounted(() => {
@@ -214,7 +223,7 @@ onBeforeUnmount(() => {
               <strong>{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</strong>
               <small v-if="subName({ cn: b.cn, original: b.title, en: b.en })">{{ subName({ cn: b.cn, original: b.title, en: b.en }) }}</small>
             </span>
-            <span class="stat"><JIcon :icon="ICONS.point" :size="14" />{{ b.pointCount }}</span>
+            <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
           </button>
           <hr v-if="results.bangumis.length && results.points.length" />
           <button
@@ -247,9 +256,9 @@ onBeforeUnmount(() => {
                 {{ subName({ cn: detail.cn, original: detail.title, en: detail.en }) }}
               </p>
               <p class="meta">
-                <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" />{{ detail.cat }}</span>
-                <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" />{{ detail.city }}</span>
-                <span class="stat"><JIcon :icon="ICONS.point" :size="14" />{{ detail.pointCount }}</span>
+                <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" /><span class="tx">{{ detail.cat }}</span></span>
+                <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" /><span class="tx">{{ detail.city }}</span></span>
+                <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ detail.pointCount }}</span></span>
               </p>
               <p class="links">
                 <a :href="`https://bgm.tv/subject/${detail.id}`" target="_blank" rel="noopener">Bangumi</a>
@@ -283,8 +292,8 @@ onBeforeUnmount(() => {
               <strong>{{ pickName({ cn: p.cn, original: p.name }) }}</strong>
               <small v-if="subName({ cn: p.cn, original: p.name })">{{ subName({ cn: p.cn, original: p.name }) }}</small>
               <span v-if="p.ep || p.s" class="meta">
-                <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" />{{ formatEpisode(p.ep) }}</span>
-                <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" />{{ formatTime(p.s) }}</span>
+                <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
+                <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
               </span>
               <p v-if="p.id === focusPointId && p.mark" class="mark">{{ p.mark }}</p>
             </div>
@@ -295,34 +304,51 @@ onBeforeUnmount(() => {
 
       <!-- 概览 -->
       <section v-else class="scroll overview">
-        <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" />{{ t("brand") }}</h1>
+        <h1><JIcon :icon="ICONS.logo" :size="22" weight="bold" /><span class="tx">{{ t("brand") }}</span></h1>
         <!-- 热门作品：真实链接，服务端渲染，既是入口也让爬虫能走到每个作品页 -->
         <ul v-if="popular?.length" class="popular">
           <li v-for="b in popular" :key="b.id">
             <a :href="`/b/${b.id}`" @click.prevent="select(b.id)">
               <img v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
               <span class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en }) }}</span>
-              <span class="stat"><JIcon :icon="ICONS.point" :size="12" />{{ b.pointCount }}</span>
+              <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.pointCount }}</span></span>
             </a>
           </li>
         </ul>
       </section>
 
       <footer class="foot">
-        <!-- OSM 要求地图署名始终可见；其余来源收进信息浮层 -->
-        <details class="credits-more">
-          <summary :title="t('credits')" :aria-label="t('credits')"><JIcon :icon="ICONS.info" :size="14" /></summary>
-          <div class="credits-pop">
-            <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
-            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
-            <a href="https://bgm.tv/" target="_blank" rel="noopener">Bangumi</a>
-            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
-            <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
-            <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
-            <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
-          </div>
-        </details>
+        <!-- OSM 要求地图署名始终可见；其余来源收进原生 popover（点外部或 Esc 自动关闭） -->
+        <button
+          ref="creditsBtn"
+          type="button"
+          class="credits-btn"
+          popovertarget="credits"
+          :title="t('credits')"
+          :aria-label="t('credits')"
+        >
+          <JIcon :icon="ICONS.info" :size="14" />
+        </button>
+        <div id="credits" ref="creditsPop" popover class="credits-pop" @toggle="onCreditsToggle">
+          <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+          <a href="https://bgm.tv/" target="_blank" rel="noopener">Bangumi</a>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
+          <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
+          <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
+          <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
+        </div>
         <a class="osm" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
+        <a
+          class="icon-link"
+          href="https://github.com/Jannchie/junrei"
+          target="_blank"
+          rel="noopener"
+          :title="t('source')"
+          :aria-label="t('source')"
+        >
+          <JIcon :icon="ICONS.github" :size="14" />
+        </a>
         <label class="lang" :title="t('language')">
           <JIcon :icon="ICONS.language" :size="14" />
           <select v-model="locale" :aria-label="t('language')">
@@ -447,6 +473,11 @@ a {
   align-items: center;
   gap: 4px;
   font-variant-numeric: tabular-nums;
+}
+/* 图标与文字垂直居中：把文字行盒裁到大写字母高度与基线，否则字体上下留白不对称，图标会显得偏上 */
+.tx,
+.osm {
+  text-box: trim-both cap alphabetic;
 }
 .icon-btn {
   display: grid;
@@ -738,39 +769,55 @@ figcaption a {
   color: var(--muted);
   border-top: 1px solid var(--line);
 }
-.credits-more {
-  position: relative;
+.credits-btn {
+  anchor-name: --credits;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
 }
-.credits-more summary {
+.icon-link {
   display: grid;
   place-items: center;
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  list-style: none;
-  cursor: pointer;
 }
-.credits-more summary::-webkit-details-marker {
-  display: none;
+.icon-link:hover {
+  background: var(--hover);
 }
-.credits-more summary:hover,
-.credits-more[open] summary {
+.credits-btn:hover,
+.credits-btn:has(+ .credits-pop:popover-open) {
   color: var(--fg);
   background: var(--hover);
 }
 .credits-pop {
-  position: absolute;
-  left: -4px;
-  bottom: calc(100% + 8px);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  /* 覆盖 popover 默认的居中；位置由锚点（或 onCreditsToggle）决定 */
+  position: fixed;
+  inset: auto;
+  margin: 0 0 8px -4px;
+  position-anchor: --credits;
+  position-area: top span-right;
   min-width: 160px;
   padding: 10px 12px;
   font-size: 12px;
-  background: var(--bg-solid);
-  border-radius: 10px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 0;
+  border-radius: 12px;
   box-shadow: var(--shadow);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+.credits-pop:popover-open {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .osm {
   flex: 1;
@@ -802,5 +849,46 @@ figcaption a {
   outline: none;
   cursor: pointer;
   appearance: none;
+}
+/* 渐进增强：可定制 select（appearance: base-select）。不支持的浏览器用系统下拉，手机上即系统选择器 */
+@supports (appearance: base-select) {
+  .lang select,
+  .lang select::picker(select) {
+    appearance: base-select;
+  }
+  .lang select {
+    padding: 0;
+  }
+  .lang select::picker-icon {
+    display: none;
+  }
+  .lang select::picker(select) {
+    min-width: 132px;
+    padding: 4px;
+    margin-block: 8px;
+    color: var(--fg);
+    background: var(--bg);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    backdrop-filter: saturate(180%) blur(24px);
+  }
+  .lang option {
+    padding: 7px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .lang option:hover,
+  .lang option:focus-visible {
+    background: var(--hover);
+  }
+  .lang option:checked {
+    font-weight: 600;
+  }
+  .lang option::checkmark {
+    order: 1;
+    margin-left: auto;
+    color: var(--accent);
+  }
 }
 </style>

@@ -7,6 +7,7 @@ import {
   IconCamera,
   IconClock,
   IconLoadingGlobe,
+  IconGithub,
   IconInfo,
   IconLanguages,
   IconLocate,
@@ -38,4 +39,5 @@ export const ICONS = {
   locate: IconLocate,
   language: IconLanguages,
   info: IconInfo,
+  github: IconGithub,
 } satisfies Record<string, Icon>;
