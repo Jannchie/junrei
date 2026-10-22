@@ -1,0 +1,21 @@
+# junrei
+
+> 动画、游戏的圣地巡礼（取景地）地图。收录数千部作品、数万个取景地，每个地点有坐标、集数与时间点、截图来源。界面支持简体中文、繁體中文、日本語、English。
+
+数据来自 Anitabi 社区投稿，作品信息来自番组计划（Bangumi）。截图采用 CC BY-NC-SA 4.0，引用时请注明来源；本站为非商业项目。
+
+## 适合 LLM 读取的页面
+
+- [作品索引](https://junrei.jannchie.com/md)：全部作品的 Markdown 列表，按取景地数量排序，链接到各作品页
+- 作品取景地：`https://junrei.jannchie.com/md/b/{id}`，Markdown 表格，含名称、原名、集数与时间、坐标、备注；`{id}` 为番组计划（bgm.tv）的作品 ID
+
+## 网页
+
+- [地图首页](https://junrei.jannchie.com/)
+- 作品页：`https://junrei.jannchie.com/b/{id}`，可加 `?p={地标 id}` 定位到某个取景地
+- [站点地图](https://junrei.jannchie.com/sitemap.xml)
+
+## JSON 接口
+
+- 搜索：`https://junrei.jannchie.com/v1/search?q={关键词}`，按作品名、城市、地标名搜索
+- 作品详情：`https://junrei.jannchie.com/v1/bangumi/{id}`

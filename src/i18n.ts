@@ -1,5 +1,5 @@
 // 界面语言：简体、繁体、日语、英语。界面文字很少（多为图标的无障碍名称），重点是作品名与地标名按语言取值。
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch } from "vue";
 
 export const LOCALES = ["zh-Hans", "zh-Hant", "ja", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -81,14 +81,23 @@ function detect(): Locale {
   return "zh-Hans";
 }
 
-export const locale = ref<Locale>(detect());
+// 服务端渲染统一用简体中文，浏览器挂载后再按用户偏好切换（见 initLocale）
+export const locale = ref<Locale>("zh-Hans");
 
-watchEffect(() => {
+let initialized = false;
+
+export function initLocale() {
+  if (initialized) return;
+  initialized = true;
+  locale.value = detect();
   document.documentElement.lang = locale.value;
-  try {
-    localStorage.setItem(STORAGE_KEY, locale.value);
-  } catch {}
-});
+  watch(locale, (l) => {
+    document.documentElement.lang = l;
+    try {
+      localStorage.setItem(STORAGE_KEY, l);
+    } catch {}
+  });
+}
 
 export const t = (key: MessageKey) => MESSAGES[locale.value][key];
 

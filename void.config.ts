@@ -5,14 +5,42 @@ export default defineConfig({
   "worker": {
     "compatibility_date": "2026-02-24"
   },
+  "head": {
+    "htmlAttrs": { "lang": "zh-Hans" },
+    "meta": [
+      // viewport-fit=cover 配合 env(safe-area-inset-*)，让底部抽屉避开 iPhone 的 Home 指示条
+      { "name": "viewport", "content": "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { "name": "theme-color", "content": "#f2f4f6", "media": "(prefers-color-scheme: light)" },
+      { "name": "theme-color", "content": "#212327", "media": "(prefers-color-scheme: dark)" },
+      { "name": "apple-mobile-web-app-capable", "content": "yes" },
+      { "name": "apple-mobile-web-app-status-bar-style", "content": "default" },
+      { "name": "apple-mobile-web-app-title", "content": "junrei" }
+    ],
+    "link": [
+      { "rel": "manifest", "href": "/manifest.webmanifest" },
+      { "rel": "icon", "href": "/icons/favicon-32.png", "type": "image/png" },
+      { "rel": "apple-touch-icon", "href": "/icons/apple-touch-icon.png" },
+      { "rel": "alternate", "type": "text/plain", "href": "/llms.txt", "title": "llms.txt" },
+      // 地图点位与地图同时开始加载，不必等页面脚本跑完
+      { "rel": "preload", "href": "/data/points.geojson", "as": "fetch", "crossorigin": "anonymous" }
+    ]
+  },
   "routing": {
     // 数据只在导入时变化，而导入总是伴随一次部署（部署会清空 ISR 缓存），所以按「直到下次部署」缓存。
     // /api 下的路径 Void 从不缓存，读接口因此放在 /v1。
-    "revalidate": { "/v1/*": 31536000 },
+    "revalidate": {
+      "/": 31536000,
+      "/b/*": 31536000,
+      "/v1/*": 31536000,
+      "/md": 31536000,
+      "/md/*": 31536000,
+      "/sitemap.xml": 31536000
+    },
     "revalidateQueryAllowlist": { "/v1/search": ["q"] },
     "headers": {
       "/v1/*": ["Cache-Control: public, max-age=3600"],
-      "/data/*": ["Cache-Control: public, max-age=3600, stale-while-revalidate=86400"]
+      "/data/*": ["Cache-Control: public, max-age=3600, stale-while-revalidate=86400"],
+      "/sw.js": ["Cache-Control: no-cache"]
     }
   }
 });
