@@ -1,11 +1,18 @@
 // junrei 的 Service Worker：让应用可安装、弱网可用，并缓存去过的地方（巡礼现场常常信号不好）。
 // 策略：页面先走网络、失败回退缓存；带哈希的静态资源只取缓存；数据与地图瓦片先给缓存再后台更新。
-const VERSION = "v1";
+const VERSION = "v2";
 const PAGES = `pages-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const DATA = `data-${VERSION}`;
-const TILES = `tiles-${VERSION}`;
-const TILE_LIMIT = 3000; // 地图瓦片、地形、截图缩略图的条目上限
+// 第三方资源按类型分池、各自设条目上限，互不挤占（截图再多也不会把地图瓦片挤出去）
+const POOLS = [
+  // 矢量瓦片、样式、字体：每张几十 KB，看过的区域尽量留住
+  { name: `tiles-${VERSION}`, limit: 2000, test: (u) => /(^|\.)openfreemap\.org$/.test(u.hostname) },
+  // 地形瓦片：每张约 100 KB，只在小比例尺用到，留少一些
+  { name: `terrain-${VERSION}`, limit: 500, test: (u) => u.hostname.includes("elevation-tiles-prod") },
+  // 截图与封面缩略图
+  { name: `images-${VERSION}`, limit: 1000, test: (u) => /(^|\.)anitabi\.cn$/.test(u.hostname) },
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/", "/manifest.webmanifest"])));
@@ -13,7 +20,7 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  const keep = [PAGES, STATIC, DATA, TILES];
+  const keep = [PAGES, STATIC, DATA, ...POOLS.map((p) => p.name)];
   event.waitUntil(
     caches
       .keys()
@@ -34,9 +41,8 @@ self.addEventListener("fetch", (event) => {
     if (url.pathname.startsWith("/v1/")) return event.respondWith(networkFirst(req, DATA));
     return;
   }
-  if (/(^|\.)openfreemap\.org$|elevation-tiles-prod|(^|\.)anitabi\.cn$/.test(url.hostname)) {
-    return event.respondWith(staleWhileRevalidate(req, TILES, TILE_LIMIT));
-  }
+  const pool = POOLS.find((p) => p.test(url));
+  if (pool) return event.respondWith(staleWhileRevalidate(req, pool.name, pool.limit));
 });
 
 async function networkFirst(req, cacheName) {
