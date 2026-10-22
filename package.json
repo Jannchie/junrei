@@ -10,7 +10,14 @@
     "data:sync": "python -m sync.sync",
     "data:export": "python -m sync.export",
     "data:import": "void db execute --file data/d1-import.sql",
-    "data": "pnpm data:sync && pnpm data:export && pnpm data:import"
+    "data": "pnpm data:sync && pnpm data:export && pnpm data:import",
+    "enrich:places": "python -m sync.places",
+    "enrich:bgm": "python -m sync.bgm",
+    "enrich:geocheck": "python -m sync.geocheck",
+    "enrich:notes": "python -m sync.notes",
+    "enrich:translate": "python -m sync.translate",
+    "enrich:report": "python -m sync.enrich_report",
+    "enrich": "pnpm enrich:places && pnpm enrich:bgm && pnpm enrich:geocheck"
   },
   "dependencies": {
     "@jannchie/icons": "0.12.0",
