@@ -1,6 +1,5 @@
-# 同步产物，由 sync/ 下的脚本生成
-data/
-public/data/
+# 同步中间产物，由 sync/ 下的脚本生成（public/data/ 是前端静态数据，随代码提交，CI 构建要用）
+/data/
 
 node_modules
 dist
