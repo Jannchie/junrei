@@ -21,8 +21,9 @@ from dataclasses import dataclass, field
 
 from sync.enrich_common import now_iso
 
-DEFAULT_MODEL = "claude-opus-5-5"
+DEFAULT_MODEL = "claude-haiku-5-5"  # 短文本分类 / 翻译用 Haiku 足够；要更稳可 --model claude-sonnet-5-5
 FALLBACK_BETA = "server-side-fallback-2026-07-01"  # 只用于同步模式；Batches API 不接受 fallbacks
+FALLBACK_MODELS = {"claude-fable-5-1", "claude-opus-5-5", "claude-opus-5", "claude-sonnet-5-5"}  # 支持服务端 refusal fallback
 
 
 def clean_text(s: str) -> str:
@@ -181,8 +182,11 @@ def run(db, task: Task, inputs: list[str], *, model: str = DEFAULT_MODEL, mode: 
     if mode == "sync":
         for k, shas in enumerate(chunks):
             try:
-                msg = c.beta.messages.create(**task.params(model, [texts[s] for s in shas]),
-                                             betas=[FALLBACK_BETA], fallbacks="default")
+                params = task.params(model, [texts[s] for s in shas])
+                if model in FALLBACK_MODELS:
+                    msg = c.beta.messages.create(**params, betas=[FALLBACK_BETA], fallbacks="default")
+                else:
+                    msg = c.messages.create(**params)
             except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
                 sys.exit(f"Claude API 凭据不可用：{e.message}")
             except anthropic.BadRequestError as e:

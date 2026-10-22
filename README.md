@@ -48,7 +48,7 @@ pnpm dev               # http://localhost:5173
 
 数据目录默认是 `<项目根>/data`，可用环境变量 `JUNREI_DATA` 或 `--data` 指定（例如在 git worktree 里复用主仓库的数据）。
 
-两个 LLM 步骤需要 `pip install anthropic` 和 Claude API 凭据（`ANTHROPIC_API_KEY` 等，按 SDK 默认顺序解析），默认模型 `claude-opus-5-5`（`--model` 可改）：
+两个 LLM 步骤需要 `pip install anthropic` 和 Claude API 凭据（`ANTHROPIC_API_KEY` 等，按 SDK 默认顺序解析），默认模型 `claude-haiku-5-5`（短文本分类和翻译够用，批量价约 $0.05 / $0.25 每百万 token；要更稳可 `--model claude-sonnet-5-5`）：
 
 ```bash
 pnpm enrich:notes --dry-run          # 不调用 API：看去重后要发多少请求、请求长什么样
@@ -58,7 +58,7 @@ pnpm enrich:notes --wait             # 全量走 Message Batches（半价、异�
 
 - 相同文本只请求一次，结果按 `(任务, 提示词版本, 模型, 文本哈希)` 缓存；改了提示词，版本号里的哈希会变，旧缓存自动不再使用。
 - 不加 `--wait` 时提交完批次就退出，批次 id 记在缓存库里，下次运行会先收取结果。
-- 同步模式开启了服务端 refusal fallback；Batches 不支持该参数。
+- 同步模式下，支持的模型（Opus / Sonnet 5.5 / Fable）会开启服务端 refusal fallback，Haiku 不支持；Batches 不支持该参数。
 - 标签和置信度是模型给的，机翻名称前端展示时应标明「机翻」，人工录入的中文名永远优先。
 
 多语言翻译表 `translation(entity, entity_id, field, lang, text, source, machine_translated, confidence, …)`：
