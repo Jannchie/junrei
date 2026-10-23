@@ -3785,6 +3785,252 @@
       },
       "cat": "TV",
       "cover": "https://api.bgm.tv/v0/subjects/9716/image?type=common"
+    },
+    {
+      "id": 226540,
+      "title": "とある魔術の禁書目録Ⅲ",
+      "cn": "魔法禁书目录 第三季",
+      "en": "Toaru Majutsu no Index III",
+      "names": {
+        "zh-Hans": "魔法禁书目录 第三季",
+        "zh-Hant": "魔法禁書目錄 第三季",
+        "ja": "とある魔術の禁書目録Ⅲ",
+        "en": "Toaru Majutsu no Index III"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/226540/image?type=common"
+    },
+    {
+      "id": 160124,
+      "title": "食戟のソーマ 弍ノ皿",
+      "cn": "食戟之灵 贰之皿",
+      "en": null,
+      "names": {
+        "zh-Hans": "食戟之灵 贰之皿",
+        "zh-Hant": "食戟之靈 貳之皿",
+        "ja": "食戟のソーマ 弍ノ皿"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/160124/image?type=common"
+    },
+    {
+      "id": 296820,
+      "title": "食戟のソーマ 豪ノ皿",
+      "cn": "食戟之灵 豪之皿",
+      "en": null,
+      "names": {
+        "zh-Hans": "食戟之灵 豪之皿",
+        "zh-Hant": "食戟之靈 豪之皿",
+        "ja": "食戟のソーマ 豪ノ皿"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/296820/image?type=common"
+    },
+    {
+      "id": 213816,
+      "title": "ReLIFE 完結編",
+      "cn": "ReLIFE 完结篇",
+      "en": null,
+      "names": {
+        "zh-Hans": "ReLIFE 完结篇",
+        "zh-Hant": "ReLIFE 完結篇",
+        "ja": "ReLIFE 完結編"
+      },
+      "cat": "OVA",
+      "cover": "https://api.bgm.tv/v0/subjects/213816/image?type=common"
+    },
+    {
+      "id": 175596,
+      "title": "終物語(下)",
+      "cn": "终物语（下）",
+      "en": "Owarimonogatari (2017)",
+      "names": {
+        "zh-Hans": "终物语（下）",
+        "zh-Hant": "終物語（下）",
+        "ja": "終物語(下)",
+        "en": "Owarimonogatari (2017)"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/175596/image?type=common"
+    },
+    {
+      "id": 278826,
+      "title": "Re:ゼロから始める異世界生活 2nd season",
+      "cn": "Re：从零开始的异世界生活 第二季",
+      "en": "Re:Zero kara Hajimeru Isekai Seikatsu (2020)",
+      "names": {
+        "zh-Hans": "Re：从零开始的异世界生活 第二季",
+        "zh-Hant": "Re：從零開始的異世界生活 第二季",
+        "ja": "Re:ゼロから始める異世界生活 2nd season",
+        "en": "Re:Zero kara Hajimeru Isekai Seikatsu (2020)"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/278826/image?type=common"
+    },
+    {
+      "id": 183891,
+      "title": "カードキャプターさくら クリアカード編",
+      "cn": "魔卡少女樱 透明牌篇",
+      "en": "Cardcaptor Sakura: Clear Card-hen",
+      "names": {
+        "zh-Hans": "魔卡少女樱 透明牌篇",
+        "zh-Hant": "魔卡少女櫻 透明牌篇",
+        "ja": "カードキャプターさくら クリアカード編",
+        "en": "Cardcaptor Sakura: Clear Card-hen"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/183891/image?type=common"
+    },
+    {
+      "id": 7150,
+      "title": "そらのおとしものf",
+      "cn": "天降之物f",
+      "en": "Sora no Otoshimono Forte",
+      "names": {
+        "zh-Hans": "天降之物f",
+        "zh-Hant": "天降之物f",
+        "ja": "そらのおとしものf",
+        "en": "Sora no Otoshimono Forte"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/7150/image?type=common"
+    },
+    {
+      "id": 228254,
+      "title": "デート・ア・ライブⅢ",
+      "cn": "约会大作战 第三季",
+      "en": "Date a Live III",
+      "names": {
+        "zh-Hans": "约会大作战 第三季",
+        "zh-Hant": "約會大作戰 第三季",
+        "ja": "デート・ア・ライブⅢ",
+        "en": "Date a Live III"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/228254/image?type=common"
+    },
+    {
+      "id": 129988,
+      "title": "ノラガミ ARAGOTO",
+      "cn": "野良神 ARAGOTO",
+      "en": "Noragami Aragoto",
+      "names": {
+        "zh-Hans": "野良神 ARAGOTO",
+        "zh-Hant": "野良神 ARAGOTO",
+        "ja": "ノラガミ ARAGOTO",
+        "en": "Noragami Aragoto"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/129988/image?type=common"
+    },
+    {
+      "id": 120236,
+      "title": "ハイキュー!! セカンドシーズン",
+      "cn": "排球少年 第二季",
+      "en": "Haikyuu!! 2nd Season",
+      "names": {
+        "zh-Hans": "排球少年 第二季",
+        "zh-Hant": "排球少年 第二季",
+        "ja": "ハイキュー!! セカンドシーズン",
+        "en": "Haikyuu!! 2nd Season"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/120236/image?type=common"
+    },
+    {
+      "id": 53984,
+      "title": "よんでますよ、アザゼルさん。Z",
+      "cn": "恶魔阿萨谢尔在召唤你Z",
+      "en": "Yondemasuyo, Azazel-san.Z",
+      "names": {
+        "zh-Hans": "恶魔阿萨谢尔在召唤你Z",
+        "zh-Hant": "惡魔阿薩謝爾在召喚你Z",
+        "ja": "よんでますよ、アザゼルさん。Z",
+        "en": "Yondemasuyo, Azazel-san.Z"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/53984/image?type=common"
+    },
+    {
+      "id": 42339,
+      "title": "ヨルムンガンド PERFECT ORDER",
+      "cn": "军火女王 PERFECT ORDER",
+      "en": null,
+      "names": {
+        "zh-Hans": "军火女王 PERFECT ORDER",
+        "zh-Hant": "軍火女王 PERFECT ORDER",
+        "ja": "ヨルムンガンド PERFECT ORDER"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/42339/image?type=common"
+    },
+    {
+      "id": 29421,
+      "title": "君と僕。2",
+      "cn": "少年同盟 2",
+      "en": null,
+      "names": {
+        "zh-Hans": "少年同盟 2",
+        "zh-Hant": "少年同盟 2",
+        "ja": "君と僕。2"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/29421/image?type=common"
+    },
+    {
+      "id": 251666,
+      "title": "宇宙戦艦ティラミスII",
+      "cn": "宇宙战舰提拉米斯 2",
+      "en": null,
+      "names": {
+        "zh-Hans": "宇宙战舰提拉米斯 2",
+        "zh-Hant": "宇宙戰艦提拉米斯 2",
+        "ja": "宇宙戦艦ティラミスII"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/251666/image?type=common"
+    },
+    {
+      "id": 14749,
+      "title": "京騒戯画",
+      "cn": "京骚戏画",
+      "en": "Kyousogiga",
+      "names": {
+        "zh-Hans": "京骚戏画",
+        "zh-Hant": "京騷戲畫",
+        "ja": "京騒戯画",
+        "en": "Kyousogiga"
+      },
+      "cat": "WEB",
+      "cover": "https://api.bgm.tv/v0/subjects/14749/image?type=common"
+    },
+    {
+      "id": 291039,
+      "title": "フルーツバスケット 2nd season",
+      "cn": "水果篮子 第二季",
+      "en": "Fruits Basket",
+      "names": {
+        "zh-Hans": "水果篮子 第二季",
+        "zh-Hant": "水果籃子 第二季",
+        "ja": "フルーツバスケット 2nd season",
+        "en": "Fruits Basket"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/291039/image?type=common"
+    },
+    {
+      "id": 315516,
+      "title": "フルーツバスケット The Final",
+      "cn": "水果篮子 最终季",
+      "en": "Fruits Basket",
+      "names": {
+        "zh-Hans": "水果篮子 最终季",
+        "zh-Hant": "水果籃子 最終季",
+        "ja": "フルーツバスケット The Final",
+        "en": "Fruits Basket"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/315516/image?type=common"
     }
   ],
   "points": [
@@ -3908,7 +4154,7 @@
       "source": null
     },
     {
-      "bangumi": 1014,
+      "bangumi": 226540,
       "id": "m-1014-61e7b874",
       "name": "中組公園",
       "cn": "中组公园",
@@ -3932,10 +4178,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1014-61e7b874-c9295e1e.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/12578982.html"
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/12578982.html",
+      "s": 1049
     },
     {
-      "bangumi": 1014,
+      "bangumi": 226540,
       "id": "m-1014-2fcb5c32",
       "name": "東京ビッグサイト",
       "cn": "东京国际展览中心（东京Big Sight）",
@@ -3959,10 +4206,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1014-2fcb5c32-e1c27bd3.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/12812741.html"
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/12812741.html",
+      "s": 466
     },
     {
-      "bangumi": 1014,
+      "bangumi": 226540,
       "id": "m-1014-fa5e3d8d",
       "name": "汐留シティセンター",
       "cn": "汐留城市中心",
@@ -3986,7 +4234,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1014-fa5e3d8d-27d6599e.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/13043722.html"
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/13043722.html",
+      "s": 714
     },
     {
       "bangumi": 1014,
@@ -4037,7 +4286,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1014-14dc881a-6799bb76.jpg",
       "origin": "tianlang2.s206.xrea.com",
-      "origin_link": "http://tianlang2.s206.xrea.com/Toaru_Majutsuno_Index.htm"
+      "origin_link": "http://tianlang2.s206.xrea.com/Toaru_Majutsuno_Index.htm",
+      "s": null
     },
     {
       "bangumi": 1014,
@@ -4062,7 +4312,7 @@
       },
       "reference": "http://tianlang2.s206.xrea.com/Toaru_Majutsuno_Index.htm",
       "source": null,
-      "s": 920,
+      "s": 921,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1014-87576528-427573f2.jpg",
       "origin": "tianlang2.s206.xrea.com",
       "origin_link": "http://tianlang2.s206.xrea.com/Toaru_Majutsuno_Index.htm"
@@ -4624,7 +4874,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-10639-c5c3aba7-96701a9a.jpg",
       "origin": "ameblo.jp",
-      "origin_link": "http://ameblo.jp/pachuca33/entry-11036223647.html"
+      "origin_link": "http://ameblo.jp/pachuca33/entry-11036223647.html",
+      "s": 531
     },
     {
       "bangumi": 10639,
@@ -4651,7 +4902,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-10639-7cc11a00-96701a9a.jpg",
       "origin": "ameblo.jp",
-      "origin_link": "http://ameblo.jp/pachuca33/entry-11036223647.html"
+      "origin_link": "http://ameblo.jp/pachuca33/entry-11036223647.html",
+      "s": 531
     },
     {
       "bangumi": 10639,
@@ -4700,7 +4952,7 @@
       },
       "reference": "http://ameblo.jp/pachuca33/entry-11069933007.html",
       "source": null,
-      "s": 976,
+      "s": 980,
       "image": "https://cdn.jannchie.com/junrei/shots/m-10639-c627bd8a-05f7bd69.jpg",
       "origin": "ameblo.jp",
       "origin_link": "http://ameblo.jp/pachuca33/entry-11069933007.html"
@@ -4816,7 +5068,7 @@
       "cn": "锦糸町Olinas购物中心",
       "lat": 35.70062,
       "lng": 139.815679,
-      "ep": "3",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "锦糸町Olinas购物中心",
@@ -4834,7 +5086,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-106693-9eda41b7-e4ea649a.jpg",
       "origin": "dtman.info",
-      "origin_link": "http://dtman.info/post-4034/"
+      "origin_link": "http://dtman.info/post-4034/",
+      "s": 65
     },
     {
       "bangumi": 106693,
@@ -5009,7 +5262,7 @@
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-1349.html"
     },
     {
-      "bangumi": 116461,
+      "bangumi": 160124,
       "id": "m-116461-4c0d559d",
       "name": "品川駅",
       "cn": "品川站",
@@ -5033,10 +5286,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-116461-4c0d559d-77e17a30.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/beetle883/archives/11628069.html"
+      "origin_link": "http://blog.livedoor.jp/beetle883/archives/11628069.html",
+      "s": 85
     },
     {
-      "bangumi": 116461,
+      "bangumi": 296820,
       "id": "m-116461-40bdd0f6",
       "name": "サンサンロード",
       "cn": "阳光大道（立川）",
@@ -5060,7 +5314,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-116461-40bdd0f6-70ca5d8f.jpg",
       "origin": "furaba-animeseichi.blog.jp",
-      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24837240.html"
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24837240.html",
+      "s": 885
     },
     {
       "bangumi": 118906,
@@ -5165,7 +5420,7 @@
       "cn": "多良木站",
       "lat": 32.262982,
       "lng": 130.933606,
-      "ep": null,
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "多良木站",
@@ -5181,7 +5436,7 @@
       },
       "reference": "http://tianlang2.s206.xrea.com/Hotarubi.htm",
       "source": null,
-      "s": 1622,
+      "s": 1623,
       "image": "https://cdn.jannchie.com/junrei/shots/m-12544-0c385e17-ea50d6ec.jpg",
       "origin": "tianlang2.s206.xrea.com",
       "origin_link": "http://tianlang2.s206.xrea.com/Hotarubi.htm"
@@ -5307,13 +5562,13 @@
       "source": null
     },
     {
-      "bangumi": 126173,
+      "bangumi": 213816,
       "id": "m-126173-4233f044",
       "name": "パレットタウン",
       "cn": "彩虹城（Palette Town）",
       "lat": 35.624474,
       "lng": 139.781464,
-      "ep": "16",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "彩虹城（Palette Town）",
@@ -5331,16 +5586,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-126173-4233f044-cb31bb61.jpg",
       "origin": "astral01.hatenablog.com",
-      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524"
+      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524",
+      "s": 731
     },
     {
-      "bangumi": 126173,
+      "bangumi": 213816,
       "id": "m-126173-6982ea53",
       "name": "ヴィーナスフォート",
       "cn": "维纳斯堡购物中心",
       "lat": 35.624993,
       "lng": 139.780203,
-      "ep": "16",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "维纳斯堡购物中心",
@@ -5358,16 +5614,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-126173-6982ea53-87a436c9.jpg",
       "origin": "astral01.hatenablog.com",
-      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524"
+      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524",
+      "s": 822
     },
     {
-      "bangumi": 126173,
+      "bangumi": 213816,
       "id": "m-126173-99de3c5a",
       "name": "シンボルプロムナード公園",
       "cn": "象征步道公园",
       "lat": 35.620533,
       "lng": 139.777264,
-      "ep": "16",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "象征步道公园",
@@ -5385,16 +5642,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-126173-99de3c5a-efef7ddd.jpg",
       "origin": "astral01.hatenablog.com",
-      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524"
+      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524",
+      "s": 1136
     },
     {
-      "bangumi": 126173,
+      "bangumi": 213816,
       "id": "m-126173-70ba2643",
       "name": "出会い橋",
       "cn": "相遇桥",
       "lat": 35.625036,
       "lng": 139.777593,
-      "ep": "16",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "相遇桥",
@@ -5412,7 +5670,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-126173-70ba2643-50c13094.jpg",
       "origin": "astral01.hatenablog.com",
-      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524"
+      "origin_link": "http://astral01.hatenablog.com/entry/2018/04/05/204524",
+      "s": 1161
     },
     {
       "bangumi": 127563,
@@ -5421,7 +5680,7 @@
       "cn": "三井Repark 松原1丁目第2停车场",
       "lat": 35.642121,
       "lng": 139.655317,
-      "ep": "6",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "三井Repark 松原1丁目第2停车场",
@@ -5439,7 +5698,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-127563-ed2c476b-5a5ff83b.jpg",
       "origin": "dtman.info",
-      "origin_link": "http://dtman.info/onepunchman-meidaimae/"
+      "origin_link": "http://dtman.info/onepunchman-meidaimae/",
+      "s": 278
     },
     {
       "bangumi": 138829,
@@ -5466,7 +5726,7 @@
       "source": null
     },
     {
-      "bangumi": 138829,
+      "bangumi": 175596,
       "id": "m-138829-b15244c8",
       "name": "CAFE ZENON",
       "cn": "CAFE ZENON咖啡馆",
@@ -5490,7 +5750,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-138829-b15244c8-50b57110.jpg",
       "origin": "kimamanidance.hatenablog.com",
-      "origin_link": "https://kimamanidance.hatenablog.com/entry/2019/07/05/151224"
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2019/07/05/151224",
+      "s": null
     },
     {
       "bangumi": 138829,
@@ -5515,19 +5776,19 @@
       },
       "reference": "https://kimamanidance.hatenablog.com/entry/2019/11/15/180000",
       "source": null,
-      "s": 1032,
+      "s": 1113,
       "image": "https://cdn.jannchie.com/junrei/shots/m-138829-7e5a1cbc-19d69606.jpg",
       "origin": "kimamanidance.hatenablog.com",
       "origin_link": "https://kimamanidance.hatenablog.com/entry/2019/11/15/180000"
     },
     {
-      "bangumi": 140001,
+      "bangumi": 278826,
       "id": "m-140001-675628cc",
       "name": "権現堂公園",
       "cn": "权现堂公园",
       "lat": 36.10068,
       "lng": 139.72507,
-      "ep": "29",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "权现堂公园",
@@ -5545,7 +5806,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-675628cc-85bf89af.jpg",
       "origin": "fwht8392.blog.fc2.com",
-      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html"
+      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "s": 271
     },
     {
       "bangumi": 140001,
@@ -5572,16 +5834,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-2dd78b7a-f14ca45e.jpg",
       "origin": "fwht8392.blog.fc2.com",
-      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html"
+      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "s": null
     },
     {
-      "bangumi": 140001,
+      "bangumi": 278826,
       "id": "m-140001-d87cf41f",
       "name": "北二丁目歩道橋",
       "cn": "北二丁目人行天桥",
       "lat": 36.084053,
       "lng": 139.723083,
-      "ep": "29",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "北二丁目人行天桥",
@@ -5599,16 +5862,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-d87cf41f-83451c90.jpg",
       "origin": "fwht8392.blog.fc2.com",
-      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html"
+      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "s": 1115
     },
     {
-      "bangumi": 140001,
+      "bangumi": 278826,
       "id": "m-140001-8e39c1f0",
       "name": "浅間神社",
       "cn": "浅间神社",
       "lat": 36.079677,
       "lng": 139.723118,
-      "ep": "29",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "浅间神社",
@@ -5626,16 +5890,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-8e39c1f0-3d06cf92.jpg",
       "origin": "fwht8392.blog.fc2.com",
-      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html"
+      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "s": 1260
     },
     {
-      "bangumi": 140001,
+      "bangumi": 278826,
       "id": "m-140001-b49618f8",
       "name": "北二丁目交差点",
       "cn": "北二丁目十字路口",
       "lat": 36.084053,
       "lng": 139.723083,
-      "ep": "29",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "北二丁目十字路口",
@@ -5653,16 +5918,17 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-b49618f8-b6805347.jpg",
       "origin": "furaba-animeseichi.blog.jp",
-      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html"
+      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "s": 738
     },
     {
-      "bangumi": 140001,
+      "bangumi": 278826,
       "id": "m-140001-a15af853",
       "name": "権現堂堤",
       "cn": "权现堂堤",
       "lat": 36.081141,
       "lng": 139.731096,
-      "ep": "29",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "权现堂堤",
@@ -5680,7 +5946,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-140001-a15af853-01c07dfc.jpg",
       "origin": "furaba-animeseichi.blog.jp",
-      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html"
+      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "s": 271
     },
     {
       "bangumi": 15910,
@@ -6621,7 +6888,7 @@
       },
       "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/73607448.html",
       "source": null,
-      "s": 485,
+      "s": 486,
       "image": "https://cdn.jannchie.com/junrei/shots/m-188091-b6787fd6-c7aad58f.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/73607448.html"
@@ -6723,7 +6990,7 @@
       "source": null
     },
     {
-      "bangumi": 1940,
+      "bangumi": 183891,
       "id": "m-1940-e8156b6c",
       "name": "元立誠小学校",
       "cn": "原立诚小学",
@@ -6747,7 +7014,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1940-e8156b6c-66887f81.jpg",
       "origin": "inish.blog1.fc2.com",
-      "origin_link": "http://inish.blog1.fc2.com/blog-entry-447.html"
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-447.html",
+      "s": null
     },
     {
       "bangumi": 204145,
@@ -6756,7 +7024,7 @@
       "cn": "秋叶原站",
       "lat": 35.69716,
       "lng": 139.775159,
-      "ep": "1",
+      "ep": null,
       "src": "ja",
       "names": {
         "zh-Hans": "秋叶原站",
@@ -6772,7 +7040,7 @@
       },
       "reference": "https://riyot.hatenablog.com/entry/2022/05/10/232200",
       "source": null,
-      "s": 120,
+      "s": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-204145-fff7eb9b-2b090465.jpg",
       "origin": "riyot.hatenablog.com",
       "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200"
@@ -6802,7 +7070,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-204145-4829276a-2b090465.jpg",
       "origin": "riyot.hatenablog.com",
-      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200"
+      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200",
+      "s": null
     },
     {
       "bangumi": 204145,
@@ -6811,7 +7080,7 @@
       "cn": "圣桥",
       "lat": 35.699747,
       "lng": 139.765524,
-      "ep": "2",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "圣桥",
@@ -6829,7 +7098,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-204145-55dd6ff1-c43637bb.jpg",
       "origin": "riyot.hatenablog.com",
-      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200"
+      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200",
+      "s": 0
     },
     {
       "bangumi": 204145,
@@ -6838,7 +7108,7 @@
       "cn": "东京国际展览中心",
       "lat": 35.629763,
       "lng": 139.793982,
-      "ep": "4",
+      "ep": "8",
       "src": "ja",
       "names": {
         "zh-Hans": "东京国际展览中心",
@@ -6856,7 +7126,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-204145-2fcb5c32-ac9eeb7c.jpg",
       "origin": "riyot.hatenablog.com",
-      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200"
+      "origin_link": "https://riyot.hatenablog.com/entry/2022/05/10/232200",
+      "s": 856
     },
     {
       "bangumi": 204145,
@@ -7085,7 +7356,7 @@
       "cn": "莵道高中公交站",
       "lat": 34.904243,
       "lng": 135.827042,
-      "ep": null,
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "莵道高中公交站",
@@ -7101,7 +7372,7 @@
       },
       "reference": "http://ukatensei.blog50.fc2.com/blog-entry-906.html",
       "source": null,
-      "s": 5060,
+      "s": 5062,
       "image": "https://cdn.jannchie.com/junrei/shots/m-216371-a3e6ad3a-a5864b8a.jpg",
       "origin": "ukatensei.blog50.fc2.com",
       "origin_link": "http://ukatensei.blog50.fc2.com/blog-entry-906.html"
@@ -7233,7 +7504,7 @@
       "cn": "冰川神社",
       "lat": 35.92714,
       "lng": 139.488776,
-      "ep": "1",
+      "ep": "18",
       "src": "ja",
       "names": {
         "zh-Hans": "冰川神社",
@@ -7251,7 +7522,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-23686-56f0da72-08f8448f.jpg",
       "origin": "rimatai.blog.fc2.com",
-      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-199.html"
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-199.html",
+      "s": 174
     },
     {
       "bangumi": 23686,
@@ -8226,7 +8498,7 @@
       "source": null
     },
     {
-      "bangumi": 2617,
+      "bangumi": 7150,
       "id": "m-2617-e8539b9b",
       "name": "出雲大社 拝殿",
       "cn": "出云大社拜殿",
@@ -8250,7 +8522,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-2617-e8539b9b-332da2d3.jpg",
       "origin": "d.hatena.ne.jp",
-      "origin_link": "http://d.hatena.ne.jp/kabutoyama-tigers/20140311/1394540288"
+      "origin_link": "http://d.hatena.ne.jp/kabutoyama-tigers/20140311/1394540288",
+      "s": 1283
     },
     {
       "bangumi": 262943,
@@ -9531,7 +9804,7 @@
       "cn": "国际通 县厅前十字路口",
       "lat": 26.218515,
       "lng": 127.693712,
-      "ep": "6",
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "国际通 县厅前十字路口",
@@ -9549,10 +9822,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-45842-251fa547-990692ad.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/kouhei14915/archives/52170888.html"
+      "origin_link": "http://blog.livedoor.jp/kouhei14915/archives/52170888.html",
+      "s": 637
     },
     {
-      "bangumi": 49131,
+      "bangumi": 228254,
       "id": "m-49131-ac800b5f",
       "name": "玉川学園前8号踏切",
       "cn": "玉川学园前8号道口",
@@ -9576,7 +9850,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-49131-ac800b5f-b6a79b18.jpg",
       "origin": "blog.livedoor.jp",
-      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/16341782.html"
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/16341782.html",
+      "s": null
     },
     {
       "bangumi": 5976,
@@ -9937,7 +10212,7 @@
       },
       "reference": "http://inish.blog1.fc2.com/blog-entry-233.html",
       "source": null,
-      "s": 346,
+      "s": 347,
       "image": "https://cdn.jannchie.com/junrei/shots/m-82572-74f23100-d71b78f7.jpg",
       "origin": "inish.blog1.fc2.com",
       "origin_link": "http://inish.blog1.fc2.com/blog-entry-233.html"
@@ -10027,7 +10302,7 @@
       "origin_link": "http://inish.blog1.fc2.com/blog-entry-238.html"
     },
     {
-      "bangumi": 82572,
+      "bangumi": 129988,
       "id": "m-82572-dc131077",
       "name": "大泉学園駅 南側連絡通路",
       "cn": "大泉学园站南侧连廊",
@@ -10051,7 +10326,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-82572-dc131077-2fdebbb8.jpg",
       "origin": "inish.blog1.fc2.com",
-      "origin_link": "http://inish.blog1.fc2.com/blog-entry-309.html"
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-309.html",
+      "s": null
     },
     {
       "bangumi": 82572,
@@ -10160,7 +10436,7 @@
       "cn": "歌舞伎町一番街大门",
       "lat": 35.695393,
       "lng": 139.701294,
-      "ep": "10",
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "歌舞伎町一番街大门",
@@ -10178,7 +10454,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-8402-7d08b41f-8d9aaf3f.jpg",
       "origin": "d.hatena.ne.jp",
-      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659"
+      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659",
+      "s": 638
     },
     {
       "bangumi": 8402,
@@ -10187,7 +10464,7 @@
       "cn": "斯巴鲁大厦 新宿之眼",
       "lat": 35.690954,
       "lng": 139.698764,
-      "ep": "10",
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "斯巴鲁大厦 新宿之眼",
@@ -10205,7 +10482,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-8402-cd533ded-38bf32e9.jpg",
       "origin": "d.hatena.ne.jp",
-      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659"
+      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659",
+      "s": 647
     },
     {
       "bangumi": 8402,
@@ -10214,7 +10492,7 @@
       "cn": "唐吉诃德 新宿东口总店",
       "lat": 35.690047,
       "lng": 139.702009,
-      "ep": "10",
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "唐吉诃德 新宿东口总店",
@@ -10232,10 +10510,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-8402-2556934b-cd0dd08b.jpg",
       "origin": "d.hatena.ne.jp",
-      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659"
+      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659",
+      "s": 1007
     },
     {
-      "bangumi": 84171,
+      "bangumi": 120236,
       "id": "m-84171-3c0b57bb",
       "name": "仙台中央郵便局",
       "cn": "仙台中央邮局",
@@ -10259,10 +10538,11 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-84171-3c0b57bb-03dc656d.jpg",
       "origin": "tianlang.s601.xrea.com",
-      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm"
+      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "s": 857
     },
     {
-      "bangumi": 84171,
+      "bangumi": 120236,
       "id": "m-84171-c1f2aee2",
       "name": "勾当台公園駅",
       "cn": "勾当台公园站",
@@ -10286,7 +10566,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-84171-c1f2aee2-03dc656d.jpg",
       "origin": "tianlang.s601.xrea.com",
-      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm"
+      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "s": 857
     },
     {
       "bangumi": 84171,
@@ -10313,7 +10594,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-84171-cdd8ab01-5d2f496c.jpg",
       "origin": "tianlang.s601.xrea.com",
-      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm"
+      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "s": null
     },
     {
       "bangumi": 84171,
@@ -10340,7 +10622,8 @@
       "source": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-84171-2ec35e10-5d2f496c.jpg",
       "origin": "tianlang.s601.xrea.com",
-      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm"
+      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "s": null
     },
     {
       "bangumi": 84872,
@@ -10634,13 +10917,13 @@
       "s": null
     },
     {
-      "bangumi": 10742,
+      "bangumi": 53984,
       "id": "m-10742-a6c89e61",
       "name": "国立科学博物館",
       "cn": "国立科学博物馆",
       "lat": 35.715899,
       "lng": 139.776688,
-      "ep": null,
+      "ep": "9",
       "src": "ja",
       "names": {
         "zh-Hans": "国立科学博物馆",
@@ -10656,7 +10939,7 @@
       },
       "reference": "http://rimatai.blog.fc2.com/blog-entry-275.html",
       "source": null,
-      "s": null,
+      "s": 59,
       "image": "https://cdn.jannchie.com/junrei/shots/m-10742-a6c89e61-cc1719f2.jpg",
       "origin": "rimatai.blog.fc2.com",
       "origin_link": "http://rimatai.blog.fc2.com/blog-entry-275.html"
@@ -11862,7 +12145,7 @@
       },
       "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/67340200.html",
       "source": null,
-      "s": 76,
+      "s": 77,
       "image": "https://cdn.jannchie.com/junrei/shots/m-194877-8be6a66c-3a34f96c.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/67340200.html"
@@ -12560,7 +12843,7 @@
       "cn": "荷兰通",
       "lat": 34.6606,
       "lng": 133.929671,
-      "ep": "3",
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "荷兰通",
@@ -12576,7 +12859,7 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-490.html",
       "source": null,
-      "s": null,
+      "s": 758,
       "image": "https://cdn.jannchie.com/junrei/shots/m-246915-7afd131b-e6a589b6.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-490.html"
@@ -12688,7 +12971,7 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
       "source": null,
-      "s": null,
+      "s": 923,
       "image": "https://cdn.jannchie.com/junrei/shots/m-246915-d06c7b06-67c9eb9a.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html"
@@ -12744,7 +13027,7 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
       "source": null,
-      "s": null,
+      "s": 923,
       "image": "https://cdn.jannchie.com/junrei/shots/m-246915-1dcab5a3-67c9eb9a.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html"
@@ -12756,7 +13039,7 @@
       "cn": "冈山站前喷泉",
       "lat": 38.023273,
       "lng": 140.788605,
-      "ep": "2",
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "冈山站前喷泉",
@@ -12772,7 +13055,7 @@
       },
       "reference": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
       "source": null,
-      "s": null,
+      "s": 718,
       "image": "https://cdn.jannchie.com/junrei/shots/m-246915-60ce7f86-6cb73673.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/miyaken46/archives/23335275.html"
@@ -12896,7 +13179,7 @@
       "cn": "下石井公园",
       "lat": 34.660783,
       "lng": 133.9221,
-      "ep": "10",
+      "ep": "11",
       "src": "ja",
       "names": {
         "zh-Hans": "下石井公园",
@@ -12912,7 +13195,7 @@
       },
       "reference": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
       "source": null,
-      "s": null,
+      "s": 480,
       "image": "https://cdn.jannchie.com/junrei/shots/m-246915-afe5eed4-d755b5a0.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/miyaken46/archives/23335275.html"
@@ -13310,7 +13593,7 @@
       "cn": "涩谷摩艾像",
       "lat": 35.661812,
       "lng": 139.704285,
-      "ep": "2",
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "涩谷摩艾像",
@@ -13326,7 +13609,7 @@
       },
       "reference": "http://furaba-animeseichi.blog.jp/archives/21965532.html",
       "source": null,
-      "s": null,
+      "s": 1613,
       "image": "https://cdn.jannchie.com/junrei/shots/m-266147-6a8e00e3-27ce08bf.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "http://furaba-animeseichi.blog.jp/archives/21965532.html"
@@ -13675,13 +13958,13 @@
       "s": null
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-469f3f2f",
       "name": "成田国際空港 第1ターミナル 北ウイング 国際線到着ロビー",
       "cn": "成田国际机场第1航站楼北翼国际到达大厅",
       "lat": 35.775871,
       "lng": 140.39331,
-      "ep": "16",
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "成田国际机场第1航站楼北翼国际到达大厅",
@@ -13697,19 +13980,19 @@
       },
       "reference": "http://blog.livedoor.jp/kouhei14915/archives/52100742.html",
       "source": null,
-      "s": null,
+      "s": 1012,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-469f3f2f-43d15b1e.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/kouhei14915/archives/52100742.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-1268ccea",
       "name": "成田国際空港 第1旅客ターミナル 展望デッキ",
       "cn": "成田国际机场第1航站楼展望台",
       "lat": 35.763594,
       "lng": 140.383613,
-      "ep": "17",
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "成田国际机场第1航站楼展望台",
@@ -13725,19 +14008,19 @@
       },
       "reference": "http://blog.livedoor.jp/kouhei14915/archives/52100742.html",
       "source": null,
-      "s": null,
+      "s": 267,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-1268ccea-d7663ae2.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/kouhei14915/archives/52100742.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-a5fed643",
       "name": "海老名サービスエリア（下り）",
       "cn": "海老名服务区（下行）",
       "lat": 35.430794,
       "lng": 139.40269,
-      "ep": null,
+      "ep": "5",
       "src": "ja",
       "names": {
         "zh-Hans": "海老名服务区（下行）",
@@ -13753,19 +14036,19 @@
       },
       "reference": "http://rimatai.blog.fc2.com/blog-entry-182.html",
       "source": null,
-      "s": null,
+      "s": 765,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-a5fed643-42bef264.jpg",
       "origin": "rimatai.blog.fc2.com",
       "origin_link": "http://rimatai.blog.fc2.com/blog-entry-182.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-7a29261d",
       "name": "成田国際空港",
       "cn": "成田国际机场",
       "lat": 35.775871,
       "lng": 140.39331,
-      "ep": null,
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "成田国际机场",
@@ -13781,19 +14064,19 @@
       },
       "reference": "http://rimatai.blog.fc2.com/blog-entry-218.html",
       "source": null,
-      "s": null,
+      "s": 1001,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-7a29261d-f7840cf0.jpg",
       "origin": "rimatai.blog.fc2.com",
       "origin_link": "http://rimatai.blog.fc2.com/blog-entry-218.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-0405e59b",
       "name": "成田国際空港 第1ターミナル",
       "cn": "成田国际机场第1航站楼",
       "lat": 35.763096,
       "lng": 140.386371,
-      "ep": null,
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "成田国际机场第1航站楼",
@@ -13809,19 +14092,19 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html",
       "source": null,
-      "s": null,
+      "s": 1001,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-0405e59b-7c1da353.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-4291a2fe",
       "name": "成田国際空港 第1ターミナル展望デッキ",
       "cn": "成田国际机场第1航站楼观景台",
       "lat": 35.775871,
       "lng": 140.39331,
-      "ep": null,
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "成田国际机场第1航站楼观景台",
@@ -13837,19 +14120,19 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html",
       "source": null,
-      "s": null,
+      "s": 1001,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-4291a2fe-7c1da353.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-71ef8957",
       "name": "関西国際空港",
       "cn": "关西国际机场",
       "lat": 34.434204,
       "lng": 135.222523,
-      "ep": null,
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "关西国际机场",
@@ -13865,19 +14148,19 @@
       },
       "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html",
       "source": null,
-      "s": null,
+      "s": 1001,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-71ef8957-7c1da353.jpg",
       "origin": "tsurebashi.blog123.fc2.com",
       "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-234.html"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-19f6d706",
       "name": "海ほたるPA",
       "cn": "海萤火虫停车区",
       "lat": 35.462991,
       "lng": 139.876418,
-      "ep": null,
+      "ep": "6",
       "src": "ja",
       "names": {
         "zh-Hans": "海萤火虫停车区",
@@ -13893,19 +14176,19 @@
       },
       "reference": "http://d.hatena.ne.jp/riyot/20130522/1369229735",
       "source": null,
-      "s": null,
+      "s": 275,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-19f6d706-09c44369.jpg",
       "origin": "d.hatena.ne.jp",
       "origin_link": "http://d.hatena.ne.jp/riyot/20130522/1369229735"
     },
     {
-      "bangumi": 29073,
+      "bangumi": 42339,
       "id": "m-29073-718436b0",
       "name": "海ほたるPA カッターフェイス",
       "cn": "海萤火虫 盾构刀盘纪念碑",
       "lat": 35.464802,
       "lng": 139.872977,
-      "ep": null,
+      "ep": "6",
       "src": "ja",
       "names": {
         "zh-Hans": "海萤火虫 盾构刀盘纪念碑",
@@ -13921,7 +14204,7 @@
       },
       "reference": "http://d.hatena.ne.jp/riyot/20130522/1369229735",
       "source": null,
-      "s": null,
+      "s": 275,
       "image": "https://cdn.jannchie.com/junrei/shots/m-29073-718436b0-09c44369.jpg",
       "origin": "d.hatena.ne.jp",
       "origin_link": "http://d.hatena.ne.jp/riyot/20130522/1369229735"
@@ -14164,7 +14447,7 @@
       "cn": "新宿中央公园水之广场",
       "lat": 35.690029,
       "lng": 139.689585,
-      "ep": "7",
+      "ep": null,
       "src": "ja",
       "names": {
         "zh-Hans": "新宿中央公园水之广场",
@@ -14180,7 +14463,7 @@
       },
       "reference": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
       "source": null,
-      "s": 199,
+      "s": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-301469-d4f09d3b-c029a458.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/24988881.html"
@@ -14398,7 +14681,7 @@
       "cn": "观音崎灯塔",
       "lat": 35.256144,
       "lng": 139.745233,
-      "ep": "3",
+      "ep": "2",
       "src": "ja",
       "names": {
         "zh-Hans": "观音崎灯塔",
@@ -14414,7 +14697,7 @@
       },
       "reference": "http://lohirocke.blog.fc2.com/blog-entry-2754.html",
       "source": null,
-      "s": null,
+      "s": 578,
       "image": "https://cdn.jannchie.com/junrei/shots/m-323626-fd0574a7-7562f8dc.jpg",
       "origin": "lohirocke.blog.fc2.com",
       "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2754.html"
@@ -14442,7 +14725,7 @@
       },
       "reference": "http://lohirocke.blog.fc2.com/blog-entry-2754.html",
       "source": null,
-      "s": 549,
+      "s": 550,
       "image": "https://cdn.jannchie.com/junrei/shots/m-323626-ca92b876-2045b894.jpg",
       "origin": "lohirocke.blog.fc2.com",
       "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2754.html"
@@ -14470,7 +14753,7 @@
       },
       "reference": "https://furaba-animeseichi.blog.jp/archives/30389938.html",
       "source": null,
-      "s": null,
+      "s": 626,
       "image": "https://cdn.jannchie.com/junrei/shots/m-323626-19268d2e-11a6b0eb.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/30389938.html"
@@ -14510,7 +14793,7 @@
       "cn": "八景岛海岛乐园",
       "lat": 35.336503,
       "lng": 139.645783,
-      "ep": "7",
+      "ep": "9",
       "src": "ja",
       "names": {
         "zh-Hans": "八景岛海岛乐园",
@@ -14526,7 +14809,7 @@
       },
       "reference": "https://furaba-animeseichi.blog.jp/archives/30389938.html",
       "source": null,
-      "s": null,
+      "s": 626,
       "image": "https://cdn.jannchie.com/junrei/shots/m-323626-c5cbe9d0-11a6b0eb.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/30389938.html"
@@ -15125,7 +15408,7 @@
       "cn": "矢久桥",
       "lat": 35.848528,
       "lng": 139.315199,
-      "ep": "6",
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "矢久桥",
@@ -15141,7 +15424,7 @@
       },
       "reference": "http://teo.cocolog-nifty.com/column/2014/02/post-bf27.html",
       "source": null,
-      "s": null,
+      "s": 556,
       "image": "https://cdn.jannchie.com/junrei/shots/m-55703-fcd6844f-e2bcc39c.jpg",
       "origin": "teo.cocolog-nifty.com",
       "origin_link": "http://teo.cocolog-nifty.com/column/2014/02/post-bf27.html"
@@ -15406,7 +15689,7 @@
       "cn": "飞驒一之宫站",
       "lat": 36.088243,
       "lng": 137.247377,
-      "ep": null,
+      "ep": "7",
       "src": "ja",
       "names": {
         "zh-Hans": "飞驒一之宫站",
@@ -15422,7 +15705,7 @@
       },
       "reference": "https://nishikibuna.web.fc2.com/EXTRA/gifu.html#tk",
       "source": null,
-      "s": null,
+      "s": 485,
       "image": "https://cdn.jannchie.com/junrei/shots/m-7185-ba5bc251-1a560d06.jpg",
       "origin": "nishikibuna.web.fc2.com",
       "origin_link": "https://nishikibuna.web.fc2.com/EXTRA/gifu.html#tk"
@@ -15484,7 +15767,7 @@
       "cn": "御嵩站",
       "lat": 35.429721,
       "lng": 137.128203,
-      "ep": null,
+      "ep": "7",
       "src": "ja",
       "names": {
         "zh-Hans": "御嵩站",
@@ -15500,7 +15783,7 @@
       },
       "reference": "https://nishikibuna.web.fc2.com/EXTRA/gifu.html#tk",
       "source": null,
-      "s": null,
+      "s": 485,
       "image": "https://cdn.jannchie.com/junrei/shots/m-7185-bbe132a0-1a560d06.jpg",
       "origin": "nishikibuna.web.fc2.com",
       "origin_link": "https://nishikibuna.web.fc2.com/EXTRA/gifu.html#tk"
@@ -15777,7 +16060,7 @@
       "cn": "市之尾站",
       "lat": 35.552078,
       "lng": 139.541805,
-      "ep": "4",
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "市之尾站",
@@ -15793,7 +16076,7 @@
       },
       "reference": "http://blog.livedoor.jp/samwo/archives/51858233.html",
       "source": null,
-      "s": null,
+      "s": 358,
       "image": "https://cdn.jannchie.com/junrei/shots/m-92836-99e81b77-a4a6a279.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/samwo/archives/51858233.html"
@@ -16910,7 +17193,7 @@
       },
       "reference": "http://d.hatena.ne.jp/riyot/20081104#1225802609",
       "source": null,
-      "s": null,
+      "s": 95,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1314-86c34576-6ce11b4a.jpg",
       "origin": "d.hatena.ne.jp",
       "origin_link": "http://d.hatena.ne.jp/riyot/20081104#1225802609"
@@ -16938,7 +17221,7 @@
       },
       "reference": "http://d.hatena.ne.jp/riyot/20081124#1227455837",
       "source": null,
-      "s": null,
+      "s": 95,
       "image": "https://cdn.jannchie.com/junrei/shots/m-1314-431e3884-6ce11b4a.jpg",
       "origin": "d.hatena.ne.jp",
       "origin_link": "http://d.hatena.ne.jp/riyot/20081124#1227455837"
@@ -17308,13 +17591,13 @@
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-692.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-a587bfb8",
       "name": "境南ふれあい広場公園",
       "cn": "境南交流广场公园",
       "lat": 35.701569,
       "lng": 139.543747,
-      "ep": null,
+      "ep": "2",
       "src": "ja",
       "names": {
         "zh-Hans": "境南交流广场公园",
@@ -17330,19 +17613,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-795.html",
       "source": null,
-      "s": null,
+      "s": 595,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-a587bfb8-4b9a7bd5.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-795.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-87b8e06f",
       "name": "Emio武蔵境",
       "cn": "Emio 武藏境",
       "lat": 35.701825,
       "lng": 139.543971,
-      "ep": null,
+      "ep": "2",
       "src": "ja",
       "names": {
         "zh-Hans": "Emio 武藏境",
@@ -17358,19 +17641,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-795.html",
       "source": null,
-      "s": null,
+      "s": 723,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-87b8e06f-8628d329.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-795.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-91c36661",
       "name": "すきっぷ通り",
       "cn": "Skip通商店街",
       "lat": 35.703438,
       "lng": 139.544157,
-      "ep": null,
+      "ep": "3",
       "src": "ja",
       "names": {
         "zh-Hans": "Skip通商店街",
@@ -17386,19 +17669,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-810.html",
       "source": null,
-      "s": null,
+      "s": 272,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-91c36661-d36c71c9.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-810.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-9715fd39",
       "name": "東急プラザ蒲田",
       "cn": "东急广场蒲田",
       "lat": 35.56181,
       "lng": 139.715264,
-      "ep": null,
+      "ep": "4",
       "src": "ja",
       "names": {
         "zh-Hans": "东急广场蒲田",
@@ -17414,19 +17697,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-810.html",
       "source": null,
-      "s": null,
+      "s": 305,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-9715fd39-ca23836d.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-810.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-5f74618d",
       "name": "鳥取県立米子西高等学校",
       "cn": "鸟取县立米子西高中",
       "lat": 35.416249,
       "lng": 133.328377,
-      "ep": null,
+      "ep": "6",
       "src": "ja",
       "names": {
         "zh-Hans": "鸟取县立米子西高中",
@@ -17442,19 +17725,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
       "source": null,
-      "s": null,
+      "s": 778,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-5f74618d-afd081d6.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-825.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-18c2598c",
       "name": "境橋",
       "cn": "境桥",
       "lat": 35.710851,
       "lng": 139.536973,
-      "ep": null,
+      "ep": "6",
       "src": "ja",
       "names": {
         "zh-Hans": "境桥",
@@ -17470,19 +17753,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
       "source": null,
-      "s": null,
+      "s": 1082,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-18c2598c-76b83975.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-825.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-6125561c",
       "name": "アトレ吉祥寺",
       "cn": "Atre吉祥寺",
       "lat": 35.703058,
       "lng": 139.579347,
-      "ep": null,
+      "ep": "8",
       "src": "ja",
       "names": {
         "zh-Hans": "Atre吉祥寺",
@@ -17498,19 +17781,19 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
       "source": null,
-      "s": null,
+      "s": 488,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-6125561c-a8acc5cf.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-825.html"
     },
     {
-      "bangumi": 14220,
+      "bangumi": 29421,
       "id": "m-14220-8dda8540",
       "name": "吉祥寺サンロード商店街",
       "cn": "吉祥寺Sun Road商店街",
       "lat": 35.705045,
       "lng": 139.580509,
-      "ep": null,
+      "ep": "8",
       "src": "ja",
       "names": {
         "zh-Hans": "吉祥寺Sun Road商店街",
@@ -17526,7 +17809,7 @@
       },
       "reference": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
       "source": null,
-      "s": null,
+      "s": 549,
       "image": "https://cdn.jannchie.com/junrei/shots/m-14220-8dda8540-b2b2a107.jpg",
       "origin": "jokejokken.blog.fc2.com",
       "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-825.html"
@@ -18988,13 +19271,13 @@
       "origin_link": "http://sinkirouno.exblog.jp/26157363/"
     },
     {
-      "bangumi": 225022,
+      "bangumi": 251666,
       "id": "m-225022-331b0a65",
       "name": "一蘭 新宿歌舞伎町店",
       "cn": "一兰 新宿歌舞伎町店",
       "lat": 35.697778,
       "lng": 139.707191,
-      "ep": null,
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "一兰 新宿歌舞伎町店",
@@ -19010,19 +19293,19 @@
       },
       "reference": "http://blog.livedoor.jp/fly_ask/archives/14659784.html",
       "source": null,
-      "s": null,
+      "s": 167,
       "image": "https://cdn.jannchie.com/junrei/shots/m-225022-331b0a65-fef5aef6.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/fly_ask/archives/14659784.html"
     },
     {
-      "bangumi": 225022,
+      "bangumi": 251666,
       "id": "m-225022-06484182",
       "name": "ヨドバシカメラ マルチメディア名古屋松坂屋店",
       "cn": "友都八喜 名古屋松坂屋店",
       "lat": 35.169659,
       "lng": 136.884008,
-      "ep": null,
+      "ep": "1",
       "src": "ja",
       "names": {
         "zh-Hans": "友都八喜 名古屋松坂屋店",
@@ -19038,7 +19321,7 @@
       },
       "reference": "http://blog.livedoor.jp/fly_ask/archives/20210327.html",
       "source": null,
-      "s": null,
+      "s": 161,
       "image": "https://cdn.jannchie.com/junrei/shots/m-225022-06484182-659f0d0b.jpg",
       "origin": "blog.livedoor.jp",
       "origin_link": "http://blog.livedoor.jp/fly_ask/archives/20210327.html"
@@ -21642,7 +21925,7 @@
       },
       "reference": "http://sakuya5725.blog71.fc2.com/blog-entry-863.html",
       "source": null,
-      "s": 733,
+      "s": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-2936-6cfe00c3-5e7511ed.jpg",
       "origin": "sakuya5725.blog71.fc2.com",
       "origin_link": "http://sakuya5725.blog71.fc2.com/blog-entry-863.html"
@@ -26408,7 +26691,7 @@
       "origin_link": "http://d.hatena.ne.jp/riyot/20140418/1397747282"
     },
     {
-      "bangumi": 79114,
+      "bangumi": 14749,
       "id": "m-79114-d8901196",
       "name": "源光庵",
       "cn": "源光庵",
@@ -26430,13 +26713,13 @@
       },
       "reference": "http://bradbury3404.blog.fc2.com/blog-entry-74.html",
       "source": null,
-      "s": null,
+      "s": 173,
       "image": "https://cdn.jannchie.com/junrei/shots/m-79114-d8901196-754dc6c7.jpg",
       "origin": "bradbury3404.blog.fc2.com",
       "origin_link": "http://bradbury3404.blog.fc2.com/blog-entry-74.html"
     },
     {
-      "bangumi": 79114,
+      "bangumi": 14749,
       "id": "m-79114-2f5f7431",
       "name": "知恩院",
       "cn": "知恩院",
@@ -26458,13 +26741,13 @@
       },
       "reference": "http://bradbury3404.blog.fc2.com/blog-entry-74.html",
       "source": null,
-      "s": null,
+      "s": 369,
       "image": "https://cdn.jannchie.com/junrei/shots/m-79114-2f5f7431-cab1d4d3.jpg",
       "origin": "bradbury3404.blog.fc2.com",
       "origin_link": "http://bradbury3404.blog.fc2.com/blog-entry-74.html"
     },
     {
-      "bangumi": 79114,
+      "bangumi": 14749,
       "id": "m-79114-23d2e3e4",
       "name": "鞍馬寺",
       "cn": "鞍马寺",
@@ -26486,13 +26769,13 @@
       },
       "reference": "http://bradbury3404.blog.fc2.com/blog-entry-74.html",
       "source": null,
-      "s": null,
+      "s": 369,
       "image": "https://cdn.jannchie.com/junrei/shots/m-79114-23d2e3e4-24bd85f7.jpg",
       "origin": "bradbury3404.blog.fc2.com",
       "origin_link": "http://bradbury3404.blog.fc2.com/blog-entry-74.html"
     },
     {
-      "bangumi": 79114,
+      "bangumi": 14749,
       "id": "m-79114-5b7af1f5",
       "name": "高山寺",
       "cn": "高山寺",
@@ -26514,7 +26797,7 @@
       },
       "reference": "http://bradbury3404.blog.fc2.com/blog-entry-74.html",
       "source": null,
-      "s": null,
+      "s": 375,
       "image": "https://cdn.jannchie.com/junrei/shots/m-79114-5b7af1f5-385aa18a.jpg",
       "origin": "bradbury3404.blog.fc2.com",
       "origin_link": "http://bradbury3404.blog.fc2.com/blog-entry-74.html"
@@ -27444,13 +27727,13 @@
       "origin_link": "http://d.hatena.ne.jp/paffue/20140305/1393970551"
     },
     {
-      "bangumi": 880,
+      "bangumi": 291039,
       "id": "m-880-09d84601",
       "name": "京都駅 烏丸口バスターミナル",
       "cn": "京都站乌丸口巴士总站",
       "lat": 34.986191,
       "lng": 135.760063,
-      "ep": null,
+      "ep": "17",
       "src": "ja",
       "names": {
         "zh-Hans": "京都站乌丸口巴士总站",
@@ -27466,19 +27749,19 @@
       },
       "reference": "http://furaba-animeseichi.blog.jp/archives/24381052.html",
       "source": null,
-      "s": null,
+      "s": 38,
       "image": "https://cdn.jannchie.com/junrei/shots/m-880-09d84601-fbf62c18.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "http://furaba-animeseichi.blog.jp/archives/24381052.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 291039,
       "id": "m-880-48ef98e0",
       "name": "嵐山 竹林の小径",
       "cn": "岚山 竹林小径",
       "lat": 35.016796,
       "lng": 135.671266,
-      "ep": null,
+      "ep": "17",
       "src": "ja",
       "names": {
         "zh-Hans": "岚山 竹林小径",
@@ -27494,19 +27777,19 @@
       },
       "reference": "http://furaba-animeseichi.blog.jp/archives/24381052.html",
       "source": null,
-      "s": null,
+      "s": 2,
       "image": "https://cdn.jannchie.com/junrei/shots/m-880-48ef98e0-85e79ee0.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "http://furaba-animeseichi.blog.jp/archives/24381052.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 291039,
       "id": "m-880-f656ae7c",
       "name": "野宮神社",
       "cn": "野宫神社",
       "lat": 35.017765,
       "lng": 135.674166,
-      "ep": null,
+      "ep": "17",
       "src": "ja",
       "names": {
         "zh-Hans": "野宫神社",
@@ -27522,19 +27805,19 @@
       },
       "reference": "http://furaba-animeseichi.blog.jp/archives/24381052.html",
       "source": null,
-      "s": null,
+      "s": 269,
       "image": "https://cdn.jannchie.com/junrei/shots/m-880-f656ae7c-45903d16.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "http://furaba-animeseichi.blog.jp/archives/24381052.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 291039,
       "id": "m-880-fc9c4d4d",
       "name": "春日大社 二之鳥居",
       "cn": "春日大社 二之鸟居",
       "lat": 34.680506,
       "lng": 135.846075,
-      "ep": null,
+      "ep": "17",
       "src": "ja",
       "names": {
         "zh-Hans": "春日大社 二之鸟居",
@@ -27550,13 +27833,13 @@
       },
       "reference": "https://furaba-animeseichi.blog.jp/archives/25970812.html",
       "source": null,
-      "s": null,
+      "s": 814,
       "image": "https://cdn.jannchie.com/junrei/shots/m-880-fc9c4d4d-67b11c2a.jpg",
       "origin": "furaba-animeseichi.blog.jp",
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/25970812.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 315516,
       "id": "m-880-b894245a",
       "name": "光明院",
       "cn": "光明院",
@@ -27584,7 +27867,7 @@
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/28014147.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 315516,
       "id": "m-880-8b4ecab4",
       "name": "東福寺 通天橋",
       "cn": "东福寺 通天桥",
@@ -27612,7 +27895,7 @@
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/28014147.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 315516,
       "id": "m-880-10c379bd",
       "name": "建仁寺",
       "cn": "建仁寺",
@@ -27640,7 +27923,7 @@
       "origin_link": "https://furaba-animeseichi.blog.jp/archives/28014147.html"
     },
     {
-      "bangumi": 880,
+      "bangumi": 315516,
       "id": "m-880-baacc849",
       "name": "宝厳院",
       "cn": "宝严院",
