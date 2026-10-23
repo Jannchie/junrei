@@ -37,6 +37,7 @@ const MESSAGES = {
     inView: "这片区域的作品",
     machineTranslated: "机器翻译",
     noSpots: "还没有收录这部作品的巡礼地标",
+    allWorks: "全部",
     series: "同系列作品",
   },
   "zh-Hant": {
@@ -63,6 +64,7 @@ const MESSAGES = {
     inView: "這片區域的作品",
     machineTranslated: "機器翻譯",
     noSpots: "還沒有收錄這部作品的巡禮地標",
+    allWorks: "全部",
     series: "同系列作品",
   },
   ja: {
@@ -89,6 +91,7 @@ const MESSAGES = {
     inView: "このエリアの作品",
     machineTranslated: "機械翻訳",
     noSpots: "この作品の聖地はまだ登録されていません",
+    allWorks: "すべて",
     series: "シリーズ作品",
   },
   en: {
@@ -115,6 +118,7 @@ const MESSAGES = {
     inView: "In this area",
     machineTranslated: "Machine translated",
     noSpots: "No pilgrimage spots for this title yet",
+    allWorks: "All",
     series: "In this series",
   },
 } satisfies Record<Locale, Record<string, string>>;

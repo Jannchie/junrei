@@ -10,16 +10,18 @@ import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail } from "../detail";
-import type { BangumiDetail } from "../server/bangumi";
+import { buildView, type Card, type Group, groupOf, missingDetails, type View } from "../series";
 import "../theme.css";
 
-/** 首页与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
+/** 首页、系列页 /s/:id 与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
 const props = defineProps<{
   /** 页面语言，由 URL 决定（简体中文无前缀，其余为 /zh-hant、/ja、/en） */
   lang: Locale;
-  initialDetail?: BangumiDetail | null;
-  /** 概览里展示的热门作品 */
-  popular?: { id: number; cn: string | null; title: string | null; en: string | null; cover: string | null; pointCount: number }[];
+  /** 系列页、作品页：所在系列与筛选的作品（null 为全部） */
+  initialGroup?: Group | null;
+  initialFilter?: number | null;
+  /** 概览里展示的热门系列 */
+  popular?: Card[];
 }>();
 
 provideIconDefaults({ size: 16 });
@@ -76,7 +78,10 @@ interface SearchResult {
 }
 const fetchSearch = (q: string) => fetch("/v1/search", { query: { q } });
 
-const detail = shallowRef<BangumiDetail | null>(props.initialDetail ?? null);
+// 面板里的作品以系列为单位：group 是当前系列，filter 是筛选的作品（null 为全部），detail 是据此组装出的显示内容
+const group = shallowRef<Group | null>(props.initialGroup ?? null);
+const filter = ref<number | null>(props.initialFilter ?? null);
+const detail = computed<View | null>(() => (group.value ? buildView(group.value, filter.value) : null));
 const focusPointId = ref<string | null>(null);
 const query = ref("");
 const results = shallowRef<SearchResult | null>(null);
@@ -87,7 +92,7 @@ const selected = computed(() =>
     ? {
         bangumiId: detail.value.id,
         color: detail.value.color,
-        points: detail.value.points.map((p) => ({ id: p.id, name: pickName({ cn: p.cn, original: p.name, i18n: p.i18n }), lng: p.lng, lat: p.lat })),
+        points: detail.value.points.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName({ cn: p.cn, original: p.name, i18n: p.i18n }), lng: p.lng, lat: p.lat })),
       }
     : null,
 );
@@ -115,12 +120,29 @@ function onDetailScroll(e: Event) {
   headHidden.value = !!row && row.getBoundingClientRect().bottom < (e.target as HTMLElement).getBoundingClientRect().top;
 }
 
-async function select(bangumiId: number, pointId: string | null = null) {
-  if (detail.value?.id !== bangumiId) {
-    detail.value = await fetchDetail(bangumiId);
+/** 打开某部作品所在的系列：filterId 为 null 显示全部，否则筛选到那一部；可同时聚焦一个地标 */
+async function open(anyId: number, filterId: number | null, pointId: string | null = null) {
+  let g = group.value?.works.some((w) => w.id === anyId) ? group.value : groupOf(await fetchDetail(anyId));
+  const need = (filterId != null ? [filterId] : missingDetails(g)).filter((id) => !g.details.some((d) => d.id === id));
+  if (need.length) g = { ...g, details: [...g.details, ...(await Promise.all(need.map(fetchDetail)))] };
+  if (g !== group.value || filterId !== filter.value) {
+    group.value = g;
+    filter.value = filterId;
     visibleCount.value = PAGE;
     headHidden.value = false;
   }
+  await focus(pointId);
+}
+
+/** 选中一个地标（地图、搜索结果、列表、快捷键）：在当前显示范围里就直接聚焦，否则打开它所在的整个系列 */
+async function select(bangumiId: number, pointId: string | null = null) {
+  const shown = group.value?.works.some((w) => w.id === bangumiId) && (filter.value == null || filter.value === bangumiId);
+  if (shown && detail.value) return focus(pointId);
+  return open(bangumiId, null, pointId);
+}
+
+async function focus(pointId: string | null) {
+  if (!detail.value) return;
   const index = pointId ? detail.value.points.findIndex((p) => p.id === pointId) : -1;
   if (index >= visibleCount.value) visibleCount.value = index + PAGE;
   if (sheet.value === "peek") sheet.value = "half";
@@ -130,14 +152,15 @@ async function select(bangumiId: number, pointId: string | null = null) {
 }
 
 function clearSelection() {
-  detail.value = null;
+  group.value = null;
+  filter.value = null;
   focusPointId.value = null;
   headHidden.value = false;
 }
 
 // ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏；拖动把手切换 ----
 type Sheet = "peek" | "half" | "full";
-const sheet = ref<Sheet>(props.initialDetail ? "half" : "peek");
+const sheet = ref<Sheet>(props.initialGroup ? "half" : "peek");
 let drag: { y: number; height: number } | null = null;
 const dragHeight = ref<number | null>(null);
 function onHandleDown(e: PointerEvent) {
@@ -192,6 +215,17 @@ async function pickResult(bangumiId: number, pointId: string | null = null) {
   results.value = null;
   await select(bangumiId, pointId);
 }
+/** 搜索结果、首页的系列卡片：打开整个系列 */
+async function pickCard(id: number) {
+  query.value = "";
+  results.value = null;
+  await open(id, null);
+}
+const workName = (id: number) => {
+  const w = detail.value?.series.find((s) => s.id === id);
+  return w ? pickName({ cn: w.cn, original: w.title, en: w.en, i18n: w.i18n }) : "";
+};
+const cardPath = (c: Card) => localePath(locale.value, c.series ? `/s/${c.id}` : `/b/${c.id}`);
 
 // 状态写进 URL，链接即可分享、收藏：路径是作品（/b/:id 由服务端渲染，可被收录），?p 是地标，
 // ?q 是搜索词（也是 OpenSearch 的入口），#map 是地图视野（由 maplibre 维护，这里原样保留）
@@ -202,7 +236,10 @@ watch(query, (q) => {
   queryTimer = setTimeout(() => (debouncedQuery.value = q.trim()), 400);
 });
 watch([detail, focusPointId, debouncedQuery], () => {
-  const url = new URL(localePath(locale.value, detail.value ? `/b/${detail.value.id}` : "/"), location.origin);
+  // 系列「全部」是 /s/:系列，筛选到某部作品（或不在系列里的作品）是 /b/:作品
+  const d = detail.value;
+  const path = !d ? "/" : d.filter == null && d.series.length > 1 ? `/s/${d.key}` : `/b/${d.id}`;
+  const url = new URL(localePath(locale.value, path), location.origin);
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
   if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
   url.hash = location.hash;
@@ -274,7 +311,7 @@ function stepPoint(delta: number) {
   if (!points?.length) return false;
   const i = points.findIndex((p) => p.id === focusPointId.value);
   const next = i < 0 ? 0 : Math.min(points.length - 1, Math.max(0, i + delta));
-  void select(detail.value!.id, points[next].id);
+  void select(points[next].bangumiId, points[next].id);
 }
 /** 搜索结果：↑↓ 在输入框与结果之间移动焦点，回车即点击 */
 function stepRow(e: KeyboardEvent, delta: number) {
@@ -344,8 +381,9 @@ onMounted(() => {
   panelObserver.observe(app.value!);
   // ?p= 定位地标（作品页）；旧链接 /?b=…&p=…
   const params = new URLSearchParams(location.search);
-  const b = Number(params.get("b")) || detail.value?.id;
+  const b = Number(params.get("b"));
   if (b) void select(b, params.get("p"));
+  else if (detail.value && params.get("p")) void focus(params.get("p"));
   const q = params.get("q");
   if (q) {
     query.value = q;
@@ -412,14 +450,17 @@ onBeforeUnmount(() => {
           <div v-if="!results.bangumis.length && !results.points.length" class="empty">
             <JIcon :icon="ICONS.noResult" :size="28" />
           </div>
-          <button v-for="b in results.bangumis" :key="b.id" class="row" :class="{ dim: !b.pointCount }" @click="pickResult(b.id)">
+          <button v-for="b in results.bangumis" :key="b.id" class="row" :class="{ dim: !b.pointCount }" @click="pickCard(b.id)">
             <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</strong>
               <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</small>
             </span>
-            <span v-if="b.pointCount" class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
+            <span class="row-stats">
+              <span v-if="b.series" class="stat" :title="t('series')"><JIcon :icon="ICONS.series" :size="14" /><span class="tx">{{ b.works }}</span></span>
+              <span v-if="b.pointCount" class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ b.pointCount }}</span></span>
+            </span>
           </button>
           <hr v-if="results.bangumis.length && results.points.length" />
           <button
@@ -460,9 +501,9 @@ onBeforeUnmount(() => {
                 <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ detail.pointCount }}</span></span>
               </p>
               <p class="links">
-                <a :href="`https://bgm.tv/subject/${detail.id}`" target="_blank" rel="noopener">Bangumi</a>
-                <a :href="`https://www.anitabi.cn/map?bangumiId=${detail.id}`" target="_blank" rel="noopener">Anitabi</a>
-                <a :href="`/v1/bangumi/${detail.id}/kml?lang=${locale}`" class="stat" :title="t('exportKml')" download>
+                <a :href="`https://bgm.tv/subject/${detail.linkId}`" target="_blank" rel="noopener">Bangumi</a>
+                <a :href="`https://www.anitabi.cn/map?bangumiId=${detail.linkId}`" target="_blank" rel="noopener">Anitabi</a>
+                <a :href="`/v1/bangumi/${detail.linkId}/kml?lang=${locale}`" class="stat" :title="t('exportKml')" download>
                   <JIcon :icon="ICONS.download" :size="14" /><span class="tx">KML</span>
                 </a>
               </p>
@@ -472,12 +513,24 @@ onBeforeUnmount(() => {
         <!-- 同系列作品（TV 各季、剧场版、OVA…）：横向一排，当前作品高亮，没有地标的淡一些 -->
         <nav v-if="detail.series.length > 1" class="series" :aria-label="t('series')" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
           <a
+            :href="localePath(locale, `/s/${detail.key}`)"
+            :class="{ current: detail.filter == null }"
+            :aria-current="detail.filter == null ? 'page' : undefined"
+            @click.prevent="open(detail.key, null)"
+          >
+            <span class="series-name">{{ t("allWorks") }}</span>
+            <small class="stat">
+              <span class="tx">{{ detail.series.length }}</span>
+              <JIcon :icon="ICONS.point" :size="11" /><span class="tx">{{ detail.series.reduce((n, s) => n + s.pointCount, 0) }}</span>
+            </small>
+          </a>
+          <a
             v-for="s in detail.series"
             :key="s.id"
             :href="localePath(locale, `/b/${s.id}`)"
-            :class="{ current: s.id === detail.id, dim: !s.pointCount }"
-            :aria-current="s.id === detail.id ? 'page' : undefined"
-            @click.prevent="select(s.id)"
+            :class="{ current: s.id === detail.filter, dim: !s.pointCount }"
+            :aria-current="s.id === detail.filter ? 'page' : undefined"
+            @click.prevent="open(detail.key, s.id)"
           >
             <span v-auto-lang class="series-name">{{ pickName({ cn: s.cn, original: s.title, en: s.en, i18n: s.i18n }) }}</span>
             <small class="stat">
@@ -493,7 +546,7 @@ onBeforeUnmount(() => {
             :id="`p-${p.id}`"
             :key="p.id"
             :class="{ active: p.id === focusPointId }"
-            @click="select(detail.id, p.id)"
+            @click="select(p.bangumiId, p.id)"
           >
             <figure v-if="p.image">
               <img @error="retryImage"
@@ -512,6 +565,7 @@ onBeforeUnmount(() => {
               <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
               <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
               <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
+              <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(p.bangumiId) }}</span>
               <span v-if="p.ep || p.s" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
@@ -543,7 +597,7 @@ onBeforeUnmount(() => {
         <h2 class="section-label">{{ t(inView ? "inView" : "popular") }}</h2>
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
-            <a :href="localePath(locale, `/b/${b.id}`)" @click.prevent="select(b.id)">
+            <a :href="cardPath(b)" @click.prevent="pickCard(b.id)">
               <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
               <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
@@ -1057,6 +1111,18 @@ figcaption a {
   gap: 3px;
   font-size: 11px;
   color: var(--muted);
+}
+.from {
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.row-stats {
+  display: flex;
+  flex: none;
+  gap: 8px;
 }
 .no-spots {
   padding: 32px 24px;

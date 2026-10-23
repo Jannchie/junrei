@@ -1,6 +1,7 @@
 import type { HeadDescriptor } from "void";
 import { cityFor, type Locale, LOCALES, localePath, pickNameFor, subNameFor, translate } from "../i18n";
 import { type BangumiDetail, SITE } from "./bangumi";
+import type { View } from "../series";
 
 /** 各语言的 Open Graph locale 与分享图 */
 const OG_LOCALE: Record<Locale, string> = { "zh-Hans": "zh_CN", "zh-Hant": "zh_TW", ja: "ja_JP", en: "en_US" };
@@ -96,10 +97,11 @@ export function homeHead(locale: Locale): HeadDescriptor {
   });
 }
 
-export function bangumiHead(locale: Locale, d: BangumiDetail): HeadDescriptor {
+/** 作品页与系列页：筛选到某部作品时路径是 /b/:id，系列「全部」时是 /s/:key */
+export function bangumiHead(locale: Locale, d: View): HeadDescriptor {
   const names = { cn: d.cn, original: d.title, en: d.en, i18n: d.i18n };
   const name = pickNameFor(locale, names);
-  const path = `/b/${d.id}`;
+  const path = d.filter == null && d.series.length > 1 ? `/s/${d.key}` : `/b/${d.id}`;
   const spots = d.points
     .slice(0, 6)
     .map((p) => pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }))

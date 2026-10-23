@@ -28,6 +28,8 @@ export const bangumi = sqliteTable("bangumi", {
   popularity: integer("popularity").notNull().default(0), // Bangumi 上看过 + 在看 + 想看的人数，没有地标的作品按它排序
   airDate: text("air_date"), // 首播日期 YYYY-MM-DD
   seriesId: integer("series_id"), // 所属系列的代表作 id（Bangumi 条目关系连成的系列，sync/bgm_archive.py）；单独一部为空
+  seriesPoints: integer("series_points").notNull().default(0), // 所在系列的地标总数（不在系列里就是自己的地标数）
+  seriesWorks: integer("series_works").notNull().default(1), // 所在系列的作品数
   i18n: text("i18n", { mode: "json" }).$type<I18n>(), // 各语言标题（含机翻），见 sync/export.py
   search: text("search"), // 各语言名称折叠后的搜索键（sync/fold.py）
 });

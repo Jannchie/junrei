@@ -209,11 +209,23 @@ def main():
     ]
     points = [(*p, i18n_json(spots[(p[0], p[1])]), keys(p[2], p[3], *names(spots[(p[0], p[1])]))) for p in points]
 
+    # 系列汇总：每部作品记下所在系列的地标总数与作品数（搜索、首页按系列合并时用）；系列封面取地标最多的那部
+    series: dict[int, dict] = {}
+    for b in bangumi:
+        if b[11] is not None:
+            g = series.setdefault(b[11], {"points": 0, "works": 0, "top": None})
+            g["points"] += b[8]
+            g["works"] += 1
+            if b[8] and (g["top"] is None or b[8] > g["top"][8]):
+                g["top"] = b
+    bangumi = [(*b, series[b[11]]["points"] if b[11] is not None else b[8], series[b[11]]["works"] if b[11] is not None else 1)
+               for b in bangumi]
+
     out_sql = DEFAULT_OUT / "d1-import.sql"
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
         cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "popularity", "air_date",
-                "series_id", "i18n", "search"]
+                "series_id", "i18n", "search", "series_points", "series_works"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
                 "origin_link", "mark", "i18n", "search"]
@@ -234,9 +246,16 @@ def main():
     })
 
     write_json(FOLD_MAP, char_map)
-    # [id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题]；只收有地标的作品，其余由服务端搜索
-    write_json(PUBLIC_DATA / "bangumi.json",
-               [[b[0], b[1], b[2], b[3], b[7], b[8], b[13], (titles[b[0]] or {}).get("name")] for b in bangumi if b[8]])
+    # works：[id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题, 系列]，只收有地标的作品，其余由服务端搜索；
+    # series：{代表作 id: [中文名, 原名, 英文名, 各语言标题, 地标总数, 作品数, 封面]}，只收有地标的系列
+    by_id = {b[0]: b for b in bangumi}
+    write_json(PUBLIC_DATA / "bangumi.json", {
+        "works": [[b[0], b[1], b[2], b[3], b[7], b[8], b[13], (titles[b[0]] or {}).get("name"), b[11]] for b in bangumi if b[8]],
+        "series": {
+            sid: [by_id[sid][1], by_id[sid][2], by_id[sid][3], (titles[sid] or {}).get("name"), g["points"], g["works"], g["top"][7]]
+            for sid, g in series.items() if g["points"] and sid in by_id
+        },
+    })
 
     print(f"{out_sql}：{len(bangumi)} 部作品，{len(points)} 个地标，{out_sql.stat().st_size / 1e6:.1f} MB")
     print(f"{out_geo}：{out_geo.stat().st_size / 1e6:.1f} MB")

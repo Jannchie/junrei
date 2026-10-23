@@ -12,6 +12,7 @@ import {
   IconInfo,
   IconKeyboard,
   IconLanguages,
+  IconLayers,
   IconLocate,
   IconMapPin,
   IconMoon,
@@ -42,6 +43,7 @@ export const ICONS = {
   zoomOut: IconMinus,
   locate: IconLocate,
   language: IconLanguages,
+  series: IconLayers, // 系列：叠在一起的几部作品
   info: IconInfo,
   keyboard: IconKeyboard,
   github: IconGithub,

@@ -13,6 +13,8 @@ import { isDark } from "../theme";
 
 export interface SelectedPoint {
   id: string;
+  /** 所属作品（系列「全部」时各地标来自不同作品） */
+  b: number;
   name: string | null;
   lng: number;
   lat: number;
@@ -65,7 +67,7 @@ function syncSelected() {
     features: (sel?.points ?? []).map((p) => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: [p.lng, p.lat] },
-      properties: { b: sel!.bangumiId, p: p.id, name: p.name ?? "" },
+      properties: { b: p.b, p: p.id, name: p.name ?? "" },
     })),
   });
   map.setGlobalStateProperty("selected", sel != null);

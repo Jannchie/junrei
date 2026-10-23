@@ -3,6 +3,7 @@ import { defineHandler } from "void";
 import { db, desc, eq, like, sql } from "void/db";
 import { z } from "zod";
 import { fold } from "../../src/fold";
+import type { Card } from "../../src/series";
 
 interface PointHit {
   bangumiId: number;
@@ -27,37 +28,31 @@ export const GET = defineHandler.withValidator({
   const pattern = `%${q.replace(/[\\%_]/g, (m) => `\\${m}`)}%`;
   const has = (col: Parameters<typeof like>[0]) => sql`${col} LIKE ${pattern} ESCAPE '\\'`;
 
-  const [bangumis, points] = await Promise.all([searchBangumi(q, has), searchPoints(q, has)]);
+  const [bangumis, points] = await Promise.all([searchBangumi(q), searchPoints(q, has)]);
   return { bangumis, points };
 });
 
-interface BangumiHit {
-  id: number;
-  cn: string | null;
-  title: string | null;
-  en: string | null;
-  cover: string | null;
-  pointCount: number;
-  i18n: I18n | null;
-}
-
 /**
- * 作品约 3 万行（Bangumi 全部动画，多数没有地标）：≥3 个字符走 FTS5 trigram 索引；
- * 更短的查询只能 LIKE 扫描。有地标的排前面，其余按 Bangumi 热度。
+ * 作品约 3 万行（Bangumi 全部动画，多数没有地标）：≥3 个字符走 FTS5 trigram 索引；更短的查询只能 LIKE 扫描。
+ * 命中的作品按系列合并成卡片：系列显示系列代表作的名称与系列的地标总数。有地标的排前面，其余按 Bangumi 热度。
  */
-async function searchBangumi(q: string, has: (col: Parameters<typeof like>[0]) => ReturnType<typeof sql>): Promise<BangumiHit[]> {
-  const order = [desc(bangumi.pointCount), desc(bangumi.popularity)];
-  const cols = { id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cover: bangumi.cover, pointCount: bangumi.pointCount, i18n: bangumi.i18n };
-  if ([...q].length >= 3) {
-    const rows = await db.all<Omit<BangumiHit, "i18n"> & { i18n: string | null }>(sql`
-      SELECT b.id, b.cn, b.title, b.en, b.cover, b.point_count AS pointCount, b.i18n
-      FROM bangumi_fts JOIN bangumi b ON b.rowid = bangumi_fts.rowid
-      WHERE bangumi_fts MATCH ${`"${q}"`}
-      ORDER BY b.point_count DESC, b.popularity DESC
-      LIMIT 20`);
-    return rows.map((r) => ({ ...r, i18n: r.i18n ? JSON.parse(r.i18n) : null }));
-  }
-  return db.select(cols).from(bangumi).where(has(bangumi.search)).orderBy(...order).limit(20);
+async function searchBangumi(q: string): Promise<Card[]> {
+  const pattern = `%${q.replace(/[\\%_]/g, (m) => `\\${m}`)}%`;
+  const match = [...q].length >= 3
+    ? sql`b.rowid IN (SELECT rowid FROM bangumi_fts WHERE bangumi_fts MATCH ${`"${q}"`})`
+    : sql`b.search LIKE ${pattern} ESCAPE '\\'`;
+  const rows = await db.all<Omit<Card, "i18n" | "series"> & { i18n: string | null; series: number }>(sql`
+    SELECT coalesce(b.series_id, b.id) AS id, b.series_works > 1 AS series, r.cn, r.title, r.en, r.i18n,
+           b.cover, b.series_points AS pointCount, b.series_works AS works
+    FROM bangumi b JOIN bangumi r ON r.id = coalesce(b.series_id, b.id)
+    WHERE ${match}
+    ORDER BY b.series_points DESC, b.popularity DESC
+    LIMIT 40`);
+  const seen = new Set<number>();
+  return rows
+    .filter((r) => !seen.has(r.id) && seen.add(r.id))
+    .slice(0, 20)
+    .map((r) => ({ ...r, series: !!r.series, i18n: r.i18n ? JSON.parse(r.i18n) : null }));
 }
 
 /** 地标 5 万多行：≥3 个字符走 FTS5 trigram 索引，只读命中的行；更短的查询只能 LIKE 扫描 */
