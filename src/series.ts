@@ -82,13 +82,16 @@ export function buildView(g: Group, filter: number | null): View | null {
   const loaded = [...g.details].sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
   const top = loaded.reduce((a, b) => (b.pointCount > a.pointCount ? b : a));
   const head = g.works.find((w) => w.id === g.key) ?? g.works[0];
+  // 城市按系列第一部算：地标最多的那部可能是外地篇（如修学旅行去了京都）
+  const home = loaded.find((d) => d.id === g.key && d.city) ?? top;
   return {
     ...top,
     id: g.key,
     cn: head.cn,
     title: head.title,
     en: head.en,
-    i18n: { ...head.i18n, city: top.i18n?.city },
+    city: home.city,
+    i18n: { ...head.i18n, city: home.i18n?.city },
     cat: null,
     pointCount: loaded.reduce((n, d) => n + d.pointCount, 0),
     points: loaded.flatMap(tag),
