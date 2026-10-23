@@ -29,6 +29,7 @@ BUCKET = "public-assets"
 PREFIX = "junrei/covers/"
 PUBLIC = "https://cdn.jannchie.com/"
 BGM_API = "https://api.bgm.tv/v0/subjects/{}"
+BGMD = "https://cdn.jsdelivr.net/npm/bgmd@0/dist/index.json"
 UA = "Jannchie/junrei (https://junrei.jannchie.com)"  # Bangumi 要求调用方在 UA 里标明身份
 
 SCHEMA = """
@@ -113,43 +114,63 @@ def queue(db, data: Path, limit: int) -> list[int]:
     return sorted(ids - done, key=lambda b: (-points.get(b, 0), -pop.get(b, 0)))[:limit]
 
 
+def bgmd_posters() -> dict[int, str]:
+    """bgmd（github.com/AnimeGarden/bgmd，MIT）每天整理的 Bangumi 作品数据里带着封面地址，约 8400 部主流动画，
+    这些不必再逐个调 Bangumi API。返回 作品 id → 原图路径（pic/ 之后的部分）"""
+    try:
+        body = download(BGMD)
+        subjects = json.loads(body)["subjects"] if body else []
+    except (ValueError, KeyError):
+        subjects = []
+    return {s["id"]: s["poster"].split("/pic/", 1)[1] for s in subjects if "/pic/" in (s.get("poster") or "")}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     add_data_arg(ap)
-    ap.add_argument("--limit", type=int, default=2000)
+    ap.add_argument("--limit", type=int, default=2000, help="最多调用多少次 Bangumi API（bgmd 里已有封面地址的不算）")
+    ap.add_argument("--max", type=int, default=8000, help="这次最多镜像多少部")
     args = ap.parse_args()
     data = Path(args.data)
     db = open_db(data)
     db.executescript(SCHEMA)
-    todo = queue(db, data, args.limit)
+    todo = queue(db, data, args.max)
     print(f"待镜像 {len(todo)} 部")
     if not todo:
         return
+    known = bgmd_posters()
+    print(f"bgmd 提供了 {sum(1 for b in todo if b in known)} 部的封面地址")
     http = Http(db, interval=1.0, ua=UA, max_age_days=30)
     up = Uploader()
-    ok = none = fail = 0
+    ok = none = fail = calls = 0
     for n, bid in enumerate(todo, 1):
-        status, subject = http.get_json(BGM_API.format(bid))
-        large = ((subject or {}).get("images") or {}).get("large") if status == 200 else None
-        if status == 200 and not large:
-            db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)", (bid, None, None, None, now_iso()))
-            none += 1
-        elif large:
+        path = known.get(bid)
+        if not path:
+            if calls >= args.limit:
+                continue  # 今天的 API 额度用完了，明天接着来
+            calls += 1
+            status, subject = http.get_json(BGM_API.format(bid))
+            large = ((subject or {}).get("images") or {}).get("large") if status == 200 else None
+            if status == 200 and not large:
+                db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)", (bid, None, None, None, now_iso()))
+                none += 1
+                continue
+            if not large:
+                fail += 1  # API 出错（404 是条目被删或隐藏），下次再试
+                continue
             path = large.split("/pic/", 1)[-1]
-            body = download(f"https://lain.bgm.tv/r/400/pic/{path}")
-            key = cover_key(bid, path)
-            if body and up.put(key, body):
-                db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)", (bid, path, key, len(body), now_iso()))
-                ok += 1
-            else:
-                fail += 1
+        body = download(f"https://lain.bgm.tv/r/400/pic/{path}")
+        key = cover_key(bid, path)
+        if body and up.put(key, body):
+            db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)", (bid, path, key, len(body), now_iso()))
+            ok += 1
         else:
-            fail += 1  # API 出错（404 是条目被删或隐藏），下次再试
-        if n % 100 == 0:
+            fail += 1
+        if n % 200 == 0:
             db.commit()
-            print(f"  {n}/{len(todo)}：镜像 {ok}，无封面 {none}，失败 {fail}")
+            print(f"  {n}/{len(todo)}：镜像 {ok}，无封面 {none}，失败 {fail}，API {calls} 次")
     db.commit()
-    print(f"完成：镜像 {ok}，无封面 {none}，失败 {fail}")
+    print(f"完成：镜像 {ok}，无封面 {none}，失败 {fail}，API {calls} 次")
 
 
 if __name__ == "__main__":
