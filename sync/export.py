@@ -84,6 +84,15 @@ def i18n_json(item: dict | None) -> str | None:
     return json.dumps(item, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
+def bgm_cover(url: str | None) -> str | None:
+    """Anitabi 转发的 Bangumi 封面（bgm-api.anitabi.cn/pic/…）直接改用 Bangumi 自己的 CDN，并缩到 400px 宽，
+    不占用 Anitabi 的代理流量"""
+    for prefix in ("https://bgm-api.anitabi.cn/pic/", "https://bgm-api.anitabi.cn/img/pic/"):
+        if url and url.startswith(prefix):
+            return "https://lain.bgm.tv/r/400/pic/" + url.removeprefix(prefix)
+    return url
+
+
 def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -> None:
     """合并 sync/manual.json：Anitabi 没有收录的作品与地标。多语言名称直接写在文件里。"""
     data = json.loads(MANUAL.read_text(encoding="utf-8"))
@@ -180,6 +189,7 @@ def main():
         counts[p[0]] = counts.get(p[0], 0) + 1
     rows = src.execute(
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
+    rows = [(*r[:7], bgm_cover(r[7])) for r in rows]
     merge_manual(rows, points, counts, i18n)
     extra = merge_bgm(rows, i18n)
 

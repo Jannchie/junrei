@@ -42,15 +42,21 @@ const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" 
 // 图片偶尔会因为图床限流或网络抖动加载失败：隔一会儿重试两次，仍失败就显示占位底色，不出现破图图标
 // 图片加载失败（网络抖动、图床短暂拒绝并发请求）时退避重试：1、2、4、8 秒后各试一次
 const IMAGE_RETRIES = 4;
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 function retryImage(e: Event | { target: HTMLImageElement }) {
   const img = e.target as HTMLImageElement;
+  if (img.src === BLANK) return;
   const tries = Number(img.dataset.tries ?? 0);
+  const url = new URL(img.dataset.src ?? img.src);
+  url.searchParams.delete("retry");
+  img.dataset.src = url.href;
+  // 等待期间换成透明空图：显示占位底色，而不是浏览器的破图边框
+  img.src = BLANK;
   if (tries >= IMAGE_RETRIES) {
-    img.classList.add("img-failed");
+    img.classList.add("img-failed"); // 重试用尽：占位上显示「图片不可用」
     return;
   }
   img.dataset.tries = String(tries + 1);
-  const url = new URL(img.src);
   url.searchParams.set("retry", String(tries + 1));
   setTimeout(() => (img.src = url.href), 1000 * 2 ** tries);
 }
@@ -364,6 +370,7 @@ const SHORTCUTS = computed(() => [
 onMounted(() => {
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
   recoverImages();
+
   bindShortcuts();
   visualViewport?.addEventListener("resize", onVisualViewport);
   visualViewport?.addEventListener("scroll", onVisualViewport);
@@ -688,11 +695,15 @@ body {
 a {
   color: inherit;
 }
+/* 图片：加载中、等待重试时是占位底色；重试用尽后显示「图片不可用」图标，和加载中区分开 */
+.panel img {
+  background-color: var(--hover);
+}
 img.img-failed {
-  /* 隐藏破图图标与替代文字，只留占位底色 */
+  /* 隐藏破图图标与替代文字 */
   color: transparent;
   font-size: 0;
-  background: var(--hover);
+  background: var(--hover) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M3 16l5-5 4 4 3-3 6 6'/%3E%3Cpath d='M3 3l18 18'/%3E%3C/svg%3E") center / min(28px, 40%) no-repeat;
 }
 
 /* 滚动条：各系统统一成细的半透明样式。标准属性给 Firefox 与新版 Chromium，
