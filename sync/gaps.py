@@ -501,6 +501,7 @@ def write_review(out_dir: Path) -> None:
 
 TRACE = "https://api.trace.moe/search?anilistInfo&cutBorders"
 TRACE_SIMILARITY = 0.9  # trace.moe 自己建议低于 0.9 的结果多半不对
+LOCAL_SIMILARITY = 0.9  # 本地只在这部作品里比对，阈值用在线结果校准（见 sync.tracemoe）
 TRACE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS trace_moe (
   image TEXT PRIMARY KEY,  -- 来源文章里的图片地址
@@ -529,10 +530,7 @@ def looks_like_frame(body: bytes) -> bool:
     return flat >= 0.3
 
 
-def trace_image(url: str) -> tuple[int, dict | None]:
-    """先自己下载图片再上传（博客多有防盗链，让 trace.moe 去抓常常失败还白占额度）。
-    返回 (状态, 第一条结果)；状态 0 表示图片没下载到，或看着不像动画截图、没有去查"""
-    import urllib.error
+def download_image(url: str) -> bytes | None:
     import urllib.request
 
     from sync.enrich_common import SSL_CONTEXT
@@ -543,8 +541,20 @@ def trace_image(url: str) -> tuple[int, dict | None]:
         with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as r:
             body = r.read()
     except Exception:  # noqa: BLE001 - 文章里的图片地址什么样都有（模板残片、坏链接）
-        return 0, None
-    if len(body) < 2000 or not looks_like_frame(body):
+        return None
+    return body if len(body) >= 2000 else None
+
+
+def trace_image(url: str) -> tuple[int, dict | None]:
+    """先自己下载图片再上传（博客多有防盗链，让 trace.moe 去抓常常失败还白占额度）。
+    返回 (状态, 第一条结果)；状态 0 表示图片没下载到，或看着不像动画截图、没有去查"""
+    import urllib.error
+    import urllib.request
+
+    from sync.enrich_common import SSL_CONTEXT
+
+    body = download_image(url)
+    if not body or not looks_like_frame(body):
         return 0, None
     req = urllib.request.Request(TRACE, data=body, method="POST", headers={"Content-Type": "image/jpeg", "User-Agent": "junrei-gaps/0.1 (+https://junrei.jannchie.com)"})
     try:
@@ -569,8 +579,36 @@ def trace_match(hit: dict, names: list[str]) -> str | None:
     return "series" if any(a.startswith(b) or b.startswith(a) for a in titles if a for b in ours) else None
 
 
+def local_lookup(tm, vectors: dict, img: str, ids: dict[int, str]) -> tuple[dict, str] | None:
+    """本地 trace.moe（sync.tracemoe）：先在标题一致的条目里找，找不到再看同系列的续作"""
+    from sync import tracemoe
+
+    if img not in vectors:
+        body = download_image(img)
+        vectors[img] = tracemoe.image_vector(body) if body else None
+    vec = vectors[img]
+    # 几乎没有细节的图（纯黑、纯色）在任何作品里都能找到「很像」的帧，不算数
+    if not vec or sum(abs(x - 16) for x in vec[1:21] + vec[22:27] + vec[28:33]) < 20:
+        return None
+    for kind in ("exact", "series"):
+        best = tracemoe.search(tm, vec, [a for a, k in ids.items() if k == kind])
+        if best and best["similarity"] >= LOCAL_SIMILARITY:
+            return {"anilist": {"id": best["anilist"]}, "episode": best["episode"], "from": best["from"],
+                    "similarity": best["similarity"]}, kind
+    return None
+
+
 def cmd_trace(db, data: Path, budget: int) -> None:
     db.executescript(TRACE_SCHEMA)
+    from sync import tracemoe
+
+    # 有本地帧库（python -m sync.tracemoe extract）就在本地比对，不占在线额度；图片向量缓存在 image_vector 表
+    tm = tracemoe.open_db() if (tracemoe.DIR / "frames.sqlite").exists() else None
+    if tm and not tm.execute("SELECT 1 FROM files LIMIT 1").fetchone():
+        tm = None
+    db.execute("CREATE TABLE IF NOT EXISTS image_vector (image TEXT PRIMARY KEY, vector TEXT)")
+    vectors = {i: json.loads(v) if v else None for i, v in db.execute("SELECT image, vector FROM image_vector")}
+    known_vectors = set(vectors)
     cache = {img: json.loads(r) if r else None for img, r in db.execute("SELECT image, result FROM trace_moe")}
     subs = all_subjects(data)
     out_dir = data / "review" / "gaps"
@@ -578,14 +616,24 @@ def cmd_trace(db, data: Path, budget: int) -> None:
     applied = {p["id"]: p for p in manual["points"]}
     drafts = {p: json.loads(p.read_text(encoding="utf-8")) for p in sorted(out_dir.glob("*.json")) if p.stem.isdigit()}
     # 先查没有集数的；游戏、成人向作品 trace.moe 里没有
-    todo = [(p, d, s) for p, d in drafts.items() if not d.get("nsfw") for s in d["spots"] if s.get("images") and "trace" not in s]
+    todo = [(p, d, s) for p, d in drafts.items() if not d.get("nsfw") for s in d["spots"]
+            if s.get("images") and ("trace" not in s if not tm else not s.get("trace") and not s.get("trace_local"))]
     todo.sort(key=lambda x: (bool(x[2]["ep"]), -x[2]["confidence"]))
     used = found = 0
     for p, d, s in todo:
         sub = subs.get(d["bangumi"], {})
         names = [d["title"], d.get("cn"), sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])]
         hit, queries = None, 0
-        for img in s["images"]:
+        if tm:
+            ids = tracemoe.match_anilist(tm, [n for n in names if n])
+            for img in s["images"]:
+                if ids and (r := local_lookup(tm, vectors, img, ids)):
+                    hit = (img, *r)
+                    break
+            if not hit:
+                s["trace_local"] = "none"  # 本地比对过、没有对上
+                continue
+        for img in s["images"] if not hit else []:
             if img not in cache:
                 if used >= budget or queries >= 2:
                     break
@@ -636,6 +684,9 @@ def cmd_trace(db, data: Path, budget: int) -> None:
                     s["ep"] = ""
             if (m := applied.get(s["id"])) is not None and s.get("s") is not None and (m.get("ep") or s["ep"]) == s["ep"]:
                 m["ep"], m["s"] = s["ep"] or None, s["s"]
+    db.executemany("INSERT OR REPLACE INTO image_vector VALUES (?,?)",
+                   [(i, json.dumps(v) if v else None) for i, v in vectors.items() if i not in known_vectors])
+    db.commit()
     for p, d in drafts.items():
         p.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
     MANUAL.write_text(json.dumps(manual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
