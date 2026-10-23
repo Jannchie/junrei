@@ -158,7 +158,7 @@ async function focus(pointId: string | null) {
   if (!detail.value) return;
   const index = pointId ? detail.value.points.findIndex((p) => p.id === pointId) : -1;
   if (index >= visibleCount.value) visibleCount.value = index + PAGE;
-  if (sheet.value === "peek") sheet.value = "half";
+  sheet.value = "half"; // 选中后回到半屏，地图上要看得到它
   focusPointId.value = pointId;
   await nextTick(); // 新作品的列表要等渲染后才能滚动到选中项
   if (pointId) document.getElementById(`p-${pointId}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -171,31 +171,50 @@ function clearSelection() {
   headHidden.value = false;
 }
 
-// ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏；拖动把手切换 ----
+// ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏 ----
+// 像地图 App 一样，平时停在半屏：只有输入搜索时展开到全屏，输入结束、选中结果、碰地图都回到半屏
 type Sheet = "peek" | "half" | "full";
-const sheet = ref<Sheet>(props.initialGroup ? "half" : "peek");
-let drag: { y: number; height: number } | null = null;
+const sheet = ref<Sheet>("half");
+const SHEETS: Sheet[] = ["peek", "half", "full"];
+/** 各档高度（px），和下面 CSS 里 .sheet-* 的高度对应 */
+const sheetHeight = (s: Sheet) => (s === "peek" ? 84 : s === "half" ? innerHeight * 0.46 : innerHeight - 48);
+let drag: { y: number; height: number; lastY: number; lastT: number; v: number } | null = null;
 const dragHeight = ref<number | null>(null);
 function onHandleDown(e: PointerEvent) {
-  drag = { y: e.clientY, height: panel.value!.getBoundingClientRect().height };
+  drag = { y: e.clientY, height: panel.value!.getBoundingClientRect().height, lastY: e.clientY, lastT: e.timeStamp, v: 0 };
   (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 }
 function onHandleMove(e: PointerEvent) {
+  if (!drag) return;
+  if (e.timeStamp > drag.lastT) drag.v = (e.clientY - drag.lastY) / (e.timeStamp - drag.lastT); // px/ms，向下为正
+  drag.lastY = e.clientY;
+  drag.lastT = e.timeStamp;
   // 位移很小时仍算轻点，不进入拖动
-  if (drag && (dragHeight.value != null || Math.abs(e.clientY - drag.y) > 6)) {
+  if (dragHeight.value != null || Math.abs(e.clientY - drag.y) > 6) {
     dragHeight.value = Math.max(72, drag.height + drag.y - e.clientY);
   }
 }
 function onHandleUp() {
-  if (!drag || dragHeight.value == null) {
-    // 轻点把手：在 peek 和 half 之间切换
-    sheet.value = sheet.value === "peek" ? "half" : "peek";
+  const h = dragHeight.value;
+  if (!drag || h == null) {
+    // 轻点把手：全屏 → 半屏，半屏 → 收起，收起 → 半屏
+    sheet.value = sheet.value === "half" ? "peek" : "half";
+  } else if (Math.abs(drag.v) > 0.4) {
+    // 快速甩动：顺着方向切到下一档
+    const down = drag.v > 0;
+    const next = down ? [...SHEETS].reverse().find((s) => sheetHeight(s) < h - 1) : SHEETS.find((s) => sheetHeight(s) > h + 1);
+    sheet.value = next ?? (down ? "peek" : "full");
   } else {
-    const ratio = dragHeight.value / innerHeight;
-    sheet.value = ratio < 0.25 ? "peek" : ratio < 0.7 ? "half" : "full";
+    // 慢慢拖：停到最近的一档
+    sheet.value = SHEETS.reduce((a, b) => (Math.abs(sheetHeight(b) - h) < Math.abs(sheetHeight(a) - h) ? b : a));
   }
   drag = null;
   dragHeight.value = null;
+}
+/** 碰到地图：抽屉让开，回到半屏 */
+function onMapPointer() {
+  if (sheet.value === "full") sheet.value = "half";
+  if (document.activeElement === searchInput.value) searchInput.value!.blur();
 }
 
 // 搜索：输入停顿 250ms 后请求
@@ -328,6 +347,15 @@ function onVisualViewport() {
 function expandForTyping() {
   if (sheet.value !== "full") sheet.value = "full";
 }
+/** 输入结束（键盘收起）就回到半屏。手指还按着时先不动：点的可能是搜索结果，抽屉一变，点击会落空 */
+let pressing = false;
+function onSearchBlur() {
+  const collapse = () => {
+    if (document.activeElement !== searchInput.value && sheet.value === "full") sheet.value = "half";
+  };
+  if (!pressing) return collapse();
+  addEventListener("pointerup", () => setTimeout(collapse), { once: true });
+}
 
 // ---- 键盘快捷键（按 ? 查看）----
 const mapView = ref<{ zoomIn(): void; zoomOut(): void; locate(): void }>();
@@ -404,6 +432,11 @@ const SHORTCUTS = computed(() => [
 ]);
 
 onMounted(() => {
+  addEventListener("pointerdown", (e) => {
+    pressing = true;
+    if ((e.target as Element).closest?.(".map")) onMapPointer();
+  }, { capture: true });
+  for (const type of ["pointerup", "pointercancel"]) addEventListener(type, () => (pressing = false), { capture: true });
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
   recoverImages();
 
@@ -481,7 +514,7 @@ onBeforeUnmount(() => {
           <JIcon :icon="ICONS.back" :size="18" />
         </button>
         <JIcon v-else :icon="ICONS.search" class="muted" />
-        <input ref="searchInput" v-model="query" type="search" :placeholder="t('search')" :aria-label="t('search')" autocomplete="off" @focus="expandForTyping" />
+        <input ref="searchInput" v-model="query" type="search" :placeholder="t('search')" :aria-label="t('search')" autocomplete="off" @focus="expandForTyping" @blur="onSearchBlur" />
         <button v-if="query" class="icon-btn" :title="t('clear')" :aria-label="t('clear')" @click="query = ''">
           <JIcon :icon="ICONS.clear" />
         </button>
