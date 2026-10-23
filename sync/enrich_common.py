@@ -109,8 +109,17 @@ class Http:
             return row[0], row[1]
         status, body = self._fetch(url)
         if status == 200 or 400 <= status < 500:  # 4xx 也缓存（如条目不存在），5xx / 网络错误不缓存
-            self.db.execute("INSERT OR REPLACE INTO cache.http_cache VALUES (?,?,?,?)", (url, status, body, now_iso()))
-            self.db.commit()
+            # 多个补全脚本同时写缓存时可能等锁超时：缓存写不进去只是下次再请求，不值得让整个任务退出
+            for attempt in range(5):
+                try:
+                    self.db.execute("INSERT OR REPLACE INTO cache.http_cache VALUES (?,?,?,?)", (url, status, body, now_iso()))
+                    self.db.commit()
+                    break
+                except sqlite3.OperationalError as e:
+                    if "locked" not in str(e):
+                        raise
+                    self.db.rollback()
+                    time.sleep(2 ** attempt)
         return status, body
 
     def get_json(self, url: str, params: dict | None = None):
