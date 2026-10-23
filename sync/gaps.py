@@ -71,6 +71,27 @@ TASK = llm.Task(
     chunk_chars=30000,
     effort="medium",
 )
+# 截图证据模式：文章里的图片先用本地 trace.moe 比对，确认是这部作品画面的截图换成 [截图#k：…] 标记，
+# 模型只能输出能指认截图的地点（evidence 填 k），没有截图依据的地点一律不收
+EVIDENCE_SYSTEM = SYSTEM + """
+
+文中形如 [截图#3：第5集 12:05] 的标记，是经画面比对确认来自这部作品的动画截图（附集数与时间；同系列续作的截图不带集数）。
+博客通常把动画截图和实拍照片放在一起，地点名写在附近。
+- 每个地点必须对应一个截图标记：evidence 写该地点所依据的截图编号 k（就近、且文字说明这张截图拍的就是这个地点）。
+- 找不到对应截图的地点不要输出；一张截图只对应一个地点。
+- episode 以截图标记里的集数为准。"""
+EVIDENCE_TASK = llm.Task(
+    name="gap_spots_evidence",
+    version="v1",
+    system=EVIDENCE_SYSTEM,
+    item_properties={"spots": {"type": "array", "items": {
+        **SPOT, "properties": {**SPOT["properties"], "evidence": {"type": "integer"}},
+        "required": [*SPOT["required"], "evidence"]}}},
+    chunk_size=4,
+    chunk_chars=30000,
+    effort="medium",
+)
+EVIDENCE_IMAGES = 60  # 每篇文章最多比对多少张图
 MODEL = "claude-sonnet-5-5"  # 长文阅读 + 判断，Haiku 容易漏或编
 
 
@@ -87,14 +108,18 @@ def decode(body: bytes) -> str:
     return body.decode("utf-8", "replace")
 
 
-def text_of(page: str) -> str:
-    """粗略的正文提取：优先常见博客正文容器；容器里几乎没字（结构没认对）时退回全文"""
+def content_html(page: str) -> str:
+    """粗略的正文区域：优先常见博客正文容器；容器里几乎没字（结构没认对）时退回全文"""
     page = re.sub(r"(?is)<(script|style|noscript|svg|iframe)[^>]*>.*?</\1>", " ", page)
     # 类名要整词匹配（"preventry-text" 这种上一篇导航不能算）
     m = re.search(r'class="(?:[^"]*\s)?(?:entry[-_]?(?:content|body|text)|article[-_]?(?:body|text)|post[-_]?(?:content|body)|'
                   r'main[-_]?text|blog[-_]?body|articleText|skin-entryBody)(?:\s[^"]*)?"', page, re.I)
-    body = strip_tags(page[m.start():m.start() + 200000]) if m else ""
-    return body if len(body) >= 300 else strip_tags(page)
+    body = page[m.start():m.start() + 200000] if m else ""
+    return body if len(strip_tags(body)) >= 300 else page
+
+
+def text_of(page: str) -> str:
+    return strip_tags(content_html(page))
 
 
 def strip_tags(page: str) -> str:
@@ -145,6 +170,47 @@ def work_links(http: Http, title: str) -> list[tuple[str, str]]:
             hint = re.sub(r"\s+", " ", re.sub(r"https?://\S+", " ", hint)).strip(" 「」")
             out.append((url, hint[:60]))
     return list(dict.fromkeys(out))
+
+
+def with_evidence(page: str, base: str, tm, ids: dict[int, str], vectors: dict) -> tuple[str, dict[int, dict]]:
+    """文章正文，其中对上这部作品画面的图片换成 [截图#k：第N集 mm:ss]，其余图片去掉。返回 (正文, {k: 比对结果})"""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from sync import tracemoe
+
+    region = content_html(page)
+    tags = []
+    for m in re.finditer(r"(?is)<img\b[^>]*>", region):
+        src = re.search(r'(?:data-src|data-original|src)="([^"]+)"', m.group(0))
+        url = urllib.parse.urljoin(base, html.unescape(src.group(1))) if src else ""
+        if url.startswith("http") and not re.search(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif|\.svg", url):
+            tags.append((m.span(), url))
+    tags = tags[:EVIDENCE_IMAGES]
+
+    def vector(url: str):
+        body = download_image(url, full=False)  # 只看 8×8 的色块分布，缩略图就够了
+        return url, tracemoe.image_vector(body) if body else None
+
+    with ThreadPoolExecutor(6) as pool:
+        for url, v in pool.map(vector, [u for _, u in tags if u not in vectors]):
+            vectors[url] = v
+    evidence: dict[int, dict] = {}
+    out, last = [], 0
+    for (start, end), url in tags:
+        out.append(region[last:start])
+        last = end
+        hit = local_lookup(tm, vectors, url, ids)
+        if not hit:
+            continue
+        res, match = hit
+        k = len(evidence) + 1
+        evidence[k] = {"image": url, "anilist": res["anilist"]["id"], "episode": res["episode"],
+                       "from": round(res["from"], 1), "similarity": round(res["similarity"], 3), "match": match}
+        when = f"{int(res['from']) // 60}:{int(res['from']) % 60:02d}"
+        label = f"第{res['episode']}集 {when}" if match == "exact" and res["episode"] else ("同系列续作" if match == "series" else when)
+        out.append(f"<br>[截图#{k}：{label}]<br>")
+    out.append(region[last:])
+    return strip_tags("".join(out)), evidence
 
 
 def nishikibuna_works(http: Http) -> dict[str, list[str]]:
@@ -354,10 +420,30 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         done = {int(p.stem) for p in (data / "review" / "gaps").glob("*.json") if p.stem.isdigit()}
         gaps = [g for g in gaps if int(g["bangumi_id"]) not in done][: args.top]
     subs = all_subjects(data)
+    from sync import tracemoe
+
+    evidence_mode = args.list != "nishikibuna"  # 游戏不在 trace.moe 里，只能照旧
+    task = EVIDENCE_TASK if evidence_mode else TASK
+    if evidence_mode:
+        if not (tracemoe.DIR / "frames.sqlite").exists():
+            raise SystemExit("截图证据需要本地 trace.moe 帧库：python -m sync.tracemoe extract <dump>")
+        tm = tracemoe.open_db()
+        db.execute("CREATE TABLE IF NOT EXISTS image_vector (image TEXT PRIMARY KEY, vector TEXT)")
+        vectors = {i: json.loads(v) if v else None for i, v in db.execute("SELECT image, vector FROM image_vector")}
+        known = set(vectors)
+    evidences: dict[str, dict[int, dict]] = {}  # 文章（送给模型的文本 sha）→ 截图证据
 
     # 1. 每部作品的探访文章 → 送给模型的输入
     works = []
     for g in gaps:
+        if evidence_mode:
+            sub = subs.get(int(g["bangumi_id"]), {})
+            names = [n for n in [g["title"], g.get("cn"), sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])] if n]
+            ids = tracemoe.match_anilist(tm, names)
+            tracemoe.clear_cache()  # 帧数据按作品载入，换作品就释放
+            if not ids:
+                print(f"{g['title']}：trace.moe 里没有这部作品，跳过")
+                continue
         if g.get("links"):
             # 錦鮒出版：县页面里一部作品只占几条，按作品摘出来；锚点只是定位，同一页只取一次
             links = list({u.split("#")[0]: (u, "") for u in reversed(g["links"].split())}.values())[::-1]
@@ -369,24 +455,40 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
             if status != 200:
                 print(f"  ! {url} → {status}")
                 continue
-            text = (nishikibuna_text(decode(body), g["title"]) if g.get("links") else text_of(decode(body)))[:ARTICLE_CHARS]
+            ev: dict[int, dict] = {}
+            if evidence_mode:
+                text, ev = with_evidence(decode(body), url, tm, ids, vectors)
+                if not ev:
+                    continue  # 没有一张截图对上，这篇不送去提取
+            elif g.get("links"):
+                text = nishikibuna_text(decode(body), g["title"])
+            else:
+                text = text_of(decode(body))
+            text = text[:ARTICLE_CHARS]
             if not text:
                 continue
-            inputs.append((url, llm.clean_text(json.dumps({"work": g["title"], "area": hint, "text": text}, ensure_ascii=False))))
+            payload = llm.clean_text(json.dumps({"work": g["title"], "area": hint, "text": text}, ensure_ascii=False))
+            evidences[llm.sha(payload)] = ev
+            inputs.append((url, payload))
         works.append((g, links, inputs))
-        print(f"{g['title']}：{len(links)} 篇文章")
+        shots = sum(len(evidences[llm.sha(t)]) for _, t in inputs)
+        print(f"{g['title']}：{len(links)} 篇文章" + (f"，{len(inputs)} 篇有对上的截图（共 {shots} 张）" if evidence_mode else ""), flush=True)
+    if evidence_mode:
+        db.executemany("INSERT OR REPLACE INTO image_vector VALUES (?,?)",
+                       [(i, json.dumps(v) if v else None) for i, v in vectors.items() if i not in known])
+        db.commit()
 
     # 2. LLM 提取（按文章缓存）。--manual：没有 API 时，把待提取的文章导出给任意模型或人工，答案导回缓存
     if args.manual:
         texts = [t for _, _, ins in works for _, t in ins]
-        if not exchange(db, Path(args.manual), texts, args.model):
+        if not exchange(db, Path(args.manual), texts, args.model, task):
             return
     # 任何模型已经提取过的文章都直接用（例如会话里人工 / 其他模型给出的答案），只把剩下的送去请求
     texts = [t for _, _, ins in works for _, t in ins]
     other = {}
-    for model in {r[0] for r in db.execute("SELECT DISTINCT model FROM cache.llm_cache WHERE task = ?", (TASK.name,))} - {args.model}:
-        other |= {k: v for k, v in llm.cached(db, TASK, model).items() if k not in other}
-    results = llm.run(db, TASK, [t for t in texts if llm.sha(t) not in other], model=args.model, mode=args.mode,
+    for model in {r[0] for r in db.execute("SELECT DISTINCT model FROM cache.llm_cache WHERE task = ?", (task.name,))} - {args.model}:
+        other |= {k: v for k, v in llm.cached(db, task, model).items() if k not in other}
+    results = llm.run(db, task, [t for t in texts if llm.sha(t) not in other], model=args.model, mode=args.mode,
                       dry_run=args.dry_run, limit=args.limit, wait=args.wait)
     results = {**other, **results}
     if args.dry_run:
@@ -406,9 +508,12 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                 continue
             _, body = http.get(url.split("#")[0])  # 已缓存，给审核页找对照图
             page = decode(body) if body else ""
+            ev = evidences.get(llm.sha(text), {})
+            cited = [s.get("evidence") for s in r[0]["spots"]]
             for s in r[0]["spots"]:
                 key = s["name_ja"]
-                if key in seen or s["confidence"] < args.min_confidence:
+                proof = ev.get(s.get("evidence", -1)) if evidence_mode else None
+                if key in seen or s["confidence"] < args.min_confidence or (evidence_mode and not proof):
                     continue
                 seen.add(key)
                 if norm(key) in existing["names"]:
@@ -431,9 +536,18 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                     "lng": loc and loc["lng"],
                     "geocode": loc,
                     "reference": url,
-                    "images": images_near(page, url, [s["name_ja"], s["query"].split(" ")[0]]) if page else [],
+                    "images": [proof["image"]] if proof else images_near(page, url, [s["name_ja"], s["query"].split(" ")[0]]) if page else [],
                     "model": r[1],
+                    **({"trace": proof} if proof else {}),
                 })
+                if proof:
+                    # 有截图为证：集数、时间以比对结果为准；同一张截图被几个地点引用时说明不了是哪个，不写时间
+                    spot = spots[-1]
+                    spot["confidence"] = max(spot["confidence"], 0.9)
+                    if proof["match"] == "exact" and cited.count(s["evidence"]) == 1:
+                        if proof["episode"]:
+                            spot["ep"] = str(proof["episode"])
+                        spot["s"] = int(proof["from"])
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots,
                  **({"nsfw": True} if sub.get("nsfw") else {})}
@@ -443,7 +557,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
     write_review(out_dir)
 
 
-def exchange(db, folder: Path, texts: list[str], model: str) -> bool:
+def exchange(db, folder: Path, texts: list[str], model: str, task: llm.Task = TASK) -> bool:
     """folder/answers.jsonl（{"sha", "spots"}）导入缓存；还没有答案的写到 folder/pending.jsonl。全部有答案返回 True"""
     folder.mkdir(parents=True, exist_ok=True)
     answers = folder / "answers.jsonl"
@@ -454,10 +568,10 @@ def exchange(db, folder: Path, texts: list[str], model: str) -> bool:
                 a = json.loads(line)
                 if a["sha"] in by_sha:
                     db.execute("INSERT OR REPLACE INTO cache.llm_cache VALUES (?,?,?,?,?,?,?,?)", (
-                        TASK.name, TASK.prompt_version, model, a["sha"], by_sha[a["sha"]],
+                        task.name, task.prompt_version, model, a["sha"], by_sha[a["sha"]],
                         json.dumps({"spots": a["spots"]}, ensure_ascii=False), a.get("served_model", "manual"), now_iso()))
         db.commit()
-    done = llm.cached(db, TASK, model)
+    done = llm.cached(db, task, model)
     pending = [t for t in texts if llm.sha(t) not in done]
     with (folder / "pending.jsonl").open("w", encoding="utf-8") as f:
         for t in pending:
@@ -530,14 +644,14 @@ def looks_like_frame(body: bytes) -> bool:
     return flat >= 0.3
 
 
-def download_image(url: str) -> bytes | None:
+def download_image(url: str, full: bool = True) -> bytes | None:
     import urllib.request
 
     from sync.enrich_common import SSL_CONTEXT
 
     try:
-        full = re.sub(r"-s(\.\w+)$", r"\1", url) if "blogimg.jp" in url else url  # livedoor 的 -s 是缩略图
-        req = urllib.request.Request(full, headers={"User-Agent": "Mozilla/5.0 (junrei-gaps; +https://junrei.jannchie.com)"})
+        src = re.sub(r"-s(\.\w+)$", r"\1", url) if full and "blogimg.jp" in url else url  # livedoor 的 -s 是缩略图
+        req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0 (junrei-gaps; +https://junrei.jannchie.com)"})
         with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as r:
             body = r.read()
     except Exception:  # noqa: BLE001 - 文章里的图片地址什么样都有（模板残片、坏链接）

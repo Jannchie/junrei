@@ -176,6 +176,10 @@ def anilist_titles(db) -> dict[int, set[str]]:
 _frames: dict[int, list] = {}
 
 
+def clear_cache() -> None:
+    _frames.clear()
+
+
 def frames(db, anilist_id: int) -> list[tuple[dict, np.ndarray, np.ndarray]]:
     """一部作品各集的帧：[(文件信息, 时间数组, 向量矩阵)]"""
     import zstandard
