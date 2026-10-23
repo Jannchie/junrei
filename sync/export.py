@@ -24,6 +24,7 @@ from urllib.parse import urlparse
 
 from sync.fold import build_char_map, fold, romaji
 from sync.llm import clean_text
+from sync.translate import LANGS, SOURCE_RANK, opencc_converter
 from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
@@ -34,10 +35,7 @@ BGM_ANIME = DEFAULT_OUT / "bgm-anime.json"
 BGM_COVER = "https://api.bgm.tv/v0/subjects/{}/image?type=common"  # 数据包里没有封面地址，用官方接口的跳转
 ROWS_PER_INSERT = 200  # 分批插入
 MAX_STATEMENT_BYTES = 90_000  # D1 单条语句上限 100 KB
-LANGS = ("zh-Hans", "zh-Hant", "ja", "en")
-# 同一语言有多条时：原文混了别的语言时的纯净版本（llm_fix）最优先，其次人工数据、复核过的机翻、机翻、繁简转换；
-# 置信度太低的机翻排到最后，只在这种语言没有别的文本时兜底，保证每条都有四种语言
-SOURCE_RANK = {"llm_fix": -1, "anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3, "opencc": 4}
+# 同一语言有多条时按 translate.SOURCE_RANK 取；置信度太低的机翻排到最后，只在这种语言没有别的文本时兜底，保证每条都有四种语言
 MIN_CONFIDENCE = 0.5
 LOW_CONFIDENCE_RANK = 10
 FIELD_KEY = {"title": "name", "name": "name", "mark": "mark"}
@@ -171,15 +169,19 @@ def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -
     return nsfw
 
 
+def subject_names(s: dict, to_hant) -> dict[str, str]:
+    """Bangumi 条目的各语言名称：简体取中文名，繁体由它转换，日文取原名"""
+    names = {"zh-Hans": s.get("cn"), "zh-Hant": s.get("cn") and to_hant and to_hant(s["cn"]), "ja": s.get("name"), "en": s.get("en")}
+    return {k: v for k, v in names.items() if v}
+
+
 def merge_bgm(rows: list, i18n: dict) -> tuple[dict[int, dict], set[int]]:
     """并入 Bangumi 全部动画条目：已有的作品补上热度、首播日期和别名，没有的新增一行（地标数 0）。
     同时返回 Bangumi 标为成人向（nsfw）的全部条目 id（含游戏）。"""
     if not BGM_ANIME.exists():
         print("没有 data/bgm-anime.json，只导出有地标的作品（先跑 python -m sync.bgm_archive）")
         return {}, set()
-    import opencc  # 繁体名由简体中文名转换（台湾用字）
-
-    to_hant = opencc.OpenCC("s2twp").convert
+    to_hant = opencc_converter("s2twp")  # 繁体名由简体中文名转换（台湾用字）
     archive = json.loads(BGM_ANIME.read_text(encoding="utf-8"))
     subjects = archive["subjects"]
     known = {r[0] for r in rows}
@@ -189,8 +191,7 @@ def merge_bgm(rows: list, i18n: dict) -> tuple[dict[int, dict], set[int]]:
         if s["id"] in known:
             continue
         rows.append((s["id"], s["cn"], s["name"], s["en"], None, s["cat"], None, BGM_COVER.format(s["id"])))
-        name = {k: v for k, v in (("zh-Hans", s["cn"]), ("zh-Hant", s["cn"] and to_hant(s["cn"])), ("ja", s["name"]),
-                                  ("en", s["en"])) if v}
+        name = subject_names(s, to_hant)
         if name:
             i18n[("bangumi", str(s["id"]))] = {"name": name}
     rows.sort(key=lambda r: r[0])

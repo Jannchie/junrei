@@ -17,28 +17,26 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import http.client
 import json
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
-import urllib.error
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from sync.enrich_common import SSL_CONTEXT, Http, add_data_arg, now_iso, open_db, setup_stdout
+from sync.bgm import API as BGM_API
+from sync.bgm import BGM_UA as UA  # Bangumi 要求调用方在 UA 里标明身份
+from sync.enrich_common import Http, add_data_arg, now_iso, open_db, setup_stdout
+from sync.net import request
 
 ACCOUNT = "ad02684d0205554549c21cd8bfc41d48"
 BUCKET = "public-assets"
 PREFIX = "junrei/covers/"
 MANIFEST = PREFIX + "index.json"
 PUBLIC = "https://cdn.jannchie.com/"
-BGM_API = "https://api.bgm.tv/v0/subjects/{}"
 BGMD = "https://cdn.jsdelivr.net/npm/bgmd@0/dist/index.json"
-UA = "Jannchie/junrei (https://junrei.jannchie.com)"  # Bangumi 要求调用方在 UA 里标明身份
 IMMUTABLE = "public, max-age=31536000, immutable"
 
 SCHEMA = """
@@ -63,18 +61,12 @@ def mirrored(db) -> dict[int, str]:
 
 
 def download(url: str) -> bytes | None:
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Cache-Control": "no-cache"})
-    try:
-        with urllib.request.urlopen(req, timeout=60, context=SSL_CONTEXT) as r:
-            return r.read()
-    except urllib.error.HTTPError as e:
-        if e.code != 404:
-            print(f"  ! 下载失败 {url}：{e.code}", file=sys.stderr)
-        return None
-    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as e:
-        # 连接中途断开（IncompleteRead 等）只算这一张失败，下次再试
-        print(f"  ! 下载失败 {url}：{e!r}", file=sys.stderr)
-        return None
+    status, body = request(url, ua=UA, timeout=60, headers={"Cache-Control": "no-cache"})
+    if status == 200:
+        return body
+    if status != 404:  # 404 是没有这张图；其他失败只算这一张，下次再试
+        print(f"  ! 下载失败 {url}：{status}", file=sys.stderr)
+    return None
 
 
 class Uploader:
@@ -89,19 +81,13 @@ class Uploader:
     def put(self, key: str, body: bytes, content_type: str = "image/jpeg", cache: str = IMMUTABLE) -> bool:
         if self.token:
             url = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/r2/buckets/{BUCKET}/objects/{key}"
-            req = urllib.request.Request(url, data=body, method="PUT", headers={
+            status, _ = request(url, data=body, method="PUT", timeout=60, headers={
                 "Authorization": f"Bearer {self.token}", "Content-Type": content_type, "Cache-Control": cache})
-            try:
-                with urllib.request.urlopen(req, timeout=60, context=SSL_CONTEXT) as r:
-                    return 200 <= r.status < 300
-            except urllib.error.HTTPError as e:
-                if e.code in (401, 403):
-                    sys.exit("令牌没有 R2 编辑权限（Account → Workers R2 Storage → Edit）")
-                print(f"  ! 上传失败 {key}：{e.code}", file=sys.stderr)
-                return False
-            except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
-                print(f"  ! 上传失败 {key}：{e!r}", file=sys.stderr)
-                return False
+            if status in (401, 403):
+                sys.exit("令牌没有 R2 编辑权限（Account → Workers R2 Storage → Edit）")
+            if not 200 <= status < 300:
+                print(f"  ! 上传失败 {key}：{status}", file=sys.stderr)
+            return 200 <= status < 300
         assert self.pnpm
         with tempfile.NamedTemporaryFile(suffix=Path(key).suffix, delete=False) as f:
             f.write(body)

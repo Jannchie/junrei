@@ -15,10 +15,10 @@ import json
 import re
 import time
 import urllib.parse
-import urllib.request
 from pathlib import Path
 
-from sync.enrich_common import SSL_CONTEXT, add_data_arg, open_db, setup_stdout
+from sync.enrich_common import add_data_arg, open_db, setup_stdout
+from sync.net import request
 
 API = "https://www.wikidata.org/w/api.php"
 UA = "junrei-data/0.1 (https://junrei.jannchie.com)"
@@ -47,17 +47,10 @@ CREATE TABLE IF NOT EXISTS city_label (
 
 
 def get(params: dict) -> dict:
-    url = f"{API}?{urllib.parse.urlencode({**params, 'format': 'json'})}"
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    for attempt in range(4):
-        try:
-            with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as r:
-                return json.load(r)
-        except Exception:
-            if attempt == 3:
-                raise
-            time.sleep(2 ** attempt)
-    return {}
+    status, body = request(f"{API}?{urllib.parse.urlencode({**params, 'format': 'json'})}", ua=UA)
+    if status != 200:
+        raise RuntimeError(f"Wikidata → {status}")
+    return json.loads(body)
 
 
 def find(city: str) -> str | None:

@@ -30,11 +30,14 @@ from pathlib import Path
 from sync import llm
 from sync.bgm import script_lang
 from sync.enrich_common import add_data_arg, log_run, now_iso, open_db, setup_stdout
+from sync.fold import loose
 from sync.enrich_report import has, write_report
 
 LANGS = ["zh-Hans", "zh-Hant", "ja", "en"]
 LLM_LANGS = {"ja": "ja", "zh_hans": "zh-Hans", "en": "en"}  # 结构化输出字段 → 语言代码
-SOURCE_RANK = {"llm_fix": -1, "anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3}
+# 同一语言有多条时的优先级（export 取文本也按它）：原文混了别的语言时的纯净版本（llm_fix）最优先，
+# 其次人工数据、复核过的机翻、机翻、繁简转换
+SOURCE_RANK = {"llm_fix": -1, "anitabi": 0, "bangumi": 1, "llm_review": 2, "llm": 3, "opencc": 4}
 MACHINE = {"llm", "llm_review", "llm_fix", "opencc"}
 REVIEW_MODEL = "claude-opus-5-5"
 LANG_KEY = {v: k for k, v in LLM_LANGS.items()}
@@ -138,11 +141,6 @@ SIMPLIFIED = set(
     "带齐斋济气时实盐仓贝钏网纹馆胜鹤库惠绘经结线练续终组细红纳纲缘总级绿统濑顺预领头风飞驹骏鱼鸣鹰陆达镇罗军车轮艺龟"
     "摄滩铫鹭栉灵莲苇觉阁营对涉鸠务业观赖伞吴杂凑历让浊训骑钟银铁锦阶际隐难韩页题颜冲热远霸势诸见灶穗浓宁闻场园楼过这"
     "们说话东车站厅馆")
-
-
-def loose(text: str) -> str:
-    """比较用：忽略全半角、大小写、空白与标点差异，只看文字本身是否不同"""
-    return re.sub(r"[\s\W_]+", "", unicodedata.normalize("NFKC", text)).casefold()
 
 
 def guess_lang(text: str) -> tuple[str, float]:

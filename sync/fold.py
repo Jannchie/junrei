@@ -7,12 +7,18 @@
 
 from __future__ import annotations
 
+import re
 import unicodedata
 
 from opencc import OpenCC
 
 _t2s = OpenCC("t2s")
 _s2t = OpenCC("s2t")
+
+
+def loose(text: str | None) -> str:
+    """比较用的宽松归一：忽略全半角、大小写、空白与标点差异（不做繁简归一，需要时用 fold）"""
+    return re.sub(r"[\s\W_]+", "", unicodedata.normalize("NFKC", text or "")).casefold()
 
 
 def build_char_map(texts) -> dict[str, str]:

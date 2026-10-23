@@ -15,27 +15,29 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 import urllib.request
 import zipfile
 from pathlib import Path
 
-from sync.enrich_common import SSL_CONTEXT
+from sync.enrich_common import setup_stdout
+from sync.net import SSL_CONTEXT, request
 from sync.sync import DEFAULT_OUT
 
 LATEST = "https://raw.githubusercontent.com/bangumi/Archive/master/aux/latest.json"
 UA = "junrei-sync/0.1 (+https://junrei.jannchie.com)"
 ARCHIVE_DIR = DEFAULT_OUT / "bgm-archive"
 OUT = DEFAULT_OUT / "bgm-anime.json"
+GAMES = DEFAULT_OUT / "bgm-games.json"
 # Bangumi 动画条目的 platform → 与 Anitabi 一致的类别名（前端再按语言翻译）
 PLATFORM = {1: "TV", 2: "OVA", 3: "剧场版", 5: "WEB"}
 SERIES_RELATIONS = {2, 3, 4, 5, 6, 12}  # 前传、续集、总集篇、全集、番外篇、主线故事
 
 
 def fetch(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=60, context=SSL_CONTEXT) as r:
-        return r.read()
+    status, body = request(url, ua=UA, timeout=60)
+    if status != 200:
+        raise RuntimeError(f"{url} → {status}")
+    return body
 
 
 def download() -> Path:
@@ -105,39 +107,45 @@ def add_series(z: zipfile.ZipFile, rows: list[dict]) -> None:
     print(f"系列：{len(sizes)} 个（最大 {sizes[:5]} 部）")
 
 
+def subject_row(s: dict, cat: str) -> dict:
+    """数据包里的一个条目 → 只留名称、别名、首播日期、类型与热度"""
+    alias = aliases(s.get("infobox", ""))
+    fav = s.get("favorite") or {}
+    return {
+        "id": s["id"],
+        "name": s.get("name") or None,
+        "cn": s.get("name_cn") or None,
+        "en": english(alias),
+        "aliases": [a for a in alias if a not in (s.get("name"), s.get("name_cn"))][:8],
+        "date": s.get("date") or None,
+        "cat": cat,
+        # 热度：看过 + 在看 + 想看，用于没有地标的作品之间排序
+        "popularity": fav.get("done", 0) + fav.get("doing", 0) + fav.get("wish", 0),
+        **({"nsfw": True} if s.get("nsfw") else {}),
+    }
+
+
 def main():
     path = download()
-    rows = []
-    nsfw = []
+    rows, games, nsfw = [], [], []
     with zipfile.ZipFile(path) as z, z.open("subject.jsonlines") as f:
         for line in f:
             s = json.loads(line)
             if s.get("nsfw"):
                 nsfw.append(s["id"])
-            if s["type"] != 2:
-                continue
-            alias = aliases(s.get("infobox", ""))
-            fav = s.get("favorite") or {}
-            rows.append({
-                "id": s["id"],
-                "name": s.get("name") or None,
-                "cn": s.get("name_cn") or None,
-                "en": english(alias),
-                "aliases": [a for a in alias if a not in (s.get("name"), s.get("name_cn"))][:8],
-                "date": s.get("date") or None,
-                "cat": PLATFORM.get(s.get("platform"), "其他"),
-                # 热度：看过 + 在看 + 想看，用于没有地标的作品之间排序
-                "popularity": fav.get("done", 0) + fav.get("doing", 0) + fav.get("wish", 0),
-                **({"nsfw": True} if s.get("nsfw") else {}),
-            })
+            if s["type"] == 2:
+                rows.append(subject_row(s, PLATFORM.get(s.get("platform"), "其他")))
+            elif s["type"] == 4:
+                games.append(subject_row(s, "游戏"))  # 补漏（sync.gaps）对美少女游戏的取景用
     rows.sort(key=lambda r: r["id"])
     with zipfile.ZipFile(path) as z:
         add_series(z, rows)
     OUT.write_text(json.dumps({"archive": path.name, "subjects": rows, "nsfw": sorted(nsfw)}, ensure_ascii=False, separators=(",", ":")),
                    encoding="utf-8")
-    print(f"{OUT}：{len(rows)} 部动画，成人向条目 {len(nsfw)} 个（{OUT.stat().st_size / 1e6:.1f} MB）")
+    GAMES.write_text(json.dumps({"archive": path.name, "subjects": games}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"{OUT}：{len(rows)} 部动画，成人向条目 {len(nsfw)} 个（{OUT.stat().st_size / 1e6:.1f} MB）；游戏 {len(games)} 部")
 
 
 if __name__ == "__main__":
-    sys.stdout.reconfigure(encoding="utf-8")  # pyright: ignore[reportAttributeAccessIssue]
+    setup_stdout()
     main()

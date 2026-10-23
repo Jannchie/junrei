@@ -21,12 +21,12 @@ import json
 import re
 import sqlite3
 import subprocess
-import unicodedata
 from pathlib import Path
 
 import numpy as np
 
 from sync.enrich_common import setup_stdout
+from sync.fold import loose
 from sync.sync import DEFAULT_OUT
 
 DIR = DEFAULT_OUT / "tracemoe"
@@ -143,17 +143,13 @@ def image_vector(body: bytes) -> list[int] | None:
 
 # ---- 检索 ----
 
-def fold(t: str | None) -> str:
-    return re.sub(r"[\s\W_]+", "", unicodedata.normalize("NFKC", t or "")).casefold()
-
-
 def titles_of(info: dict) -> list[str]:
     return [t for t in [*(info.get("title") or {}).values(), *(info.get("synonyms") or [])] if t]
 
 
 def match_anilist(db, names: list[str]) -> dict[int, str]:
     """作品名（含别名）→ AniList 条目：标题一致为 exact，互为前缀为 series（多是续作、剧场版）"""
-    ours = {fold(n) for n in names if n and len(fold(n)) >= 2}
+    ours = {loose(n) for n in names if n and len(loose(n)) >= 2}
     out: dict[int, str] = {}
     for aid, info in anilist_titles(db).items():
         if ours & info:
@@ -169,7 +165,7 @@ _titles: dict[int, set[str]] | None = None
 def anilist_titles(db) -> dict[int, set[str]]:
     global _titles
     if _titles is None:
-        _titles = {aid: {fold(t) for t in titles_of(json.loads(j))} - {""} for aid, j in db.execute("SELECT id, json FROM anilist")}
+        _titles = {aid: {loose(t) for t in titles_of(json.loads(j))} - {""} for aid, j in db.execute("SELECT id, json FROM anilist")}
     return _titles
 
 

@@ -9,20 +9,16 @@
 from __future__ import annotations
 
 import datetime as dt
-import gzip
-import http.client
 import json
 import os
 import sqlite3
-import ssl
 import sys
 import time
-import urllib.error
 import urllib.parse
-import urllib.request
 from pathlib import Path
 
-from sync.sync import DEFAULT_OUT
+from sync.net import SSL_CONTEXT, request  # noqa: F401  (SSL_CONTEXT 供其他脚本从这里取)
+from sync.sync import DEFAULT_OUT, now_iso
 
 DATA_DIR = Path(os.environ.get("JUNREI_DATA") or DEFAULT_OUT)
 UA = "junrei-enrich/0.1 (+https://junrei.jannchie.com; non-commercial)"
@@ -52,23 +48,6 @@ CREATE TABLE IF NOT EXISTS enrich_run (
 """
 
 
-def _ssl_context():
-    """有 certifi 就用它的根证书：部分 Windows 环境的系统证书库会让 api.bgm.tv 这类新签发链校验失败。
-    也可以用环境变量 SSL_CERT_FILE 指定证书文件。"""
-    try:
-        import certifi
-    except ImportError:
-        return ssl.create_default_context()
-    return ssl.create_default_context(cafile=certifi.where())
-
-
-SSL_CONTEXT = _ssl_context()
-
-
-def now_iso() -> str:
-    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
-
-
 def open_db(data_dir: Path = DATA_DIR) -> sqlite3.Connection:
     """打开 enrich.sqlite，并挂载 src（原始库，只读）与 cache。"""
     src = data_dir / "anitabi.sqlite"
@@ -89,10 +68,14 @@ def log_run(db, step: str, started: str, params: dict, stats: dict) -> None:
 
 
 class Http:
-    """限速 + 缓存的 GET。命中缓存不发请求、也不计入限速。"""
+    """限速 + 缓存的 GET。命中缓存不发请求、也不计入限速。
+
+    缓存用单独一个自动提交的连接读写 cache.sqlite：和调用方的连接分开，调用方开着的写事务
+    不会把缓存写入卷进去，几个脚本同时跑时也不会因此互相锁住。"""
 
     def __init__(self, db, interval: float, ua: str = UA, max_age_days: float | None = None):
-        self.db = db
+        path = next(r[2] for r in db.execute("PRAGMA database_list") if r[1] == "cache")
+        self.cache = sqlite3.connect(path, timeout=60, isolation_level=None)
         self.interval = interval
         self.ua = ua
         self.max_age = max_age_days
@@ -103,57 +86,24 @@ class Http:
     def get(self, url: str, params: dict | None = None) -> tuple[int, bytes]:
         if params:
             url = f"{url}?{urllib.parse.urlencode(params)}"
-        row = self.db.execute("SELECT status, body, fetched_at FROM cache.http_cache WHERE url=?", (url,)).fetchone()
+        row = self.cache.execute("SELECT status, body, fetched_at FROM http_cache WHERE url=?", (url,)).fetchone()
         if row and (self.max_age is None or
                     dt.datetime.now(dt.timezone.utc) - dt.datetime.fromisoformat(row[2]) < dt.timedelta(days=self.max_age)):
             self.hits += 1
             return row[0], row[1]
-        status, body = self._fetch(url)
+        wait = self.interval - (time.monotonic() - self._last)
+        if wait > 0:
+            time.sleep(wait)
+        self.requests += 1
+        status, body = request(url, ua=self.ua, headers={"Accept": "application/json"})
+        self._last = time.monotonic()
         if status == 200 or 400 <= status < 500:  # 4xx 也缓存（如条目不存在），5xx / 网络错误不缓存
-            # 多个补全脚本同时写缓存时可能等锁超时：缓存写不进去只是下次再请求，不值得让整个任务退出
-            for attempt in range(5):
-                try:
-                    self.db.execute("INSERT OR REPLACE INTO cache.http_cache VALUES (?,?,?,?)", (url, status, body, now_iso()))
-                    self.db.commit()
-                    break
-                except sqlite3.OperationalError as e:
-                    if "locked" not in str(e):
-                        raise
-                    self.db.rollback()
-                    time.sleep(2 ** attempt)
+            self.cache.execute("INSERT OR REPLACE INTO http_cache VALUES (?,?,?,?)", (url, status, body, now_iso()))
         return status, body
 
     def get_json(self, url: str, params: dict | None = None):
         status, body = self.get(url, params)
         return status, (json.loads(body) if status == 200 and body else None)
-
-    def _fetch(self, url: str) -> tuple[int, bytes]:
-        req = urllib.request.Request(url, headers={"User-Agent": self.ua, "Accept-Encoding": "gzip",
-                                                   "Accept": "application/json"})
-        for attempt in range(4):
-            wait = self.interval - (time.monotonic() - self._last)
-            if wait > 0:
-                time.sleep(wait)
-            self._last = time.monotonic()
-            self.requests += 1
-            try:
-                with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as r:
-                    body = r.read()
-                    if r.headers.get("Content-Encoding") == "gzip":
-                        body = gzip.decompress(body)
-                    return r.status, body
-            except urllib.error.HTTPError as e:
-                if e.code == 429 or e.code >= 500:
-                    retry = float(e.headers.get("Retry-After") or 2 ** (attempt + 1))
-                    print(f"  ! {url} → {e.code}，{retry:.0f}s 后重试", file=sys.stderr)
-                    time.sleep(retry)
-                    continue
-                return e.code, e.read()
-            except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
-                # 网络层的失败（超时、连接被重置、对方没响应就断开、读到一半断开）都重试；HTTPError 在上面单独处理
-                print(f"  ! {url} 失败（{e!r}），{2 ** attempt}s 后重试", file=sys.stderr)
-                time.sleep(2**attempt)
-        return 599, b""
 
 
 def add_data_arg(ap) -> None:

@@ -6,7 +6,7 @@
   python -m sync.gaps run --top 5           # 取前 5 部：抓作品页与探访文章 → LLM 提取地点与集数 → 地理编码 → 草稿
   python -m sync.gaps run --ids 181354      # 指定作品（Bangumi id）
   python -m sync.gaps run --list nishikibuna --top 20   # 錦鮒出版「聖地巡礼特集」探访过的美少女游戏（成人向标 nsfw，网站默认隐藏）
-  python -m sync.gaps trace --budget 50     # 用来源文章里的截图查 trace.moe：对上作品的提高把握度，补集数与时间
+  python -m sync.gaps trace                 # 老草稿的来源截图在本地 trace.moe 帧库里比对：对上作品的提高把握度，补集数与时间
   python -m sync.gaps apply                 # 草稿里 approved 为 true 的地标（或审核页导出的 approved.json）并入 manual.json
 
 草稿在 data/review/gaps/<作品 id>.json，审核页 data/review/gaps/review.html（地图上逐个确认，勾选后导出）。
@@ -22,12 +22,14 @@ import hashlib
 import html
 import json
 import re
-import unicodedata
 import urllib.parse
 from pathlib import Path
 
 from sync import llm
 from sync.enrich_common import Http, add_data_arg, now_iso, open_db, setup_stdout
+from sync.fold import loose
+from sync.net import request
+from sync.sync import haversine_km
 
 LEGWORK = "https://wikiwiki.jp/legwork/"
 NISHIKIBUNA = "https://nishikibuna.web.fc2.com/EXTRA/"  # 美少女游戏（多为成人向）的取景探访，按都道府县整理
@@ -39,6 +41,8 @@ ARTICLE_CHARS = 8000  # 每篇文章最多送给模型的字数
 ARTICLES_PER_WORK = 8
 THIN = 15  # 地标少于这个数的已收录作品算「偏少」，也值得补
 DUP_METERS = 150  # 和已有地标相距不到这个距离（或同名）的候选视为重复，不进草稿
+GAPS_UA = "junrei-gaps/0.1 (+https://junrei.jannchie.com)"
+IMG_JUNK = re.compile(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif|\.svg")  # 不是正文图片的地址
 
 SYSTEM = """你在帮动画圣地巡礼地图整理「舞台探访」文章：粉丝实地走访动画里出现的真实地点后写的博客。
 每条输入是 JSON：work 为作品名，area 为目录给出的地区提示，text 为文章正文（可能夹着导航、广告等杂讯）。
@@ -62,15 +66,16 @@ SPOT = {
                  "confidence"],
     "additionalProperties": False,
 }
-TASK = llm.Task(
-    name="gap_spots",
-    version="v1",
-    system=SYSTEM,
-    item_properties={"spots": {"type": "array", "items": SPOT}},
-    chunk_size=4,
-    chunk_chars=30000,
-    effort="medium",
-)
+
+
+def spot_task(name: str, system: str, extra: dict | None = None) -> llm.Task:
+    item = {**SPOT, "properties": {**SPOT["properties"], **(extra or {})}, "required": [*SPOT["required"], *(extra or {})]}
+    return llm.Task(name=name, version="v1", system=system, item_properties={"spots": {"type": "array", "items": item}},
+                    chunk_size=4, chunk_chars=30000, effort="medium")
+
+
+TASK = spot_task("gap_spots", SYSTEM)
+
 # 截图证据模式：文章里的图片先用本地 trace.moe 比对，确认是这部作品画面的截图换成 [截图#k：…] 标记，
 # 模型只能输出能指认截图的地点（evidence 填 k），没有截图依据的地点一律不收
 EVIDENCE_SYSTEM = SYSTEM + """
@@ -80,17 +85,7 @@ EVIDENCE_SYSTEM = SYSTEM + """
 - 每个地点必须对应一个截图标记：evidence 写该地点所依据的截图编号 k（就近、且文字说明这张截图拍的就是这个地点）。
 - 找不到对应截图的地点不要输出；一张截图只对应一个地点。
 - episode 以截图标记里的集数为准。"""
-EVIDENCE_TASK = llm.Task(
-    name="gap_spots_evidence",
-    version="v1",
-    system=EVIDENCE_SYSTEM,
-    item_properties={"spots": {"type": "array", "items": {
-        **SPOT, "properties": {**SPOT["properties"], "evidence": {"type": "integer"}},
-        "required": [*SPOT["required"], "evidence"]}}},
-    chunk_size=4,
-    chunk_chars=30000,
-    effort="medium",
-)
+EVIDENCE_TASK = spot_task("gap_spots_evidence", EVIDENCE_SYSTEM, {"evidence": {"type": "integer"}})
 EVIDENCE_IMAGES = 60  # 每篇文章最多比对多少张图
 MODEL = "claude-sonnet-5-5"  # 长文阅读 + 判断，Haiku 容易漏或编
 
@@ -108,9 +103,13 @@ def decode(body: bytes) -> str:
     return body.decode("utf-8", "replace")
 
 
+def strip_scripts(page: str) -> str:
+    return re.sub(r"(?is)<(script|style|noscript|svg|iframe)[^>]*>.*?</\1>", " ", page)
+
+
 def content_html(page: str) -> str:
     """粗略的正文区域：优先常见博客正文容器；容器里几乎没字（结构没认对）时退回全文"""
-    page = re.sub(r"(?is)<(script|style|noscript|svg|iframe)[^>]*>.*?</\1>", " ", page)
+    page = strip_scripts(page)
     # 类名要整词匹配（"preventry-text" 这种上一篇导航不能算）
     m = re.search(r'class="(?:[^"]*\s)?(?:entry[-_]?(?:content|body|text)|article[-_]?(?:body|text)|post[-_]?(?:content|body)|'
                   r'main[-_]?text|blog[-_]?body|articleText|skin-entryBody)(?:\s[^"]*)?"', page, re.I)
@@ -130,10 +129,21 @@ def strip_tags(page: str) -> str:
     return re.sub(r"[ \t　]+", " ", re.sub(r"\n\s*\n+", "\n", text)).strip()
 
 
+def img_tags(page: str, base: str) -> list[tuple[tuple[int, int], str]]:
+    """正文图片：[(标签在 page 里的位置, 绝对地址)]，图标、头像、按钮之类不算"""
+    out = []
+    for m in re.finditer(r"(?is)<img\b[^>]*>", page):
+        src = re.search(r'(?:data-src|data-original|src)="([^"]+)"', m.group(0))
+        url = urllib.parse.urljoin(base, html.unescape(src.group(1))) if src else ""
+        if url.startswith("http") and not IMG_JUNK.search(url):
+            out.append((m.span(), url))
+    return out
+
+
 def images_near(page: str, base: str, names: list[str], n: int = 4) -> list[str]:
     """文章里某个地点附近的图片（名称第一次出现之后的 n 张，通常是「动画截图 + 实拍」对照），
     只给本地审核页对照用，不保存、不发布。找不到名称时返回空"""
-    page = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</\1>", " ", page)
+    page = strip_scripts(page)
     plain = re.sub(r"<[^>]+>", lambda m: " " * len(m.group(0)), page)  # 标签换成占位，位置与原文对齐
     at = -1
     for name in names:
@@ -144,14 +154,7 @@ def images_near(page: str, base: str, names: list[str], n: int = 4) -> list[str]
             break
     if at < 0:
         return []
-    out = []
-    for m in re.finditer(r'(?is)<img[^>]*?(?:data-src|data-original|src)="([^"]+)"', page[at:]):
-        src = urllib.parse.urljoin(base, html.unescape(m.group(1)))
-        if src.startswith("http") and not re.search(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif", src) and src not in out:
-            out.append(src)
-        if len(out) >= n:
-            break
-    return out
+    return list(dict.fromkeys(url for _, url in img_tags(page[at:], base)))[:n]
 
 
 def work_links(http: Http, title: str) -> list[tuple[str, str]]:
@@ -172,42 +175,24 @@ def work_links(http: Http, title: str) -> list[tuple[str, str]]:
     return list(dict.fromkeys(out))
 
 
-def with_evidence(page: str, base: str, tm, ids: dict[int, str], vectors: dict) -> tuple[str, dict[int, dict]]:
+def with_evidence(page: str, base: str, tm, ids: dict[int, str], vectors: "Vectors") -> tuple[str, dict[int, dict]]:
     """文章正文，其中对上这部作品画面的图片换成 [截图#k：第N集 mm:ss]，其余图片去掉。返回 (正文, {k: 比对结果})"""
-    from concurrent.futures import ThreadPoolExecutor
-
-    from sync import tracemoe
-
     region = content_html(page)
-    tags = []
-    for m in re.finditer(r"(?is)<img\b[^>]*>", region):
-        src = re.search(r'(?:data-src|data-original|src)="([^"]+)"', m.group(0))
-        url = urllib.parse.urljoin(base, html.unescape(src.group(1))) if src else ""
-        if url.startswith("http") and not re.search(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif|\.svg", url):
-            tags.append((m.span(), url))
-    tags = tags[:EVIDENCE_IMAGES]
-
-    def vector(url: str):
-        body = download_image(url, full=False)  # 只看 8×8 的色块分布，缩略图就够了
-        return url, tracemoe.image_vector(body) if body else None
-
-    with ThreadPoolExecutor(6) as pool:
-        for url, v in pool.map(vector, [u for _, u in tags if u not in vectors]):
-            vectors[url] = v
+    tags = img_tags(region, base)[:EVIDENCE_IMAGES]
+    vectors.prefetch([u for _, u in tags])
     evidence: dict[int, dict] = {}
     out, last = [], 0
     for (start, end), url in tags:
         out.append(region[last:start])
         last = end
-        hit = local_lookup(tm, vectors, url, ids)
-        if not hit:
+        proof = lookup(tm, vectors, url, ids)
+        if not proof:
             continue
-        res, match = hit
         k = len(evidence) + 1
-        evidence[k] = {"image": url, "anilist": res["anilist"]["id"], "episode": res["episode"],
-                       "from": round(res["from"], 1), "similarity": round(res["similarity"], 3), "match": match}
-        when = f"{int(res['from']) // 60}:{int(res['from']) % 60:02d}"
-        label = f"第{res['episode']}集 {when}" if match == "exact" and res["episode"] else ("同系列续作" if match == "series" else when)
+        evidence[k] = proof
+        when = f"{int(proof['from']) // 60}:{int(proof['from']) % 60:02d}"
+        label = f"第{proof['episode']}集 {when}" if proof["match"] == "exact" and proof["episode"] else (
+            "同系列续作" if proof["match"] == "series" else when)
         out.append(f"<br>[截图#{k}：{label}]<br>")
     out.append(region[last:])
     return strip_tags("".join(out)), evidence
@@ -231,13 +216,12 @@ def nishikibuna_works(http: Http) -> dict[str, list[str]]:
 
 def nishikibuna_text(page: str, work: str) -> str:
     """县页面里属于这部作品的探访条目：「・地点 / 作品：… / 訪問日：…」，连同所在地区（◆）与开头的地点一览"""
-    fold = lambda t: norm(unicodedata.normalize("NFKC", t))  # noqa: E731
     lines = [ln.strip() for ln in strip_tags(page).split("\n") if ln.strip()]
-    key = fold(work)
+    key = loose(work)
     out, region, place, summary = [], "", "", False
     for i, ln in enumerate(lines):
         if ln.startswith("○"):
-            summary = key in fold(ln)  # 开头一览：「○ 作品」下面几行是「・ 市区町村 ( 地点 ， … )」
+            summary = key in loose(ln)  # 开头一览：「○ 作品」下面几行是「・ 市区町村 ( 地点 ， … )」
             if summary:
                 out.append(ln)
             continue
@@ -249,45 +233,40 @@ def nishikibuna_text(page: str, work: str) -> str:
             region = ln
         elif ln.startswith("・"):
             place = ln
-        elif ln.startswith("作品：") and key in fold(ln):
+        elif ln.startswith("作品：") and key in loose(ln):
             out += [f"{place}（{region.lstrip('◆')}）", ln, *[x for x in lines[i + 1:i + 4] if x.startswith(("訪問日", "[图"))]]
     return "\n".join(out)
 
 
 def game_subjects(data: Path) -> list[dict]:
-    """Bangumi 的游戏条目（含成人向）：data/bgm-games.json，从 Bangumi Archive 数据包读出，数据包更新后重建"""
-    import zipfile
-
-    from sync.bgm_archive import ARCHIVE_DIR, aliases
-
-    archive = max(ARCHIVE_DIR.glob("*.zip"), default=None)
-    out = data / "bgm-games.json"
-    if out.exists():
-        cached = json.loads(out.read_text(encoding="utf-8"))
-        if archive is None or cached["archive"] == archive.name:
-            return cached["subjects"]
-    if archive is None:
+    """Bangumi 的游戏条目（含成人向）：python -m sync.bgm_archive 顺带导出的 data/bgm-games.json"""
+    path = data / "bgm-games.json"
+    if not path.exists():
+        print("没有 data/bgm-games.json（先跑 python -m sync.bgm_archive），游戏条目对不上")
         return []
-    rows = []
-    with zipfile.ZipFile(archive) as z, z.open("subject.jsonlines") as f:
-        for line in f:
-            s = json.loads(line)
-            if s["type"] != 4:
-                continue
-            fav = s.get("favorite") or {}
-            alias = aliases(s.get("infobox", ""))
-            rows.append({"id": s["id"], "name": s.get("name") or None, "cn": s.get("name_cn") or None, "en": None,
-                         "aliases": [a for a in alias if a not in (s.get("name"), s.get("name_cn"))][:8], "cat": "游戏",
-                         "popularity": fav.get("done", 0) + fav.get("doing", 0) + fav.get("wish", 0),
-                         **({"nsfw": True} if s.get("nsfw") else {})})
-    out.write_text(json.dumps({"archive": archive.name, "subjects": rows}, ensure_ascii=False, separators=(",", ":")),
-                   encoding="utf-8")
-    return rows
+    return json.loads(path.read_text(encoding="utf-8"))["subjects"]
 
 
 def all_subjects(data: Path) -> dict[int, dict]:
     subs = json.loads((data / "bgm-anime.json").read_text(encoding="utf-8"))["subjects"]
     return {s["id"]: s for s in [*game_subjects(data), *subs]}
+
+
+def work_names(title: str | None, cn: str | None, sub: dict) -> list[str]:
+    """一部作品的各种叫法（目录里的写法 + Bangumi 的原名、中文名、英文名、别名），对 trace.moe 的 AniList 条目用"""
+    return [n for n in [title, cn, sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])] if n]
+
+
+def drafts(out_dir: Path) -> list[tuple[Path, dict]]:
+    return [(p, json.loads(p.read_text(encoding="utf-8"))) for p in sorted(out_dir.glob("*.json")) if p.stem.isdigit()]
+
+
+def load_manual() -> dict:
+    return json.loads(MANUAL.read_text(encoding="utf-8"))
+
+
+def save_manual(manual: dict) -> None:
+    MANUAL.write_text(json.dumps(manual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 # ---- 待补清单 ----
@@ -417,7 +396,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         want = {int(i) for i in args.ids.split(",")}
         gaps = [g for g in gaps if int(g["bangumi_id"]) in want]
     else:
-        done = {int(p.stem) for p in (data / "review" / "gaps").glob("*.json") if p.stem.isdigit()}
+        done = {d["bangumi"] for _, d in drafts(data / "review" / "gaps")}
         gaps = [g for g in gaps if int(g["bangumi_id"]) not in done][: args.top]
     subs = all_subjects(data)
     from sync import tracemoe
@@ -428,18 +407,13 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         if not (tracemoe.DIR / "frames.sqlite").exists():
             raise SystemExit("截图证据需要本地 trace.moe 帧库：python -m sync.tracemoe extract <dump>")
         tm = tracemoe.open_db()
-        db.execute("CREATE TABLE IF NOT EXISTS image_vector (image TEXT PRIMARY KEY, vector TEXT)")
-        vectors = {i: json.loads(v) if v else None for i, v in db.execute("SELECT image, vector FROM image_vector")}
-        known = set(vectors)
-    evidences: dict[str, dict[int, dict]] = {}  # 文章（送给模型的文本 sha）→ 截图证据
+        vectors = Vectors(db)
 
     # 1. 每部作品的探访文章 → 送给模型的输入
     works = []
     for g in gaps:
         if evidence_mode:
-            sub = subs.get(int(g["bangumi_id"]), {})
-            names = [n for n in [g["title"], g.get("cn"), sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])] if n]
-            ids = tracemoe.match_anilist(tm, names)
+            ids = tracemoe.match_anilist(tm, work_names(g["title"], g.get("cn"), subs.get(int(g["bangumi_id"]), {})))
             tracemoe.clear_cache()  # 帧数据按作品载入，换作品就释放
             if not ids:
                 print(f"{g['title']}：trace.moe 里没有这部作品，跳过")
@@ -468,23 +442,18 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
             if not text:
                 continue
             payload = llm.clean_text(json.dumps({"work": g["title"], "area": hint, "text": text}, ensure_ascii=False))
-            evidences[llm.sha(payload)] = ev
-            inputs.append((url, payload))
-        works.append((g, links, inputs))
-        shots = sum(len(evidences[llm.sha(t)]) for _, t in inputs)
+            inputs.append((url, payload, ev))
+        works.append((g, inputs))
+        if evidence_mode:
+            vectors.save()  # 每部作品存一次：中途停下，下次不必重新下载图片
+        shots = sum(len(ev) for *_, ev in inputs)
         print(f"{g['title']}：{len(links)} 篇文章" + (f"，{len(inputs)} 篇有对上的截图（共 {shots} 张）" if evidence_mode else ""), flush=True)
-    if evidence_mode:
-        db.executemany("INSERT OR REPLACE INTO image_vector VALUES (?,?)",
-                       [(i, json.dumps(v) if v else None) for i, v in vectors.items() if i not in known])
-        db.commit()
 
     # 2. LLM 提取（按文章缓存）。--manual：没有 API 时，把待提取的文章导出给任意模型或人工，答案导回缓存
-    if args.manual:
-        texts = [t for _, _, ins in works for _, t in ins]
-        if not exchange(db, Path(args.manual), texts, args.model, task):
-            return
+    texts = [t for _, ins in works for _, t, _ in ins]
+    if args.manual and not exchange(db, Path(args.manual), texts, args.model, task):
+        return
     # 任何模型已经提取过的文章都直接用（例如会话里人工 / 其他模型给出的答案），只把剩下的送去请求
-    texts = [t for _, _, ins in works for _, t in ins]
     other = {}
     for model in {r[0] for r in db.execute("SELECT DISTINCT model FROM cache.llm_cache WHERE task = ?", (task.name,))} - {args.model}:
         other |= {k: v for k, v in llm.cached(db, task, model).items() if k not in other}
@@ -497,30 +466,33 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
     # 3. 地理编码，写草稿
     out_dir = data / "review" / "gaps"
     out_dir.mkdir(parents=True, exist_ok=True)
-    for g, _, inputs in works:
+    manual_points: dict[int, list] = {}
+    for mp in load_manual()["points"]:
+        manual_points.setdefault(mp["bangumi"], []).append(mp)
+    for g, inputs in works:
         bid = int(g["bangumi_id"])
         spots, seen = [], set()
-        existing = existing_points(db, bid)
+        existing = existing_points(db, bid, manual_points.get(bid, []))
         dropped = 0
-        for url, text in inputs:
+        for url, text, ev in inputs:
             r = results.get(llm.sha(text))
             if not r:
                 continue
-            _, body = http.get(url.split("#")[0])  # 已缓存，给审核页找对照图
-            page = decode(body) if body else ""
-            ev = evidences.get(llm.sha(text), {})
-            cited = [s.get("evidence") for s in r[0]["spots"]]
+            page = ""
+            if not evidence_mode:  # 没有截图证据时，审核页按地名在原文里找附近的图（页面已缓存）
+                _, body = http.get(url.split("#")[0])
+                page = decode(body) if body else ""
             for s in r[0]["spots"]:
                 key = s["name_ja"]
                 proof = ev.get(s.get("evidence", -1)) if evidence_mode else None
                 if key in seen or s["confidence"] < args.min_confidence or (evidence_mode and not proof):
                     continue
                 seen.add(key)
-                if norm(key) in existing["names"]:
+                if loose(key) in existing["names"]:
                     dropped += 1
                     continue
                 loc = geocode(geo, s)
-                if loc and loc["by"] != "gsi-area" and any(dist(loc["lat"], loc["lng"], la, ln) < DUP_METERS for la, ln in existing["coords"]):
+                if loc and loc["by"] != "gsi-area" and any(haversine_km(loc["lat"], loc["lng"], la, ln) * 1000 < DUP_METERS for la, ln in existing["coords"]):
                     dropped += 1
                     continue
                 spots.append({
@@ -540,14 +512,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                     "model": r[1],
                     **({"trace": proof} if proof else {}),
                 })
-                if proof:
-                    # 有截图为证：集数、时间以比对结果为准；同一张截图被几个地点引用时说明不了是哪个，不写时间
-                    spot = spots[-1]
-                    spot["confidence"] = max(spot["confidence"], 0.9)
-                    if proof["match"] == "exact" and cited.count(s["evidence"]) == 1:
-                        if proof["episode"]:
-                            spot["ep"] = str(proof["episode"])
-                        spot["s"] = int(proof["from"])
+        apply_trace(spots)
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots,
                  **({"nsfw": True} if sub.get("nsfw") else {})}
@@ -577,255 +542,161 @@ def exchange(db, folder: Path, texts: list[str], model: str, task: llm.Task = TA
         for t in pending:
             f.write(json.dumps({"sha": llm.sha(t), "input": json.loads(t)}, ensure_ascii=False) + "\n")
     if pending:
-        (folder / "prompt.md").write_text(SYSTEM + '\n\n输出：每篇一行 JSON {"sha": …, "spots": [...]}，写到 answers.jsonl。字段见 sync/gaps.py 的 SPOT。\n',
+        (folder / "prompt.md").write_text(task.system + '\n\n输出：每篇一行 JSON {"sha": …, "spots": [...]}，写到 answers.jsonl。字段见 sync/gaps.py 的 SPOT。\n',
                                           encoding="utf-8")
         print(f"还有 {len(pending)} 篇文章没有答案：{folder / 'pending.jsonl'}（说明见 prompt.md）")
     return not pending
 
 
-def norm(name: str) -> str:
-    return re.sub(r"[\s\W_]+", "", name or "").casefold()
-
-
-def dist(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
-    """两点距离（米），近距离用等距矩形近似就够了"""
-    import math
-    x = math.radians(lng2 - lng1) * math.cos(math.radians((lat1 + lat2) / 2))
-    return math.hypot(x, math.radians(lat2 - lat1)) * 6371000
-
-
-def existing_points(db, bid: int) -> dict:
-    """作品已有的地标（Anitabi + manual.json）：名称（规范化）与坐标，用来给候选去重"""
+def existing_points(db, bid: int, manual_points: list[dict]) -> dict:
+    """作品已有的地标（Anitabi + manual.json）：名称（宽松归一）与坐标，用来给候选去重"""
     rows = db.execute("SELECT name, cn, lat, lng FROM src.point WHERE bangumi_id = ?", (bid,)).fetchall()
-    rows += [(p.get("name"), p.get("cn"), p["lat"], p["lng"])
-             for p in json.loads(MANUAL.read_text(encoding="utf-8"))["points"] if p["bangumi"] == bid]
-    return {"names": {norm(n) for r in rows for n in r[:2] if n}, "coords": [(r[2], r[3]) for r in rows if r[2] is not None]}
+    rows += [(p.get("name"), p.get("cn"), p["lat"], p["lng"]) for p in manual_points]
+    return {"names": {loose(n) for r in rows for n in r[:2] if n}, "coords": [(r[2], r[3]) for r in rows if r[2] is not None]}
 
 
 def write_review(out_dir: Path) -> None:
     """审核页：读所有草稿，地图上逐个看位置，勾选后导出 approved.json"""
-    drafts = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(out_dir.glob("*.json")) if p.stem.isdigit()]
+    items = [d for _, d in drafts(out_dir)]
     template = (Path(__file__).resolve().parent / "gaps_review.html").read_text(encoding="utf-8")
-    page = template.replace("/*DRAFTS*/[]", json.dumps(drafts, ensure_ascii=False).replace("</", "<\\/"))
+    page = template.replace("/*DRAFTS*/[]", json.dumps(items, ensure_ascii=False).replace("</", "<\\/"))
     (out_dir / "review.html").write_text(page, encoding="utf-8")
     print(f"审核页：{out_dir / 'review.html'}")
 
 
-# ---- trace.moe：用来源文章里的动画截图核对作品、补集数与时间 ----
+# ---- 截图证据：在本地 trace.moe 帧库（sync.tracemoe）里比对来源文章的图片 ----
 
-TRACE = "https://api.trace.moe/search?anilistInfo&cutBorders"
-TRACE_SIMILARITY = 0.9  # trace.moe 自己建议低于 0.9 的结果多半不对
-LOCAL_SIMILARITY = 0.9  # 本地只在这部作品里比对，阈值用在线结果校准（见 sync.tracemoe）
-TRACE_SCHEMA = """
-CREATE TABLE IF NOT EXISTS trace_moe (
-  image TEXT PRIMARY KEY,  -- 来源文章里的图片地址
-  result TEXT,             -- trace.moe 的第一条结果（JSON）；图片下载失败为 NULL
-  checked_at TEXT
-);
-"""
+SIMILARITY = 0.9  # 与 trace.moe 的建议一致：低于 0.9 的结果多半不对
+SHOT_UA = "Mozilla/5.0 (junrei-gaps; +https://junrei.jannchie.com)"  # 部分图床拒绝非浏览器的 UA
 
 
-def looks_like_frame(body: bytes) -> bool:
-    """粗筛动画截图，省 trace.moe 额度：16:9、够大、平涂多（相邻像素几乎同色的比例高）；实拍照片多半过不了"""
-    import io
-
-    from PIL import Image
-
-    try:
-        im = Image.open(io.BytesIO(body)).convert("L")
-    except Exception:  # noqa: BLE001 - 图片格式五花八门（svg、坏图）
-        return False
-    w, h = im.size
-    if w < 300 or not 1.7 <= w / h <= 1.9:
-        return False
-    sm = im.resize((160, 90))
-    px = sm.tobytes()
-    flat = sum(1 for i in range(len(px) - 1) if (i + 1) % 160 and abs(px[i] - px[i + 1]) <= 1) / len(px)
-    return flat >= 0.3
+def download_image(url: str) -> bytes | None:
+    """文章里的图片。只看 8×8 的色块分布，缩略图就够了，不换原图"""
+    status, body = request(url, ua=SHOT_UA, retries=2)
+    return body if status == 200 and len(body) >= 2000 else None
 
 
-def download_image(url: str, full: bool = True) -> bytes | None:
-    import urllib.request
+class Vectors:
+    """图片地址 → Color Layout 向量（下载不到为 None），缓存在 enrich.sqlite 的 image_vector 表"""
 
-    from sync.enrich_common import SSL_CONTEXT
+    def __init__(self, db):
+        db.execute("CREATE TABLE IF NOT EXISTS image_vector (image TEXT PRIMARY KEY, vector TEXT)")
+        self.db = db
+        self.known = {i: json.loads(v) if v else None for i, v in db.execute("SELECT image, vector FROM image_vector")}
+        self.new: dict[str, list[int] | None] = {}
 
-    try:
-        src = re.sub(r"-s(\.\w+)$", r"\1", url) if full and "blogimg.jp" in url else url  # livedoor 的 -s 是缩略图
-        req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0 (junrei-gaps; +https://junrei.jannchie.com)"})
-        with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as r:
-            body = r.read()
-    except Exception:  # noqa: BLE001 - 文章里的图片地址什么样都有（模板残片、坏链接）
-        return None
-    return body if len(body) >= 2000 else None
+    def _compute(self, url: str) -> list[int] | None:
+        from sync import tracemoe
 
+        body = download_image(url)
+        return tracemoe.image_vector(body) if body else None
 
-def trace_image(url: str) -> tuple[int, dict | None]:
-    """先自己下载图片再上传（博客多有防盗链，让 trace.moe 去抓常常失败还白占额度）。
-    返回 (状态, 第一条结果)；状态 0 表示图片没下载到，或看着不像动画截图、没有去查"""
-    import urllib.error
-    import urllib.request
+    def prefetch(self, urls: list[str]) -> None:
+        from concurrent.futures import ThreadPoolExecutor
 
-    from sync.enrich_common import SSL_CONTEXT
+        todo = [u for u in dict.fromkeys(urls) if u not in self.known and u not in self.new]
+        with ThreadPoolExecutor(6) as pool:
+            self.new.update(zip(todo, pool.map(self._compute, todo)))
 
-    body = download_image(url)
-    if not body or not looks_like_frame(body):
-        return 0, None
-    req = urllib.request.Request(TRACE, data=body, method="POST", headers={"Content-Type": "image/jpeg", "User-Agent": "junrei-gaps/0.1 (+https://junrei.jannchie.com)"})
-    try:
-        with urllib.request.urlopen(req, timeout=60, context=SSL_CONTEXT) as r:
-            hits = json.loads(r.read()).get("result") or []
-            return 200, hits[0] if hits else {}
-    except urllib.error.HTTPError as e:
-        return e.code, None
-    except (urllib.error.URLError, TimeoutError):
-        return 0, None
+    def get(self, url: str) -> list[int] | None:
+        if url not in self.known and url not in self.new:
+            self.new[url] = self._compute(url)
+        return self.known[url] if url in self.known else self.new[url]
+
+    def save(self) -> None:
+        self.db.executemany("INSERT OR REPLACE INTO image_vector VALUES (?,?)",
+                            [(i, json.dumps(v) if v else None) for i, v in self.new.items()])
+        self.db.commit()
+        self.known.update(self.new)
+        self.new.clear()
 
 
-def trace_match(hit: dict, names: list[str]) -> str | None:
-    """trace.moe 给的是 AniList 条目。标题与作品名（含别名）一致为 "exact"；
-    互为前缀为 "series"（多是续作：「ヨルムンガンド PERFECT ORDER」，舞台同属一个系列，但集数是续作那一季的）"""
-    fold = lambda t: norm(unicodedata.normalize("NFKC", t or ""))  # noqa: E731
-    info = hit.get("anilist") or {}
-    titles = [fold(t) for t in [*(info.get("title") or {}).values(), *(info.get("synonyms") or [])] if t]
-    ours = [fold(n) for n in names if n and len(fold(n)) >= 2]
-    if set(titles) & set(ours):
-        return "exact"
-    return "series" if any(a.startswith(b) or b.startswith(a) for a in titles if a for b in ours) else None
-
-
-def local_lookup(tm, vectors: dict, img: str, ids: dict[int, str]) -> tuple[dict, str] | None:
-    """本地 trace.moe（sync.tracemoe）：先在标题一致的条目里找，找不到再看同系列的续作"""
+def lookup(tm, vectors: Vectors, img: str, ids: dict[int, str]) -> dict | None:
+    """一张图在这部作品（ids：AniList 条目 → exact / series）里的比对结果：先找标题一致的条目，再看同系列的续作"""
     from sync import tracemoe
 
-    if img not in vectors:
-        body = download_image(img)
-        vectors[img] = tracemoe.image_vector(body) if body else None
-    vec = vectors[img]
+    vec = vectors.get(img)
     # 几乎没有细节的图（纯黑、纯色）在任何作品里都能找到「很像」的帧，不算数
     if not vec or sum(abs(x - 16) for x in vec[1:21] + vec[22:27] + vec[28:33]) < 20:
         return None
     for kind in ("exact", "series"):
         best = tracemoe.search(tm, vec, [a for a, k in ids.items() if k == kind])
-        if best and best["similarity"] >= LOCAL_SIMILARITY:
-            return {"anilist": {"id": best["anilist"]}, "episode": best["episode"], "from": best["from"],
-                    "similarity": best["similarity"]}, kind
+        if best and best["similarity"] >= SIMILARITY:
+            return {"image": img, "anilist": best["anilist"], "episode": best["episode"], "from": round(best["from"], 1),
+                    "similarity": round(best["similarity"], 3), "match": kind}
     return None
 
 
-def cmd_trace(db, data: Path, budget: int) -> None:
-    db.executescript(TRACE_SCHEMA)
+def apply_trace(spots: list[dict], applied: dict | None = None) -> None:
+    """有截图为证的地点：提高把握度；集数与时间只在标题完全一致（不是续作）、且这张截图只对应这一个地点时采用
+    （文章里同一张图挨着好几个地名的，说明不了是哪个）。applied 是已并入 manual.json 的地标，同步更新"""
+    traced = [s for s in spots if s.get("trace")]
+    images = [s["trace"]["image"] for s in traced]
+    for s in traced:
+        t = s["trace"]
+        s["confidence"] = max(s["confidence"], 0.9)
+        ep = str(t["episode"]) if t["episode"] else ""
+        if t.get("match") == "exact" and images.count(t["image"]) == 1:
+            if not s["ep"] and ep:
+                s["ep"], s["ep_by"] = ep, "trace.moe"
+            if s["ep"] == ep:
+                s["s"] = int(t["from"])
+        else:
+            s.pop("s", None)
+            if s.pop("ep_by", None):
+                s["ep"] = ""
+        if applied and (m := applied.get(s["id"])) is not None and s.get("s") is not None and (m.get("ep") or s["ep"]) == s["ep"]:
+            m["ep"], m["s"] = s["ep"] or None, s["s"]
+
+
+def cmd_trace(db, data: Path) -> None:
+    """老草稿（没有截图证据时生成的）里的图片补做比对"""
     from sync import tracemoe
 
-    # 有本地帧库（python -m sync.tracemoe extract）就在本地比对，不占在线额度；图片向量缓存在 image_vector 表
-    tm = tracemoe.open_db() if (tracemoe.DIR / "frames.sqlite").exists() else None
-    if tm and not tm.execute("SELECT 1 FROM files LIMIT 1").fetchone():
-        tm = None
-    db.execute("CREATE TABLE IF NOT EXISTS image_vector (image TEXT PRIMARY KEY, vector TEXT)")
-    vectors = {i: json.loads(v) if v else None for i, v in db.execute("SELECT image, vector FROM image_vector")}
-    known_vectors = set(vectors)
-    cache = {img: json.loads(r) if r else None for img, r in db.execute("SELECT image, result FROM trace_moe")}
+    if not (tracemoe.DIR / "frames.sqlite").exists():
+        raise SystemExit("需要本地 trace.moe 帧库：python -m sync.tracemoe extract <dump>")
+    tm = tracemoe.open_db()
+    vectors = Vectors(db)
     subs = all_subjects(data)
     out_dir = data / "review" / "gaps"
-    manual = json.loads(MANUAL.read_text(encoding="utf-8"))
+    manual = load_manual()
     applied = {p["id"]: p for p in manual["points"]}
-    drafts = {p: json.loads(p.read_text(encoding="utf-8")) for p in sorted(out_dir.glob("*.json")) if p.stem.isdigit()}
-    # 先查没有集数的；游戏、成人向作品 trace.moe 里没有
-    todo = [(p, d, s) for p, d in drafts.items() if not d.get("nsfw") for s in d["spots"]
-            if s.get("images") and ("trace" not in s if not tm else not s.get("trace") and not s.get("trace_local"))]
-    todo.sort(key=lambda x: (bool(x[2]["ep"]), -x[2]["confidence"]))
-    used = found = 0
-    for p, d, s in todo:
-        sub = subs.get(d["bangumi"], {})
-        names = [d["title"], d.get("cn"), sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])]
-        hit, queries = None, 0
-        if tm:
-            ids = tracemoe.match_anilist(tm, [n for n in names if n])
-            for img in s["images"]:
-                if ids and (r := local_lookup(tm, vectors, img, ids)):
-                    hit = (img, *r)
-                    break
-            if not hit:
-                s["trace_local"] = "none"  # 本地比对过、没有对上
-                continue
-        for img in s["images"] if not hit else []:
-            if img not in cache:
-                if used >= budget or queries >= 2:
-                    break
-                status, res = trace_image(img)
-                if status in (402, 429):
-                    print("trace.moe 额度用完了（匿名每月 100 次），下个月再继续，或配置赞助后的 API key")
-                    budget = used
-                    break
-                if status == 200:
-                    used += 1
-                    queries += 1
-                elif status:
-                    print(f"  ! trace.moe → {status}：{img}")
-                if status in (0, 200):
-                    cache[img] = res
-                    db.execute("INSERT OR REPLACE INTO trace_moe VALUES (?,?,?)",
-                               (img, json.dumps(res, ensure_ascii=False) if res is not None else None, now_iso()))
-                    db.commit()
-            res = cache.get(img)
-            if res and res.get("similarity", 0) >= TRACE_SIMILARITY and (match := trace_match(res, names)):
-                hit = (img, res, match)
-                break
-        if not hit:
-            if all(i in cache for i in s["images"]):
-                s["trace"] = None  # 查过、没有对上（多半是实拍照片）
-            continue
-        img, res, match = hit
-        found += 1
-        s["trace"] = {"image": img, "anilist": (res.get("anilist") or {}).get("id"), "episode": res.get("episode"),
-                      "from": round(res["from"], 1), "similarity": round(res["similarity"], 3), "match": match}
-        s["confidence"] = max(s["confidence"], 0.95)  # 截图对上了作品，地点是这部作品（系列）的舞台基本可以确定
-
-    # 集数与时间：只在标题完全一致（不是续作）、且这张截图只对应这一个地点时采用（文章里同一张图挨着好几个地名的，说明不了是哪个）
-    for d in drafts.values():
-        traced = [s for s in d["spots"] if s.get("trace")]
-        shared = {t for t in (s["trace"]["image"] for s in traced) if sum(x["trace"]["image"] == t for x in traced) > 1}
-        for s in traced:
-            t = s["trace"]
-            ep = str(t["episode"]) if t["episode"] else ""
-            if t.get("match") == "exact" and t["image"] not in shared:
-                if not s["ep"] and ep:
-                    s["ep"], s["ep_by"] = ep, "trace.moe"
-                if s["ep"] == ep:
-                    s["s"] = int(t["from"])
+    found = 0
+    for path, d in drafts(out_dir):
+        todo = [s for s in d["spots"] if s.get("images") and not s.get("trace") and not s.get("trace_local")]
+        ids = tracemoe.match_anilist(tm, work_names(d["title"], d.get("cn"), subs.get(d["bangumi"], {}))) if todo else {}
+        tracemoe.clear_cache()  # 帧数据按作品载入，换作品就释放
+        for s in todo if ids else []:
+            proof = next((p for img in s["images"] if (p := lookup(tm, vectors, img, ids))), None)
+            if proof:
+                s["trace"] = proof
+                found += 1
             else:
-                s.pop("s", None)
-                if s.pop("ep_by", None):
-                    s["ep"] = ""
-            if (m := applied.get(s["id"])) is not None and s.get("s") is not None and (m.get("ep") or s["ep"]) == s["ep"]:
-                m["ep"], m["s"] = s["ep"] or None, s["s"]
-    db.executemany("INSERT OR REPLACE INTO image_vector VALUES (?,?)",
-                   [(i, json.dumps(v) if v else None) for i, v in vectors.items() if i not in known_vectors])
-    db.commit()
-    for p, d in drafts.items():
-        p.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
-    MANUAL.write_text(json.dumps(manual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"trace.moe：查询 {used} 次，对上 {found} 个地标；还有 {sum(1 for _, _, s in todo if 'trace' not in s)} 个待查")
+                s["trace_local"] = "none"  # 比对过、没有对上（多半是实拍照片）
+        apply_trace(d["spots"], applied)
+        vectors.save()
+        path.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    save_manual(manual)
+    print(f"本地 trace.moe：新对上 {found} 个地标")
     write_review(out_dir)
 
 
 # ---- 并入 manual.json ----
 
 def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = None) -> None:
-    import opencc
+    from sync.export import BGM_COVER, subject_names
+    from sync.translate import opencc_converter
 
-    to_hant = opencc.OpenCC("s2twp").convert
+    to_hant = opencc_converter("s2twp")
     out_dir = data / "review" / "gaps"
     # 审核页导出的是 {地标 id: {lat, lng}}：有记录即通过，坐标可能在审核页里拖动修正过
     ok: dict | None = json.loads(Path(approved_file).read_text(encoding="utf-8")) if approved_file else None
     subs = all_subjects(data)
-    manual = json.loads(MANUAL.read_text(encoding="utf-8"))
+    manual = load_manual()
     known_points = {p["id"] for p in manual["points"]}
     known_works = {b["id"] for b in manual["bangumi"]}
     added = 0
-    for p in sorted(out_dir.glob("*.json")):
-        if not p.stem.isdigit():
-            continue
-        draft = json.loads(p.read_text(encoding="utf-8"))
+    for _, draft in drafts(out_dir):
         bid = draft["bangumi"]
         for s in draft["spots"]:
             # 自动通过：把握度够高、又精确定位到具体地点（不是只落在行政区中心）的，不必人工审核
@@ -848,13 +719,11 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
             if bid not in known_works:
                 # 作品信息取 Bangumi；有没有地标由 export 统计，这里只登记作品本身
                 sub = subs.get(bid, {})
-                title = {k: v for k, v in {"zh-Hans": sub.get("cn"), "zh-Hant": sub.get("cn") and to_hant(sub["cn"]),
-                                           "ja": sub.get("name"), "en": sub.get("en")}.items() if v}
                 manual["bangumi"].append({"id": bid, "title": sub.get("name"), "cn": sub.get("cn"), "en": sub.get("en"),
-                                          "names": title, "cat": sub.get("cat"), **({"nsfw": True} if sub.get("nsfw") else {}),
-                                          "cover": f"https://api.bgm.tv/v0/subjects/{bid}/image?type=common"})
+                                          "names": subject_names(sub, to_hant), "cat": sub.get("cat"),
+                                          **({"nsfw": True} if sub.get("nsfw") else {}), "cover": BGM_COVER.format(bid)})
                 known_works.add(bid)
-    MANUAL.write_text(json.dumps(manual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    save_manual(manual)
     print(f"并入 {added} 个地标 → {MANUAL}")
 
 
@@ -876,8 +745,7 @@ def main():
     run.add_argument("--min-confidence", type=float, default=0.7, help="低于这个把握度的候选不进草稿（默认 0.7）")
     run.add_argument("--manual", metavar="DIR", help="不调用 API：待提取的文章导出到 DIR/pending.jsonl，读 DIR/answers.jsonl 的答案")
     sub.add_parser("review", help="只根据现有草稿重建审核页")
-    tr = sub.add_parser("trace", help="用来源文章里的截图查 trace.moe：核对作品、补集数与时间")
-    tr.add_argument("--budget", type=int, default=50, help="这次最多查询多少次（匿名额度每月 100 次）")
+    sub.add_parser("trace", help="老草稿的来源截图在本地 trace.moe 帧库里比对：核对作品、补集数与时间")
     apply = sub.add_parser("apply")
     apply.add_argument("approved", nargs="?", help="审核页导出的 approved.json；省略则用草稿里的 approved 字段")
     apply.add_argument("--auto", type=float, metavar="CONF", help="把握度不低于 CONF 且精确定位的候选自动通过，例如 --auto 0.85")
@@ -886,14 +754,14 @@ def main():
     data = Path(args.data)
     db = open_db(data)
     # 探访目录与博客：每秒一个请求，缓存 30 天；地理编码按 Nominatim 的使用规范每秒一个
-    http = Http(db, interval=1.0, ua="junrei-gaps/0.1 (+https://junrei.jannchie.com)", max_age_days=30)
-    geo = Http(db, interval=1.1, ua="junrei-gaps/0.1 (+https://junrei.jannchie.com)")
+    http = Http(db, interval=1.0, ua=GAPS_UA, max_age_days=30)
+    geo = Http(db, interval=1.1, ua=GAPS_UA)
     if args.cmd == "list":
         cmd_list(db, http, data)
     elif args.cmd == "run":
         cmd_run(db, http, geo, data, args)
     elif args.cmd == "trace":
-        cmd_trace(db, data, args.budget)
+        cmd_trace(db, data)
     elif args.cmd == "review":
         write_review(data / "review" / "gaps")
     else:

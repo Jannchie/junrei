@@ -17,17 +17,16 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import gzip
 import json
 import math
 import sqlite3
 import statistics
 import sys
 import time
-import urllib.error
-import urllib.request
 from collections import Counter
 from pathlib import Path
+
+from sync.net import request
 
 BASE = "https://www.anitabi.cn"
 DEFAULT_OUT = Path(__file__).resolve().parent.parent / "data"
@@ -87,20 +86,9 @@ class Fetcher:
         if wait > 0:
             time.sleep(wait)
         url = f"{BASE}{path}?d={self.cache_key}"
-        req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "gzip"})
-        body = b""
-        for attempt in range(4):
-            try:
-                with urllib.request.urlopen(req, timeout=60) as r:
-                    body = r.read()
-                    if r.headers.get("Content-Encoding") == "gzip":
-                        body = gzip.decompress(body)
-                break
-            except (urllib.error.URLError, TimeoutError) as e:
-                if attempt == 3:
-                    raise
-                print(f"  ! {path} 失败（{e}），{2 ** attempt}s 后重试", file=sys.stderr)
-                time.sleep(2**attempt)
+        status, body = request(url, ua=UA, timeout=60)
+        if status != 200:
+            raise RuntimeError(f"{path} → {status}")
         self._last = time.monotonic()
         self.bytes += len(body)
         if self.raw_dir:
