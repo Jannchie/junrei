@@ -599,7 +599,7 @@ onBeforeUnmount(() => {
           <li v-for="b in overviewList" :key="b.id">
             <a :href="cardPath(b)" @click.prevent="pickCard(b.id)">
               <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
-              <span v-auto-lang class="popular-name">{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</span>
+              <span v-auto-lang class="popular-name" :title="pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
           </li>
@@ -1175,7 +1175,7 @@ figcaption a {
 }
 .popular {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* minmax(0, …)：不换行的长标题不会把列撑宽 */
   gap: 14px 10px;
   margin: 0 0 16px;
   padding: 0;
@@ -1198,10 +1198,10 @@ figcaption a {
   font-size: 12px;
   font-weight: 600;
   line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  /* 一行显示，放不下省略，网格各格高度一致；完整名称在悬停提示里 */
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .popular .stat {
   margin: 0;

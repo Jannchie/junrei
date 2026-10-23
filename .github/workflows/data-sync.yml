@@ -107,7 +107,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          pnpm exec wrangler d1 execute junrei-db --remote --file data/d1-import.sql --yes -c .void-wrangler.jsonc
+          # D1 导入接口偶尔报错（失败时数据库保持原样，可以安全重试），最多试 3 次
+          for i in 1 2 3; do
+            pnpm exec wrangler d1 execute junrei-db --remote --file data/d1-import.sql --yes -c .void-wrangler.jsonc && break
+            [ "$i" = 3 ] && exit 1
+            sleep 30
+          done
           mv data/last-import.sha256.new data/last-import.sha256
 
       - name: Save data snapshot
