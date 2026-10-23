@@ -224,6 +224,7 @@ def main():
                         # 200 没有封面；404 是公开 API 看不到（成人向或已删除），记下来不再每次重试
                         db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)",
                                    (bid, "hidden" if status == 404 else None, None, None, now_iso()))
+                        db.commit()  # 马上提交：同一个库别的脚本也在写（补漏的图片向量），不能一直占着写锁
                         stats["none" if status == 200 else "hidden"] += 1
                         continue
                     if not large:

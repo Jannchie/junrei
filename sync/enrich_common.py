@@ -56,7 +56,9 @@ def open_db(data_dir: Path = DATA_DIR) -> sqlite3.Connection:
     db = sqlite3.connect((data_dir / "enrich.sqlite").resolve().as_uri(), uri=True, timeout=60)  # uri=True 才能只读 ATTACH
     db.execute("ATTACH DATABASE ? AS src", (f"{src.resolve().as_uri()}?mode=ro",))
     db.execute("ATTACH DATABASE ? AS cache", (str(data_dir / "cache.sqlite"),))
-    db.execute("PRAGMA cache.journal_mode=WAL")  # 允许多个补全脚本同时读写缓存
+    # WAL：几个补全脚本（补漏、封面镜像…）同时跑时，读不会被写挡住；写入仍要排队，所以各脚本都要及时提交
+    db.execute("PRAGMA main.journal_mode=WAL")
+    db.execute("PRAGMA cache.journal_mode=WAL")
     db.executescript(ENRICH_SCHEMA + CACHE_SCHEMA.replace("IF NOT EXISTS ", "IF NOT EXISTS cache."))
     return db
 
