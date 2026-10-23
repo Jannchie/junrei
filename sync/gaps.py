@@ -82,15 +82,17 @@ def decode(body: bytes) -> str:
 
 
 def text_of(page: str) -> str:
-    """粗略的正文提取：优先常见博客正文容器，否则全文；去掉脚本、样式，图片换成 [图: alt]"""
+    """粗略的正文提取：优先常见博客正文容器；容器里几乎没字（结构没认对）时退回全文"""
     page = re.sub(r"(?is)<(script|style|noscript|svg|iframe)[^>]*>.*?</\1>", " ", page)
     # 类名要整词匹配（"preventry-text" 这种上一篇导航不能算）
-    for pat in [r'class="(?:[^"]*\s)?(?:entry[-_]?(?:content|body|text)|article[-_]?(?:body|text)|post[-_]?(?:content|body)|'
-                r'main[-_]?text|blog[-_]?body|articleText|skin-entryBody)(?:\s[^"]*)?"']:
-        m = re.search(pat, page, re.I)
-        if m:
-            page = page[m.start():m.start() + 200000]
-            break
+    m = re.search(r'class="(?:[^"]*\s)?(?:entry[-_]?(?:content|body|text)|article[-_]?(?:body|text)|post[-_]?(?:content|body)|'
+                  r'main[-_]?text|blog[-_]?body|articleText|skin-entryBody)(?:\s[^"]*)?"', page, re.I)
+    body = strip_tags(page[m.start():m.start() + 200000]) if m else ""
+    return body if len(body) >= 300 else strip_tags(page)
+
+
+def strip_tags(page: str) -> str:
+    """去掉标签，图片换成 [图: alt]，合并空白"""
     page = re.sub(r'(?is)<img[^>]*alt="([^"]+)"[^>]*>', r" [图: \1] ", page)
     page = re.sub(r"(?i)<br\s*/?>|</p>|</div>|</li>|</h\d>", "\n", page)
     text = html.unescape(re.sub(r"<[^>]+>", " ", page))
@@ -171,7 +173,7 @@ def geocode(http: Http, spot: dict) -> dict | None:
     pref = m.group(1) if m else ""
     near = lambda label: (not city or city in label) and (not pref or pref in label)  # noqa: E731
     # 名称在 OSM 里常常没有空格，或只登记了最后一段（「国立国会図書館 国際子ども図書館」→「国際子ども図書館」）
-    variants = [name, name.replace(" ", ""), name.split(" ")[-1]]
+    variants = [name, name.replace(" ", ""), name.split(" ")[-1], name.split(" ")[0]]  # 最后才退到第一段（「京都駅 大階段」→「京都駅」）
     queries = list(dict.fromkeys(q for q in [spot["query"], *(f"{v} {city}" for v in variants), *variants] if q.strip()))
     for q in queries:
         status, hits = http.get_json(NOMINATIM, {"q": q, "format": "json", "limit": 5, "accept-language": "ja"})
