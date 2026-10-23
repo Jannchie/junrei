@@ -88894,29 +88894,29 @@
     {
       "bangumi": 12317,
       "id": "m-12317-kabukicho-op",
-      "name": "歌舞伎町セントラルロード（旧コマ劇場前）",
+      "name": "歌舞伎町セントラルロード（つぼ九の看板）",
+      "cn": "歌舞伎町中央路（「坪九」招牌）",
+      "lat": 35.69455,
+      "lng": 139.702,
+      "ep": null,
+      "src": "ja",
       "names": {
-        "ja": "歌舞伎町セントラルロード（旧コマ劇場前）",
-        "zh-Hans": "歌舞伎町中央路（旧剧场前）",
-        "zh-Hant": "歌舞伎町中央路（舊劇場前）",
-        "en": "Kabukicho Central Road (former Koma Theater)"
+        "ja": "歌舞伎町セントラルロード（つぼ九の看板）",
+        "zh-Hans": "歌舞伎町中央路（「坪九」招牌）",
+        "zh-Hant": "歌舞伎町中央路（「坪九」招牌）",
+        "en": "Kabukicho Central Road (Tsubokyu sign)"
       },
       "marks": {
-        "ja": "OP でカイジが歩く夜の繁華街",
-        "zh-Hans": "OP 里开司走过的夜晚繁华街",
-        "zh-Hant": "OP 裡開司走過的夜晚繁華街",
-        "en": "The night street Kaiji walks through in the opening"
+        "ja": "夜の街をうろつくカイジの背後に「つぼ九」の看板",
+        "zh-Hans": "开司在夜街徘徊，身后是「坪九」招牌",
+        "zh-Hant": "開司在夜街徘徊，身後是「坪九」招牌",
+        "en": "Kaiji wanders the night street past a Tsubokyu sign"
       },
-      "lat": 35.6949,
-      "lng": 139.7019,
-      "ep": null,
-      "s": null,
       "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
-      "origin": "derongi.hatenadiary.org",
-      "cn": "歌舞伎町中央路（旧剧场前）",
-      "src": "ja",
       "source": "derongi.hatenadiary.org",
+      "s": null,
       "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-b8989439.jpg",
+      "origin": "derongi.hatenadiary.org",
       "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
     },
     {
@@ -88996,6 +88996,146 @@
       "reference": "https://manba.co.jp/manba_magazines/6275",
       "source": "マンバ通信",
       "s": null
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op-street",
+      "name": "歌舞伎町セントラルロード",
+      "cn": "歌舞伎町中央路",
+      "lat": 35.69424,
+      "lng": 139.70171,
+      "ep": null,
+      "src": "ja",
+      "names": {
+        "ja": "歌舞伎町セントラルロード",
+        "zh-Hans": "歌舞伎町中央路",
+        "zh-Hant": "歌舞伎町中央路",
+        "en": "Kabukicho Central Road"
+      },
+      "marks": {
+        "ja": "OP 冒頭、ビルの看板が並ぶ通りを見上げるカット",
+        "zh-Hans": "OP 开头仰望招牌林立的街道",
+        "zh-Hant": "OP 開頭仰望招牌林立的街道",
+        "en": "Opening shot looking up at the signboards along the street"
+      },
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "source": "derongi.hatenadiary.org",
+      "s": null,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-street-808e4d93.jpg",
+      "origin": "derongi.hatenadiary.org",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op-title",
+      "name": "歌舞伎町セントラルロード（タイトルカット）",
+      "cn": "歌舞伎町中央路（标题画面）",
+      "lat": 35.6938,
+      "lng": 139.70155,
+      "ep": null,
+      "src": "ja",
+      "names": {
+        "ja": "歌舞伎町セントラルロード（タイトルカット）",
+        "zh-Hans": "歌舞伎町中央路（标题画面）",
+        "zh-Hant": "歌舞伎町中央路（標題畫面）",
+        "en": "Kabukicho Central Road (title shot)"
+      },
+      "marks": {
+        "ja": "通りを真上から見下ろしたタイトルカット",
+        "zh-Hans": "从高处俯瞰街道的标题画面",
+        "zh-Hant": "從高處俯瞰街道的標題畫面",
+        "en": "Title card over an overhead view of the street"
+      },
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "source": "derongi.hatenadiary.org",
+      "s": null,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-title-1c66ad90.jpg",
+      "origin": "derongi.hatenadiary.org",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op-tenichi",
+      "name": "天下一品 歌舞伎町店",
+      "cn": "天下一品 歌舞伎町店",
+      "lat": 35.69475,
+      "lng": 139.70212,
+      "ep": null,
+      "src": "ja",
+      "names": {
+        "ja": "天下一品 歌舞伎町店",
+        "zh-Hans": "天下一品 歌舞伎町店",
+        "zh-Hant": "天下一品 歌舞伎町店",
+        "en": "Tenkaippin Kabukicho"
+      },
+      "marks": {
+        "ja": "札束の隙間に「天上天下」の看板が見える",
+        "zh-Hans": "钞票缝隙里露出「天上天下」招牌",
+        "zh-Hant": "鈔票縫隙裡露出「天上天下」招牌",
+        "en": "The Tenjo Tenge sign seen between banknotes"
+      },
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "source": "derongi.hatenadiary.org",
+      "s": null,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-tenichi-37acc5a7.jpg",
+      "origin": "derongi.hatenadiary.org",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op-shutter",
+      "name": "カラオケ館 セントラルロード店前",
+      "cn": "卡拉OK馆 中央路店前",
+      "lat": 35.694809,
+      "lng": 139.702307,
+      "ep": null,
+      "src": "ja",
+      "names": {
+        "ja": "カラオケ館 セントラルロード店前",
+        "zh-Hans": "卡拉OK馆 中央路店前",
+        "zh-Hant": "卡拉OK館 中央路店前",
+        "en": "In front of Karaoke-kan, Central Road"
+      },
+      "marks": {
+        "ja": "カイジと黒沢たちがシャッター前に座り込む",
+        "zh-Hans": "开司和黑泽等人坐在卷帘门前",
+        "zh-Hant": "開司和黑澤等人坐在捲簾門前",
+        "en": "Kaiji, Kurosawa and others sit in front of a shutter"
+      },
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "source": "derongi.hatenadiary.org",
+      "s": null,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-shutter-d5cf09d8.jpg",
+      "origin": "derongi.hatenadiary.org",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op-shutter2",
+      "name": "カラオケ館 セントラルロード店前（別アングル）",
+      "cn": "卡拉OK馆 中央路店前（另一角度）",
+      "lat": 35.694809,
+      "lng": 139.702307,
+      "ep": null,
+      "src": "ja",
+      "names": {
+        "ja": "カラオケ館 セントラルロード店前（別アングル）",
+        "zh-Hans": "卡拉OK馆 中央路店前（另一角度）",
+        "zh-Hant": "卡拉OK館 中央路店前（另一角度）",
+        "en": "In front of Karaoke-kan, Central Road (another angle)"
+      },
+      "marks": {
+        "ja": "座り込む男たちの前をスーツ姿の人が通り過ぎる",
+        "zh-Hans": "西装路人从坐着的男人们面前走过",
+        "zh-Hant": "西裝路人從坐著的男人們面前走過",
+        "en": "Office workers pass the men sitting by the shutter"
+      },
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "source": "derongi.hatenadiary.org",
+      "s": null,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-shutter2-8b1cf0ed.jpg",
+      "origin": "derongi.hatenadiary.org",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
     }
   ]
 }
