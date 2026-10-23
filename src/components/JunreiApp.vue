@@ -597,11 +597,13 @@ onBeforeUnmount(() => {
               <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
               <!-- 数据出处：每个地标都能跳到原文（截图的署名在图片角上，另算） -->
               <span v-if="p.id === focusPointId" class="source-row">
-                <a v-if="p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source" @click.stop>
-                  {{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }} ↗
+                <a v-if="p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source stat" @click.stop>
+                  <JIcon :icon="ICONS.external" :size="12" /><span class="tx">{{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }}</span>
                 </a>
                 <!-- 地标有误（位置不对、不是这部作品、已经消失）：开一个预填好的 GitHub issue -->
-                <a :href="reportUrl(p)" target="_blank" rel="noopener" class="source" @click.stop>{{ t("report") }}</a>
+                <a :href="reportUrl(p)" target="_blank" rel="noopener" class="source stat" @click.stop>
+                  <JIcon :icon="ICONS.report" :size="12" /><span class="tx">{{ t("report") }}</span>
+                </a>
               </span>
               <a
                 v-if="p.id === focusPointId"

@@ -5,6 +5,7 @@ export function formatEpisode(ep: string): string {
 
 /** 秒 → 12:34 */
 export function formatTime(s: number): string {
+  if (!Number.isFinite(s)) return "";
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 }
 

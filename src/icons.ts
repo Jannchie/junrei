@@ -7,6 +7,8 @@ import {
   IconCamera,
   IconClock,
   IconDownload,
+  IconExternalLink,
+  IconFlag,
   IconLoadingGlobe,
   IconGithub,
   IconInfo,
@@ -49,6 +51,8 @@ export const ICONS = {
   github: IconGithub,
   navigate: IconNavigation,
   download: IconDownload,
+  external: IconExternalLink, // 跳到站外原文
+  report: IconFlag, // 报告地标问题
   themeAuto: IconTheme, // 专门表示「跟随系统」：太阳与月亮各占一半
   themeLight: IconSun,
   themeDark: IconMoon,

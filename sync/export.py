@@ -28,6 +28,7 @@ from sync.sync import DEFAULT_OUT, attribution, valid_geo, write_json
 
 PUBLIC_DATA = DEFAULT_OUT.parent / "public" / "data"
 MANUAL = Path(__file__).resolve().parent / "manual.json"
+OVERRIDES = Path(__file__).resolve().parent / "overrides.json"
 FOLD_MAP = DEFAULT_OUT.parent / "src" / "fold-map.json"
 BGM_ANIME = DEFAULT_OUT / "bgm-anime.json"
 BGM_COVER = "https://api.bgm.tv/v0/subjects/{}/image?type=common"  # 数据包里没有封面地址，用官方接口的跳转
@@ -101,6 +102,48 @@ def bgm_cover(url: str | None) -> str | None:
         if url and url.startswith(prefix):
             return "https://lain.bgm.tv/r/400/pic/" + url.removeprefix(prefix)
     return url
+
+
+def seconds(v) -> float | None:
+    """画面时间统一成秒：Anitabi 里大多是秒数，也有「07:41」「01:00:29」这样的文字，甚至「ed」，换算不了的留空"""
+    if v is None or isinstance(v, (int, float)):
+        return v
+    parts = str(v).strip().split(":")
+    if 2 <= len(parts) <= 3 and all(x.strip().isdigit() for x in parts):
+        n = 0
+        for x in parts:
+            n = n * 60 + int(x)
+        return float(n)
+    try:
+        return float(v)
+    except ValueError:
+        return None
+
+
+FIELDS = {"name": 2, "cn": 3, "lat": 4, "lng": 5, "ep": 7, "s": 8, "mark": 12}
+
+
+def apply_overrides(points: list) -> list:
+    """sync/overrides.json：处理用户报告的问题，对所有来源的地标生效（Anitabi 的数据每天重新同步，改源数据会被覆盖）。
+    hide：要隐藏的地标「作品id:地标id」；patch：要修正的字段（name、cn、lat、lng、ep、s、mark）"""
+    if not OVERRIDES.exists():
+        return points
+    o = json.loads(OVERRIDES.read_text(encoding="utf-8"))
+    hide = set(o.get("hide", []))
+    patch = o.get("patch", {})
+    out = []
+    for pt in points:
+        key = f"{pt[0]}:{pt[1]}"
+        if key in hide:
+            continue
+        if key in patch:
+            pt = list(pt)
+            for field, value in patch[key].items():
+                pt[FIELDS[field]] = value
+            pt = tuple(pt)
+        out.append(pt)
+    print(f"覆盖：隐藏 {len(points) - len(out)} 个地标，修正 {sum(1 for p in out if f'{p[0]}:{p[1]}' in patch)} 个")
+    return out
 
 
 def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -> None:
@@ -201,6 +244,10 @@ def main():
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
     rows = [(*r[:7], bgm_cover(r[7])) for r in rows]
     merge_manual(rows, points, counts, i18n)
+    points = [(*pt[:8], seconds(pt[8]), *pt[9:]) for pt in apply_overrides(points)]
+    counts = {}
+    for pt in points:
+        counts[pt[0]] = counts.get(pt[0], 0) + 1
     extra = merge_bgm(rows, i18n)
     # 已镜像到自己 R2 的封面（sync.covers）优先
     covers = mirrored_covers()

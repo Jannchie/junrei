@@ -1,0 +1,5 @@
+{
+  "_comment": "处理用户报告（GitHub issue，标签 spot-report）：hide 隐藏地标，patch 修正字段；键是「作品id:地标id」，对 Anitabi 与手动补充的地标都生效。Anitabi 的问题最好同时回报给 Anitabi。",
+  "hide": [],
+  "patch": {}
+}
