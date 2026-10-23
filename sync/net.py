@@ -13,6 +13,7 @@ import ssl
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 UA = "junrei-sync/0.1 (+https://junrei.jannchie.com)"
@@ -42,9 +43,14 @@ def _retry_after(e: urllib.error.HTTPError, attempt: int) -> float:
 
 def request(url: str, *, data: bytes | None = None, method: str | None = None, headers: dict | None = None,
             ua: str = UA, timeout: float = 30, retries: int = 4) -> tuple[int, bytes]:
-    """返回 (状态码, 响应体)；重试用尽仍是网络错误时返回 (599, b"")"""
-    req = urllib.request.Request(url, data=data, method=method,
-                                 headers={"User-Agent": ua, "Accept-Encoding": "gzip", **(headers or {})})
+    """返回 (状态码, 响应体)；重试用尽仍是网络错误时返回 (599, b"")，地址本身不合法时返回 (400, b"")"""
+    # 博客里的图片地址常带着没编码的日文、空格：先按百分号编码（已编码的部分保持不变）
+    url = urllib.parse.quote(url, safe=":/?#[]@!$&'()*+,;=%~")
+    try:
+        req = urllib.request.Request(url, data=data, method=method,
+                                     headers={"User-Agent": ua, "Accept-Encoding": "gzip", **(headers or {})})
+    except ValueError:
+        return 400, b""
     for attempt in range(retries):
         last = attempt == retries - 1
         try:
@@ -60,6 +66,8 @@ def request(url: str, *, data: bytes | None = None, method: str | None = None, h
                 time.sleep(wait)
                 continue
             return e.code, e.read()
+        except (http.client.InvalidURL, UnicodeError):  # 模板残片之类根本不是地址的
+            return 400, b""
         except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
             if last:
                 print(f"  ! {url} 失败（{e!r}）", file=sys.stderr)
