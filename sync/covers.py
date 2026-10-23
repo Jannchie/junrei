@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import shutil
@@ -70,8 +71,9 @@ def download(url: str) -> bytes | None:
         if e.code != 404:
             print(f"  ! 下载失败 {url}：{e.code}", file=sys.stderr)
         return None
-    except (urllib.error.URLError, TimeoutError) as e:
-        print(f"  ! 下载失败 {url}：{e}", file=sys.stderr)
+    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as e:
+        # 连接中途断开（IncompleteRead 等）只算这一张失败，下次再试
+        print(f"  ! 下载失败 {url}：{e!r}", file=sys.stderr)
         return None
 
 
