@@ -293,7 +293,7 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
     // selected：是否选中了作品（其余地标淡化）；selectedColor：选中作品的主题色，由组件设置。
     // 默认值必须与主题无关，换主题时样式才能按 diff 更新，而不是整体重载
-    state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" } },
+    state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" }, adult: { default: false } },
     sources: {
       [SOURCE]: { type: "vector", url: "https://tiles.openfreemap.org/planet" },
       [DEM]: {
@@ -322,6 +322,8 @@ const SELECTED: ExpressionSpecification = ["global-state", "selected"];
 const FOCUS: ExpressionSpecification = ["boolean", ["feature-state", "focus"], false];
 /** 过滤器里不能用 feature-state，选中地标的专属图层用全局状态 focus（地标 id）筛选 */
 const IS_FOCUS: ExpressionSpecification = ["==", ["get", "p"], ["global-state", "focus"]];
+/** 成人向作品的地标带 n 属性（sync/export.py），全局状态 adult 打开前不画、也点不到 */
+const SHOWN: ExpressionSpecification = ["any", ["global-state", "adult"], ["!", ["has", "n"]]];
 
 /**
  * 缩小时的热度晕染：极低密度处透明，按密度由淡紫、品红、珊瑚橙渐变到暖金，最密集处最亮。
@@ -334,7 +336,7 @@ function heatLayer(c: Palette): LayerSpecification {
     type: "heatmap",
     source: "points",
     maxzoom: fadeTo + 0.5,
-    filter: ["!", SELECTED],
+    filter: ["all", ["!", SELECTED], SHOWN],
     paint: {
       "heatmap-weight": 1,
       // 半径偏小，相邻城市不会连成一片
@@ -369,7 +371,7 @@ function overlayLayers(c: Palette): LayerSpecification[] {
       type: "circle",
       source: "points",
       minzoom: fadeFrom - 0.5,
-      filter: unselected,
+      filter: ["all", unselected, SHOWN],
       paint: {
         "circle-color": c.accent,
         "circle-radius": ["interpolate", ["linear"], ["zoom"], fadeFrom, 3, 12, 5, 16, 8, 18, 10],

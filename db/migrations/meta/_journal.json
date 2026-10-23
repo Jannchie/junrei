@@ -43,6 +43,13 @@
       "when": 1792728739616,
       "tag": "20261023041219_faithful_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1792738075287,
+      "tag": "20261023064755_new_spectrum",
+      "breakpoints": true
     }
   ]
 }

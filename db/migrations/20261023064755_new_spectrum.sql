@@ -1,0 +1,1 @@
+ALTER TABLE `bangumi` ADD `nsfw` integer DEFAULT false NOT NULL;

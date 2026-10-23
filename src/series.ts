@@ -40,11 +40,28 @@ export interface Card {
   works: number;
 }
 
+/**
+ * 不显示成人向时，系列里只留一般向作品（筛选中的那部除外）。整个系列都是成人向时原样返回，由页面决定是否先确认。
+ */
+export function visibleGroup(g: Group, adult: boolean, filter: number | null): Group {
+  if (adult) return g;
+  const works = g.works.filter((w) => !w.nsfw || w.id === filter);
+  if (!works.some((w) => w.pointCount > 0 || w.id === filter) || works.length === g.works.length) return g;
+  return { ...g, works, details: g.details.filter((d) => works.some((w) => w.id === d.id)) };
+}
+
+/** 打开这一屏需要先确认：筛选的作品是成人向，或系列里有地标的作品（单独一部时就是它自己）全是成人向 */
+export function needsAdultGate(g: Group, filter: number | null): boolean {
+  if (filter != null) return !!g.works.find((w) => w.id === filter)?.nsfw;
+  const withPoints = g.works.filter((w) => w.pointCount > 0);
+  return (withPoints.length ? withPoints : g.works).every((w) => w.nsfw);
+}
+
 export const groupKey = (d: Pick<BangumiDetail, "id" | "seriesId">) => d.seriesId ?? d.id;
 
 /** 由一部作品的详情建立系列（只含它自己的详情，其余按需加载） */
 export function groupOf(d: BangumiDetail): Group {
-  const self: SeriesWork = { id: d.id, cn: d.cn, title: d.title, en: d.en, cat: d.cat, pointCount: d.pointCount, airDate: d.airDate, i18n: d.i18n };
+  const self: SeriesWork = { id: d.id, cn: d.cn, title: d.title, en: d.en, cat: d.cat, pointCount: d.pointCount, airDate: d.airDate, i18n: d.i18n, nsfw: d.nsfw };
   return { key: groupKey(d), works: d.series.length ? d.series : [self], details: [d] };
 }
 

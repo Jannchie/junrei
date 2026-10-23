@@ -1,7 +1,7 @@
 import type { HeadDescriptor } from "void";
 import { cityFor, type Locale, LOCALES, localePath, pickNameFor, subNameFor, translate } from "../i18n";
 import { type BangumiDetail, SITE } from "./bangumi";
-import type { View } from "../series";
+import { buildView, type Group, needsAdultGate, visibleGroup } from "../series";
 
 /** 各语言的 Open Graph locale 与分享图 */
 const OG_LOCALE: Record<Locale, string> = { "zh-Hans": "zh_CN", "zh-Hant": "zh_TW", ja: "ja_JP", en: "en_US" };
@@ -97,12 +97,17 @@ export function homeHead(locale: Locale): HeadDescriptor {
   });
 }
 
-/** 作品页与系列页：筛选到某部作品时路径是 /b/:id，系列「全部」时是 /s/:key */
-export function bangumiHead(locale: Locale, d: View): HeadDescriptor {
+/**
+ * 作品页与系列页：筛选到某部作品时路径是 /b/:id，系列「全部」时是 /s/:key。
+ * 按默认（不显示成人向）的样子组装；成人向作品页不让搜索引擎收录，也不带封面和地标。
+ */
+export function bangumiHead(locale: Locale, g: Group, filter: number | null): HeadDescriptor {
+  const adult = needsAdultGate(g, filter);
+  const d = buildView(visibleGroup(g, false, filter), filter)!;
   const names = { cn: d.cn, original: d.title, en: d.en, i18n: d.i18n };
   const name = pickNameFor(locale, names);
   const path = d.filter == null && d.series.length > 1 ? `/s/${d.key}` : `/b/${d.id}`;
-  const spots = d.points
+  const spots = (adult ? [] : d.points)
     .slice(0, 6)
     .map((p) => pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }))
     .filter(Boolean)
@@ -111,10 +116,10 @@ export function bangumiHead(locale: Locale, d: View): HeadDescriptor {
   return siteHead(locale, path, {
     title: `${name} · ${translate(locale, "brand")}`,
     description: bangumiDescription(locale, d, name, subNameFor(locale, names), spots),
-    image: d.cover?.startsWith("https://image.anitabi.cn/") ? `${d.cover}?plan=h360` : (d.cover ?? undefined),
-    // 还没有地标的作品页内容很少，不让搜索引擎收录（也不在 sitemap 里）
-    noindex: d.points.length === 0,
-    jsonLd: {
+    image: adult ? undefined : d.cover?.startsWith("https://image.anitabi.cn/") ? `${d.cover}?plan=h360` : (d.cover ?? undefined),
+    // 还没有地标的作品页内容很少、成人向作品页，都不让搜索引擎收录（也不在 sitemap 里）
+    noindex: d.points.length === 0 || adult,
+    jsonLd: adult ? undefined : {
       "@context": "https://schema.org",
       "@type": "ItemList",
       name: `${name} · ${translate(locale, "brand")}`,

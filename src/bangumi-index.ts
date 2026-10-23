@@ -27,8 +27,8 @@ function call<T>(req: WithoutId<Request>): Promise<T> {
 }
 
 /** 作品搜索：全语种（各语言名称、罗马音、城市都在搜索键里）+ 模糊 */
-export const searchBangumi = (query: string, limit = 20) => call<Card[]>({ type: "search", query, limit });
+export const searchBangumi = (query: string, adult: boolean, limit = 20) => call<Card[]>({ type: "search", query, limit, adult });
 
 /** 视口内有地标的系列（不在系列里的作品单独算），按视口内地标数排序 */
-export const bangumiInView = (bounds: Bounds, limit = 48) =>
-  call<(Card & { inView: number })[]>({ type: "inView", bounds, limit });
+export const bangumiInView = (bounds: Bounds, adult: boolean, limit = 48) =>
+  call<(Card & { inView: number })[]>({ type: "inView", bounds, limit, adult });

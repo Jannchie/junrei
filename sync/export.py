@@ -146,10 +146,12 @@ def apply_overrides(points: list) -> list:
     return out
 
 
-def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -> None:
-    """合并 sync/manual.json：Anitabi 没有收录的作品与地标。多语言名称直接写在文件里。"""
+def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -> set[int]:
+    """合并 sync/manual.json：Anitabi 没有收录的作品与地标。多语言名称直接写在文件里。
+    返回显式标了 "nsfw": true 的作品（Bangumi 没标、但确实是成人向的）。"""
     data = json.loads(MANUAL.read_text(encoding="utf-8"))
     known = {r[0] for r in rows}
+    nsfw = {b["id"] for b in data.get("bangumi", []) if b.get("nsfw")}
     for b in data.get("bangumi", []):
         if b["id"] not in known:
             rows.append((b["id"], b.get("cn"), b.get("title"), b.get("en"), b.get("city"), b.get("cat"), b.get("color"), b.get("cover")))
@@ -166,17 +168,20 @@ def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -
             i18n[("point", f"{p['bangumi']}:{p['id']}")] = item
     rows.sort(key=lambda r: r[0])
     print(f"手动补充：{len(data.get('bangumi', []))} 部作品，{len(data.get('points', []))} 个地标")
+    return nsfw
 
 
-def merge_bgm(rows: list, i18n: dict) -> dict[int, dict]:
-    """并入 Bangumi 全部动画条目：已有的作品补上热度、首播日期和别名，没有的新增一行（地标数 0）"""
+def merge_bgm(rows: list, i18n: dict) -> tuple[dict[int, dict], set[int]]:
+    """并入 Bangumi 全部动画条目：已有的作品补上热度、首播日期和别名，没有的新增一行（地标数 0）。
+    同时返回 Bangumi 标为成人向（nsfw）的全部条目 id（含游戏）。"""
     if not BGM_ANIME.exists():
         print("没有 data/bgm-anime.json，只导出有地标的作品（先跑 python -m sync.bgm_archive）")
-        return {}
+        return {}, set()
     import opencc  # 繁体名由简体中文名转换（台湾用字）
 
     to_hant = opencc.OpenCC("s2twp").convert
-    subjects = json.loads(BGM_ANIME.read_text(encoding="utf-8"))["subjects"]
+    archive = json.loads(BGM_ANIME.read_text(encoding="utf-8"))
+    subjects = archive["subjects"]
     known = {r[0] for r in rows}
     extra = {}
     for s in subjects:
@@ -190,7 +195,7 @@ def merge_bgm(rows: list, i18n: dict) -> dict[int, dict]:
             i18n[("bangumi", str(s["id"]))] = {"name": name}
     rows.sort(key=lambda r: r[0])
     print(f"Bangumi 动画：{len(subjects)} 部，其中 {len(subjects) - len(known & extra.keys())} 部没有地标")
-    return extra
+    return extra, set(archive.get("nsfw", []))
 
 
 def sql_value(v) -> str:
@@ -243,12 +248,13 @@ def main():
     rows = src.execute(
         "SELECT id, cn, title, en, city, cat, color, cover FROM bangumi WHERE deleted = 0 ORDER BY id").fetchall()
     rows = [(*r[:7], bgm_cover(r[7])) for r in rows]
-    merge_manual(rows, points, counts, i18n)
+    manual_nsfw = merge_manual(rows, points, counts, i18n)
     points = [(*pt[:8], seconds(pt[8]), *pt[9:]) for pt in apply_overrides(points)]
     counts = {}
     for pt in points:
         counts[pt[0]] = counts.get(pt[0], 0) + 1
-    extra = merge_bgm(rows, i18n)
+    extra, nsfw = merge_bgm(rows, i18n)
+    nsfw |= manual_nsfw
     # 已镜像到自己 R2 的封面（sync.covers）优先
     covers = mirrored_covers()
     rows = [(*r[:7], covers.get(r[0], r[7])) for r in rows]
@@ -293,14 +299,20 @@ def main():
             g["works"] += 1
             if b[8] and (g["top"] is None or b[8] > g["top"][8]):
                 g["top"] = b
-    bangumi = [(*b, series[b[11]]["points"] if b[11] is not None else b[8], series[b[11]]["works"] if b[11] is not None else 1)
+    bangumi = [(*b, series[b[11]]["points"] if b[11] is not None else b[8], series[b[11]]["works"] if b[11] is not None else 1,
+                int(b[0] in nsfw))
                for b in bangumi]
+    # 成人向的系列：系列里有地标的作品全是成人向（混有一般向作品的系列照常显示，只隐藏其中的成人向作品）
+    for b in bangumi:
+        if b[11] is not None and b[8]:
+            series[b[11]]["nsfw"] = series[b[11]].get("nsfw", True) and bool(b[16])
+    print(f"成人向：{sum(1 for b in bangumi if b[16])} 部作品，其中 {sum(1 for b in bangumi if b[16] and b[8])} 部有地标")
 
     out_sql = DEFAULT_OUT / "d1-import.sql"
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
         cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "popularity", "air_date",
-                "series_id", "i18n", "search", "series_points", "series_works"]
+                "series_id", "i18n", "search", "series_points", "series_works", "nsfw"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
                 "origin_link", "mark", "source", "source_url", "i18n", "search"]
@@ -308,26 +320,26 @@ def main():
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
         f.write("INSERT INTO bangumi_fts(bangumi_fts) VALUES('rebuild');\n")
 
-    # 坐标保留 5 位小数（约 1 m）；属性只留点击时需要的作品 id 和地标 id
+    # 坐标保留 5 位小数（约 1 m）；属性只留点击时需要的作品 id 和地标 id，成人向作品的地标另加 n: 1（地图默认不显示）
     PUBLIC_DATA.mkdir(parents=True, exist_ok=True)
     out_geo = PUBLIC_DATA / "points.geojson"
     write_json(out_geo, {
         "type": "FeatureCollection",
         "features": [
             {"type": "Feature", "geometry": {"type": "Point", "coordinates": [round(p[5], 5), round(p[4], 5)]},
-             "properties": {"b": p[0], "p": p[1]}}
+             "properties": {"b": p[0], "p": p[1], **({"n": 1} if p[0] in nsfw else {})}}
             for p in points
         ],
     })
 
     write_json(FOLD_MAP, char_map)
-    # works：[id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题, 系列]，只收有地标的作品，其余由服务端搜索；
-    # series：{代表作 id: [中文名, 原名, 英文名, 各语言标题, 地标总数, 作品数, 封面]}，只收有地标的系列
+    # works：[id, 中文名, 原名, 英文名, 封面, 地标数, 搜索键, 各语言标题, 系列, 成人向]，只收有地标的作品，其余由服务端搜索；
+    # series：{代表作 id: [中文名, 原名, 英文名, 各语言标题, 地标总数, 作品数, 封面, 成人向]}，只收有地标的系列
     by_id = {b[0]: b for b in bangumi}
     write_json(PUBLIC_DATA / "bangumi.json", {
-        "works": [[b[0], b[1], b[2], b[3], b[7], b[8], b[13], (titles[b[0]] or {}).get("name"), b[11]] for b in bangumi if b[8]],
+        "works": [[b[0], b[1], b[2], b[3], b[7], b[8], b[13], (titles[b[0]] or {}).get("name"), b[11], b[16]] for b in bangumi if b[8]],
         "series": {
-            sid: [by_id[sid][1], by_id[sid][2], by_id[sid][3], (titles[sid] or {}).get("name"), g["points"], g["works"], g["top"][7]]
+            sid: [by_id[sid][1], by_id[sid][2], by_id[sid][3], (titles[sid] or {}).get("name"), g["points"], g["works"], g["top"][7], int(g.get("nsfw", False))]
             for sid, g in series.items() if g["points"] and sid in by_id
         },
     })

@@ -41,6 +41,9 @@ const MESSAGES = {
     report: "报告问题",
     allWorks: "全部",
     series: "同系列作品",
+    adultShow: "显示成人向作品",
+    adultNotice: "这部作品是成人向内容（18 禁），默认隐藏。",
+    adultContinue: "已满 18 岁，继续查看",
   },
   "zh-Hant": {
     brand: "聖地巡禮地圖",
@@ -70,6 +73,9 @@ const MESSAGES = {
     report: "回報問題",
     allWorks: "全部",
     series: "同系列作品",
+    adultShow: "顯示成人向作品",
+    adultNotice: "這部作品是成人向內容（18 禁），預設隱藏。",
+    adultContinue: "已滿 18 歲，繼續查看",
   },
   ja: {
     brand: "聖地巡礼マップ",
@@ -99,6 +105,9 @@ const MESSAGES = {
     report: "問題を報告",
     allWorks: "すべて",
     series: "シリーズ作品",
+    adultShow: "成人向け作品を表示",
+    adultNotice: "この作品は成人向け（18 禁）のため、通常は表示されません。",
+    adultContinue: "18 歳以上なので表示する",
   },
   en: {
     brand: "Anime Pilgrimage Map",
@@ -128,6 +137,9 @@ const MESSAGES = {
     report: "Report an issue",
     allWorks: "All",
     series: "In this series",
+    adultShow: "Show adult titles",
+    adultNotice: "This title is adult (18+) content and is hidden by default.",
+    adultContinue: "I'm 18 or older, show it",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

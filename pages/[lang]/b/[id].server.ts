@@ -2,7 +2,6 @@ import { defineHandler, defineHead, type InferProps } from "void";
 import { localeFromSegment } from "../../../src/i18n";
 import { getGroup } from "../../../src/server/bangumi";
 import { bangumiHead } from "../../../src/server/seo";
-import { buildView } from "../../../src/series";
 
 export type Props = InferProps<typeof loader>;
 
@@ -15,4 +14,4 @@ export const loader = defineHandler(async (c) => {
   return { group, filter: id as number | null, lang };
 });
 
-export const head = defineHead<Props>((_c, { group, filter, lang }) => bangumiHead(lang, buildView(group, filter)!));
+export const head = defineHead<Props>((_c, { group, filter, lang }) => bangumiHead(lang, group, filter));

@@ -16,21 +16,22 @@ export interface BangumiLite {
 interface Entry extends BangumiLite {
   keys: string[];
   series: number | null;
+  nsfw: boolean;
 }
 export type Bounds = { west: number; south: number; east: number; north: number };
 export type Request =
-  | { id: number; type: "search"; query: string; limit: number }
-  | { id: number; type: "inView"; bounds: Bounds; limit: number };
+  | { id: number; type: "search"; query: string; limit: number; adult: boolean }
+  | { id: number; type: "inView"; bounds: Bounds; limit: number; adult: boolean };
 
-type Raw = [number, string | null, string | null, string | null, string | null, number, string, I18n["name"] | null, number | null];
+type Raw = [number, string | null, string | null, string | null, string | null, number, string, I18n["name"] | null, number | null, 0 | 1];
 type RawSeries = [string | null, string | null, string | null, I18n["name"] | null, number, number, string | null];
 
 // 作品（有地标的）与系列汇总，格式见 sync/export.py
 const index = fetch("/data/bangumi.json")
   .then((r) => r.json() as Promise<{ works: Raw[]; series: Record<string, RawSeries> }>)
   .then(({ works, series }) => ({
-    works: works.map(([id, cn, title, en, cover, pointCount, keys, names, s]): Entry => ({
-      id, cn, title, en, cover, pointCount, i18n: names ? { name: names } : null, keys: keys.split("|"), series: s,
+    works: works.map(([id, cn, title, en, cover, pointCount, keys, names, s, nsfw]): Entry => ({
+      id, cn, title, en, cover, pointCount, i18n: names ? { name: names } : null, keys: keys.split("|"), series: s, nsfw: !!nsfw,
     })),
     series: new Map(Object.entries(series).map(([id, s]) => [Number(id), s])),
   }));
@@ -77,10 +78,12 @@ function score(key: string, q: string): number {
   return gaps > q.length * 3 ? 0 : 500 - gaps * 10 - (key.length - q.length) * 0.5;
 }
 
-async function search(query: string, limit: number) {
+// 成人向作品默认不出现在搜索和视口列表里（见 src/adult.ts）
+async function search(query: string, limit: number, adult: boolean) {
   const q = fold(query);
   if (!q) return [];
   const hits = (await bangumi)
+    .filter((b) => adult || !b.nsfw)
     .map((b) => ({ b, s: Math.max(...b.keys.map((k) => score(k, q))) }))
     .filter((x) => x.s > 0)
     .sort((x, y) => y.s - x.s || y.b.pointCount - x.b.pointCount);
@@ -97,7 +100,7 @@ async function search(query: string, limit: number) {
   return out;
 }
 
-async function inView({ west, south, east, north }: Bounds, limit: number) {
+async function inView({ west, south, east, north }: Bounds, limit: number, adult: boolean) {
   const [idx, all] = await Promise.all([points, bangumi]);
   const counts = new Map<number, number>();
   const wraps = west > east; // 跨 180° 经线
@@ -113,7 +116,7 @@ async function inView({ west, south, east, north }: Bounds, limit: number) {
   const merged = new Map<number, Card & { inView: number }>();
   for (const [id, n] of counts) {
     const b = byId.get(id);
-    if (!b) continue;
+    if (!b || (b.nsfw && !adult)) continue;
     const c = await card(b);
     const m = merged.get(c.id);
     if (m) m.inView += n;
@@ -124,6 +127,6 @@ async function inView({ west, south, east, north }: Bounds, limit: number) {
 
 self.onmessage = async (e: MessageEvent<Request>) => {
   const req = e.data;
-  const result = req.type === "search" ? await search(req.query, req.limit) : await inView(req.bounds, req.limit);
+  const result = req.type === "search" ? await search(req.query, req.limit, req.adult) : await inView(req.bounds, req.limit, req.adult);
   self.postMessage({ id: req.id, result });
 };

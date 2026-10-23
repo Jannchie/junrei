@@ -1,7 +1,8 @@
 """全部动画条目：从 Bangumi 官方每周发布的数据包（github.com/bangumi/Archive）读出动画条目的元数据，
 写到 data/bgm-anime.json，由 sync.export 并进作品表。没有巡礼地标的作品也因此能被搜到。
 
-只取动画（type=2）、排除 nsfw；每条只留名称、别名、首播日期、类型与热度。数据包约 450 MB，
+只取动画（type=2）；每条只留名称、别名、首播日期、类型与热度。成人向（nsfw）的动画也收录并标上 nsfw，
+网站默认隐藏；另把所有类型的 nsfw 条目 id（多为成人游戏）列进 nsfw，Anitabi、手动补充里的游戏取景据此标记。数据包约 450 MB，
 已下载过同一版本就不再下载。
 
 系列：按条目关系（前传、续集、总集篇、全集、番外篇、主线故事）把动画连成系列，
@@ -107,10 +108,13 @@ def add_series(z: zipfile.ZipFile, rows: list[dict]) -> None:
 def main():
     path = download()
     rows = []
+    nsfw = []
     with zipfile.ZipFile(path) as z, z.open("subject.jsonlines") as f:
         for line in f:
             s = json.loads(line)
-            if s["type"] != 2 or s.get("nsfw"):
+            if s.get("nsfw"):
+                nsfw.append(s["id"])
+            if s["type"] != 2:
                 continue
             alias = aliases(s.get("infobox", ""))
             fav = s.get("favorite") or {}
@@ -124,13 +128,14 @@ def main():
                 "cat": PLATFORM.get(s.get("platform"), "其他"),
                 # 热度：看过 + 在看 + 想看，用于没有地标的作品之间排序
                 "popularity": fav.get("done", 0) + fav.get("doing", 0) + fav.get("wish", 0),
+                **({"nsfw": True} if s.get("nsfw") else {}),
             })
     rows.sort(key=lambda r: r["id"])
     with zipfile.ZipFile(path) as z:
         add_series(z, rows)
-    OUT.write_text(json.dumps({"archive": path.name, "subjects": rows}, ensure_ascii=False, separators=(",", ":")),
+    OUT.write_text(json.dumps({"archive": path.name, "subjects": rows, "nsfw": sorted(nsfw)}, ensure_ascii=False, separators=(",", ":")),
                    encoding="utf-8")
-    print(f"{OUT}：{len(rows)} 部动画（{OUT.stat().st_size / 1e6:.1f} MB）")
+    print(f"{OUT}：{len(rows)} 部动画，成人向条目 {len(nsfw)} 个（{OUT.stat().st_size / 1e6:.1f} MB）")
 
 
 if __name__ == "__main__":

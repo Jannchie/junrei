@@ -10,6 +10,7 @@ import { fetchDetail } from "../detail";
 import { imageUrl } from "../format";
 import { CJK_FONT_FAMILY, createStyle, HEAT_FADE, readPalette } from "../map-style";
 import { isDark } from "../theme";
+import { showAdult } from "../adult";
 
 export interface SelectedPoint {
   id: string;
@@ -71,6 +72,7 @@ function syncSelected() {
     })),
   });
   map.setGlobalStateProperty("selected", sel != null);
+  map.setGlobalStateProperty("adult", showAdult.value);
   const color = sel?.color ?? readPalette().accent;
   map.setGlobalStateProperty("selectedColor", color);
   el.value?.style.setProperty("--focus-color", color); // 选中地标的截图描边用作品色
@@ -253,6 +255,10 @@ onBeforeUnmount(() => {
 });
 
 watch([locale, isDark], restyle);
+watch(showAdult, (on) => {
+  map?.setGlobalStateProperty("adult", on);
+  void syncPhotos();
+});
 watch(() => props.padding, () => {
   if (!map) return;
   if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));

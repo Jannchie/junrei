@@ -10,7 +10,8 @@ import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail } from "../detail";
-import { buildView, type Card, type Group, groupOf, missingDetails, type View, type ViewPoint } from "../series";
+import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, type ViewPoint, visibleGroup } from "../series";
+import { initAdult, setShowAdult, showAdult } from "../adult";
 import "../theme.css";
 
 /** 首页、系列页 /s/:id 与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
@@ -82,19 +83,25 @@ interface SearchResult {
   bangumis: Awaited<ReturnType<typeof searchBangumi>>;
   points: Awaited<ReturnType<typeof fetchSearch>>["points"];
 }
-const fetchSearch = (q: string) => fetch("/v1/search", { query: { q } });
+const fetchSearch = (q: string, adult: boolean) => fetch("/v1/search", { query: adult ? { q, adult: "1" as const } : { q } });
 
 // 面板里的作品以系列为单位：group 是当前系列，filter 是筛选的作品（null 为全部），detail 是据此组装出的显示内容
 const group = shallowRef<Group | null>(props.initialGroup ?? null);
 const filter = ref<number | null>(props.initialFilter ?? null);
-const detail = computed<View | null>(() => (group.value ? buildView(group.value, filter.value) : null));
+// 成人向（src/adult.ts）：没打开显示开关时，系列里只留一般向作品；直接打开成人向作品要先确认一次（revealed 记下确认过的系列）
+const revealed = ref<number | null>(null);
+const adultFor = (g: Group) => showAdult.value || revealed.value === g.key;
+const gated = computed(() => !!group.value && !adultFor(group.value) && needsAdultGate(group.value, filter.value));
+const detail = computed<View | null>(() =>
+  group.value ? buildView(visibleGroup(group.value, adultFor(group.value), filter.value), filter.value) : null,
+);
 const focusPointId = ref<string | null>(null);
 const query = ref("");
 const results = shallowRef<SearchResult | null>(null);
 const searching = ref(false);
 
 const selected = computed(() =>
-  detail.value
+  detail.value && !gated.value
     ? {
         bangumiId: detail.value.id,
         color: detail.value.color,
@@ -129,7 +136,7 @@ function onDetailScroll(e: Event) {
 /** 打开某部作品所在的系列：filterId 为 null 显示全部，否则筛选到那一部；可同时聚焦一个地标 */
 async function open(anyId: number, filterId: number | null, pointId: string | null = null) {
   let g = group.value?.works.some((w) => w.id === anyId) ? group.value : groupOf(await fetchDetail(anyId));
-  const need = (filterId != null ? [filterId] : missingDetails(g)).filter((id) => !g.details.some((d) => d.id === id));
+  const need = (filterId != null ? [filterId] : missingDetails(visibleGroup(g, adultFor(g), null))).filter((id) => !g.details.some((d) => d.id === id));
   if (need.length) g = { ...g, details: [...g.details, ...(await Promise.all(need.map(fetchDetail)))] };
   if (g !== group.value || filterId !== filter.value) {
     group.value = g;
@@ -205,7 +212,7 @@ watch(query, (q) => {
     searching.value = true;
     try {
       // 作品在浏览器里模糊匹配（全语种、即时）；地标五万多条，交给服务端的全文索引
-      const [local, { bangumis: remote, points }] = await Promise.all([searchBangumi(q), fetchSearch(q.trim())]);
+      const [local, { bangumis: remote, points }] = await Promise.all([searchBangumi(q, showAdult.value), fetchSearch(q.trim(), showAdult.value)]);
       // 本地索引只有带地标的作品（模糊匹配更好）；服务端还能搜到没有地标的作品，接在后面
       const seen = new Set(local.map((b) => b.id));
       const bangumis = [...local, ...remote.filter((b) => !seen.has(b.id))].slice(0, 30);
@@ -287,10 +294,23 @@ function onCreditsToggle(e: Event) {
 type Bounds = { west: number; south: number; east: number; north: number };
 const inView = shallowRef<Awaited<ReturnType<typeof bangumiInView>> | null>(null);
 let viewSeq = 0;
+let lastBounds: Bounds | null = null;
 async function onView(bounds: Bounds) {
+  lastBounds = bounds;
   const id = ++viewSeq;
-  const list = await bangumiInView(bounds);
+  const list = await bangumiInView(bounds, showAdult.value);
   if (id === viewSeq) inView.value = list;
+}
+/** 成人向开关变化：视口列表重算；系列「全部」补加载刚显示出来的作品 */
+watch(showAdult, () => {
+  if (lastBounds) void onView(lastBounds);
+  if (group.value) void open(group.value.key, filter.value, focusPointId.value);
+});
+/** 确认后显示这一个系列里的成人向作品（不改变全局开关） */
+function revealAdult() {
+  if (!group.value) return;
+  revealed.value = group.value.key;
+  void open(group.value.key, filter.value, focusPointId.value);
 }
 const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({ ...b, inView: b.pointCount })) ?? []);
 
@@ -392,6 +412,7 @@ onMounted(() => {
   visualViewport?.addEventListener("scroll", onVisualViewport);
   mounted.value = true;
   initTheme();
+  initAdult();
   panelObserver = new ResizeObserver(() => {
     const a = app.value!.getBoundingClientRect();
     const r = panel.value!.getBoundingClientRect();
@@ -510,6 +531,16 @@ onBeforeUnmount(() => {
             {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
           </button>
         </div>
+        <!-- 成人向作品：确认之前不显示封面、标题与地标 -->
+        <div v-if="gated" class="adult-gate">
+          <JIcon :icon="ICONS.adult" :size="28" />
+          <p>{{ t("adultNotice") }}</p>
+          <div class="adult-actions">
+            <button type="button" class="primary" @click="revealAdult">{{ t("adultContinue") }}</button>
+            <button type="button" @click="clearSelection">{{ t("back") }}</button>
+          </div>
+        </div>
+        <template v-else>
         <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
           <div ref="titleRow" class="title-row">
             <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
@@ -621,6 +652,7 @@ onBeforeUnmount(() => {
           </li>
         </ol>
         <div v-if="visibleCount < detail.points.length" ref="moreSentinel" class="more" />
+        </template>
       </section>
 
       <!-- 概览 -->
@@ -656,6 +688,10 @@ onBeforeUnmount(() => {
           <a class="stat" href="https://github.com/Jannchie/junrei" target="_blank" rel="noopener">
             <JIcon :icon="ICONS.github" :size="14" /><span class="tx">{{ t("source") }}</span>
           </a>
+          <label class="stat adult-toggle">
+            <input type="checkbox" :checked="showAdult" @change="setShowAdult(($event.target as HTMLInputElement).checked)" />
+            <span class="tx">{{ t("adultShow") }}</span>
+          </label>
           <button type="button" class="stat kb-btn" popovertarget="shortcuts">
             <JIcon :icon="ICONS.keyboard" :size="14" /><span class="tx">{{ t("shortcuts") }}</span>
           </button>
@@ -1346,6 +1382,48 @@ figcaption a {
 .credits-pop a:hover,
 .credits-pop button:hover {
   color: var(--fg);
+}
+.adult-toggle {
+  cursor: pointer;
+}
+.adult-toggle input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+.adult-toggle:hover {
+  color: var(--fg);
+}
+.adult-gate {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: var(--muted);
+  text-align: center;
+}
+.adult-gate p {
+  margin: 0;
+  font-size: 13px;
+}
+.adult-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.adult-actions button {
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--hover);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.adult-actions .primary {
+  color: #fff;
+  background: var(--accent);
 }
 /* 触屏设备没有键盘，不显示快捷键入口 */
 @media (hover: none) {
