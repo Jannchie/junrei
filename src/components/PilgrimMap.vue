@@ -98,7 +98,10 @@ function syncCamera() {
   if (!ready.value || !map || !sel?.points.length) return;
   const key = `${sel.bangumiId}:${props.focusPointId ?? ""}`;
   if (key === cameraKey) return;
+  // 从地标退回同一部作品（Esc、返回）：镜头留在原处，不跳回整部作品的范围
+  const backToWork = !props.focusPointId && cameraKey.startsWith(`${sel.bangumiId}:`);
   cameraKey = key;
+  if (backToWork) return;
   if (keepLinkedView) {
     keepLinkedView = false;
     return;
