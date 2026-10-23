@@ -237,6 +237,19 @@ const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({
 
 let panelObserver: ResizeObserver | undefined;
 
+// ---- 手机键盘：布局不随键盘缩放（见 void.config.ts 的 viewport），抽屉留出被键盘挡住的高度，列表能滚到键盘上方 ----
+const keyboard = ref(0);
+function onVisualViewport() {
+  const vv = visualViewport!;
+  keyboard.value = Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop));
+  // iOS 聚焦输入框时会把整页往上推；页面本身不滚动，推上去的部分直接拉回
+  if (keyboard.value && scrollY) scrollTo(0, 0);
+}
+/** 在获得焦点（键盘弹出）之前就把抽屉展开，避免浏览器按展开前的位置去推页面 */
+function expandForTyping() {
+  if (sheet.value !== "full") sheet.value = "full";
+}
+
 // ---- 键盘快捷键（按 ? 查看）----
 const mapView = ref<{ zoomIn(): void; zoomOut(): void; locate(): void }>();
 const searchInput = ref<HTMLInputElement>();
@@ -315,6 +328,8 @@ onMounted(() => {
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
   recoverImages();
   bindShortcuts();
+  visualViewport?.addEventListener("resize", onVisualViewport);
+  visualViewport?.addEventListener("scroll", onVisualViewport);
   mounted.value = true;
   initTheme();
   panelObserver = new ResizeObserver(() => {
@@ -342,11 +357,13 @@ onBeforeUnmount(() => {
   panelObserver?.disconnect();
   moreObserver?.disconnect();
   offShortcuts?.();
+  visualViewport?.removeEventListener("resize", onVisualViewport);
+  visualViewport?.removeEventListener("scroll", onVisualViewport);
 });
 </script>
 
 <template>
-  <div ref="app" class="app" :style="{ '--panel-inset-bottom': `${mapPadding.bottom}px` }">
+  <div ref="app" class="app" :style="{ '--panel-inset-bottom': `${mapPadding.bottom}px`, '--keyboard': `${keyboard}px` }">
     <PilgrimMap
       v-if="mounted"
       ref="mapView"
@@ -370,7 +387,7 @@ onBeforeUnmount(() => {
         @pointerup="onHandleUp"
         @pointercancel="onHandleUp"
       />
-      <label class="search">
+      <label class="search" @pointerdown="expandForTyping">
         <button
           v-if="detail && !query.trim()"
           type="button"
@@ -382,7 +399,7 @@ onBeforeUnmount(() => {
           <JIcon :icon="ICONS.back" :size="18" />
         </button>
         <JIcon v-else :icon="ICONS.search" class="muted" />
-        <input ref="searchInput" v-model="query" type="search" :placeholder="t('search')" :aria-label="t('search')" autocomplete="off" @focus="sheet = 'full'" />
+        <input ref="searchInput" v-model="query" type="search" :placeholder="t('search')" :aria-label="t('search')" autocomplete="off" @focus="expandForTyping" />
         <button v-if="query" class="icon-btn" :title="t('clear')" :aria-label="t('clear')" @click="query = ''">
           <JIcon :icon="ICONS.clear" />
         </button>
@@ -686,6 +703,8 @@ img.img-failed {
   }
   .sheet-full {
     height: calc(100dvh - 48px - env(safe-area-inset-top));
+    /* 键盘弹出时，内容区底部让出键盘的高度（抽屉本身不动） */
+    padding-bottom: max(env(safe-area-inset-bottom), var(--keyboard, 0px));
   }
   .handle {
     display: block;

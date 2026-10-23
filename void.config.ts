@@ -15,7 +15,8 @@ export default defineConfig({
     "htmlAttrs": { "lang": "zh-Hans" },
     "meta": [
       // viewport-fit=cover 配合 env(safe-area-inset-*)，让底部抽屉避开 iPhone 的 Home 指示条
-      { "name": "viewport", "content": "width=device-width, initial-scale=1, viewport-fit=cover" },
+      // interactive-widget=resizes-visual：安卓弹出键盘时只缩可视区域、不改布局尺寸，底部抽屉不会被顶起来（iOS 本来就是这样）
+      { "name": "viewport", "content": "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual" },
       { "name": "theme-color", "content": "#f2f4f6", "media": "(prefers-color-scheme: light)" },
       { "name": "theme-color", "content": "#212327", "media": "(prefers-color-scheme: dark)" },
       { "name": "apple-mobile-web-app-capable", "content": "yes" },
