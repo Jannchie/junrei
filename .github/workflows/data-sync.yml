@@ -13,8 +13,9 @@ on:
         type: boolean
         default: false
 
+# 与代码部署（void-deploy.yml）共用一个并发组，避免两次部署互相顶掉
 concurrency:
-  group: data-sync
+  group: cloudflare-deploy
   cancel-in-progress: false
 
 permissions:

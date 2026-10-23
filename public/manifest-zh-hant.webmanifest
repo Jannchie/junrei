@@ -1,0 +1,44 @@
+{
+  "id": "/zh-hant",
+  "name": "聖地巡禮地圖",
+  "short_name": "聖地巡禮",
+  "description": "動畫、遊戲取景地（聖地巡禮）地圖",
+  "start_url": "/zh-hant",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f4f6",
+  "theme_color": "#f2f4f6",
+  "lang": "zh-Hant",
+  "categories": [
+    "travel",
+    "navigation",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

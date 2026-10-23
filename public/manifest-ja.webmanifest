@@ -1,0 +1,44 @@
+{
+  "id": "/ja",
+  "name": "聖地巡礼マップ",
+  "short_name": "聖地巡礼",
+  "description": "アニメ・ゲームの舞台（聖地）を地図で",
+  "start_url": "/ja",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f4f6",
+  "theme_color": "#f2f4f6",
+  "lang": "ja",
+  "categories": [
+    "travel",
+    "navigation",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

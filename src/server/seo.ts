@@ -4,6 +4,8 @@ import { type BangumiDetail, SITE } from "./bangumi";
 
 /** 各语言的 Open Graph locale 与分享图 */
 const OG_LOCALE: Record<Locale, string> = { "zh-Hans": "zh_CN", "zh-Hant": "zh_TW", ja: "ja_JP", en: "en_US" };
+/** 加到主屏幕后图标下的名字（iOS），与清单的 short_name 一致 */
+const APP_NAME: Record<Locale, string> = { "zh-Hans": "圣地巡礼", "zh-Hant": "聖地巡禮", ja: "聖地巡礼", en: "Pilgrimage" };
 const ogImage = (locale: Locale) => `${SITE}/icons/og-${locale.toLowerCase()}.png`;
 
 const HOME: Record<Locale, { title: string; description: string }> = {
@@ -56,10 +58,14 @@ function siteHead(locale: Locale, path: string, o: { title: string; description:
       { property: "og:url", content: url },
       { property: "og:image", content: o.image ?? ogImage(locale) },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "apple-mobile-web-app-title", content: APP_NAME[locale] },
       ...(o.noindex ? [{ name: "robots", content: "noindex" }] : []),
     ],
     link: [
       { rel: "canonical", href: url },
+      // 各语言各自的 PWA 清单（应用名、启动页）与地址栏搜索（scripts/gen-pwa.mts 生成）
+      { rel: "manifest", href: `/manifest-${locale.toLowerCase()}.webmanifest` },
+      { rel: "search", type: "application/opensearchdescription+xml", href: `/opensearch-${locale.toLowerCase()}.xml`, title: translate(locale, "brand") },
       // 同一页面的各语言版本互相指向，搜索引擎据此按用户语言展示
       ...LOCALES.map((l) => ({ rel: "alternate", hreflang: l, href: SITE + localePath(l, path) })),
       { rel: "alternate", hreflang: "x-default", href: SITE + localePath("zh-Hans", path) },

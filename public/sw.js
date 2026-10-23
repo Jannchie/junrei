@@ -15,7 +15,7 @@ const POOLS = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/", "/manifest.webmanifest"])));
+  event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/"])));
   self.skipWaiting();
 });
 

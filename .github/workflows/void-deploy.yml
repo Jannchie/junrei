@@ -3,9 +3,10 @@ on:
   push:
     branches: [main]
 
+# 与数据同步（data-sync.yml）共用一个并发组：两边都会部署，同时跑时 Cloudflare 会让后一个顶掉前一个
 concurrency:
-  group: void-cloudflare-deploy-${{ github.repository }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: cloudflare-deploy
+  cancel-in-progress: false
 
 permissions:
   contents: read

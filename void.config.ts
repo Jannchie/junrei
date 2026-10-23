@@ -19,20 +19,17 @@ export default defineConfig({
       { "name": "theme-color", "content": "#f2f4f6", "media": "(prefers-color-scheme: light)" },
       { "name": "theme-color", "content": "#212327", "media": "(prefers-color-scheme: dark)" },
       { "name": "apple-mobile-web-app-capable", "content": "yes" },
-      { "name": "apple-mobile-web-app-status-bar-style", "content": "default" },
-      { "name": "apple-mobile-web-app-title", "content": "圣地巡礼" }
+      { "name": "apple-mobile-web-app-status-bar-style", "content": "default" }
     ],
+    // PWA 清单、主屏名称、OpenSearch 按页面语言在 src/server/seo.ts 里给出
     // 首次绘制前应用用户保存的外观选择（src/theme.ts），避免刷新时闪一下
     "script": [
       { "innerHTML": "try{var t=localStorage.getItem('junrei:theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}" }
     ],
     "link": [
-      { "rel": "manifest", "href": "/manifest.webmanifest" },
       { "rel": "icon", "href": "/icons/favicon-32.png", "type": "image/png" },
       { "rel": "apple-touch-icon", "href": "/icons/apple-touch-icon.png" },
       { "rel": "alternate", "type": "text/plain", "href": "/llms.txt", "title": "llms.txt" },
-      // 浏览器地址栏直接搜本站
-      { "rel": "search", "type": "application/opensearchdescription+xml", "href": "/opensearch.xml", "title": "圣地巡礼地图" },
       // 地图点位与地图同时开始加载，不必等页面脚本跑完
       { "rel": "preload", "href": "/data/points.geojson", "as": "fetch", "crossorigin": "anonymous" }
     ]
