@@ -7736,6 +7736,19 @@
       },
       "cat": "TV",
       "cover": "https://api.bgm.tv/v0/subjects/99116/image?type=common"
+    },
+    {
+      "id": 12317,
+      "title": "逆境無頼カイジ 破戒録篇",
+      "cn": "赌博默示录 破戒录篇",
+      "en": null,
+      "names": {
+        "zh-Hans": "赌博默示录 破戒录篇",
+        "zh-Hant": "賭博默示錄 破戒錄篇",
+        "ja": "逆境無頼カイジ 破戒録篇"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/12317/image?type=common"
     }
   ],
   "points": [
@@ -88864,6 +88877,62 @@
       "image": "https://cdn.jannchie.com/junrei/shots/m-99116-0eb87fe2-e753ee2e.jpg",
       "origin": "d.hatena.ne.jp",
       "origin_link": "http://d.hatena.ne.jp/paffue/20140810/1407637049"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-kabukicho-op",
+      "name": "歌舞伎町セントラルロード（旧コマ劇場前）",
+      "names": {
+        "ja": "歌舞伎町セントラルロード（旧コマ劇場前）",
+        "zh-Hans": "歌舞伎町中央路（旧剧场前）",
+        "zh-Hant": "歌舞伎町中央路（舊劇場前）",
+        "en": "Kabukicho Central Road (former Koma Theater)"
+      },
+      "marks": {
+        "ja": "OP でカイジが歩く夜の繁華街",
+        "zh-Hans": "OP 里开司走过的夜晚繁华街",
+        "zh-Hant": "OP 裡開司走過的夜晚繁華街",
+        "en": "The night street Kaiji walks through in the opening"
+      },
+      "lat": 35.6949,
+      "lng": 139.7019,
+      "ep": null,
+      "s": null,
+      "reference": "https://derongi.hatenadiary.org/entry/20110416/p1",
+      "origin": "derongi.hatenadiary.org",
+      "cn": "歌舞伎町中央路（旧剧场前）",
+      "src": "ja",
+      "source": "derongi.hatenadiary.org",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-kabukicho-op-b8989439.jpg",
+      "origin_link": "https://derongi.hatenadiary.org/entry/20110416/p1"
+    },
+    {
+      "bangumi": 12317,
+      "id": "m-12317-sapporo-keiba",
+      "name": "札幌競馬場",
+      "names": {
+        "ja": "札幌競馬場",
+        "zh-Hans": "札幌赛马场",
+        "zh-Hant": "札幌賽馬場",
+        "en": "Sapporo Racecourse"
+      },
+      "marks": {
+        "ja": "カイジと坂崎が競馬に挑む",
+        "zh-Hans": "开司和坂崎来赛马场下注",
+        "zh-Hant": "開司和坂崎來賽馬場下注",
+        "en": "Kaiji and Sakazaki bet on the races"
+      },
+      "lat": 43.077501,
+      "lng": 141.325879,
+      "ep": "13",
+      "s": null,
+      "reference": "https://btsoken.hatenablog.com/entry/20110703/1309684614",
+      "origin": "btsoken.hatenablog.com",
+      "cn": "札幌赛马场",
+      "src": "ja",
+      "source": "btsoken.hatenablog.com",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12317-sapporo-keiba-e462e602.jpg",
+      "origin_link": "https://btsoken.hatenablog.com/entry/20110703/1309684614"
     }
   ]
 }
