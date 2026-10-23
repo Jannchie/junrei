@@ -319,9 +319,28 @@ function onVisualViewport() {
   // iOS 聚焦输入框时会把整页往上推；页面本身不滚动，推上去的部分直接拉回
   if (keyboard.value && scrollY) scrollTo(0, 0);
 }
-/** 在获得焦点（键盘弹出）之前就把抽屉展开，避免浏览器按展开前的位置去推页面 */
+/** 用键盘（/ 快捷键、Tab）聚焦搜索框时展开抽屉 */
 function expandForTyping() {
   if (sheet.value !== "full") sheet.value = "full";
+}
+/**
+ * 手机上点搜索框：抬起手指时自己完成「展开 → 聚焦」，不交给浏览器。
+ * 浏览器会在抬起后按原来的坐标合成点击、聚焦并把输入框滚进视野；抽屉一展开，原坐标上已经是别的东西
+ * （点到作品卡片就打开了作品），滚动也是按展开前的位置算的，结果看到的是抽屉下半截。
+ * 所以取消合成点击，先不带动画把抽屉直接展开到全屏，再聚焦，并且不让浏览器滚动
+ */
+function onSearchTouch(e: TouchEvent) {
+  if ((e.target as Element).closest("button") || !e.cancelable) return; // 返回按钮照常；滑动中的不管
+  e.preventDefault();
+  const el = panel.value!;
+  el.style.transition = "none";
+  el.style.height = "calc(100dvh - 48px - env(safe-area-inset-top))"; // 同 .sheet-full：同步撑开，聚焦时布局已经是展开后的
+  sheet.value = "full";
+  searchInput.value!.focus({ preventScroll: true });
+  void nextTick(() => {
+    el.style.height = ""; // sheet-full 的样式已经生效，高度相同，去掉临时值不会跳
+    el.style.transition = "";
+  });
 }
 /** 输入结束（键盘收起）就回到半屏。手指还按着时先不动：点的可能是搜索结果，抽屉一变，点击会落空 */
 let pressing = false;
@@ -480,7 +499,7 @@ onBeforeUnmount(() => {
         @pointerup="onHandleUp"
         @pointercancel="onHandleUp"
       />
-      <label class="search" @pointerdown="expandForTyping">
+      <label class="search" @touchend="onSearchTouch">
         <button
           v-if="detail && !query.trim()"
           type="button"
