@@ -99,8 +99,8 @@ class Uploader:
                     sys.exit("令牌没有 R2 编辑权限（Account → Workers R2 Storage → Edit）")
                 print(f"  ! 上传失败 {key}：{e.code}", file=sys.stderr)
                 return False
-            except (urllib.error.URLError, TimeoutError) as e:
-                print(f"  ! 上传失败 {key}：{e}", file=sys.stderr)
+            except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
+                print(f"  ! 上传失败 {key}：{e!r}", file=sys.stderr)
                 return False
         assert self.pnpm
         with tempfile.NamedTemporaryFile(suffix=Path(key).suffix, delete=False) as f:
