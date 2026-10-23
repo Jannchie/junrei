@@ -9,6 +9,9 @@
   python -m sync.gaps trace                 # 老草稿的来源截图在本地 trace.moe 帧库里比对：对上作品的提高把握度，补集数与时间
   python -m sync.gaps apply                 # 草稿里 approved 为 true 的地标（或审核页导出的 approved.json）并入 manual.json
 
+并入的地标都带截图：文章里与 trace.moe 帧对上的那张动画截图，缩到 640px 宽转存到 R2（junrei/shots/），
+不引用博客的图片地址（会防盗链、会随博客消失）。没有对上截图、或截图转存失败的候选不并入，留在草稿里下次再试。
+
 草稿在 data/review/gaps/<作品 id>.json，审核页 data/review/gaps/review.html（地图上逐个确认，勾选后导出）。
 文章正文只用于提取，不写进任何数据；地标只记地点、集数、一句自己写的场景说明，并保留来源链接。
 LLM 步骤需要 Claude API（pip install anthropic，ANTHROPIC_API_KEY），结果按文章缓存，同一篇不会重复请求。
@@ -683,6 +686,77 @@ def cmd_trace(db, data: Path) -> None:
 
 # ---- 并入 manual.json ----
 
+SHOTS = "junrei/shots/"
+SHOT_WIDTH = 640
+
+
+def shot_candidates(url: str) -> list[str]:
+    """博客常在正文里放缩略图：先试原图（livedoor 去掉 -s，FC2 去掉末尾的 s），不行再用缩略图本身"""
+    full = re.sub(r"-s(\.\w+)$", r"\1", url) if "blogimg.jp" in url else re.sub(r"(\d{6,})s(\.\w+)$", r"\1\2", url)
+    return [full, url] if full != url else [url]
+
+
+def shot_jpeg(body: bytes, aspect: float | None = None) -> bytes | None:
+    """缩到 SHOT_WIDTH 宽、去掉元数据的 JPEG；aspect 给了时比例要一致（防止「原图」其实是另一张图）"""
+    import io
+
+    from PIL import Image
+
+    try:
+        im = Image.open(io.BytesIO(body)).convert("RGB")
+    except Exception:  # noqa: BLE001 - 图片格式五花八门
+        return None
+    if aspect and abs(im.width / im.height - aspect) > 0.03 * aspect:
+        return None
+    if im.width > SHOT_WIDTH:
+        im = im.resize((SHOT_WIDTH, round(im.height * SHOT_WIDTH / im.width)), Image.Resampling.LANCZOS)
+    out = io.BytesIO()
+    im.save(out, "JPEG", quality=85, optimize=True, progressive=True)
+    return out.getvalue()
+
+
+def mirror_shot(up, pid: str, url: str) -> str | None:
+    """来源截图转存到 R2，返回公开地址；下载或上传失败返回 None"""
+    import io
+
+    from PIL import Image
+
+    from sync.covers import PUBLIC
+
+    thumb = download_image(url)
+    if not thumb:
+        return None
+    try:
+        aspect = (lambda im: im.width / im.height)(Image.open(io.BytesIO(thumb)))
+    except Exception:  # noqa: BLE001
+        return None
+    for cand in shot_candidates(url):
+        body = thumb if cand == url else download_image(cand)
+        jpeg = body and shot_jpeg(body, aspect)
+        if jpeg:
+            key = f"{SHOTS}{pid}-{hashlib.sha1(cand.encode()).hexdigest()[:8]}.jpg"
+            return PUBLIC + key if up.put(key, jpeg) else None
+    return None
+
+
+def attach_shots(points: list[tuple[dict, dict]]) -> int:
+    """(manual 地标, 草稿候选) → 并行转存截图，写进地标的 image / origin / origin_link；返回成功数"""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from sync.covers import Uploader
+
+    if not points:
+        return 0
+    up = Uploader()
+    with ThreadPoolExecutor(up.workers) as pool:
+        urls = list(pool.map(lambda ps: mirror_shot(up, ps[0]["id"], ps[1]["trace"]["image"]), points))
+    for (p, s), url in zip(points, urls):
+        if url:
+            ref = s["reference"]
+            p.update(image=url, origin=s.get("source") or urllib.parse.urlparse(ref).hostname, origin_link=ref)
+    return sum(1 for u in urls if u)
+
+
 def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = None) -> None:
     from sync.export import BGM_COVER, subject_names
     from sync.translate import opencc_converter
@@ -693,15 +767,22 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
     ok: dict | None = json.loads(Path(approved_file).read_text(encoding="utf-8")) if approved_file else None
     subs = all_subjects(data)
     manual = load_manual()
-    known_points = {p["id"] for p in manual["points"]}
+    by_id = {p["id"]: p for p in manual["points"]}
     known_works = {b["id"] for b in manual["bangumi"]}
-    added = 0
+    candidates: list[tuple[dict, dict]] = []  # (将要并入的地标, 草稿候选)
+    backfill: list[tuple[dict, dict]] = []  # 早先并入、还没有截图的地标
     for _, draft in drafts(out_dir):
         bid = draft["bangumi"]
         for s in draft["spots"]:
+            if (m := by_id.get(s["id"])) is not None:
+                if not m.get("image") and s.get("trace"):
+                    backfill.append((m, s))
+                continue
+            if not s.get("trace"):
+                continue  # 没有对上动画截图的不并入
             # 自动通过：把握度够高、又精确定位到具体地点（不是只落在行政区中心）的，不必人工审核
             auto = auto_min is not None and s["confidence"] >= auto_min and (s.get("geocode") or {}).get("by") in ("osm", "gsi")
-            if not (auto or (s["approved"] if ok is None else s["id"] in ok)) or s["id"] in known_points:
+            if not (auto or (s["approved"] if ok is None else s["id"] in ok)):
                 continue
             if ok and ok.get(s["id"]):
                 s.update(ok[s["id"]])
@@ -709,22 +790,28 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
                 continue
             names = {**s["names"], "zh-Hant": to_hant(s["names"]["zh-Hans"])}
             marks = {k: v for k, v in {**s["marks"], "zh-Hant": to_hant(s["marks"]["zh-Hans"])}.items() if v}
-            manual["points"].append({
+            point = {
                 "bangumi": bid, "id": s["id"], "name": s["name"], "cn": s["names"]["zh-Hans"],
                 "lat": round(s["lat"], 6), "lng": round(s["lng"], 6), "ep": s["ep"] or None, "src": "ja",
                 "names": names, "marks": marks, "reference": s["reference"], "source": s.get("source"), "s": s.get("s"),
-            })
-            known_points.add(s["id"])
-            added += 1
-            if bid not in known_works:
-                # 作品信息取 Bangumi；有没有地标由 export 统计，这里只登记作品本身
-                sub = subs.get(bid, {})
-                manual["bangumi"].append({"id": bid, "title": sub.get("name"), "cn": sub.get("cn"), "en": sub.get("en"),
-                                          "names": subject_names(sub, to_hant), "cat": sub.get("cat"),
-                                          **({"nsfw": True} if sub.get("nsfw") else {}), "cover": BGM_COVER.format(bid)})
-                known_works.add(bid)
+            }
+            by_id[s["id"]] = point
+            candidates.append((point, s))
+    filled = attach_shots(backfill)
+    attach_shots(candidates)
+    added = [p for p, _ in candidates if p.get("image")]
+    manual["points"].extend(added)
+    for bid in dict.fromkeys(p["bangumi"] for p in added):
+        if bid not in known_works:
+            # 作品信息取 Bangumi；有没有地标由 export 统计，这里只登记作品本身
+            sub = subs.get(bid, {})
+            manual["bangumi"].append({"id": bid, "title": sub.get("name"), "cn": sub.get("cn"), "en": sub.get("en"),
+                                      "names": subject_names(sub, to_hant), "cat": sub.get("cat"),
+                                      **({"nsfw": True} if sub.get("nsfw") else {}), "cover": BGM_COVER.format(bid)})
+            known_works.add(bid)
     save_manual(manual)
-    print(f"并入 {added} 个地标 → {MANUAL}")
+    print(f"并入 {len(added)} 个地标（另有 {len(candidates) - len(added)} 个截图转存失败，下次再试），"
+          f"给已有地标补上 {filled}/{len(backfill)} 张截图 → {MANUAL}")
 
 
 def main():
