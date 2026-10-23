@@ -106,13 +106,22 @@ function syncCamera() {
   if (key === pickedOnMap) return;
   const focus = sel.points.find((p) => p.id === props.focusPointId);
   // setPadding 会打断进行中的动画，所以只在相机空闲时或发起新动作前调用（见下方 padding 的 watch）
-  map.setPadding(props.padding);
+  map.setPadding(usablePadding());
   // 都用 easeTo（fitBounds 设 linear）：flyTo 途中会先拉远再推近，像跳了一下
   if (focus) {
     map.easeTo({ center: [focus.lng, focus.lat], zoom: Math.max(map.getZoom(), 15), duration: 800 });
   } else {
     map.fitBounds(coreBounds(sel.points), { padding: 80, maxZoom: 15, linear: true, duration: 800 });
   }
+}
+
+/** 面板挡住的留白，但至少给地图留出 200px 见方：手机上抽屉拉满时留白几乎等于整个画布，fitBounds 会放不下而报错 */
+function usablePadding(): PaddingOptions {
+  const p = props.padding;
+  const el = map?.getContainer();
+  if (!el) return p;
+  const room = (size: number, a: number, b: number) => Math.max(0, Math.min(a, size - 200 - b));
+  return { ...p, bottom: room(el.clientHeight, p.bottom, p.top), left: room(el.clientWidth, p.left, p.right) };
 }
 
 /** 作品的主要区域：去掉经纬度两端各 10% 的离群地标（外地零星的点不该把镜头拉远） */
@@ -196,7 +205,7 @@ onMounted(() => {
     zoom: 4.6,
     // 视野写进 URL 的 #map=缩放/纬度/经度，链接打开就是同一片区域
     hash: "map",
-    padding: props.padding,
+    padding: usablePadding(),
     localIdeographFontFamily: CJK_FONT_FAMILY,
     attributionControl: false, // 署名放在面板底部
     // 默认只在内存里留 5 个缩放级别的瓦片，来回缩放会重新加载；淡入时间也缩短，加载完更快显现
@@ -261,8 +270,8 @@ watch(showAdult, (on) => {
 });
 watch(() => props.padding, () => {
   if (!map) return;
-  if (map.isMoving()) map.once("moveend", () => map?.setPadding(props.padding));
-  else map.setPadding(props.padding);
+  if (map.isMoving()) map.once("moveend", () => map?.setPadding(usablePadding()));
+  else map.setPadding(usablePadding());
 });
 watch(() => props.selected, () => {
   syncSelected();
