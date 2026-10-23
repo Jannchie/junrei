@@ -63,6 +63,8 @@ jobs:
         continue-on-error: true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # 可选：Bangumi 个人令牌，公开 API 看不到的成人向条目也能取到封面
+          BANGUMI_TOKEN: ${{ secrets.BANGUMI_TOKEN }}
         run: python -m sync.covers --limit 2000 --max 8000
       - name: Translations
         env:
