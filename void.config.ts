@@ -41,6 +41,7 @@ export default defineConfig({
     "revalidate": {
       "/": 31536000,
       "/b/*": 31536000,
+      "/s/*": 31536000,
       "/zh-hant": 31536000,
       "/zh-hant/*": 31536000,
       "/ja": 31536000,

@@ -300,7 +300,8 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
         type: "raster-dem",
         tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
         encoding: "terrarium",
-        tileSize: 256,
+        // 地形只用来画淡淡的山影和海深：按 512px 铺，同一视野只需要四分之一的瓦片（这个源没有 CDN，每块 60–90 KB）
+        tileSize: 512,
         maxzoom: 10,
       },
       // 全部地标：maplibre 在 worker 里抓取、解析并聚合，主线程不碰这 5 万个点
