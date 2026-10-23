@@ -42,7 +42,7 @@ IMMUTABLE = "public, max-age=31536000, immutable"
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS cover_mirror (
   bangumi_id INTEGER PRIMARY KEY,
-  source TEXT,       -- Bangumi 原图路径；没有封面为 NULL
+  source TEXT,       -- Bangumi 原图路径；没有封面为 NULL，公开 API 看不到的条目（成人向、已删除）为 "hidden"
   key TEXT,          -- R2 里的对象名；没有封面为 NULL
   bytes INTEGER,
   mirrored_at TEXT
@@ -125,9 +125,9 @@ def save_manifest(db, up: Uploader) -> None:
         print(f"清单已更新：{len(rows)} 部")
 
 
-def queue(db, data: Path) -> list[int]:
-    """还没镜像的作品：有地标的在前（按地标数），其余按 Bangumi 热度"""
-    done = {r[0] for r in db.execute("SELECT bangumi_id FROM cover_mirror")}
+def queue(db, data: Path, token: str | None) -> list[int]:
+    """还没镜像的作品：有地标的在前（按地标数），其余按 Bangumi 热度。有 Bangumi 令牌时，之前看不到的条目重新排队"""
+    done = {r[0] for r in db.execute("SELECT bangumi_id FROM cover_mirror" + (" WHERE source IS NOT 'hidden'" if token else ""))}
     points: dict[int, int] = {}
     for (bid,) in db.execute("SELECT bangumi_id FROM src.point"):
         points[bid] = points.get(bid, 0) + 1
@@ -164,7 +164,9 @@ def main():
     db = open_db(data)
     db.executescript(SCHEMA)
     load_manifest(db)
-    todo = queue(db, data)[: args.max]
+    # Bangumi 的公开 API 不登录时把成人向条目当作不存在（404）；有个人令牌（https://next.bgm.tv/demo/access-token）就带上
+    token = os.environ.get("BANGUMI_TOKEN")
+    todo = queue(db, data, token)[: args.max]
     print(f"待镜像 {len(todo)} 部")
     if not todo:
         return
@@ -172,7 +174,7 @@ def main():
     print(f"bgmd 提供了 {sum(1 for b in todo if b in known)} 部的封面地址")
     http = Http(db, interval=1.0, ua=UA, max_age_days=30)
     up = Uploader()
-    stats = {"ok": 0, "none": 0, "fail": 0, "calls": 0}
+    stats = {"ok": 0, "none": 0, "hidden": 0, "fail": 0, "calls": 0}
 
     def collect(futures):
         rows = [r for r in (f.result() for f in futures) if r]
@@ -192,24 +194,29 @@ def main():
                         continue  # 这次的 API 额度用完了，下次接着来
                     stats["calls"] += 1
                     status, subject = http.get_json(BGM_API.format(bid))
+                    if status == 404 and token:
+                        status, body = request(BGM_API.format(bid), ua=UA, headers={"Authorization": f"Bearer {token}"})
+                        subject = json.loads(body) if status == 200 else None
                     large = ((subject or {}).get("images") or {}).get("large") if status == 200 else None
-                    if status == 200 and not large:
-                        db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)", (bid, None, None, None, now_iso()))
-                        stats["none"] += 1
+                    if status in (200, 404) and not large:
+                        # 200 没有封面；404 是公开 API 看不到（成人向或已删除），记下来不再每次重试
+                        db.execute("INSERT OR REPLACE INTO cover_mirror VALUES (?,?,?,?,?)",
+                                   (bid, "hidden" if status == 404 else None, None, None, now_iso()))
+                        stats["none" if status == 200 else "hidden"] += 1
                         continue
                     if not large:
-                        stats["fail"] += 1  # API 出错（404 是条目被删或隐藏），下次再试
+                        stats["fail"] += 1  # 其他错误（限流、服务端出错），下次再试
                         continue
                     path = large.split("/pic/", 1)[-1]
                 futures.append(pool.submit(mirror_one, up, bid, path))
                 if len(futures) >= 200:
                     collect(futures)
                     futures = []
-                    print("  镜像 {ok}，无封面 {none}，失败 {fail}，API {calls} 次".format(**stats), flush=True)
+                    print("  镜像 {ok}，无封面 {none}，看不到 {hidden}，失败 {fail}，API {calls} 次".format(**stats), flush=True)
             collect(futures)
     finally:
         db.commit()
-        print("完成：镜像 {ok}，无封面 {none}，失败 {fail}，API {calls} 次".format(**stats))
+        print("完成：镜像 {ok}，无封面 {none}，看不到 {hidden}（成人向或已删除，设 BANGUMI_TOKEN 可取），失败 {fail}，API {calls} 次".format(**stats))
         save_manifest(db, up)
 
 
