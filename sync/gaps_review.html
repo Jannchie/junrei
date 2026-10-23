@@ -25,6 +25,12 @@
   .meta, .geo { grid-column: 2; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
   .geo.area { color: var(--accent); }
   .links { grid-column: 2; display: flex; gap: 10px; }
+  /* 来源文章里该地点附近的图片（多为「动画截图 + 实拍」对照），只在本地审核时引用原文地址 */
+  .imgs { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 4px; }
+  .imgs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: var(--hover); cursor: zoom-in; }
+  #lightbox { position: fixed; inset: 0; z-index: 10; display: none; place-items: center; background: #000c; cursor: zoom-out; }
+  #lightbox.open { display: grid; }
+  #lightbox img { max-width: 92vw; max-height: 92vh; }
   #map { height: 100vh; }
 </style>
 </head>
@@ -34,6 +40,7 @@
   <div id="list"></div>
 </aside>
 <div id="map"></div>
+<div id="lightbox"><img alt="" referrerpolicy="no-referrer" /></div>
 <script>
 const DRAFTS = /*DRAFTS*/[];
 const KEY = "junrei-gaps-review";
@@ -71,6 +78,7 @@ function render() {
         <strong>${s.name}　${s.names["zh-Hans"]}</strong>
         <span class="meta">${s.ep ? "EP " + s.ep + " · " : ""}${s.marks["zh-Hans"]} · 把握 ${s.confidence}</span>
         <span class="geo ${g?.by === "gsi-area" ? "area" : ""}">${g ? `${g.by}：${g.label}` : "没有定位到，需要手动找坐标"}</span>
+        ${(s.images || []).length ? `<div class="imgs">${s.images.map((u) => `<img src="${u}" loading="lazy" referrerpolicy="no-referrer" alt="" />`).join("")}</div>` : ""}
         <span class="links"><a href="${s.reference}" target="_blank">来源文章</a>${p ? `<a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}" target="_blank">Google 地图</a>` : ""}<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + " " + s.area)}" target="_blank">按名称搜</a></span>`;
       el.querySelector("input").addEventListener("click", (e) => {
         e.stopPropagation();
@@ -79,6 +87,15 @@ function render() {
         save();
       });
       el.addEventListener("click", () => p && map.flyTo({ center: [p.lng, p.lat], zoom: 16 }));
+      for (const img of el.querySelectorAll(".imgs img")) {
+        img.addEventListener("error", () => img.remove());
+        img.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const box = document.getElementById("lightbox");
+          box.querySelector("img").src = img.src;
+          box.classList.add("open");
+        });
+      }
       list.append(el);
     }
   }
@@ -108,6 +125,7 @@ function drawMarkers() {
   }
 }
 
+document.getElementById("lightbox").addEventListener("click", (e) => e.currentTarget.classList.remove("open"));
 document.getElementById("export").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   const a = document.createElement("a");

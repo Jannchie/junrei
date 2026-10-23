@@ -10,7 +10,7 @@ import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail } from "../detail";
-import { buildView, type Card, type Group, groupOf, missingDetails, type View } from "../series";
+import { buildView, type Card, type Group, groupOf, missingDetails, type View, type ViewPoint } from "../series";
 import "../theme.css";
 
 /** 首页、系列页 /s/:id 与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
@@ -231,6 +231,22 @@ const workName = (id: number) => {
   const w = detail.value?.series.find((s) => s.id === id);
   return w ? pickName({ cn: w.cn, original: w.title, en: w.en, i18n: w.i18n }) : "";
 };
+/** 报告地标问题：预填好作品、地标、坐标与来源的 GitHub issue */
+function reportUrl(p: ViewPoint) {
+  const work = detail.value?.series.find((w) => w.id === p.bangumiId);
+  const title = `[地标] ${pickName({ cn: p.cn, original: p.name, i18n: p.i18n })}（${work ? pickName({ cn: work.cn, original: work.title, en: work.en, i18n: work.i18n }) : p.bangumiId}）`;
+  const body = [
+    "<!-- 请说明问题：位置不对 / 不是这部作品的场景 / 地点已经消失或变化 / 其他 -->",
+    "",
+    "",
+    "---",
+    `- 地标：${location.origin}${localePath(locale.value, `/b/${p.bangumiId}`)}?p=${p.id}`,
+    `- id：\`${p.bangumiId}:${p.id}\``,
+    `- 坐标：${p.lat}, ${p.lng}`,
+    ...(p.sourceUrl ? [`- 来源：${p.sourceUrl}`] : []),
+  ].join("\n");
+  return `https://github.com/Jannchie/junrei/issues/new?${new URLSearchParams({ title, body, labels: "spot-report" })}`;
+}
 const cardPath = (c: Card) => localePath(locale.value, c.series ? `/s/${c.id}` : `/b/${c.id}`);
 
 // 状态写进 URL，链接即可分享、收藏：路径是作品（/b/:id 由服务端渲染，可被收录），?p 是地标，
@@ -580,9 +596,13 @@ onBeforeUnmount(() => {
               <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
               <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
               <!-- 数据出处：每个地标都能跳到原文（截图的署名在图片角上，另算） -->
-              <a v-if="p.id === focusPointId && p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source" @click.stop>
-                {{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }} ↗
-              </a>
+              <span v-if="p.id === focusPointId" class="source-row">
+                <a v-if="p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source" @click.stop>
+                  {{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }} ↗
+                </a>
+                <!-- 地标有误（位置不对、不是这部作品、已经消失）：开一个预填好的 GitHub issue -->
+                <a :href="reportUrl(p)" target="_blank" rel="noopener" class="source" @click.stop>{{ t("report") }}</a>
+              </span>
               <a
                 v-if="p.id === focusPointId"
                 :href="mapsUrl(p)"
@@ -1162,6 +1182,11 @@ figcaption a {
   color: #fff;
   background: var(--accent);
   border-radius: 50%;
+}
+.source-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
 }
 .source {
   align-self: flex-start;

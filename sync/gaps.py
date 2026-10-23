@@ -101,6 +101,30 @@ def strip_tags(page: str) -> str:
     return re.sub(r"[ \t　]+", " ", re.sub(r"\n\s*\n+", "\n", text)).strip()
 
 
+def images_near(page: str, base: str, names: list[str], n: int = 4) -> list[str]:
+    """文章里某个地点附近的图片（名称第一次出现之后的 n 张，通常是「动画截图 + 实拍」对照），
+    只给本地审核页对照用，不保存、不发布。找不到名称时返回空"""
+    page = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</>", " ", page)
+    plain = re.sub(r"<[^>]+>", lambda m: " " * len(m.group(0)), page)  # 标签换成占位，位置与原文对齐
+    at = -1
+    for name in names:
+        for part in [name, *name.split(" ")]:
+            if len(part) >= 2 and (at := plain.find(part)) >= 0:
+                break
+        if at >= 0:
+            break
+    if at < 0:
+        return []
+    out = []
+    for m in re.finditer(r'(?is)<img[^>]*?(?:data-src|data-original|src)="([^"]+)"', page[at:]):
+        src = urllib.parse.urljoin(base, html.unescape(m.group(1)))
+        if src.startswith("http") and not re.search(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif", src) and src not in out:
+            out.append(src)
+        if len(out) >= n:
+            break
+    return out
+
+
 def work_links(http: Http, title: str) -> list[tuple[str, str]]:
     """目录里一部作品的探访文章：[(链接, 地区提示)]"""
     status, body = http.get(LEGWORK + urllib.parse.quote(title))
@@ -243,8 +267,14 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         texts = [t for _, _, ins in works for _, t in ins]
         if not exchange(db, Path(args.manual), texts, args.model):
             return
-    results = llm.run(db, TASK, [t for _, _, ins in works for _, t in ins], model=args.model, mode=args.mode,
+    # 任何模型已经提取过的文章都直接用（例如会话里人工 / 其他模型给出的答案），只把剩下的送去请求
+    texts = [t for _, _, ins in works for _, t in ins]
+    other = {}
+    for model in {r[0] for r in db.execute("SELECT DISTINCT model FROM cache.llm_cache WHERE task = ?", (TASK.name,))} - {args.model}:
+        other |= {k: v for k, v in llm.cached(db, TASK, model).items() if k not in other}
+    results = llm.run(db, TASK, [t for t in texts if llm.sha(t) not in other], model=args.model, mode=args.mode,
                       dry_run=args.dry_run, limit=args.limit, wait=args.wait)
+    results = {**other, **results}
     if args.dry_run:
         return
 
@@ -260,6 +290,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
             r = results.get(llm.sha(text))
             if not r:
                 continue
+            _, body = http.get(url)  # 已缓存，给审核页找对照图
+            page = decode(body) if body else ""
             for s in r[0]["spots"]:
                 key = s["name_ja"]
                 if key in seen or s["confidence"] < args.min_confidence:
@@ -285,6 +317,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                     "lng": loc and loc["lng"],
                     "geocode": loc,
                     "reference": url,
+                    "images": images_near(page, url, [s["name_ja"], s["query"].split(" ")[0]]) if page else [],
                     "model": r[1],
                 })
         sub = subs.get(bid, {})
@@ -351,7 +384,7 @@ def write_review(out_dir: Path) -> None:
 
 # ---- 并入 manual.json ----
 
-def cmd_apply(data: Path, approved_file: str | None) -> None:
+def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = None) -> None:
     import opencc
 
     to_hant = opencc.OpenCC("s2twp").convert
@@ -369,9 +402,11 @@ def cmd_apply(data: Path, approved_file: str | None) -> None:
         draft = json.loads(p.read_text(encoding="utf-8"))
         bid = draft["bangumi"]
         for s in draft["spots"]:
-            if not (s["approved"] if ok is None else s["id"] in ok) or s["id"] in known_points:
+            # 自动通过：把握度够高、又精确定位到具体地点（不是只落在行政区中心）的，不必人工审核
+            auto = auto_min is not None and s["confidence"] >= auto_min and (s.get("geocode") or {}).get("by") in ("osm", "gsi")
+            if not (auto or (s["approved"] if ok is None else s["id"] in ok)) or s["id"] in known_points:
                 continue
-            if ok and ok[s["id"]]:
+            if ok and ok.get(s["id"]):
                 s.update(ok[s["id"]])
             if s["lat"] is None:
                 continue
@@ -416,6 +451,7 @@ def main():
     sub.add_parser("review", help="只根据现有草稿重建审核页")
     apply = sub.add_parser("apply")
     apply.add_argument("approved", nargs="?", help="审核页导出的 approved.json；省略则用草稿里的 approved 字段")
+    apply.add_argument("--auto", type=float, metavar="CONF", help="把握度不低于 CONF 且精确定位的候选自动通过，例如 --auto 0.85")
     args = ap.parse_args()
 
     data = Path(args.data)
@@ -430,7 +466,7 @@ def main():
     elif args.cmd == "review":
         write_review(data / "review" / "gaps")
     else:
-        cmd_apply(data, args.approved)
+        cmd_apply(data, args.approved, args.auto)
 
 
 if __name__ == "__main__":
