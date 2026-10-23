@@ -18,6 +18,7 @@
     "enrich:notes": "python -m sync.notes",
     "enrich:translate": "python -m sync.translate",
     "enrich:cities": "python -m sync.cities",
+    "gaps": "python -m sync.gaps",
     "enrich:report": "python -m sync.enrich_report",
     "enrich": "pnpm enrich:places && pnpm enrich:bgm && pnpm enrich:geocheck"
   },

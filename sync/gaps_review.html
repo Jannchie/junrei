@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- 补漏草稿审核页（sync/gaps.py 生成 data/review/gaps/review.html，直接用浏览器打开）。
+     逐个看地标位置：勾选通过，位置不对就拖动标记修正；最后「导出」得到 approved.json，交给 python -m sync.gaps apply。 -->
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>补漏审核</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" />
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<style>
+  :root { color-scheme: light dark; --bg: light-dark(#fff, #1e1e20); --fg: light-dark(#1d1d1f, #f5f5f7); --muted: light-dark(#86868b, #98989d); --line: light-dark(#0001, #fff2); --accent: light-dark(#d2405a, #ee6a80); --hover: light-dark(#0000000b, #ffffff12); }
+  * { box-sizing: border-box; }
+  body { margin: 0; display: grid; grid-template-columns: 420px 1fr; height: 100vh; font: 13px/1.5 system-ui, "Microsoft YaHei UI", sans-serif; background: var(--bg); color: var(--fg); }
+  aside { overflow: auto; border-right: 1px solid var(--line); }
+  header { position: sticky; top: 0; z-index: 1; display: flex; gap: 8px; align-items: center; padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  header strong { flex: 1; }
+  button { font: inherit; padding: 4px 10px; border: 0; border-radius: 6px; color: #fff; background: var(--accent); cursor: pointer; }
+  h2 { margin: 0; padding: 12px 14px 4px; font-size: 14px; }
+  h2 a, .links a { color: var(--muted); font-size: 12px; font-weight: 400; }
+  .spot { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; padding: 8px 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .spot:hover, .spot.active { background: var(--hover); }
+  .spot.nogeo { opacity: 0.5; }
+  .spot input { margin-top: 3px; }
+  .meta, .geo { grid-column: 2; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .geo.area { color: var(--accent); }
+  .links { grid-column: 2; display: flex; gap: 10px; }
+  #map { height: 100vh; }
+</style>
+</head>
+<body>
+<aside>
+  <header><strong id="count"></strong><button id="export">导出 approved.json</button></header>
+  <div id="list"></div>
+</aside>
+<div id="map"></div>
+<script>
+const DRAFTS = /*DRAFTS*/[];
+const KEY = "junrei-gaps-review";
+// 审核状态存在浏览器里：{地标 id: {lat, lng}}，有记录即通过（坐标可能拖动修正过）
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} render(); };
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: "https://tiles.openfreemap.org/styles/liberty",
+  center: [139.7, 35.7],
+  zoom: 9,
+});
+const markers = new Map();
+const pos = (s) => state[s.id] ?? (s.lat != null ? { lat: s.lat, lng: s.lng } : null);
+
+function render() {
+  const all = DRAFTS.flatMap((d) => d.spots);
+  document.getElementById("count").textContent = `已通过 ${Object.keys(state).length} / ${all.length}`;
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  for (const d of DRAFTS) {
+    const h = document.createElement("h2");
+    h.innerHTML = `${d.cn || d.title} <a href="${d.legwork}" target="_blank">探访目录</a> <a href="https://bgm.tv/subject/${d.bangumi}" target="_blank">Bangumi</a>`;
+    list.append(h);
+    for (const s of d.spots) {
+      const p = pos(s);
+      const el = document.createElement("div");
+      el.className = "spot" + (p ? "" : " nogeo");
+      el.id = s.id;
+      const g = s.geocode;
+      el.innerHTML = `
+        <input type="checkbox" ${state[s.id] ? "checked" : ""} ${p ? "" : "disabled"} />
+        <strong>${s.name}　${s.names["zh-Hans"]}</strong>
+        <span class="meta">${s.ep ? "EP " + s.ep + " · " : ""}${s.marks["zh-Hans"]} · 把握 ${s.confidence}</span>
+        <span class="geo ${g?.by === "gsi-area" ? "area" : ""}">${g ? `${g.by}：${g.label}` : "没有定位到，需要手动找坐标"}</span>
+        <span class="links"><a href="${s.reference}" target="_blank">来源文章</a>${p ? `<a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}" target="_blank">Google 地图</a>` : ""}<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + " " + s.area)}" target="_blank">按名称搜</a></span>`;
+      el.querySelector("input").addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (e.target.checked) state[s.id] = pos(s);
+        else delete state[s.id];
+        save();
+      });
+      el.addEventListener("click", () => p && map.flyTo({ center: [p.lng, p.lat], zoom: 16 }));
+      list.append(el);
+    }
+  }
+}
+
+function drawMarkers() {
+  for (const d of DRAFTS) for (const s of d.spots) {
+    const p = pos(s);
+    if (!p) continue;
+    const m = new maplibregl.Marker({ draggable: true, color: "#d2405a" })
+      .setLngLat([p.lng, p.lat])
+      .setPopup(new maplibregl.Popup({ offset: 24 }).setText(`${s.name}（${d.cn || d.title}）`))
+      .addTo(map);
+    // 拖动即修正坐标，并视为通过
+    m.on("dragend", () => {
+      const { lng, lat } = m.getLngLat();
+      state[s.id] = { lat: +lat.toFixed(6), lng: +lng.toFixed(6) };
+      save();
+    });
+    markers.set(s.id, m);
+  }
+  const pts = DRAFTS.flatMap((d) => d.spots).map(pos).filter(Boolean);
+  if (pts.length) {
+    const b = new maplibregl.LngLatBounds();
+    pts.forEach((p) => b.extend([p.lng, p.lat]));
+    map.fitBounds(b, { padding: 60, maxZoom: 14, duration: 0 });
+  }
+}
+
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "approved.json";
+  a.click();
+});
+
+render();
+map.on("load", drawMarkers);
+</script>
+</body>
+</html>

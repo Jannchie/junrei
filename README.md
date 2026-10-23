@@ -44,6 +44,7 @@ pnpm dev               # http://localhost:5173
 | `pnpm enrich:notes` | 用 Claude 把备注分类成标签（禁止进入、已消失、需购票/预约、季节限定、拍摄礼仪等），顺带识别集数，生成 `note_class` / `note_tag` | Claude API |
 | `pnpm enrich:translate` | 给作品标题、地标名、备注补齐 zh-Hans / zh-Hant / ja / en，生成 `translation` 表（见下文） | Claude API、OpenCC |
 | `pnpm enrich:cities` | 到 Wikidata 查作品所在城市的简繁日英名称，生成 `city_label` 表 | Wikidata API |
+| `pnpm gaps list` / `run` / `apply` | 补漏：Anitabi 没收录、但有实地探访记录的作品（舞台探訪アーカイブ），LLM 从探访文章提取地标草稿，审核后并入 `sync/manual.json`（见 `sync/gaps.py`） | 探访目录与博客、Claude API、OSM Nominatim、国土地理院 |
 | `pnpm enrich:report` | 只根据现有结果重新生成报告 | 无 |
 | `pnpm enrich` | 依次跑不花钱的三步：places → bgm → geocheck | |
 
