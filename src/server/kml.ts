@@ -1,6 +1,6 @@
 // 作品的地标导出成 KML：可导入 Google My Maps（手机 Google Maps「已保存 → 地图」里能看到），也能被 Google Earth 等打开
 import { formatEpisode, formatTime, imageUrl } from "../format";
-import { type Locale, localePath, markFor, pickNameFor, subNameFor } from "../i18n";
+import { type Locale, localePath, markFor, pickNameFor, spotNames, subNameFor, workNames } from "../i18n";
 import { type BangumiDetail, SITE } from "./bangumi";
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (m) => `&#${m.charCodeAt(0)};`);
@@ -8,11 +8,11 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (m) => `&#${m.charCodeAt(0)};`)
 const cdata = (s: string) => `<![CDATA[${s.replaceAll("]]>", "]]]]><![CDATA[>")}]]>`;
 
 export function bangumiKml(locale: Locale, d: BangumiDetail): { name: string; kml: string } {
-  const names = { cn: d.cn, original: d.title, en: d.en, i18n: d.i18n };
+  const names = workNames(d);
   const name = pickNameFor(locale, names);
   const page = SITE + localePath(locale, `/b/${d.id}`);
   const placemarks = d.points.map((p) => {
-    const sub = subNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n });
+    const sub = subNameFor(locale, spotNames(p));
     const meta = [p.ep && formatEpisode(p.ep), p.s && formatTime(p.s)].filter(Boolean).join(" · ");
     const html = [
       sub && `<p>${esc(sub)}</p>`,
@@ -26,7 +26,7 @@ export function bangumiKml(locale: Locale, d: BangumiDetail): { name: string; km
       .filter(Boolean)
       .join("");
     return `    <Placemark>
-      <name>${esc(pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }) || name)}</name>
+      <name>${esc(pickNameFor(locale, spotNames(p)) || name)}</name>
       <description>${cdata(html)}</description>
       <Point><coordinates>${p.lng},${p.lat},0</coordinates></Point>
     </Placemark>`;

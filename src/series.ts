@@ -61,7 +61,7 @@ export const groupKey = (d: Pick<BangumiDetail, "id" | "seriesId">) => d.seriesI
 
 /** 由一部作品的详情建立系列（只含它自己的详情，其余按需加载） */
 export function groupOf(d: BangumiDetail): Group {
-  const self: SeriesWork = { id: d.id, cn: d.cn, title: d.title, en: d.en, cat: d.cat, pointCount: d.pointCount, airDate: d.airDate, i18n: d.i18n, nsfw: d.nsfw };
+  const self: SeriesWork = { id: d.id, cn: d.cn, title: d.title, en: d.en, cat: d.cat, pointCount: d.pointCount, airDate: d.airDate, i18n: d.i18n, nsfw: d.nsfw, cover: d.cover };
   return { key: groupKey(d), works: d.series.length ? d.series : [self], details: [d] };
 }
 
@@ -69,6 +69,10 @@ export function groupOf(d: BangumiDetail): Group {
 export const missingDetails = (g: Group) => g.works.filter((w) => w.pointCount > 0 && !g.details.some((d) => d.id === w.id)).map((w) => w.id);
 
 const tag = (d: BangumiDetail): ViewPoint[] => d.points.map((p) => ({ ...p, bangumiId: d.id }));
+
+/** 视图的路径：系列「全部」是 /s/:系列，筛选到某部作品（或不在系列里的作品）是 /b/:作品 */
+export const viewPath = (v: Pick<View, "filter" | "series" | "key" | "id">) =>
+  v.filter == null && v.series.length > 1 ? `/s/${v.key}` : `/b/${v.id}`;
 
 export function buildView(g: Group, filter: number | null): View | null {
   const single = g.works.length <= 1 ? g.details[0] : undefined;

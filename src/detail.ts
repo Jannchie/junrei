@@ -13,3 +13,8 @@ export function fetchDetail(id: number): Promise<BangumiDetail> {
   }
   return p;
 }
+
+/** 服务端渲染页面已经带来的作品详情：放进缓存，之后打开不再重复请求 */
+export function seedDetails(details: BangumiDetail[]): void {
+  for (const d of details) if (!cache.has(d.id)) cache.set(d.id, Promise.resolve(d));
+}

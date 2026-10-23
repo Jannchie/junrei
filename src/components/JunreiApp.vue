@@ -3,14 +3,14 @@ import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatEpisode, formatTime, imageUrl } from "../format";
-import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, stripLocale } from "../i18n";
+import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, spotNames, stripLocale, workNames } from "../i18n";
 import { ICONS } from "../icons";
 import { onShortcuts } from "../keyboard";
 import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
-import { fetchDetail } from "../detail";
-import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, type ViewPoint, visibleGroup } from "../series";
+import { fetchDetail, seedDetails } from "../detail";
+import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, viewPath, type ViewPoint, visibleGroup } from "../series";
 import { initAdult, setShowAdult, showAdult } from "../adult";
 import "../theme.css";
 
@@ -76,7 +76,7 @@ const mounted = ref(false);
 const appleMaps = ref(false);
 const mapsUrl = (p: { lat: number; lng: number; name: string | null; cn: string | null }) =>
   appleMaps.value
-    ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent(pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) || `${p.lat},${p.lng}`)}`
+    ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent(pickName(spotNames(p)) || `${p.lat},${p.lng}`)}`
     : `https://www.google.com/maps/search/?api=1&query=${p.lat}%2C${p.lng}`;
 
 interface SearchResult {
@@ -87,6 +87,7 @@ const fetchSearch = (q: string, adult: boolean) => fetch("/v1/search", { query: 
 
 // 面板里的作品以系列为单位：group 是当前系列，filter 是筛选的作品（null 为全部），detail 是据此组装出的显示内容
 const group = shallowRef<Group | null>(props.initialGroup ?? null);
+if (props.initialGroup) seedDetails(props.initialGroup.details);
 const filter = ref<number | null>(props.initialFilter ?? null);
 // 成人向（src/adult.ts）：没打开显示开关时，系列里只留一般向作品；直接打开成人向作品要先确认一次（revealed 记下确认过的系列）
 const revealed = ref<number | null>(null);
@@ -105,7 +106,7 @@ const selected = computed(() =>
     ? {
         bangumiId: detail.value.id,
         color: detail.value.color,
-        points: detail.value.points.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName({ cn: p.cn, original: p.name, i18n: p.i18n }), lng: p.lng, lat: p.lat })),
+        points: detail.value.points.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName(spotNames(p)), lng: p.lng, lat: p.lat })),
       }
     : null,
 );
@@ -179,7 +180,8 @@ const SHEETS: Sheet[] = ["peek", "half", "full"];
 /** 各档高度（px），和下面 CSS 里 .sheet-* 的高度对应 */
 const sheetHeight = (s: Sheet) => (s === "peek" ? 84 : s === "half" ? innerHeight * 0.46 : innerHeight - 48);
 let drag: { y: number; height: number; lastY: number; lastT: number; v: number } | null = null;
-const dragHeight = ref<number | null>(null);
+// 拖动中的高度直接写到面板的 style 上，不经过响应式：每帧重渲染整个面板太重
+let dragHeight: number | null = null;
 function onHandleDown(e: PointerEvent) {
   drag = { y: e.clientY, height: panel.value!.getBoundingClientRect().height, lastY: e.clientY, lastT: e.timeStamp, v: 0 };
   (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -190,12 +192,14 @@ function onHandleMove(e: PointerEvent) {
   drag.lastY = e.clientY;
   drag.lastT = e.timeStamp;
   // 位移很小时仍算轻点，不进入拖动
-  if (dragHeight.value != null || Math.abs(e.clientY - drag.y) > 6) {
-    dragHeight.value = Math.max(72, drag.height + drag.y - e.clientY);
+  if (dragHeight != null || Math.abs(e.clientY - drag.y) > 6) {
+    dragHeight = Math.max(72, drag.height + drag.y - e.clientY);
+    panel.value!.style.transition = "none";
+    panel.value!.style.height = `${dragHeight}px`;
   }
 }
 function onHandleUp() {
-  const h = dragHeight.value;
+  const h = dragHeight;
   if (!drag || h == null) {
     // 轻点把手：全屏 → 半屏，半屏 → 收起，收起 → 半屏
     sheet.value = sheet.value === "half" ? "peek" : "half";
@@ -209,7 +213,9 @@ function onHandleUp() {
     sheet.value = SHEETS.reduce((a, b) => (Math.abs(sheetHeight(b) - h) < Math.abs(sheetHeight(a) - h) ? b : a));
   }
   drag = null;
-  dragHeight.value = null;
+  dragHeight = null;
+  panel.value!.style.transition = "";
+  panel.value!.style.height = "";
 }
 /** 碰到地图：抽屉让开，回到半屏 */
 function onMapPointer() {
@@ -217,16 +223,19 @@ function onMapPointer() {
   if (document.activeElement === searchInput.value) searchInput.value!.blur();
 }
 
-// 搜索：输入停顿 250ms 后请求
+// 搜索：输入停顿 250ms 后请求，同时写进地址栏（debouncedQuery）
 let timer: ReturnType<typeof setTimeout> | undefined;
 let seq = 0;
+const debouncedQuery = ref("");
 watch(query, (q) => {
   clearTimeout(timer);
   if (!q.trim()) {
     results.value = null;
+    debouncedQuery.value = "";
     return;
   }
   timer = setTimeout(async () => {
+    debouncedQuery.value = q.trim();
     const id = ++seq;
     searching.value = true;
     try {
@@ -243,24 +252,22 @@ watch(query, (q) => {
 });
 
 async function pickResult(bangumiId: number, pointId: string | null = null) {
-  query.value = "";
-  results.value = null;
+  query.value = ""; // 清空搜索词时 watch 会一并清掉结果
   await select(bangumiId, pointId);
 }
 /** 搜索结果、首页的系列卡片：打开整个系列 */
 async function pickCard(id: number) {
   query.value = "";
-  results.value = null;
   await open(id, null);
 }
 const workName = (id: number) => {
   const w = detail.value?.series.find((s) => s.id === id);
-  return w ? pickName({ cn: w.cn, original: w.title, en: w.en, i18n: w.i18n }) : "";
+  return w ? pickName(workNames(w)) : "";
 };
 /** 报告地标问题：预填好作品、地标、坐标与来源的 GitHub issue */
 function reportUrl(p: ViewPoint) {
   const work = detail.value?.series.find((w) => w.id === p.bangumiId);
-  const title = `[地标] ${pickName({ cn: p.cn, original: p.name, i18n: p.i18n })}（${work ? pickName({ cn: work.cn, original: work.title, en: work.en, i18n: work.i18n }) : p.bangumiId}）`;
+  const title = `[地标] ${pickName(spotNames(p))}（${work ? pickName(workNames(work)) : p.bangumiId}）`;
   const body = [
     "<!-- 请说明问题：位置不对 / 不是这部作品的场景 / 地点已经消失或变化 / 其他 -->",
     "",
@@ -277,23 +284,16 @@ const cardPath = (c: Card) => localePath(locale.value, c.series ? `/s/${c.id}` :
 
 // 状态写进 URL，链接即可分享、收藏：路径是作品（/b/:id 由服务端渲染，可被收录），?p 是地标，
 // ?q 是搜索词（也是 OpenSearch 的入口），#map 是地图视野（由 maplibre 维护，这里原样保留）
-const debouncedQuery = ref("");
-let queryTimer: ReturnType<typeof setTimeout> | undefined;
-watch(query, (q) => {
-  clearTimeout(queryTimer);
-  queryTimer = setTimeout(() => (debouncedQuery.value = q.trim()), 400);
-});
 watch([detail, focusPointId, debouncedQuery], () => {
-  // 系列「全部」是 /s/:系列，筛选到某部作品（或不在系列里的作品）是 /b/:作品
   const d = detail.value;
-  const path = !d ? "/" : d.filter == null && d.series.length > 1 ? `/s/${d.key}` : `/b/${d.id}`;
+  const path = d ? viewPath(d) : "/";
   const url = new URL(localePath(locale.value, path), location.origin);
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
   if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
   url.hash = location.hash;
   history.replaceState(null, "", url);
   document.title = detail.value
-    ? `${pickName({ cn: detail.value.cn, original: detail.value.title, en: detail.value.en, i18n: detail.value.i18n })} · ${t("brand")}`
+    ? `${pickName(workNames(detail.value))} · ${t("brand")}`
     : t("brand");
 });
 
@@ -409,7 +409,7 @@ function bindShortcuts() {
     o: () => {
       const p = detail.value?.points.find((p) => p.id === focusPointId.value);
       if (!p) return false;
-      open(mapsUrl(p), "_blank", "noopener");
+      window.open(mapsUrl(p), "_blank", "noopener");
     },
     "+": () => mapView.value?.zoomIn(),
     "=": () => mapView.value?.zoomIn(),
@@ -447,12 +447,15 @@ onMounted(() => {
   initTheme();
   initAdult();
   panelObserver = new ResizeObserver(() => {
+    if (drag) return; // 拖动中不跟着改地图留白，松手停稳后再量一次
     const a = app.value!.getBoundingClientRect();
     const r = panel.value!.getBoundingClientRect();
     const beside = r.width < a.width * 0.6; // 桌面端在左侧，手机端在底部
-    mapPadding.value = beside
-      ? { top: 0, right: 0, bottom: 0, left: r.right - a.left }
-      : { top: 0, right: 0, bottom: a.bottom - r.top, left: 0 };
+    const next = beside
+      ? { top: 0, right: 0, bottom: 0, left: Math.round(r.right - a.left) }
+      : { top: 0, right: 0, bottom: Math.round(a.bottom - r.top), left: 0 };
+    const cur = mapPadding.value;
+    if (cur.bottom !== next.bottom || cur.left !== next.left) mapPadding.value = next;
   });
   panelObserver.observe(panel.value!);
   panelObserver.observe(app.value!);
@@ -493,7 +496,6 @@ onBeforeUnmount(() => {
       ref="panel"
       class="panel"
       :class="`sheet-${sheet}`"
-      :style="dragHeight != null ? { height: `${dragHeight}px`, transition: 'none' } : undefined"
     >
       <div
         class="handle"
@@ -531,8 +533,8 @@ onBeforeUnmount(() => {
             <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
-              <strong v-auto-lang>{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</strong>
-              <small v-auto-lang v-if="subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ subName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</small>
+              <strong v-auto-lang>{{ pickName(workNames(b)) }}</strong>
+              <small v-auto-lang v-if="subName(workNames(b))">{{ subName(workNames(b)) }}</small>
             </span>
             <span class="row-stats">
               <span v-if="b.series" class="stat" :title="t('series')"><JIcon :icon="ICONS.series" :size="14" /><span class="tx">{{ b.works }}</span></span>
@@ -549,7 +551,7 @@ onBeforeUnmount(() => {
             <img @error="retryImage" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
-              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
+              <strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong>
               <small v-auto-lang>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn, i18n: p.bangumiI18n }) }}</small>
             </span>
           </button>
@@ -561,7 +563,7 @@ onBeforeUnmount(() => {
         <!-- 标题区滚出去后，作品名浮在列表顶部；点一下回到顶部 -->
         <div class="detail-bar" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
           <button v-auto-lang type="button" class="bar-title" tabindex="-1" @click="($event.currentTarget as HTMLElement).closest('.scroll')!.scrollTo({ top: 0, behavior: 'smooth' })">
-            {{ pickName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
+            {{ pickName(workNames(detail)) }}
           </button>
         </div>
         <!-- 成人向作品：确认之前不显示封面、标题与地标 -->
@@ -578,9 +580,9 @@ onBeforeUnmount(() => {
           <div ref="titleRow" class="title-row">
             <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
-              <h2 v-auto-lang>{{ pickName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}</h2>
-              <p v-auto-lang v-if="subName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n })" class="sub">
-                {{ subName({ cn: detail.cn, original: detail.title, en: detail.en, i18n: detail.i18n }) }}
+              <h2 v-auto-lang>{{ pickName(workNames(detail)) }}</h2>
+              <p v-auto-lang v-if="subName(workNames(detail))" class="sub">
+                {{ subName(workNames(detail)) }}
               </p>
               <p class="meta">
                 <span v-if="detail.cat" class="stat"><JIcon :icon="ICONS.bangumi" :size="14" /><span class="tx">{{ categoryOf(detail.cat) }}</span></span>
@@ -627,7 +629,7 @@ onBeforeUnmount(() => {
             <img v-if="s.cover" @error="retryImage" :src="imageUrl(s.cover)" class="series-cover" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="series-cover" aria-hidden="true" />
             <span class="series-text">
-            <span v-auto-lang class="series-name">{{ pickName({ cn: s.cn, original: s.title, en: s.en, i18n: s.i18n }) }}</span>
+            <span v-auto-lang class="series-name">{{ pickName(workNames(s)) }}</span>
             <small class="stat">
               <span class="tx">{{ s.airDate?.slice(0, 4) ?? categoryOf(s.cat) }}</span>
               <template v-if="s.pointCount"><JIcon :icon="ICONS.point" :size="11" /><span class="tx">{{ s.pointCount }}</span></template>
@@ -658,7 +660,7 @@ onBeforeUnmount(() => {
               </figcaption>
             </figure>
             <div class="point-body">
-              <strong v-auto-lang>{{ pickName({ cn: p.cn, original: p.name, i18n: p.i18n }) }}</strong>
+              <strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong>
               <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
               <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
               <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(p.bangumiId) }}</span>
@@ -706,7 +708,7 @@ onBeforeUnmount(() => {
           <li v-for="b in overviewList" :key="b.id">
             <a :href="cardPath(b)" @click.prevent="pickCard(b.id)">
               <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
-              <span v-auto-lang class="popular-name" :title="pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n })">{{ pickName({ cn: b.cn, original: b.title, en: b.en, i18n: b.i18n }) }}</span>
+              <span v-auto-lang class="popular-name" :title="pickName(workNames(b))">{{ pickName(workNames(b)) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
           </li>

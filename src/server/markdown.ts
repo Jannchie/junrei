@@ -1,4 +1,5 @@
 // 面向 LLM 的 Markdown 版本（llms.txt 约定）：纯文本、无脚本，链接都是绝对地址
+import { formatEpisode, formatTime } from "../format";
 import { type BangumiDetail, displayName, SITE } from "./bangumi";
 
 export const markdownResponse = (body: string) =>
@@ -7,10 +8,7 @@ export const markdownResponse = (body: string) =>
 const esc = (s: string) => s.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 
 function scene(ep: string | null, s: number | null) {
-  const parts = [];
-  if (ep) parts.push(/^\d+$/.test(ep) ? `EP${ep}` : ep);
-  if (s) parts.push(`${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`);
-  return parts.join(" ");
+  return [ep && formatEpisode(ep), s && formatTime(s)].filter(Boolean).join(" ");
 }
 
 export function bangumiMarkdown(d: BangumiDetail) {

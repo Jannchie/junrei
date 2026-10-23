@@ -1,7 +1,8 @@
 import type { HeadDescriptor } from "void";
-import { cityFor, type Locale, LOCALES, localePath, pickNameFor, subNameFor, translate } from "../i18n";
+import { cityFor, type Locale, LOCALES, localePath, pickNameFor, spotNames, subNameFor, translate, workNames } from "../i18n";
+import { imageUrl } from "../format";
 import { type BangumiDetail, SITE } from "./bangumi";
-import { buildView, type Group, needsAdultGate, visibleGroup } from "../series";
+import { buildView, type Group, needsAdultGate, viewPath, visibleGroup } from "../series";
 
 /** 各语言的 Open Graph locale 与分享图 */
 const OG_LOCALE: Record<Locale, string> = { "zh-Hans": "zh_CN", "zh-Hant": "zh_TW", ja: "ja_JP", en: "en_US" };
@@ -104,19 +105,19 @@ export function homeHead(locale: Locale): HeadDescriptor {
 export function bangumiHead(locale: Locale, g: Group, filter: number | null): HeadDescriptor {
   const adult = needsAdultGate(g, filter);
   const d = buildView(visibleGroup(g, false, filter), filter)!;
-  const names = { cn: d.cn, original: d.title, en: d.en, i18n: d.i18n };
+  const names = workNames(d);
   const name = pickNameFor(locale, names);
-  const path = d.filter == null && d.series.length > 1 ? `/s/${d.key}` : `/b/${d.id}`;
+  const path = viewPath(d);
   const spots = (adult ? [] : d.points)
     .slice(0, 6)
-    .map((p) => pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }))
+    .map((p) => pickNameFor(locale, spotNames(p)))
     .filter(Boolean)
     .join(locale === "en" ? ", " : "、");
   const url = SITE + localePath(locale, path);
   return siteHead(locale, path, {
     title: `${name} · ${translate(locale, "brand")}`,
     description: bangumiDescription(locale, d, name, subNameFor(locale, names), spots),
-    image: adult ? undefined : d.cover?.startsWith("https://image.anitabi.cn/") ? `${d.cover}?plan=h360` : (d.cover ?? undefined),
+    image: adult || !d.cover ? undefined : imageUrl(d.cover, "h360"),
     // 还没有地标的作品页内容很少、成人向作品页，都不让搜索引擎收录（也不在 sitemap 里）
     noindex: d.points.length === 0 || adult,
     jsonLd: adult ? undefined : {
@@ -132,11 +133,11 @@ export function bangumiHead(locale: Locale, g: Group, filter: number | null): He
         position: i + 1,
         item: {
           "@type": "TouristAttraction",
-          name: pickNameFor(locale, { cn: p.cn, original: p.name, i18n: p.i18n }),
+          name: pickNameFor(locale, spotNames(p)),
           alternateName: p.cn && p.name ? p.name : undefined,
           url: `${url}?p=${p.id}`,
           geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lng },
-          image: p.image ? `${p.image}?plan=h360` : undefined,
+          image: p.image ? imageUrl(p.image, "h360") : undefined,
         },
       })),
     },

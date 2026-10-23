@@ -1,43 +1,52 @@
 // 作品查询，供 /v1 API、页面 loader、sitemap 与面向 LLM 的 Markdown 共用
 import { bangumi, point } from "@schema";
-import { and, asc, db, desc, eq, gt, sql } from "void/db";
+import { and, asc, db, desc, eq, gt, inArray, sql } from "void/db";
+
+type SQL = ReturnType<typeof sql>;
 import { type Card, type Group, groupOf, missingDetails } from "../series";
 
 export const SITE = "https://junrei.jannchie.com";
 
-export async function getBangumi(id: number) {
-  const [[info], points] = await Promise.all([
-    db.select().from(bangumi).where(eq(bangumi.id, id)),
+const POINT_FIELDS = {
+  bangumiId: point.bangumiId,
+  id: point.id,
+  name: point.name,
+  cn: point.cn,
+  lat: point.lat,
+  lng: point.lng,
+  ep: point.ep,
+  s: point.s,
+  image: point.image,
+  origin: point.origin,
+  originLink: point.originLink,
+  mark: point.mark,
+  source: point.source,
+  sourceUrl: point.sourceUrl,
+  i18n: point.i18n,
+};
+const SERIES_FIELDS = { id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n, nsfw: bangumi.nsfw, cover: bangumi.cover };
+
+/** 若干部作品的详情（作品、地标、所在系列的作品列表），所有查询一轮并行发出 */
+async function getDetails(ids: number[]) {
+  const [infos, points, series] = await Promise.all([
+    db.select().from(bangumi).where(inArray(bangumi.id, ids)),
+    db.select(POINT_FIELDS).from(point).where(inArray(point.bangumiId, ids)).orderBy(asc(point.priority), asc(point.id)),
     db
-      .select({
-        id: point.id,
-        name: point.name,
-        cn: point.cn,
-        lat: point.lat,
-        lng: point.lng,
-        ep: point.ep,
-        s: point.s,
-        image: point.image,
-        origin: point.origin,
-        originLink: point.originLink,
-        mark: point.mark,
-        source: point.source,
-        sourceUrl: point.sourceUrl,
-        i18n: point.i18n,
-      })
-      .from(point)
-      .where(eq(point.bangumiId, id))
-      .orderBy(asc(point.priority), asc(point.id)),
+      .select({ ...SERIES_FIELDS, seriesId: bangumi.seriesId })
+      .from(bangumi)
+      .where(sql`${bangumi.seriesId} IN (SELECT series_id FROM bangumi WHERE id IN ${ids})`)
+      .orderBy(sql`${bangumi.airDate} IS NULL`, asc(bangumi.airDate), asc(bangumi.id)),
   ]);
-  if (!info) return null;
-  const series = info.seriesId
-    ? await db
-        .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n, nsfw: bangumi.nsfw, cover: bangumi.cover })
-        .from(bangumi)
-        .where(eq(bangumi.seriesId, info.seriesId))
-        .orderBy(sql`${bangumi.airDate} IS NULL`, asc(bangumi.airDate), asc(bangumi.id))
-    : [];
-  return { ...info, points, series };
+  return infos.map((info) => ({
+    ...info,
+    points: points.filter((p) => p.bangumiId === info.id).map(({ bangumiId: _b, ...p }) => p),
+    series: info.seriesId ? series.filter((w) => w.seriesId === info.seriesId).map(({ seriesId: _s, ...w }) => w) : [],
+  }));
+}
+
+export async function getBangumi(id: number) {
+  const [d] = await getDetails([id]);
+  return d ?? null;
 }
 
 export type BangumiDetail = NonNullable<Awaited<ReturnType<typeof getBangumi>>>;
@@ -49,25 +58,31 @@ export async function getGroup(id: number, all: boolean): Promise<Group | null> 
   const d = await getBangumi(id);
   if (!d) return null;
   const group = groupOf(d);
-  if (all) {
-    const rest = await Promise.all(missingDetails(group).map(getBangumi));
-    group.details.push(...rest.filter((x) => x != null));
-  }
+  const rest = all ? missingDetails(group) : [];
+  if (rest.length) group.details.push(...(await getDetails(rest)));
   return group;
 }
 
-/** 首页的热门：按系列合并（系列名取代表作，封面取地标最多的那部），按系列地标总数排序；不含成人向作品 */
-export async function listCards(limit: number): Promise<Card[]> {
-  const rows = await db.all<Omit<Card, "i18n" | "series"> & { i18n: string | null; series: number }>(sql`
+type CardRow = Omit<Card, "i18n" | "series"> & { i18n: string | null; series: number };
+
+/**
+ * 作品按系列合并成卡片（首页热门、搜索结果共用）：名称取系列代表作，封面取系列里地标最多的那部，地标数是系列总数。
+ * where 作用在系列里的各部作品（别名 b）上
+ */
+export async function listCardsWhere(where: SQL, orderBy: SQL, limit: number): Promise<Card[]> {
+  const rows = await db.all<CardRow>(sql`
     SELECT coalesce(b.series_id, b.id) AS id, b.series_works > 1 AS series, r.cn, r.title, r.en, r.i18n,
            b.cover, b.series_points AS pointCount, b.series_works AS works, max(b.point_count) AS top
     FROM bangumi b JOIN bangumi r ON r.id = coalesce(b.series_id, b.id)
-    WHERE b.point_count > 0 AND b.nsfw = 0
+    WHERE ${where}
     GROUP BY coalesce(b.series_id, b.id)
-    ORDER BY b.series_points DESC
+    ORDER BY ${orderBy}
     LIMIT ${limit}`);
-  return rows.map(({ top: _top, ...r }: typeof rows[number] & { top?: number }) => ({ ...r, series: !!r.series, i18n: r.i18n ? JSON.parse(r.i18n) : null }));
+  return rows.map(({ top: _top, ...r }: CardRow & { top?: number }) => ({ ...r, series: !!r.series, i18n: r.i18n ? JSON.parse(r.i18n) : null }));
 }
+
+/** 首页的热门：按系列地标总数排序；不含成人向作品 */
+export const listCards = (limit: number) => listCardsWhere(sql`b.point_count > 0 AND b.nsfw = 0`, sql`b.series_points DESC`, limit);
 
 /** 有地标、不止一部作品的系列（sitemap 列出系列页用）；代表作是成人向的不列 */
 export async function listSeriesKeys(): Promise<number[]> {

@@ -1,15 +1,6 @@
-import { defineHandler, defineHead, type InferProps } from "void";
-import { localeFromSegment } from "../../src/i18n";
-import { listCards } from "../../src/server/bangumi";
-import { homeHead } from "../../src/server/seo";
+import type { InferProps } from "void";
+import { homeLoader, homePageHead } from "../../src/server/pages";
 
+export const loader = homeLoader;
 export type Props = InferProps<typeof loader>;
-
-// 其他语言的首页：/zh-hant、/ja、/en
-export const loader = defineHandler(async (c) => {
-  const lang = localeFromSegment(c.req.param("lang"));
-  if (!lang) return c.notFound();
-  return { popular: await listCards(24), lang };
-});
-
-export const head = defineHead<Props>((_c, { lang }) => homeHead(lang));
+export const head = homePageHead;

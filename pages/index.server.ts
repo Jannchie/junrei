@@ -1,11 +1,6 @@
-import { defineHandler, defineHead, type InferProps } from "void";
-import type { Locale } from "../src/i18n";
-import { listCards } from "../src/server/bangumi";
-import { homeHead } from "../src/server/seo";
+import type { InferProps } from "void";
+import { homeLoader, homePageHead } from "../src/server/pages";
 
+export const loader = homeLoader;
 export type Props = InferProps<typeof loader>;
-
-// 首页（简体中文，无语言前缀）：服务端渲染概览与热门作品（真实链接，爬虫能走到每个作品页）；地图在浏览器里挂载
-export const loader = defineHandler(async () => ({ popular: await listCards(24), lang: "zh-Hans" as Locale }));
-
-export const head = defineHead<Props>((_c, { lang }) => homeHead(lang));
+export const head = homePageHead;

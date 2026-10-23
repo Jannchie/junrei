@@ -177,6 +177,11 @@ export interface I18n {
 }
 
 type Names = { cn?: string | null; original?: string | null; en?: string | null; i18n?: I18n | null };
+/** 作品、地标各自的字段转成 Names（作品的原名在 title，地标在 name） */
+export const workNames = (w: { cn?: string | null; title?: string | null; en?: string | null; i18n?: I18n | null }): Names =>
+  ({ cn: w.cn, original: w.title, en: w.en, i18n: w.i18n });
+export const spotNames = (p: { cn?: string | null; name?: string | null; i18n?: I18n | null }): Names =>
+  ({ cn: p.cn, original: p.name, i18n: p.i18n });
 
 /**
  * 按界面语言挑名称：先用翻译表里该语言的文本（人工优先，其次机翻）；没有时按
