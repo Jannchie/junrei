@@ -43,7 +43,8 @@ MANUAL = Path(__file__).resolve().parent / "manual.json"
 ARTICLE_CHARS = 8000  # 每篇文章最多送给模型的字数
 ARTICLES_PER_WORK = 8
 THIN = 15  # 地标少于这个数的已收录作品算「偏少」，也值得补
-DUP_METERS = 150  # 和已有地标相距不到这个距离（或同名）的候选视为重复，不进草稿
+DUP_METERS = 150  # 和已有地标相距不到这个距离（或同名）、又是同一个镜头的候选视为重复，不进草稿
+SHOT_SECONDS = 15  # 同一集里时间相差不到这么多秒，算同一个镜头
 GAPS_UA = "junrei-gaps/0.1 (+https://junrei.jannchie.com)"
 IMG_JUNK = re.compile(r"(?i)icon|avatar|logo|emoji|button|banner|\.gif|\.svg")  # 不是正文图片的地址
 
@@ -400,7 +401,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         gaps = [g for g in gaps if int(g["bangumi_id"]) in want]
     else:
         done = {d["bangumi"] for _, d in drafts(data / "review" / "gaps")}
-        gaps = [g for g in gaps if int(g["bangumi_id"]) not in done][: args.top]
+        # --redo：已有草稿的作品按现在的规则重做（文章、提取结果、地理编码都有缓存）
+        gaps = [g for g in gaps if (int(g["bangumi_id"]) in done) == args.redo][: args.top]
     subs = all_subjects(data)
     from sync import tracemoe
 
@@ -474,9 +476,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         manual_points.setdefault(mp["bangumi"], []).append(mp)
     for g, inputs in works:
         bid = int(g["bangumi_id"])
-        spots, seen = [], set()
+        spots, seen, names_seen = [], set(), set()
         existing = existing_points(db, bid, manual_points.get(bid, []))
-        dropped = 0
         for url, text, ev in inputs:
             r = results.get(llm.sha(text))
             if not r:
@@ -486,18 +487,16 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                 _, body = http.get(url.split("#")[0])
                 page = decode(body) if body else ""
             for s in r[0]["spots"]:
-                key = s["name_ja"]
                 proof = ev.get(s.get("evidence", -1)) if evidence_mode else None
-                if key in seen or s["confidence"] < args.min_confidence or (evidence_mode and not proof):
+                # 同一地点的不同截图是不同镜头，各算一个地标；同一地点同一张图（或没有图）只算一个
+                shot = (s["name_ja"], proof and proof["image"])
+                if shot in seen or s["confidence"] < args.min_confidence or (evidence_mode and not proof):
                     continue
-                seen.add(key)
-                if loose(key) in existing["names"]:
-                    dropped += 1
-                    continue
+                seen.add(shot)
+                # 地标 id 沿用「按地名」的算法（已并入的不变），同名的其他镜头再带上截图地址
+                key = s["name_ja"] if s["name_ja"] not in names_seen else f"{s['name_ja']}|{proof and proof['image']}"
+                names_seen.add(s["name_ja"])
                 loc = geocode(geo, s)
-                if loc and loc["by"] != "gsi-area" and any(haversine_km(loc["lat"], loc["lng"], la, ln) * 1000 < DUP_METERS for la, ln in existing["coords"]):
-                    dropped += 1
-                    continue
                 spots.append({
                     "id": f"m-{bid}-{hashlib.sha1(key.encode()).hexdigest()[:8]}",
                     "approved": False,
@@ -517,6 +516,9 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                 })
         apply_trace(spots, retarget=anilist_bangumi(tm, subs, {s["trace"]["anilist"] for s in spots if s.get("trace")})
                     if evidence_mode else None)
+        before = len(spots)
+        spots = [s for s in spots if not is_duplicate(existing, s)]
+        dropped = before - len(spots)
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots,
                  **({"nsfw": True} if sub.get("nsfw") else {})}
@@ -552,11 +554,31 @@ def exchange(db, folder: Path, texts: list[str], model: str, task: llm.Task = TA
     return not pending
 
 
-def existing_points(db, bid: int, manual_points: list[dict]) -> dict:
-    """作品已有的地标（Anitabi + manual.json）：名称（宽松归一）与坐标，用来给候选去重"""
-    rows = db.execute("SELECT name, cn, lat, lng FROM src.point WHERE bangumi_id = ?", (bid,)).fetchall()
-    rows += [(p.get("name"), p.get("cn"), p["lat"], p["lng"]) for p in manual_points]
-    return {"names": {loose(n) for r in rows for n in r[:2] if n}, "coords": [(r[2], r[3]) for r in rows if r[2] is not None]}
+def existing_points(db, bid: int, manual_points: list[dict]) -> list[dict]:
+    """作品已有的地标（Anitabi + manual.json）：名称（宽松归一）、坐标、集数与时间，用来给候选去重"""
+    rows = db.execute("SELECT name, cn, lat, lng, ep, s FROM src.point WHERE bangumi_id = ?", (bid,)).fetchall()
+    rows += [(p.get("name"), p.get("cn"), p["lat"], p["lng"], p.get("ep"), p.get("s")) for p in manual_points]
+    return [{"names": {loose(n) for n in r[:2] if n}, "lat": r[2], "lng": r[3], "ep": r[4], "s": r[5]} for r in rows]
+
+
+def same_shot(a: dict, b: dict) -> bool:
+    """两个地标是不是同一个镜头：集数不同、或同一集时间相差超过 SHOT_SECONDS 的是不同镜头；缺集数或时间时说不清，按同一个算"""
+    ea, eb = str(a.get("ep") or ""), str(b.get("ep") or "")
+    if ea and eb and ea != eb:
+        return False
+    if a.get("s") is not None and b.get("s") is not None:
+        return abs(float(a["s"]) - float(b["s"])) <= SHOT_SECONDS
+    return True
+
+
+def is_duplicate(existing: list[dict], cand: dict) -> bool:
+    """候选和已有地标是同一个地点（同名，或相距不到 DUP_METERS）的同一个镜头。只定位到行政区中心的不按距离判断"""
+    name = loose(cand.get("name") or "")
+    located = cand.get("lat") is not None and (cand.get("geocode") or {}).get("by") != "gsi-area"
+    return any(
+        (name in e["names"] or (located and e["lat"] is not None
+                                and haversine_km(cand["lat"], cand["lng"], e["lat"], e["lng"]) * 1000 < DUP_METERS))
+        and same_shot(e, cand) for e in existing)
 
 
 def write_review(out_dir: Path) -> None:
@@ -859,6 +881,7 @@ def main():
     run.add_argument("--list", choices=["gaps", "thin", "nishikibuna"], default="gaps",
                      help="gaps：没有地标的作品；thin：地标偏少的作品；nishikibuna：錦鮒出版探访过的美少女游戏")
     run.add_argument("--ids", help="指定作品的 Bangumi id，逗号分隔")
+    run.add_argument("--redo", action="store_true", help="重做已有草稿的作品（去重规则等改了之后）")
     run.add_argument("--model", default=MODEL)
     run.add_argument("--mode", choices=["batch", "sync"], default="sync")
     run.add_argument("--limit", type=int, help="最多请求多少篇文章（试跑用）")

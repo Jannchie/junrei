@@ -4,7 +4,7 @@
   python -m sync.anime_tourism --wait       # 并入（地标名的多语言翻译走 Claude Batch，等它完成）
 
 各都道府县的地图页（/r/<地区>/）内嵌着该地区全部地标：坐标、地点名、所属作品，以及 1～2 张 200px 的场景截图。
-流程：作品名对上唯一一部 Bangumi 作品 → 去掉和已有地标重复的（150 米内或同名）→ 截图在本地 trace.moe 帧库里比对，
+流程：作品名对上唯一一部 Bangumi 作品 → 去掉和已有地标重复的（同一地点的同一个镜头，见 sync.gaps.is_duplicate）→ 截图在本地 trace.moe 帧库里比对，
 对上的取集数与时间（规则同 sync.gaps.apply_trace），对不上的也照样收录 → 截图缩小后转存到 R2 → 并入 manual.json。
 地标只记坐标、地点名、集数与时间，不搬运站点写的介绍；每个地标保留指向原页面的来源链接。
 页面与截图按每秒一个请求抓取，缓存在 data/anime-tourism/（截图）与 cache.sqlite（页面）。
@@ -21,12 +21,10 @@ from pathlib import Path
 from sync import llm
 from sync.enrich_common import Http, add_data_arg, open_db, setup_stdout
 from sync.fold import loose
-from sync.sync import haversine_km
 
 BASE = "https://anime-tourism.jp/"
 SOURCE = "Anime Tourism"
 UA = "junrei-sync/0.1 (+https://junrei.jannchie.com)"
-DUP_METERS = 150
 
 MARKER = re.compile(r'lat\[(\d+)\]=([\d.\-]+);lng\[\1\]=([\d.\-]+);icon\[\1\]=\d+;popup\[\1\]="(.*?)";(?=lat\[|\s*\n|\s*<|\s*$)', re.S)
 
@@ -70,8 +68,8 @@ def collect(http: Http) -> list[dict]:
 
 EP_PREFIX = re.compile(r"^(?:NEXT)?第?([0-9０-９]+)[話话集]\s*")
 EP_PREFIX_EN = re.compile(r"^(?:NEXT)?(?:第?[0-9０-９]+[話话集]|Ep(?:isode)?\.?\s*\d+)[\s:：-]*", re.I)
-# 站内的占位名（待考证、记号、编号）和漫画的扉页、封面：说明不了是什么地方，也不是动画画面
-JUNK_NAME = re.compile(r"^(検討|目印|ポイント|候補|不明)\s*[0-9０-９①-⑳]*$|扉絵|表紙")
+# 站内的占位名（待考证、记号、编号）：说明不了是什么地方
+JUNK_NAME = re.compile(r"^(検討|目印|ポイント|候補|不明)\s*[0-9０-９①-⑳]*$")
 
 
 def clean_name(name: str) -> tuple[str, str] | None:
@@ -128,7 +126,7 @@ def is_color(body: bytes) -> bool:
 def main():
     from sync import tracemoe
     from sync.gaps import (MANUAL, SHOTS, Vectors, all_subjects, anilist_bangumi, apply_trace, existing_points,
-                           load_manual, lookup, register_works, save_manual, shot_jpeg, work_names)
+                           is_duplicate, load_manual, lookup, register_works, save_manual, shot_jpeg, work_names)
     from sync.translate import TASKS, opencc_converter
 
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -157,46 +155,62 @@ def main():
             works[tid] = next(iter(found))
     print(f"对上 Bangumi 的作品 {len(works)} / {len({s['tid'] for s in spots})}")
 
-    # 2. 去重：和已有地标（Anitabi + manual.json）相距不到 150 米或同名的不要
+    # 2. 候选：和已有地标（Anitabi + manual.json）同一个地点的，可能只是同一地点的另一个镜头，
+    #    要等截图定下集数与时间再判断；本地帧库里没有这部作品的，判断不了，按重复处理。站内的地标互不合并（各是一个镜头）
     manual = load_manual()
     known_ids = {p["id"] for p in manual["points"]}
     manual_points: dict[int, list] = {}
     for mp in manual["points"]:
         manual_points.setdefault(mp["bangumi"], []).append(mp)
-    todo, have = [], {}
+    tm = tracemoe.open_db() if (tracemoe.DIR / "frames.sqlite").exists() else None
+    framed = {aid for (aid,) in tm.execute("SELECT DISTINCT anilist_id FROM files")} if tm else set()
+    have: dict[int, list] = {}
+    anilist: dict[int, dict] = {}
+    by_id = {p["id"]: p for p in manual["points"]}
+    todo, backfill = [], []  # backfill：早先并入、还没有截图的（当时漫画分镜没算作截图）
     for s in spots:
         bid = works.get(s["tid"])
-        if not bid or (pid := spot_id(s)) in known_ids or not (cleaned := clean_name(s["name"])):
+        if bid and (pid := spot_id(s)) in known_ids:
+            if not by_id[pid].get("image") and s["images"]:
+                s["id"] = pid
+                backfill.append(s)
+            continue
+        if not bid or not (cleaned := clean_name(s["name"])):
             continue
         s["bangumi"], s["id"] = bid, pid
         s["name"], s["ep"] = cleaned
         if bid not in have:
             have[bid] = existing_points(db, bid, manual_points.get(bid, []))
-        ex = have[bid]
-        if loose(s["name"]) in ex["names"] or any(
-                haversine_km(s["lat"], s["lng"], la, ln) * 1000 < DUP_METERS for la, ln in ex["coords"]):
+            anilist[bid] = {a: k for a, k in (tracemoe.match_anilist(tm, work_names(None, None, subs.get(bid, {}))) if tm else {}).items()
+                            if a in framed}
+        if is_duplicate(have[bid], s) and not (anilist[bid] and s["images"]):
             continue
-        ex["names"].add(loose(s["name"]))  # 站内同一地点在几个地区页重复出现
-        ex["coords"].append((s["lat"], s["lng"]))
         todo.append(s)
-    print(f"新地标 {len(todo)} 个（其中 {sum(1 for s in todo if s['images'])} 个带截图）")
+    print(f"候选 {len(todo)} 个（其中 {sum(1 for s in todo if s['images'])} 个带截图）")
 
     # 3. 截图：下载、在本地 trace.moe 帧库里比对
     images = Images(data, http)
-    tm = tracemoe.open_db() if (tracemoe.DIR / "frames.sqlite").exists() else None
     vectors = Vectors(db)
     by_work: dict[int, list[dict]] = {}
     for s in todo:
         by_work.setdefault(s["bangumi"], []).append(s)
+    for s in backfill:
+        s["shot"] = next(((u, b) for u in s["images"] if (b := images.get(u))), None)
+        if not s["shot"]:
+            del s["shot"]
     traced = 0
     for bid, group in by_work.items():
-        ids = tracemoe.match_anilist(tm, work_names(None, None, subs.get(bid, {}))) if tm else {}
+        ids = anilist[bid]
         tracemoe.clear_cache()
         for s in group:
             s["confidence"] = 0.5
             for url in s["images"]:
                 body = images.get(url)
-                if not body or not is_color(body):
+                if not body:
+                    continue
+                # 漫画分镜（黑白）也用作截图，但不拿去和动画帧比对；有彩色的动画截图时优先用它
+                if not is_color(body):
+                    s.setdefault("manga", (url, body))
                     continue
                 s.setdefault("shot", (url, body))
                 if ids:
@@ -206,8 +220,14 @@ def main():
                         s["trace"], s["shot"] = proof, (url, body)
                         traced += 1
                         break
+        for s in group:
+            if "shot" not in s and "manga" in s:
+                s["shot"] = s["manga"]
+            s.pop("manga", None)
         apply_trace(group, retarget=anilist_bangumi(tm, subs, {s["trace"]["anilist"] for s in group if s.get("trace")}) if tm else None)
         vectors.save()
+    todo = [s for s in todo if not is_duplicate(have[s["bangumi"]], s)]
+    print(f"新地标 {len(todo)} 个（同一地点的不同镜头分开算）")
     print(f"截图对上 trace.moe 的 {traced} 个，其中有集数与时间的 {sum(1 for s in todo if s.get('s') is not None)} 个")
     if args.dry_run:
         return
@@ -234,6 +254,9 @@ def main():
 
     with ThreadPoolExecutor(up.workers) as pool:
         shots = list(pool.map(mirror, todo))
+        filled = [(s, url) for s, url in zip(backfill, pool.map(mirror, backfill)) if url]
+    for s, url in filled:
+        by_id[s["id"]].update(image=url, origin=SOURCE, origin_link=s["page"])
     added = 0
     for s, shot in zip(todo, shots):
         if "shot" in s and not shot:
@@ -253,7 +276,7 @@ def main():
         added += 1
     register_works(manual, subs)
     save_manual(manual)
-    print(f"并入 {added} 个地标（{sum(1 for x in shots if x)} 个带截图）→ {MANUAL}")
+    print(f"并入 {added} 个地标（{sum(1 for x in shots if x)} 个带截图），给已有地标补上 {len(filled)} 张截图 → {MANUAL}")
 
 
 if __name__ == "__main__":
