@@ -605,11 +605,16 @@ onBeforeUnmount(() => {
             :aria-current="detail.filter == null ? 'page' : undefined"
             @click.prevent="open(detail.key, null)"
           >
+            <span class="series-covers" aria-hidden="true">
+              <img v-for="s in detail.series.filter((w) => w.cover).slice(0, 3)" :key="s.id" @error="retryImage" :src="imageUrl(s.cover!)" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            </span>
+            <span class="series-text">
             <span class="series-name">{{ t("allWorks") }}</span>
             <small class="stat">
               <span class="tx">{{ detail.series.length }}</span>
               <JIcon :icon="ICONS.point" :size="11" /><span class="tx">{{ detail.series.reduce((n, s) => n + s.pointCount, 0) }}</span>
             </small>
+            </span>
           </a>
           <a
             v-for="s in detail.series"
@@ -619,11 +624,15 @@ onBeforeUnmount(() => {
             :aria-current="s.id === detail.filter ? 'page' : undefined"
             @click.prevent="open(detail.key, s.id)"
           >
+            <img v-if="s.cover" @error="retryImage" :src="imageUrl(s.cover)" class="series-cover" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <span v-else class="series-cover" aria-hidden="true" />
+            <span class="series-text">
             <span v-auto-lang class="series-name">{{ pickName({ cn: s.cn, original: s.title, en: s.en, i18n: s.i18n }) }}</span>
             <small class="stat">
               <span class="tx">{{ s.airDate?.slice(0, 4) ?? categoryOf(s.cat) }}</span>
               <template v-if="s.pointCount"><JIcon :icon="ICONS.point" :size="11" /><span class="tx">{{ s.pointCount }}</span></template>
             </small>
+            </span>
           </a>
         </nav>
         <p v-if="!detail.points.length" class="empty no-spots">{{ t("noSpots") }}</p>
@@ -1060,7 +1069,7 @@ hr {
 }
 .detail-head {
   padding: 14px 16px;
-  border-bottom: 3px solid var(--bangumi-color);
+  border-bottom: 1px solid var(--line);
 }
 .title-row {
   display: flex;
@@ -1186,28 +1195,57 @@ figcaption a {
   border-bottom: 1px solid var(--line);
   scrollbar-width: none;
 }
+/* 系列里的作品：小封面 + 名称 + 年份 / 地点数。选中的那张用作品主题色淡淡铺底、细描边，不整块填色 */
 .series a {
   flex: none;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-width: 140px;
-  padding: 6px 10px;
+  align-items: center;
+  gap: 8px;
+  max-width: 172px;
+  padding: 5px 10px 5px 5px;
   font-size: 12px;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+.series a:hover {
   background: var(--hover);
 }
 .series a.current {
-  color: #fff;
-  background: var(--bangumi-color, var(--accent));
+  background: color-mix(in oklab, var(--bangumi-color, var(--accent)) 10%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--bangumi-color, var(--accent)) 70%, transparent);
 }
-.series a.current .stat {
-  color: inherit;
-  opacity: 0.85;
+.series a.current .series-name {
+  color: color-mix(in oklab, var(--bangumi-color, var(--accent)) 75%, var(--fg));
 }
 .series a.dim:not(.current) {
   opacity: 0.55;
+}
+.series-cover,
+.series-covers img {
+  flex: none;
+  width: 30px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 5px;
+  background: var(--line);
+}
+.series-covers {
+  display: flex;
+  flex: none;
+}
+.series-covers img {
+  box-shadow: 0 0 0 1.5px var(--bg);
+}
+.series-covers img + img {
+  margin-left: -18px;
+}
+.series-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 .series-name {
   overflow: hidden;

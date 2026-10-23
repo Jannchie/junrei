@@ -32,7 +32,7 @@ export async function getBangumi(id: number) {
   if (!info) return null;
   const series = info.seriesId
     ? await db
-        .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n, nsfw: bangumi.nsfw })
+        .select({ id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n, nsfw: bangumi.nsfw, cover: bangumi.cover })
         .from(bangumi)
         .where(eq(bangumi.seriesId, info.seriesId))
         .orderBy(sql`${bangumi.airDate} IS NULL`, asc(bangumi.airDate), asc(bangumi.id))
