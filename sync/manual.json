@@ -16,6 +16,33 @@
       "cat": "TV",
       "color": "#ffdb29",
       "cover": "https://lain.bgm.tv/pic/cover/l/ab/77/472741_MqsB8.jpg"
+    },
+    {
+      "id": 181354,
+      "title": "斉木楠雄のΨ難",
+      "cn": "齐木楠雄的灾难",
+      "en": null,
+      "names": {
+        "zh-Hans": "齐木楠雄的灾难",
+        "zh-Hant": "齊木楠雄的災難",
+        "ja": "斉木楠雄のΨ難"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/181354/image?type=common"
+    },
+    {
+      "id": 37685,
+      "title": "PSYCHO-PASS サイコパス",
+      "cn": "心理测量者",
+      "en": "PSYCHO-PASS",
+      "names": {
+        "zh-Hans": "心理测量者",
+        "zh-Hant": "心理測量者",
+        "ja": "PSYCHO-PASS サイコパス",
+        "en": "PSYCHO-PASS"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/37685/image?type=common"
     }
   ],
   "points": [
@@ -42,6 +69,52 @@
         "en": "Looking at the theatre's glass facade from Ikebukuro West Gate Park. Episode and timestamp identified with trace.moe."
       },
       "reference": "https://www.instagram.com/p/DVgDsYhk4Q1/"
+    },
+    {
+      "bangumi": 181354,
+      "id": "m-181354-8be6a66c",
+      "name": "田無駅",
+      "cn": "田无站",
+      "lat": 35.727768,
+      "lng": 139.540574,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "田无站",
+        "ja": "田無駅",
+        "en": "Tanashi Station",
+        "zh-Hant": "田無站"
+      },
+      "marks": {
+        "zh-Hans": "片段「欺骗！精神控制」里出现的车站",
+        "ja": "「欺け！マインドコントロール」に登場する駅",
+        "en": "Station seen in the segment “Deceive! Mind Control”",
+        "zh-Hant": "片段「欺騙！精神控制」裡出現的車站"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-1466.html"
+    },
+    {
+      "bangumi": 37685,
+      "id": "m-37685-e827b5e4",
+      "name": "新橋駅 SL広場",
+      "cn": "新桥站 SL广场",
+      "lat": 35.667093,
+      "lng": 139.757408,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "新桥站 SL广场",
+        "ja": "新橋駅 SL広場",
+        "en": "SL Square, Shimbashi Station",
+        "zh-Hant": "新橋站 SL廣場"
+      },
+      "marks": {
+        "zh-Hans": "第10话出现的新桥站前广场",
+        "ja": "10話に登場する新橋駅前の広場",
+        "en": "Plaza in front of Shimbashi Station in episode 10",
+        "zh-Hant": "第10話出現的新橋站前廣場"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-202.html"
     }
   ]
 }
