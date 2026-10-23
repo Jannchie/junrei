@@ -33,6 +33,8 @@ GSI = "https://msearch.gsi.go.jp/address-search/AddressSearch"
 MANUAL = Path(__file__).resolve().parent / "manual.json"
 ARTICLE_CHARS = 8000  # 每篇文章最多送给模型的字数
 ARTICLES_PER_WORK = 8
+THIN = 15  # 地标少于这个数的已收录作品算「偏少」，也值得补
+DUP_METERS = 150  # 和已有地标相距不到这个距离（或同名）的候选视为重复，不进草稿
 
 SYSTEM = """你在帮动画圣地巡礼地图整理「舞台探访」文章：粉丝实地走访动画里出现的真实地点后写的博客。
 每条输入是 JSON：work 为作品名，area 为目录给出的地区提示，text 为文章正文（可能夹着导航、广告等杂讯）。
@@ -138,21 +140,34 @@ def cmd_list(db, http: Http, data: Path) -> None:
         for n in [s["name"], s["cn"], s["en"], *s.get("aliases", [])]:
             if k := fold(n, cmap):
                 index.setdefault(k, []).append(s)
-    rows = []
+    counts: dict[int, int] = {}
+    for (bid,) in db.execute("SELECT bangumi_id FROM src.point"):
+        counts[bid] = counts.get(bid, 0) + 1
+    gaps, thin = [], []
     for n in names:
         cands = index.get(fold(n, cmap))
-        if not cands or any(s["id"] in have or s.get("series") in series_has for s in cands):
+        if not cands:
             continue
-        top = max(cands, key=lambda s: s["popularity"])
-        rows.append((top["popularity"], n, top["cn"] or "", top["id"], LEGWORK + urllib.parse.quote(n)))
-    rows.sort(reverse=True)
-    out = data / "review" / "legwork-gaps.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", encoding="utf-8-sig", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["bangumi_popularity", "title", "cn", "bangumi_id", "legwork_page"])
-        w.writerows(rows)
-    print(f"目录 {len(names)} 部，待补 {len(rows)} 部 → {out}")
+        page = LEGWORK + urllib.parse.quote(n)
+        covered = [s for s in cands if s["id"] in have]
+        if not covered and not any(s.get("series") in series_has for s in cands):
+            # 待补：作品（连同所在系列）一个地标都没有
+            top = max(cands, key=lambda s: s["popularity"])
+            gaps.append((top["popularity"], n, top["cn"] or "", top["id"], page))
+        elif covered:
+            # 偏少：有地标但不多，探访文章里可能还有没收录的地点
+            top = max(covered, key=lambda s: s["popularity"])
+            if counts.get(top["id"], 0) < THIN:
+                thin.append((top["popularity"], n, top["cn"] or "", top["id"], page))
+    for name, rows in [("legwork-gaps.csv", gaps), ("legwork-thin.csv", thin)]:
+        rows.sort(reverse=True)
+        out = data / "review" / name
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with out.open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["bangumi_popularity", "title", "cn", "bangumi_id", "legwork_page"])
+            w.writerows(rows)
+    print(f"目录 {len(names)} 部，待补 {len(gaps)} 部、偏少（不到 {THIN} 个地标）{len(thin)} 部 → {data / 'review'}")
 
 
 # ---- 地理编码 ----
@@ -199,7 +214,7 @@ def geocode(http: Http, spot: dict) -> dict | None:
 # ---- 生成草稿 ----
 
 def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
-    gaps = list(csv.DictReader((data / "review" / "legwork-gaps.csv").open(encoding="utf-8-sig")))
+    gaps = list(csv.DictReader((data / "review" / f"legwork-{args.list}.csv").open(encoding="utf-8-sig")))
     if args.ids:
         want = {int(i) for i in args.ids.split(",")}
         gaps = [g for g in gaps if int(g["bangumi_id"]) in want]
@@ -239,6 +254,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
     for g, _, inputs in works:
         bid = int(g["bangumi_id"])
         spots, seen = [], set()
+        existing = existing_points(db, bid)
+        dropped = 0
         for url, text in inputs:
             r = results.get(llm.sha(text))
             if not r:
@@ -248,7 +265,13 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                 if key in seen or s["confidence"] < args.min_confidence:
                     continue
                 seen.add(key)
+                if norm(key) in existing["names"]:
+                    dropped += 1
+                    continue
                 loc = geocode(geo, s)
+                if loc and loc["by"] != "gsi-area" and any(dist(loc["lat"], loc["lng"], la, ln) < DUP_METERS for la, ln in existing["coords"]):
+                    dropped += 1
+                    continue
                 spots.append({
                     "id": f"m-{bid}-{hashlib.sha1(key.encode()).hexdigest()[:8]}",
                     "approved": False,
@@ -267,7 +290,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots}
         (out_dir / f"{bid}.json").write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"  {g['title']}：{len(spots)} 个候选地标，{sum(1 for s in spots if s['lat'])} 个定位成功")
+        print(f"  {g['title']}：{len(spots)} 个候选地标，{sum(1 for s in spots if s['lat'])} 个定位成功"
+              + (f"，{dropped} 个与已有地标重复已去掉" if dropped else ""))
     write_review(out_dir)
 
 
@@ -295,6 +319,25 @@ def exchange(db, folder: Path, texts: list[str], model: str) -> bool:
                                           encoding="utf-8")
         print(f"还有 {len(pending)} 篇文章没有答案：{folder / 'pending.jsonl'}（说明见 prompt.md）")
     return not pending
+
+
+def norm(name: str) -> str:
+    return re.sub(r"[\s\W_]+", "", name or "").casefold()
+
+
+def dist(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """两点距离（米），近距离用等距矩形近似就够了"""
+    import math
+    x = math.radians(lng2 - lng1) * math.cos(math.radians((lat1 + lat2) / 2))
+    return math.hypot(x, math.radians(lat2 - lat1)) * 6371000
+
+
+def existing_points(db, bid: int) -> dict:
+    """作品已有的地标（Anitabi + manual.json）：名称（规范化）与坐标，用来给候选去重"""
+    rows = db.execute("SELECT name, cn, lat, lng FROM src.point WHERE bangumi_id = ?", (bid,)).fetchall()
+    rows += [(p.get("name"), p.get("cn"), p["lat"], p["lng"])
+             for p in json.loads(MANUAL.read_text(encoding="utf-8"))["points"] if p["bangumi"] == bid]
+    return {"names": {norm(n) for r in rows for n in r[:2] if n}, "coords": [(r[2], r[3]) for r in rows if r[2] is not None]}
 
 
 def write_review(out_dir: Path) -> None:
@@ -361,6 +404,7 @@ def main():
     sub.add_parser("list")
     run = sub.add_parser("run")
     run.add_argument("--top", type=int, default=5, help="取清单里还没有草稿的前 N 部")
+    run.add_argument("--list", choices=["gaps", "thin"], default="gaps", help="gaps：没有地标的作品；thin：地标偏少的作品")
     run.add_argument("--ids", help="指定作品的 Bangumi id，逗号分隔")
     run.add_argument("--model", default=MODEL)
     run.add_argument("--mode", choices=["batch", "sync"], default="sync")
