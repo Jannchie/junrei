@@ -8,6 +8,7 @@ import { useI18n } from "../i18n";
 import { ICONS } from "../icons";
 import { fetchDetail } from "../detail";
 import { imageUrl } from "../format";
+import { retryImage } from "../image-retry";
 import { CJK_FONT_FAMILY, createStyle, HEAT_FADE, readPalette } from "../map-style";
 import { isDark } from "../theme";
 import { showAdult } from "../adult";
@@ -181,7 +182,13 @@ async function syncPhotos() {
     const el = document.createElement("button");
     el.className = props.focusPointId === q.p ? "photo-pin focus" : "photo-pin";
     el.title = "";
-    el.innerHTML = `<img alt="" referrerpolicy="no-referrer" src="${imageUrl(src)}">`;
+    const img = document.createElement("img");
+    img.alt = "";
+    img.referrerPolicy = "no-referrer";
+    // 失败重试；仍然加载不出来就把这个照片标点藏起来，地图上不留破图
+    img.addEventListener("error", () => retryImage(img, () => (el.style.display = "none")));
+    img.src = imageUrl(src);
+    el.append(img);
     el.addEventListener("click", (ev) => {
       ev.stopPropagation();
       pickedOnMap = `${q.b}:${q.p}`;

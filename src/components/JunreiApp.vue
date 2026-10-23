@@ -5,6 +5,7 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { formatEpisode, formatTime, imageUrl } from "../format";
 import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, spotNames, stripLocale, workNames } from "../i18n";
 import { ICONS } from "../icons";
+import { recoverImages, retryImage } from "../image-retry";
 import { onShortcuts } from "../keyboard";
 import LogoMark from "./LogoMark.vue";
 import { cycleTheme, initTheme, themePref } from "../theme";
@@ -40,33 +41,8 @@ const vAutoLang = { mounted: setLang, updated: setLang };
 
 const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" } as const;
 
-// 图片偶尔会因为图床限流或网络抖动加载失败：隔一会儿重试两次，仍失败就显示占位底色，不出现破图图标
-// 图片加载失败（网络抖动、图床短暂拒绝并发请求）时退避重试：1、2、4、8 秒后各试一次
-const IMAGE_RETRIES = 4;
-const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-function retryImage(e: Event | { target: HTMLImageElement }) {
-  const img = e.target as HTMLImageElement;
-  if (img.src === BLANK) return;
-  const tries = Number(img.dataset.tries ?? 0);
-  const url = new URL(img.dataset.src ?? img.src);
-  url.searchParams.delete("retry");
-  img.dataset.src = url.href;
-  // 等待期间换成透明空图：显示占位底色，而不是浏览器的破图边框
-  img.src = BLANK;
-  if (tries >= IMAGE_RETRIES) {
-    img.classList.add("img-failed"); // 重试用尽：占位上显示「图片不可用」
-    return;
-  }
-  img.dataset.tries = String(tries + 1);
-  url.searchParams.set("retry", String(tries + 1));
-  setTimeout(() => (img.src = url.href), 1000 * 2 ** tries);
-}
-/** 服务端渲染的图片在页面接管前就开始加载，那时失败的错误事件没人接住；接管后补一次重试 */
-function recoverImages() {
-  for (const img of document.querySelectorAll<HTMLImageElement>("img[src]")) {
-    if (img.complete && img.naturalWidth === 0 && !img.dataset.tries) retryImage({ target: img });
-  }
-}
+// 图片失败重试见 src/image-retry.ts；模板里的 @error 直接用它
+const onImageError = (e: Event) => retryImage(e.target as HTMLImageElement);
 
 // maplibre 体积大且只在浏览器里用，单独分包，也不进服务端 bundle
 const PilgrimMap = defineAsyncComponent(() => import("./PilgrimMap.vue"));
@@ -530,7 +506,7 @@ onBeforeUnmount(() => {
             <JIcon :icon="ICONS.noResult" :size="28" />
           </div>
           <button v-for="b in results.bangumis" :key="b.id" class="row" :class="{ dim: !b.pointCount }" @click="pickCard(b.id)">
-            <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <img @error="onImageError" v-if="b.cover" :src="imageUrl(b.cover)" class="cover-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="cover-sm placeholder"><JIcon :icon="ICONS.bangumi" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName(workNames(b)) }}</strong>
@@ -548,7 +524,7 @@ onBeforeUnmount(() => {
             class="row"
             @click="pickResult(p.bangumiId, p.id)"
           >
-            <img @error="retryImage" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <img @error="onImageError" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
             <span class="row-main">
               <strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong>
@@ -578,7 +554,7 @@ onBeforeUnmount(() => {
         <template v-else>
         <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
           <div ref="titleRow" class="title-row">
-            <img @error="retryImage" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
+            <img @error="onImageError" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
               <h2 v-auto-lang>{{ pickName(workNames(detail)) }}</h2>
               <p v-auto-lang v-if="subName(workNames(detail))" class="sub">
@@ -608,7 +584,7 @@ onBeforeUnmount(() => {
             @click.prevent="open(detail.key, null)"
           >
             <span class="series-covers" aria-hidden="true">
-              <img v-for="s in detail.series.filter((w) => w.cover).slice(0, 3)" :key="s.id" @error="retryImage" :src="imageUrl(s.cover!)" loading="lazy" referrerpolicy="no-referrer" alt="" />
+              <img v-for="s in detail.series.filter((w) => w.cover).slice(0, 3)" :key="s.id" @error="onImageError" :src="imageUrl(s.cover!)" loading="lazy" referrerpolicy="no-referrer" alt="" />
             </span>
             <span class="series-text">
             <span class="series-name">{{ t("allWorks") }}</span>
@@ -626,7 +602,7 @@ onBeforeUnmount(() => {
             :aria-current="s.id === detail.filter ? 'page' : undefined"
             @click.prevent="open(detail.key, s.id)"
           >
-            <img v-if="s.cover" @error="retryImage" :src="imageUrl(s.cover)" class="series-cover" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <img v-if="s.cover" @error="onImageError" :src="imageUrl(s.cover)" class="series-cover" loading="lazy" referrerpolicy="no-referrer" alt="" />
             <span v-else class="series-cover" aria-hidden="true" />
             <span class="series-text">
             <span v-auto-lang class="series-name">{{ pickName(workNames(s)) }}</span>
@@ -647,7 +623,7 @@ onBeforeUnmount(() => {
             @click="select(p.bangumiId, p.id)"
           >
             <figure v-if="p.image">
-              <img @error="retryImage"
+              <img @error="onImageError"
                 :src="imageUrl(p.image, p.id === focusPointId ? 'h360' : 'h160')"
                 loading="lazy"
                 referrerpolicy="no-referrer"
@@ -707,7 +683,7 @@ onBeforeUnmount(() => {
         <ul v-if="overviewList.length" class="popular">
           <li v-for="b in overviewList" :key="b.id">
             <a :href="cardPath(b)" @click.prevent="pickCard(b.id)">
-              <img @error="retryImage" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
+              <img @error="onImageError" v-if="b.cover" :src="imageUrl(b.cover)" loading="lazy" referrerpolicy="no-referrer" alt="" />
               <span v-auto-lang class="popular-name" :title="pickName(workNames(b))">{{ pickName(workNames(b)) }}</span>
               <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ b.inView }}</span></span>
             </a>
