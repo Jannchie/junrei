@@ -58,6 +58,12 @@ jobs:
         run: python -m sync.bgm_archive
       - name: City names
         run: python -m sync.cities
+      # 封面镜像到自己的 R2（cdn.jannchie.com），每天一批；令牌需要 R2 编辑权限，失败不影响后面的同步
+      - name: Mirror covers
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: python -m sync.covers --limit 2000
       - name: Translations
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

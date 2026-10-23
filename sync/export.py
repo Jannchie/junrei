@@ -84,6 +84,16 @@ def i18n_json(item: dict | None) -> str | None:
     return json.dumps(item, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
+def mirrored_covers() -> dict[int, str]:
+    path = DEFAULT_OUT / "enrich.sqlite"
+    if not path.exists():
+        return {}
+    from sync.covers import mirrored
+
+    with sqlite3.connect(path) as db:
+        return mirrored(db)
+
+
 def bgm_cover(url: str | None) -> str | None:
     """Anitabi 转发的 Bangumi 封面（bgm-api.anitabi.cn/pic/…）直接改用 Bangumi 自己的 CDN，并缩到 400px 宽，
     不占用 Anitabi 的代理流量"""
@@ -192,6 +202,9 @@ def main():
     rows = [(*r[:7], bgm_cover(r[7])) for r in rows]
     merge_manual(rows, points, counts, i18n)
     extra = merge_bgm(rows, i18n)
+    # 已镜像到自己 R2 的封面（sync.covers）优先
+    covers = mirrored_covers()
+    rows = [(*r[:7], covers.get(r[0], r[7])) for r in rows]
 
     # 搜索键：各语言名称折叠后用 | 连起来，日文标题再加一份罗马音
     titles = {r[0]: i18n.get(("bangumi", str(r[0]))) for r in rows}
