@@ -196,18 +196,23 @@ def frames(db, anilist_id: int) -> list[tuple[dict, np.ndarray, np.ndarray]]:
 
 
 def search(db, vector: list[int], anilist_ids: list[int]) -> dict | None:
-    """在给定作品的所有帧里找最接近的一帧。相似度和 trace.moe 一致：(255 - 欧氏距离的平方) / 255（Milvus 的 L2 返回平方距离）"""
+    """在给定作品的所有帧里找最接近的一帧。相似度和 trace.moe 一致：(255 - 欧氏距离的平方) / 255（Milvus 的 L2 返回平方距离）。
+    runner_up 是别的集里最接近的一帧的相似度：片头片尾、总集篇在各集都有，和第一名差不多时说明不了是哪一集"""
     q = np.array(vector, dtype=np.float32)
-    best = None
+    hits = []
     for aid in anilist_ids:
         for info, times, vecs in frames(db, aid):
             d = ((vecs - q) ** 2).sum(1)
             i = int(d.argmin())
-            if best is None or d[i] < best["distance"]:
-                best = {"anilist": aid, "file": info["path"], "episode": info["episode_start"],
-                        "episode_end": info["episode_end"], "from": float(times[i]), "distance": float(d[i])}
-    if best:
-        best["similarity"] = max(0.0, (255 - best["distance"]) / 255)
+            hits.append({"anilist": aid, "file": info["path"], "episode": info["episode_start"],
+                         "episode_end": info["episode_end"], "from": float(times[i]), "distance": float(d[i])})
+    if not hits:
+        return None
+    best = min(hits, key=lambda h: h["distance"])
+    sim = lambda h: max(0.0, (255 - h["distance"]) / 255)  # noqa: E731
+    others = [h for h in hits if (h["anilist"], h["episode"]) != (best["anilist"], best["episode"])]
+    best["similarity"] = sim(best)
+    best["runner_up"] = max(map(sim, others), default=0.0)
     return best
 
 

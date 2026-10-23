@@ -515,7 +515,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                     "model": r[1],
                     **({"trace": proof} if proof else {}),
                 })
-        apply_trace(spots)
+        apply_trace(spots, retarget=anilist_bangumi(tm, subs, {s["trace"]["anilist"] for s in spots if s.get("trace")})
+                    if evidence_mode else None)
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots,
                  **({"nsfw": True} if sub.get("nsfw") else {})}
@@ -570,6 +571,7 @@ def write_review(out_dir: Path) -> None:
 # ---- 截图证据：在本地 trace.moe 帧库（sync.tracemoe）里比对来源文章的图片 ----
 
 SIMILARITY = 0.9  # 与 trace.moe 的建议一致：低于 0.9 的结果多半不对
+MARGIN = 0.05  # 比别的集里最像的一帧高出这么多，才认定是这一集（片头片尾、总集篇各集都有）
 SHOT_UA = "Mozilla/5.0 (junrei-gaps; +https://junrei.jannchie.com)"  # 部分图床拒绝非浏览器的 UA
 
 
@@ -626,34 +628,58 @@ def lookup(tm, vectors: Vectors, img: str, ids: dict[int, str]) -> dict | None:
         best = tracemoe.search(tm, vec, [a for a, k in ids.items() if k == kind])
         if best and best["similarity"] >= SIMILARITY:
             return {"image": img, "anilist": best["anilist"], "episode": best["episode"], "from": round(best["from"], 1),
-                    "similarity": round(best["similarity"], 3), "match": kind}
+                    "similarity": round(best["similarity"], 3), "runner_up": round(best["runner_up"], 3), "match": kind}
     return None
 
 
-def apply_trace(spots: list[dict], applied: dict | None = None) -> None:
-    """有截图为证的地点：提高把握度；集数与时间只在标题完全一致（不是续作）、且这张截图只对应这一个地点时采用
-    （文章里同一张图挨着好几个地名的，说明不了是哪个）。applied 是已并入 manual.json 的地标，同步更新"""
-    traced = [s for s in spots if s.get("trace")]
-    images = [s["trace"]["image"] for s in traced]
-    for s in traced:
+def anilist_bangumi(tm, subs: dict[int, dict], aids: set[int]) -> dict[int, int]:
+    """AniList 条目 → 标题一致的唯一一部 Bangumi 作品（对上续作的截图，地标改记到续作上）"""
+    from sync import tracemoe
+
+    if not aids:
+        return {}
+    index: dict[str, set[int]] = {}
+    for bid, s in subs.items():
+        for n in work_names(None, None, s):
+            index.setdefault(loose(n), set()).add(bid)
+    titles = tracemoe.anilist_titles(tm)
+    out = {}
+    for aid in aids:
+        found = set().union(*(index.get(n, set()) for n in titles.get(aid, set())))
+        if len(found) == 1:
+            out[aid] = found.pop()
+    return out
+
+
+def apply_trace(spots: list[dict], applied: dict | None = None, retarget: dict[int, int] | None = None) -> None:
+    """有截图为证的地点：提高把握度，集数与时间取截图对上的那一帧（地标显示的就是这张截图）。
+    - 帧的集数与文章写的一致：采用；不一致或文章没写：只有这一帧明显比别的集都像（MARGIN）时，以帧为准
+    - 对上的是续作（retarget：AniList 条目 → Bangumi 作品）：地标改记到续作上，再按上面的规则取集数与时间
+    applied 是已并入 manual.json 的地标，同步更新"""
+    for s in [s for s in spots if s.get("trace")]:
         t = s["trace"]
         s["confidence"] = max(s["confidence"], 0.9)
-        ep = str(t["episode"]) if t["episode"] else ""
-        if t.get("match") == "exact" and images.count(t["image"]) == 1:
-            if not s["ep"] and ep:
+        if s.pop("ep_by", None):
+            s["ep"] = ""
+        s.pop("s", None)
+        moved = (retarget or {}).get(t["anilist"]) if t.get("match") == "series" else None
+        if moved:
+            t["bangumi"] = moved
+        if t.get("match") == "exact" or t.get("bangumi"):
+            ep = str(t["episode"]) if t["episode"] else ""
+            clear = t.get("similarity", 0) - t.get("runner_up", 1) >= MARGIN
+            if ep and s["ep"] != ep and clear:
                 s["ep"], s["ep_by"] = ep, "trace.moe"
-            if s["ep"] == ep:
+            if s["ep"] == ep and (clear or ep):
                 s["s"] = int(t["from"])
-        else:
-            s.pop("s", None)
-            if s.pop("ep_by", None):
-                s["ep"] = ""
-        if applied and (m := applied.get(s["id"])) is not None and s.get("s") is not None and (m.get("ep") or s["ep"]) == s["ep"]:
-            m["ep"], m["s"] = s["ep"] or None, s["s"]
+        if applied and (m := applied.get(s["id"])) is not None:
+            if t.get("bangumi"):
+                m["bangumi"] = t["bangumi"]
+            m["ep"], m["s"] = s["ep"] or None, s.get("s")
 
 
-def cmd_trace(db, data: Path) -> None:
-    """老草稿（没有截图证据时生成的）里的图片补做比对"""
+def cmd_trace(db, data: Path, refresh: bool = False) -> None:
+    """老草稿（没有截图证据时生成的）里的图片补做比对；refresh 时已对上的也重新比对（规则或帧库更新后）"""
     from sync import tracemoe
 
     if not (tracemoe.DIR / "frames.sqlite").exists():
@@ -666,19 +692,21 @@ def cmd_trace(db, data: Path) -> None:
     applied = {p["id"]: p for p in manual["points"]}
     found = 0
     for path, d in drafts(out_dir):
-        todo = [s for s in d["spots"] if s.get("images") and not s.get("trace") and not s.get("trace_local")]
+        todo = [s for s in d["spots"] if s.get("images") and not s.get("trace_local") and (refresh or not s.get("trace"))]
         ids = tracemoe.match_anilist(tm, work_names(d["title"], d.get("cn"), subs.get(d["bangumi"], {}))) if todo else {}
         tracemoe.clear_cache()  # 帧数据按作品载入，换作品就释放
         for s in todo if ids else []:
-            proof = next((p for img in s["images"] if (p := lookup(tm, vectors, img, ids))), None)
+            images = [s["trace"]["image"]] if s.get("trace") else s["images"]
+            proof = next((p for img in images if (p := lookup(tm, vectors, img, ids))), None)
             if proof:
+                found += not s.get("trace")
                 s["trace"] = proof
-                found += 1
-            else:
+            elif not s.get("trace"):
                 s["trace_local"] = "none"  # 比对过、没有对上（多半是实拍照片）
-        apply_trace(d["spots"], applied)
+        apply_trace(d["spots"], applied, anilist_bangumi(tm, subs, {s["trace"]["anilist"] for s in d["spots"] if s.get("trace")}))
         vectors.save()
         path.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    register_works(manual, subs)  # 改记到续作上的地标
     save_manual(manual)
     print(f"本地 trace.moe：新对上 {found} 个地标")
     write_review(out_dir)
@@ -757,8 +785,23 @@ def attach_shots(points: list[tuple[dict, dict]]) -> int:
     return sum(1 for u in urls if u)
 
 
-def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = None) -> None:
+def register_works(manual: dict, subs: dict[int, dict]) -> None:
+    """manual.json 里有地标、还没登记的作品，按 Bangumi 的信息登记（有没有地标由 export 统计，这里只登记作品本身）"""
     from sync.export import BGM_COVER, subject_names
+    from sync.translate import opencc_converter
+
+    to_hant = opencc_converter("s2twp")
+    known = {b["id"] for b in manual["bangumi"]}
+    for bid in dict.fromkeys(p["bangumi"] for p in manual["points"]):
+        if bid not in known:
+            sub = subs.get(bid, {})
+            manual["bangumi"].append({"id": bid, "title": sub.get("name"), "cn": sub.get("cn"), "en": sub.get("en"),
+                                      "names": subject_names(sub, to_hant), "cat": sub.get("cat"),
+                                      **({"nsfw": True} if sub.get("nsfw") else {}), "cover": BGM_COVER.format(bid)})
+            known.add(bid)
+
+
+def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = None) -> None:
     from sync.translate import opencc_converter
 
     to_hant = opencc_converter("s2twp")
@@ -768,7 +811,6 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
     subs = all_subjects(data)
     manual = load_manual()
     by_id = {p["id"]: p for p in manual["points"]}
-    known_works = {b["id"] for b in manual["bangumi"]}
     candidates: list[tuple[dict, dict]] = []  # (将要并入的地标, 草稿候选)
     backfill: list[tuple[dict, dict]] = []  # 早先并入、还没有截图的地标
     for _, draft in drafts(out_dir):
@@ -791,7 +833,7 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
             names = {**s["names"], "zh-Hant": to_hant(s["names"]["zh-Hans"])}
             marks = {k: v for k, v in {**s["marks"], "zh-Hant": to_hant(s["marks"]["zh-Hans"])}.items() if v}
             point = {
-                "bangumi": bid, "id": s["id"], "name": s["name"], "cn": s["names"]["zh-Hans"],
+                "bangumi": s["trace"].get("bangumi", bid), "id": s["id"], "name": s["name"], "cn": s["names"]["zh-Hans"],
                 "lat": round(s["lat"], 6), "lng": round(s["lng"], 6), "ep": s["ep"] or None, "src": "ja",
                 "names": names, "marks": marks, "reference": s["reference"], "source": s.get("source"), "s": s.get("s"),
             }
@@ -801,14 +843,7 @@ def cmd_apply(data: Path, approved_file: str | None, auto_min: float | None = No
     attach_shots(candidates)
     added = [p for p, _ in candidates if p.get("image")]
     manual["points"].extend(added)
-    for bid in dict.fromkeys(p["bangumi"] for p in added):
-        if bid not in known_works:
-            # 作品信息取 Bangumi；有没有地标由 export 统计，这里只登记作品本身
-            sub = subs.get(bid, {})
-            manual["bangumi"].append({"id": bid, "title": sub.get("name"), "cn": sub.get("cn"), "en": sub.get("en"),
-                                      "names": subject_names(sub, to_hant), "cat": sub.get("cat"),
-                                      **({"nsfw": True} if sub.get("nsfw") else {}), "cover": BGM_COVER.format(bid)})
-            known_works.add(bid)
+    register_works(manual, subs)
     save_manual(manual)
     print(f"并入 {len(added)} 个地标（另有 {len(candidates) - len(added)} 个截图转存失败，下次再试），"
           f"给已有地标补上 {filled}/{len(backfill)} 张截图 → {MANUAL}")
@@ -832,7 +867,8 @@ def main():
     run.add_argument("--min-confidence", type=float, default=0.7, help="低于这个把握度的候选不进草稿（默认 0.7）")
     run.add_argument("--manual", metavar="DIR", help="不调用 API：待提取的文章导出到 DIR/pending.jsonl，读 DIR/answers.jsonl 的答案")
     sub.add_parser("review", help="只根据现有草稿重建审核页")
-    sub.add_parser("trace", help="老草稿的来源截图在本地 trace.moe 帧库里比对：核对作品、补集数与时间")
+    trace = sub.add_parser("trace", help="老草稿的来源截图在本地 trace.moe 帧库里比对：核对作品、补集数与时间")
+    trace.add_argument("--refresh", action="store_true", help="已对上的也重新比对")
     apply = sub.add_parser("apply")
     apply.add_argument("approved", nargs="?", help="审核页导出的 approved.json；省略则用草稿里的 approved 字段")
     apply.add_argument("--auto", type=float, metavar="CONF", help="把握度不低于 CONF 且精确定位的候选自动通过，例如 --auto 0.85")
@@ -848,7 +884,7 @@ def main():
     elif args.cmd == "run":
         cmd_run(db, http, geo, data, args)
     elif args.cmd == "trace":
-        cmd_trace(db, data)
+        cmd_trace(db, data, args.refresh)
     elif args.cmd == "review":
         write_review(data / "review" / "gaps")
     else:
