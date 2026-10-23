@@ -1,0 +1,10 @@
+# Cloudflare 静态资源的响应头（void.config.ts 的 routing.headers 对静态文件不生效）
+# 数据每日同步后随部署更新：浏览器缓存 1 小时，过期后先用旧的、后台再取新的
+/data/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/icons/*
+  Cache-Control: public, max-age=86400
+/manifest-*
+  Cache-Control: public, max-age=86400
+/sw.js
+  Cache-Control: no-cache
