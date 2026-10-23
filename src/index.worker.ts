@@ -34,18 +34,21 @@ const index = fetch("/data/bangumi.json")
       id, cn, title, en, cover, pointCount, i18n: names ? { name: names } : null, keys: keys.split("|"), series: s, nsfw: !!nsfw,
     })),
     series: new Map(Object.entries(series).map(([id, s]) => [Number(id), s])),
-  }));
-const bangumi = index.then((x) => x.works);
+  }))
+  .then((x) => ({ ...x, byId: new Map(x.works.map((b) => [b.id, b])) }));
+type Index = Awaited<typeof index>;
 
 /** 作品 → 卡片：在系列里的显示系列名与系列地标总数，否则显示自己 */
-async function card(b: Entry): Promise<Card> {
-  const s = b.series != null ? (await index).series.get(b.series) : undefined;
+function card(b: Entry, { series }: Index): Card {
+  const s = b.series != null ? series.get(b.series) : undefined;
   if (!s) return { id: b.id, series: false, cn: b.cn, title: b.title, en: b.en, i18n: b.i18n, cover: b.cover, pointCount: b.pointCount, works: 1 };
   const [cn, title, en, names, pointCount, works, cover] = s;
   return { id: b.series!, series: works > 1, cn, title, en, i18n: names ? { name: names } : null, cover, pointCount, works };
 }
 
-const points = fetch("/data/points.geojson")
+// 地标坐标只在第一次算「视野里的作品」时才取：那时地图多半已经把同一个文件放进浏览器缓存，不会再下载一遍
+let points: Promise<{ lng: Float32Array; lat: Float32Array; bangumi: Int32Array }> | undefined;
+const loadPoints = () => (points ??= fetch("/data/points.geojson")
   .then((r) => r.json() as Promise<{ features: { geometry: { coordinates: [number, number] }; properties: { b: number } }[] }>)
   .then(({ features }) => {
     const n = features.length;
@@ -56,7 +59,7 @@ const points = fetch("/data/points.geojson")
       idx.bangumi[i] = f.properties.b;
     });
     return idx;
-  });
+  }));
 
 
 /**
@@ -82,7 +85,8 @@ function score(key: string, q: string): number {
 async function search(query: string, limit: number, adult: boolean) {
   const q = fold(query);
   if (!q) return [];
-  const hits = (await bangumi)
+  const ix = await index;
+  const hits = ix.works
     .filter((b) => adult || !b.nsfw)
     .map((b) => ({ b, s: Math.max(...b.keys.map((k) => score(k, q))) }))
     .filter((x) => x.s > 0)
@@ -91,7 +95,7 @@ async function search(query: string, limit: number, adult: boolean) {
   const seen = new Set<number>();
   const out: Card[] = [];
   for (const { b } of hits) {
-    const c = await card(b);
+    const c = card(b, ix);
     if (seen.has(c.id)) continue;
     seen.add(c.id);
     out.push(c);
@@ -101,7 +105,7 @@ async function search(query: string, limit: number, adult: boolean) {
 }
 
 async function inView({ west, south, east, north }: Bounds, limit: number, adult: boolean) {
-  const [idx, all] = await Promise.all([points, bangumi]);
+  const [idx, ix] = await Promise.all([loadPoints(), index]);
   const counts = new Map<number, number>();
   const wraps = west > east; // 跨 180° 经线
   for (let i = 0; i < idx.lat.length; i++) {
@@ -112,12 +116,11 @@ async function inView({ west, south, east, north }: Bounds, limit: number, adult
     counts.set(idx.bangumi[i], (counts.get(idx.bangumi[i]) ?? 0) + 1);
   }
   // 按系列合并：系列在视口里的地标数是各部之和
-  const byId = new Map(all.map((b) => [b.id, b]));
   const merged = new Map<number, Card & { inView: number }>();
   for (const [id, n] of counts) {
-    const b = byId.get(id);
+    const b = ix.byId.get(id);
     if (!b || (b.nsfw && !adult)) continue;
-    const c = await card(b);
+    const c = card(b, ix);
     const m = merged.get(c.id);
     if (m) m.inView += n;
     else merged.set(c.id, { ...c, inView: n });

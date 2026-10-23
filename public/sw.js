@@ -1,6 +1,6 @@
 // junrei 的 Service Worker：让应用可安装、弱网可用，并缓存去过的地方（巡礼现场常常信号不好）。
 // 策略：页面先走网络、失败回退缓存；带哈希的静态资源只取缓存；数据与地图瓦片先给缓存再后台更新。
-const VERSION = "v2";
+const VERSION = "v3";
 const PAGES = `pages-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const DATA = `data-${VERSION}`;
@@ -10,9 +10,9 @@ const POOLS = [
   { name: `tiles-${VERSION}`, limit: 2000, test: (u) => /(^|\.)openfreemap\.org$/.test(u.hostname) },
   // 地形瓦片：每张约 100 KB，只在小比例尺用到，留少一些
   { name: `terrain-${VERSION}`, limit: 500, test: (u) => u.hostname.includes("elevation-tiles-prod") },
-  // 截图与封面缩略图
-  { name: `images-${VERSION}`, limit: 1000, test: (u) => /(^|\.)anitabi\.cn$/.test(u.hostname) },
 ];
+// 截图、封面不进 SW：<img> 拿到的是 opaque 响应，每条按约 7 MB 计入存储配额，攒多了整个站点的缓存会被浏览器清掉。
+// 它们走浏览器自己的 HTTP 缓存
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/"])));
@@ -72,10 +72,11 @@ async function staleWhileRevalidate(req, cacheName, limit) {
   const hit = await cache.match(req);
   const update = fetch(req)
     .then(async (res) => {
-      // 跨域图片可能是 opaque 响应（status 0），也照样缓存
-      if (res.ok || res.type === "opaque") {
+      // 内容没变（ETag 相同，多半是浏览器缓存直接给的）就不重写：地标数据有 6 MB，每次访问都写一遍太浪费
+      const same = hit && res.headers.get("etag") && res.headers.get("etag") === hit.headers.get("etag");
+      if (res.ok && !same) {
         await cache.put(req, res.clone());
-        if (limit) trim(cache, limit);
+        if (limit) trim(cacheName, cache, limit);
       }
       return res;
     })
@@ -83,8 +84,13 @@ async function staleWhileRevalidate(req, cacheName, limit) {
   return hit ?? update;
 }
 
-// 超出上限时删掉最早放进去的条目（Cache API 的 keys() 按插入顺序返回）
-async function trim(cache, limit) {
+// 超出上限时删掉最早放进去的条目（Cache API 的 keys() 按插入顺序返回）。
+// 枚举整个池不便宜：每个池攒够 50 次写入才清一次，超出的部分并发删除
+const pending = new Map();
+async function trim(cacheName, cache, limit) {
+  const n = (pending.get(cacheName) ?? 0) + 1;
+  pending.set(cacheName, n % 50);
+  if (n < 50) return;
   const keys = await cache.keys();
-  for (let i = 0; i < keys.length - limit; i++) await cache.delete(keys[i]);
+  await Promise.all(keys.slice(0, Math.max(0, keys.length - limit)).map((k) => cache.delete(k)));
 }

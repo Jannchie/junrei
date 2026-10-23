@@ -30,9 +30,7 @@ export default defineConfig({
     "link": [
       { "rel": "icon", "href": "/icons/favicon-32.png", "type": "image/png" },
       { "rel": "apple-touch-icon", "href": "/icons/apple-touch-icon.png" },
-      { "rel": "alternate", "type": "text/plain", "href": "/llms.txt", "title": "llms.txt" },
-      // 地图点位与地图同时开始加载，不必等页面脚本跑完
-      { "rel": "preload", "href": "/data/points.geojson", "as": "fetch", "crossorigin": "anonymous" }
+      { "rel": "alternate", "type": "text/plain", "href": "/llms.txt", "title": "llms.txt" }
     ]
   },
   "routing": {
