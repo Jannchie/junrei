@@ -155,22 +155,42 @@ def cmd_list(db, http: Http, data: Path) -> None:
 
 # ---- 地理编码 ----
 
+def city_of(area: str) -> str:
+    """「北海道札幌市中央区」→「札幌」：用来核对地理编码结果是不是落在文章说的地方（政令市取市名，区名太常见）"""
+    area = re.sub(r"^(東京都|北海道|(?:京都|大阪)府|\S{2,3}県)", "", area or "")
+    m = re.match(r"(.+?)市", area) or re.match(r"(?:.+?郡)?(.+?)[区町村]", area)
+    return m.group(1) if m else ""
+
+
 def geocode(http: Http, spot: dict) -> dict | None:
-    """先用 OSM Nominatim 查名称（设施、车站查得到），查不到再用国土地理院按地址 / 地名查"""
-    for q in [spot["query"], f"{spot['name_ja']} {spot['area']}".strip()]:
-        status, hits = http.get_json(NOMINATIM, {"q": q, "format": "json", "limit": 1, "accept-language": "ja"})
-        if status == 200 and hits:
-            h = hits[0]
-            return {"lat": float(h["lat"]), "lng": float(h["lon"]), "by": "osm", "query": q, "label": h["display_name"][:120]}
-    for q in [spot["query"], spot["area"]]:
-        if not q:
-            continue
+    """先用 OSM Nominatim 查名称（设施、车站查得到），再用国土地理院按地址 / 地名查。
+    结果必须落在文章给出的市区町村里（标签含市名），否则换下一种查法；最后只能退到行政区中心（gsi-area）。"""
+    name = re.sub(r"[（(][^）)]*[）)]", "", spot["name_ja"]).strip()  # 去掉「（国道2号線付近）」这类补充说明
+    city = city_of(spot["area"])
+    m = re.match(r"(東京|北海道|京都|大阪|\S{2,3}?)[都府県]?", spot["area"] or "")
+    pref = m.group(1) if m else ""
+    near = lambda label: (not city or city in label) and (not pref or pref in label)  # noqa: E731
+    # 名称在 OSM 里常常没有空格，或只登记了最后一段（「国立国会図書館 国際子ども図書館」→「国際子ども図書館」）
+    variants = [name, name.replace(" ", ""), name.split(" ")[-1]]
+    queries = list(dict.fromkeys(q for q in [spot["query"], *(f"{v} {city}" for v in variants), *variants] if q.strip()))
+    for q in queries:
+        status, hits = http.get_json(NOMINATIM, {"q": q, "format": "json", "limit": 5, "accept-language": "ja"})
+        for h in hits or [] if status == 200 else []:
+            if near(h["display_name"]):
+                return {"lat": float(h["lat"]), "lng": float(h["lon"]), "by": "osm", "query": q, "label": h["display_name"][:120]}
+    for q in queries:
         status, hits = http.get_json(GSI, {"q": q})
-        if status == 200 and hits:
-            lng, lat = hits[0]["geometry"]["coordinates"]
-            # 只查到市区町村时坐标在行政区中心，审核时要特别留意
-            return {"lat": lat, "lng": lng, "by": "gsi" if q == spot["query"] else "gsi-area", "query": q,
-                    "label": hits[0]["properties"].get("title", "")}
+        for h in hits or [] if status == 200 else []:
+            title = h["properties"].get("title", "")
+            # 只匹配到市区町村名（标题就是行政区）的不算具体地点
+            if near(title) and not re.fullmatch(r"\S+?[都道府県]\S*?[市区町村]", title):
+                lng, lat = h["geometry"]["coordinates"]
+                return {"lat": lat, "lng": lng, "by": "gsi", "query": q, "label": title}
+    status, hits = http.get_json(GSI, {"q": spot["area"]}) if spot["area"] else (0, None)
+    if status == 200 and hits:
+        # 只查到市区町村，坐标在行政区中心，审核时要手动挪到准确位置
+        lng, lat = hits[0]["geometry"]["coordinates"]
+        return {"lat": lat, "lng": lng, "by": "gsi-area", "query": spot["area"], "label": hits[0]["properties"].get("title", "")}
     return None
 
 
@@ -223,7 +243,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
                 continue
             for s in r[0]["spots"]:
                 key = s["name_ja"]
-                if key in seen:
+                if key in seen or s["confidence"] < args.min_confidence:
                     continue
                 seen.add(key)
                 loc = geocode(geo, s)
@@ -345,6 +365,7 @@ def main():
     run.add_argument("--limit", type=int, help="最多请求多少篇文章（试跑用）")
     run.add_argument("--wait", action="store_true")
     run.add_argument("--dry-run", action="store_true")
+    run.add_argument("--min-confidence", type=float, default=0.7, help="低于这个把握度的候选不进草稿（默认 0.7）")
     run.add_argument("--manual", metavar="DIR", help="不调用 API：待提取的文章导出到 DIR/pending.jsonl，读 DIR/answers.jsonl 的答案")
     sub.add_parser("review", help="只根据现有草稿重建审核页")
     apply = sub.add_parser("apply")
