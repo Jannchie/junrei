@@ -20,6 +20,7 @@ import json
 import sqlite3
 from pathlib import Path
 import sys
+from urllib.parse import urlparse
 
 from sync.fold import build_char_map, fold, romaji
 from sync.llm import clean_text
@@ -93,8 +94,10 @@ def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -
         if b.get("names"):
             i18n[("bangumi", str(b["id"]))] = {"name": b["names"]}
     for p in data.get("points", []):
+        ref = p.get("reference")
         points.append((p["bangumi"], p["id"], p.get("name"), p.get("cn"), p["lat"], p["lng"], p.get("priority", 0),
-                       p.get("ep"), p.get("s"), p.get("image"), p.get("origin"), p.get("origin_link"), p.get("mark")))
+                       p.get("ep"), p.get("s"), p.get("image"), p.get("origin"), p.get("origin_link"), p.get("mark"),
+                       p.get("source") or (urlparse(ref).hostname if ref else None), ref))
         counts[p["bangumi"]] = counts.get(p["bangumi"], 0) + 1
         item = {k: v for k, v in (("name", p.get("names")), ("mark", p.get("marks")), ("src", p.get("src"))) if v}
         if item:
@@ -166,7 +169,9 @@ def main():
             continue
         if image:
             origin, link = attribution(bid, pid, origin, link)
-        points.append((bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark))
+        # 数据来源（与截图署名分开）：Anitabi 的地标都指向 Anitabi 地图上的这个地标
+        points.append((bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark,
+                       "Anitabi", f"https://www.anitabi.cn/map?bangumiId={bid}&pid={pid}"))
 
     i18n = load_i18n()
 
@@ -228,7 +233,7 @@ def main():
                 "series_id", "i18n", "search", "series_points", "series_works"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
-                "origin_link", "mark", "i18n", "search"]
+                "origin_link", "mark", "source", "source_url", "i18n", "search"]
         f.writelines(insert_statements("point", cols, points))
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
         f.write("INSERT INTO bangumi_fts(bangumi_fts) VALUES('rebuild');\n")

@@ -337,7 +337,7 @@ def cmd_apply(data: Path, approved_file: str | None) -> None:
             manual["points"].append({
                 "bangumi": bid, "id": s["id"], "name": s["name"], "cn": s["names"]["zh-Hans"],
                 "lat": round(s["lat"], 6), "lng": round(s["lng"], 6), "ep": s["ep"] or None, "src": "ja",
-                "names": names, "marks": marks, "reference": s["reference"],
+                "names": names, "marks": marks, "reference": s["reference"], "source": s.get("source"),
             })
             known_points.add(s["id"])
             added += 1

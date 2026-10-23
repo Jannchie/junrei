@@ -20,6 +20,7 @@ export function bangumiKml(locale: Locale, d: BangumiDetail): { name: string; km
       p.image && `<img src="${esc(imageUrl(p.image, "h360"))}" width="320"/>`,
       markFor(locale, p).text && `<p>${esc(markFor(locale, p).text!)}</p>`,
       p.origin && `<p>© ${esc(p.origin)}</p>`,
+      p.sourceUrl && `<p>Source: <a href="${esc(p.sourceUrl)}">${esc(p.source ?? p.sourceUrl)}</a></p>`,
       `<p><a href="${esc(`${page}?p=${p.id}`)}">${esc(page)}</a></p>`,
     ]
       .filter(Boolean)

@@ -32,13 +32,13 @@ export function bangumiMarkdown(d: BangumiDetail) {
     "",
     "## 取景地",
     "",
-    "| 名称 | 原名 | 场景 | 坐标（纬度, 经度） | 备注 |",
-    "|---|---|---|---|---|",
+    "| 名称 | 原名 | 场景 | 坐标（纬度, 经度） | 备注 | 来源 |",
+    "|---|---|---|---|---|---|",
     ...d.points.map((p) =>
-      `| ${esc(p.cn ?? p.name ?? "")} | ${esc(p.cn && p.name ? p.name : "")} | ${scene(p.ep, p.s)} | ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} | ${esc(p.mark ?? "")} |`,
+      `| ${esc(p.cn ?? p.name ?? "")} | ${esc(p.cn && p.name ? p.name : "")} | ${scene(p.ep, p.s)} | ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} | ${esc(p.mark ?? "")} | ${p.sourceUrl ? `[${esc(p.source ?? "link")}](${p.sourceUrl})` : ""} |`,
     ),
     "",
-    "数据来自 Anitabi（https://www.anitabi.cn/）社区投稿；截图采用 CC BY-NC-SA 4.0，引用时请署名来源。",
+    "数据主要来自 Anitabi（https://www.anitabi.cn/）社区投稿，其余地标的出处见「来源」列；截图采用 CC BY-NC-SA 4.0，引用时请署名来源。",
     "",
   ];
   return lines.join("\n");

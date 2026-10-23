@@ -21,6 +21,8 @@ export async function getBangumi(id: number) {
         origin: point.origin,
         originLink: point.originLink,
         mark: point.mark,
+        source: point.source,
+        sourceUrl: point.sourceUrl,
         i18n: point.i18n,
       })
       .from(point)

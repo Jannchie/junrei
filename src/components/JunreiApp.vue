@@ -572,6 +572,10 @@ onBeforeUnmount(() => {
               </span>
               <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
               <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
+              <!-- 数据出处：每个地标都能跳到原文（截图的署名在图片角上，另算） -->
+              <a v-if="p.id === focusPointId && p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source" @click.stop>
+                {{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }} ↗
+              </a>
               <a
                 v-if="p.id === focusPointId"
                 :href="mapsUrl(p)"
@@ -1147,6 +1151,15 @@ figcaption a {
   color: #fff;
   background: var(--accent);
   border-radius: 50%;
+}
+.source {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.source:hover {
+  color: var(--fg);
 }
 .mt {
   font-size: 11px;
