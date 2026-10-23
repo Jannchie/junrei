@@ -7749,6 +7749,19 @@
       },
       "cat": "TV",
       "cover": "https://api.bgm.tv/v0/subjects/12317/image?type=common"
+    },
+    {
+      "id": 237834,
+      "title": "中間管理録トネガワ",
+      "cn": "中间管理录利根川",
+      "en": null,
+      "names": {
+        "zh-Hans": "中间管理录利根川",
+        "zh-Hant": "中間管理錄利根川",
+        "ja": "中間管理録トネガワ"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/237834/image?type=common"
     }
   ],
   "points": [
@@ -88933,6 +88946,56 @@
       "source": "btsoken.hatenablog.com",
       "image": "https://cdn.jannchie.com/junrei/shots/m-12317-sapporo-keiba-e462e602.jpg",
       "origin_link": "https://btsoken.hatenablog.com/entry/20110703/1309684614"
+    },
+    {
+      "bangumi": 237834,
+      "id": "m-237834-kinshi-park",
+      "name": "錦糸公園",
+      "cn": "锦糸公园",
+      "lat": 35.69909,
+      "lng": 139.816442,
+      "ep": "14",
+      "src": "ja",
+      "names": {
+        "ja": "錦糸公園",
+        "zh-Hans": "锦糸公园",
+        "zh-Hant": "錦糸公園",
+        "en": "Kinshi Park"
+      },
+      "marks": {
+        "ja": "外出した大槻がくつろぐ公園（漫画『1日外出録ハンチョウ』との比較による）",
+        "zh-Hans": "外出的大槻在这里放松（依据：与漫画《一日外出录班长》的分镜对比）",
+        "zh-Hant": "外出的大槻在這裡放鬆（依據：與漫畫《一日外出錄班長》的分鏡對比）",
+        "en": "The park where Otsuki relaxes on his day out (based on a comparison with the 1-nichi Gaishutsuroku Hanchou manga)"
+      },
+      "reference": "https://manba.co.jp/manba_magazines/6275",
+      "source": "マンバ通信",
+      "s": null
+    },
+    {
+      "bangumi": 237834,
+      "id": "m-237834-hibiya-park",
+      "name": "日比谷公園",
+      "cn": "日比谷公园",
+      "lat": 35.674041,
+      "lng": 139.756321,
+      "ep": "14",
+      "src": "ja",
+      "names": {
+        "ja": "日比谷公園",
+        "zh-Hans": "日比谷公园",
+        "zh-Hant": "日比谷公園",
+        "en": "Hibiya Park"
+      },
+      "marks": {
+        "ja": "大槻が過ごす公園の舞台（漫画『1日外出録ハンチョウ』との比較による）",
+        "zh-Hans": "大槻消磨时间的公园（依据：与漫画《一日外出录班长》的分镜对比）",
+        "zh-Hant": "大槻消磨時間的公園（依據：與漫畫《一日外出錄班長》的分鏡對比）",
+        "en": "The park where Otsuki spends his time (based on a comparison with the 1-nichi Gaishutsuroku Hanchou manga)"
+      },
+      "reference": "https://manba.co.jp/manba_magazines/6275",
+      "source": "マンバ通信",
+      "s": null
     }
   ]
 }
