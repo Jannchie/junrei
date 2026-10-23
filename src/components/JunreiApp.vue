@@ -1092,8 +1092,10 @@ h2 {
   display: none;
 }
 .points li.active {
-  background: var(--hover);
-  box-shadow: inset 3px 0 0 var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+}
+.points li.active .point-body > strong {
+  color: var(--accent);
 }
 figure {
   position: relative;
