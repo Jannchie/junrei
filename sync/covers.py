@@ -138,6 +138,29 @@ def queue(db, data: Path, token: str | None) -> list[int]:
     return sorted(ids - done, key=lambda b: (-points.get(b, 0), -pop.get(b, 0)))
 
 
+NSFW_AFTER_DAYS = 60  # Bangumi 只给注册满 60 天的账号看成人向条目（bangumi/server 的 auth.AllowNSFW）
+
+
+def nsfw_token() -> str | None:
+    """Bangumi 的公开 API 不登录时把成人向条目当作不存在（404）。有个人令牌（https://next.bgm.tv/demo/access-token）
+    且账号注册满 60 天时返回令牌；否则返回 None，免得每次都把看不到的条目重新请求一遍、白白耗掉 API 额度"""
+    import datetime as dt
+
+    token = os.environ.get("BANGUMI_TOKEN")
+    if not token:
+        return None
+    status, body = request("https://api.bgm.tv/v0/me", ua=UA, headers={"Authorization": f"Bearer {token}"})
+    if status != 200:
+        print(f"BANGUMI_TOKEN 无效（/v0/me → {status}），成人向条目的封面先跳过")
+        return None
+    reg = json.loads(body).get("reg_time")
+    ready = reg and dt.datetime.fromisoformat(reg) + dt.timedelta(days=NSFW_AFTER_DAYS)
+    if not ready or ready > dt.datetime.now(dt.timezone.utc):
+        print(f"Bangumi 账号注册未满 {NSFW_AFTER_DAYS} 天（{ready and ready.date()} 起可用），成人向条目的封面先跳过")
+        return None
+    return token
+
+
 def bgmd_posters() -> dict[int, str]:
     """bgmd 数据里的封面：作品 id → 原图路径（pic/ 之后的部分）"""
     try:
@@ -164,8 +187,7 @@ def main():
     db = open_db(data)
     db.executescript(SCHEMA)
     load_manifest(db)
-    # Bangumi 的公开 API 不登录时把成人向条目当作不存在（404）；有个人令牌（https://next.bgm.tv/demo/access-token）就带上
-    token = os.environ.get("BANGUMI_TOKEN")
+    token = nsfw_token()
     todo = queue(db, data, token)[: args.max]
     print(f"待镜像 {len(todo)} 部")
     if not todo:
