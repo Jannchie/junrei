@@ -7898,6 +7898,168 @@
       },
       "cat": "TV",
       "cover": "https://api.bgm.tv/v0/subjects/306429/image?type=common"
+    },
+    {
+      "id": 411427,
+      "title": "SPY×FAMILY Season 2",
+      "cn": "间谍过家家 第二季",
+      "en": "Spy x Family (2023)",
+      "names": {
+        "zh-Hans": "间谍过家家 第二季",
+        "zh-Hant": "間諜過家家 第二季",
+        "ja": "SPY×FAMILY Season 2",
+        "en": "Spy x Family (2023)"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/411427/image?type=common"
+    },
+    {
+      "id": 294993,
+      "title": "呪術廻戦",
+      "cn": "咒术回战",
+      "en": "Jujutsu Kaisen",
+      "names": {
+        "zh-Hans": "咒术回战",
+        "zh-Hant": "咒術回戰",
+        "ja": "呪術廻戦",
+        "en": "Jujutsu Kaisen"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/294993/image?type=common"
+    },
+    {
+      "id": 369304,
+      "title": "呪術廻戦 懐玉・玉折／渋谷事変",
+      "cn": "咒术回战 怀玉･玉折 / 涩谷事变",
+      "en": "Jujutsu Kaisen 2nd Season",
+      "names": {
+        "zh-Hans": "咒术回战 怀玉･玉折 / 涩谷事变",
+        "zh-Hant": "咒術回戰 懷玉･玉折 / 澀谷事變",
+        "ja": "呪術廻戦 懐玉・玉折／渋谷事変",
+        "en": "Jujutsu Kaisen 2nd Season"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/369304/image?type=common"
+    },
+    {
+      "id": 331559,
+      "title": "劇場版 呪術廻戦 0",
+      "cn": "剧场版 咒术回战 0",
+      "en": "Gekijouban Jujutsu Kaisen 0",
+      "names": {
+        "zh-Hans": "剧场版 咒术回战 0",
+        "zh-Hant": "劇場版 咒術回戰 0",
+        "ja": "劇場版 呪術廻戦 0",
+        "en": "Gekijouban Jujutsu Kaisen 0"
+      },
+      "cat": "剧场版",
+      "cover": "https://api.bgm.tv/v0/subjects/331559/image?type=common"
+    },
+    {
+      "id": 167655,
+      "title": "幼女戦記",
+      "cn": "幼女战记",
+      "en": "Saga of Tanya the Evil",
+      "names": {
+        "zh-Hans": "幼女战记",
+        "zh-Hant": "幼女戰記",
+        "ja": "幼女戦記",
+        "en": "Saga of Tanya the Evil"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/167655/image?type=common"
+    },
+    {
+      "id": 1730,
+      "title": "よくわかる現代魔法",
+      "cn": "简单易懂的现代魔法",
+      "en": null,
+      "names": {
+        "zh-Hans": "简单易懂的现代魔法",
+        "zh-Hant": "簡單易懂的現代魔法",
+        "ja": "よくわかる現代魔法"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/1730/image?type=common"
+    },
+    {
+      "id": 198395,
+      "title": "One Room",
+      "cn": null,
+      "en": null,
+      "names": {
+        "ja": "One Room"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/198395/image?type=common"
+    },
+    {
+      "id": 211066,
+      "title": "三ツ星カラーズ",
+      "cn": "三颗星彩色冒险",
+      "en": "Mitsuboshi Colors",
+      "names": {
+        "zh-Hans": "三颗星彩色冒险",
+        "zh-Hant": "三顆星彩色冒險",
+        "ja": "三ツ星カラーズ",
+        "en": "Mitsuboshi Colors"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/211066/image?type=common"
+    },
+    {
+      "id": 293532,
+      "title": "マブラヴ オルタネイティヴ",
+      "cn": "Muv-Luv Alternative",
+      "en": null,
+      "names": {
+        "zh-Hans": "Muv-Luv Alternative",
+        "zh-Hant": "Muv-Luv Alternative",
+        "ja": "マブラヴ オルタネイティヴ"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/293532/image?type=common"
+    },
+    {
+      "id": 354414,
+      "title": "SHINE POST",
+      "cn": "闪耀路标",
+      "en": null,
+      "names": {
+        "zh-Hans": "闪耀路标",
+        "zh-Hant": "閃耀路標",
+        "ja": "SHINE POST"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/354414/image?type=common"
+    },
+    {
+      "id": 67376,
+      "title": "グリザイアの果実",
+      "cn": "灰色的果实",
+      "en": "Grisaia no Kajitsu",
+      "names": {
+        "zh-Hans": "灰色的果实",
+        "zh-Hant": "灰色的果實",
+        "ja": "グリザイアの果実",
+        "en": "Grisaia no Kajitsu"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/67376/image?type=common"
+    },
+    {
+      "id": 75702,
+      "title": "帰宅部活動記録",
+      "cn": "归宅部活动记录",
+      "en": "Chronicles of the Going Home Club",
+      "names": {
+        "zh-Hans": "归宅部活动记录",
+        "zh-Hant": "歸宅部活動記錄",
+        "ja": "帰宅部活動記録",
+        "en": "Chronicles of the Going Home Club"
+      },
+      "cat": "TV",
+      "cover": "https://api.bgm.tv/v0/subjects/75702/image?type=common"
     }
   ],
   "points": [
@@ -16453,7 +16615,10 @@
       "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/68570468.html",
       "source": null,
       "s": null,
-      "updated": "2026-10-23"
+      "updated": "2026-10-24",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-195229-5b108ea8-24b8801d.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/68570468.html"
     },
     {
       "bangumi": 19540,
@@ -18851,7 +19016,10 @@
       "reference": "https://www.motsu-tanbou.com/entry/pilgrimage-slowloop",
       "source": null,
       "s": null,
-      "updated": "2026-10-23"
+      "updated": "2026-10-24",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-323626-bbe5af61-f2e575aa.jpg",
+      "origin": "www.motsu-tanbou.com",
+      "origin_link": "https://www.motsu-tanbou.com/entry/pilgrimage-slowloop"
     },
     {
       "bangumi": 323626,
@@ -104062,6 +104230,4617 @@
       "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-ee087be5.jpg",
       "origin": "Anime Pilgrimage",
       "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ee087be5-15e8-4661-bdac-b9d281858d87",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 106693,
+      "id": "m-106693-5d94f8cc",
+      "name": "練馬駅",
+      "cn": "练马站",
+      "lat": 35.738107,
+      "lng": 139.653974,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "练马站",
+        "ja": "練馬駅",
+        "en": "Nerima Station",
+        "zh-Hant": "練馬站"
+      },
+      "marks": {
+        "zh-Hans": "第3集中练马站检票口附近的场景，在同一地点拍摄。",
+        "ja": "第3話で練馬駅の改札口付近が描かれた場面。",
+        "en": "Scene near the Nerima Station ticket gate in episode 3.",
+        "zh-Hant": "第3集中練馬站檢票口附近的場景，在同一地點拍攝。"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2015/09/post-13c2.html",
+      "source": null,
+      "s": 237,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-106693-5d94f8cc-074b9d37.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2015/09/post-13c2.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 160124,
+      "id": "m-116461-8a954c75",
+      "name": "JR品川駅 中央改札",
+      "cn": "JR品川站 中央检票口",
+      "lat": 35.630651,
+      "lng": 139.737401,
+      "ep": "11",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "JR品川站 中央检票口",
+        "ja": "JR品川駅 中央改札",
+        "en": "JR Shinagawa Station Central Gate",
+        "zh-Hant": "JR品川站 中央檢票口"
+      },
+      "marks": {
+        "zh-Hans": "创真在检票口前等候搭档",
+        "ja": "創真が改札前で相方を待つ場面",
+        "en": "Souma waiting for his partner at the gate",
+        "zh-Hant": "創真在檢票口前等候搭檔"
+      },
+      "reference": "http://blog.livedoor.jp/beetle883/archives/11628069.html",
+      "source": null,
+      "s": 85,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-116461-8a954c75-77e17a30.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/beetle883/archives/11628069.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 160124,
+      "id": "m-116461-dbc28128",
+      "name": "品川セントラルガーデン 石のフォリー",
+      "cn": "品川中央花园 石之奇构",
+      "lat": 35.626249,
+      "lng": 139.741333,
+      "ep": "11",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "品川中央花园 石之奇构",
+        "ja": "品川セントラルガーデン 石のフォリー",
+        "en": "Shinagawa Central Garden Stone Folly",
+        "zh-Hant": "品川中央花園 石之奇構"
+      },
+      "marks": {
+        "zh-Hans": "两人在石质装饰建筑旁争论研修的场景",
+        "ja": "石のフォリー付近で二人が話す場面",
+        "en": "The two talk near the stone folly",
+        "zh-Hant": "兩人在石質裝飾建築旁爭論研修的場景"
+      },
+      "reference": "http://blog.livedoor.jp/beetle883/archives/11628069.html",
+      "source": null,
+      "s": 202,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-116461-dbc28128-ebc9c84c.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/beetle883/archives/11628069.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 296820,
+      "id": "m-116461-52cfdd31",
+      "name": "立川 サンサンロード",
+      "cn": "立川 Sun Sun Road",
+      "lat": 35.702943,
+      "lng": 139.412638,
+      "ep": "12",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "立川 Sun Sun Road",
+        "ja": "立川 サンサンロード",
+        "en": "Tachikawa Sun Sun Road",
+        "zh-Hant": "立川 Sun Sun Road"
+      },
+      "marks": {
+        "zh-Hans": "绘里奈伫立的立川北站旁天桥",
+        "ja": "えりなが佇む立川北駅側の陸橋",
+        "en": "Overpass near Tachikawa-Kita where Erina stands",
+        "zh-Hant": "繪里奈佇立的立川北站旁天橋"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/24837240.html",
+      "source": null,
+      "s": 885,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-116461-52cfdd31-70ca5d8f.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24837240.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 118906,
+      "id": "m-118906-54d62161",
+      "name": "NTTドコモ代々木ビル",
+      "cn": "NTT docomo代代木大厦",
+      "lat": 35.684451,
+      "lng": 139.702884,
+      "ep": "11",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "NTT docomo代代木大厦",
+        "ja": "NTTドコモ代々木ビル",
+        "en": "NTT Docomo Yoyogi Building",
+        "zh-Hant": "NTT docomo代代木大廈"
+      },
+      "marks": {
+        "zh-Hans": "背景中出现的代代木地标高楼",
+        "ja": "背景に描かれた代々木のランドマークビル",
+        "en": "Landmark tower shown in the background",
+        "zh-Hant": "背景中出現的代代木地標高樓"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-535.html",
+      "source": null,
+      "s": 893,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-118906-54d62161-c204569c.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-535.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 12544,
+      "id": "m-12544-379e1e60",
+      "name": "上色見熊野座神社",
+      "cn": "上色见熊野座神社",
+      "lat": 32.853804,
+      "lng": 131.158503,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "上色见熊野座神社",
+        "ja": "上色見熊野座神社",
+        "en": "Kamishikimi Kumanoza Shrine",
+        "zh-Hant": "上色見熊野座神社"
+      },
+      "marks": {
+        "zh-Hans": "剧场版开头出现的神社，是故事开场的舞台。",
+        "ja": "劇場版冒頭に登場する神社で、物語の始まりの場面。",
+        "en": "The shrine seen in the film's opening scene.",
+        "zh-Hant": "劇場版開頭出現的神社，是故事開場的舞臺。"
+      },
+      "reference": "http://d.hatena.ne.jp/USO9000/20121123/p1",
+      "source": null,
+      "s": 16,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-12544-379e1e60-a91bfe2e.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/USO9000/20121123/p1",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 126173,
+      "id": "m-126173-cf472c78",
+      "name": "大分県立大分上野丘高等学校 正門",
+      "cn": "大分县立大分上野丘高中 正门",
+      "lat": 33.237677,
+      "lng": 131.611669,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大分县立大分上野丘高中 正门",
+        "ja": "大分県立大分上野丘高等学校 正門",
+        "en": "Oita Prefectural Oita Uenogaoka High School Main Gate",
+        "zh-Hant": "大分縣立大分上野丘高中 正門"
+      },
+      "marks": {
+        "zh-Hans": "第1集前半出现的青叶高中校门与校舍外观，原型即该校",
+        "ja": "第1話前半に登場する青葉高校の校門と校舎外観のモデル",
+        "en": "Aoba High School gate and building shown in episode 1",
+        "zh-Hant": "第1集前半出現的青葉高中校門與校舍外觀，原型即該校"
+      },
+      "reference": "http://astral01.hatenablog.com/entry/2016/07/10/223349",
+      "source": null,
+      "s": 331,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-126173-cf472c78-ed321999.jpg",
+      "origin": "astral01.hatenablog.com",
+      "origin_link": "http://astral01.hatenablog.com/entry/2016/07/10/223349",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 138829,
+      "id": "m-138829-de31b5d0",
+      "name": "トリトンブリッジ",
+      "cn": "Triton Bridge",
+      "lat": 35.657502,
+      "lng": 139.779996,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Triton Bridge",
+        "ja": "トリトンブリッジ",
+        "en": "Triton Bridge",
+        "zh-Hant": "Triton Bridge"
+      },
+      "marks": {
+        "zh-Hans": "两人在移动步道上交谈的场景。",
+        "ja": "二人が動く歩道で会話する場面。",
+        "en": "Scene of the two talking on the moving walkway.",
+        "zh-Hant": "兩人在移動步道上交談的場景。"
+      },
+      "reference": "http://dotproducer.at-ninja.jp/owarimonogatari/sodachilost1/sodachilost1.html",
+      "source": null,
+      "s": 311,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-138829-de31b5d0-e3ed1d9e.jpg",
+      "origin": "dotproducer.at-ninja.jp",
+      "origin_link": "http://dotproducer.at-ninja.jp/owarimonogatari/sodachilost1/sodachilost1.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 278826,
+      "id": "m-140001-591dc201",
+      "name": "浅間神社",
+      "cn": "浅间神社",
+      "lat": 36.079677,
+      "lng": 139.723118,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "浅间神社",
+        "ja": "浅間神社",
+        "en": "Sengen Shrine",
+        "zh-Hant": "淺間神社"
+      },
+      "marks": {
+        "zh-Hans": "母亲篇章开始的神社。",
+        "ja": "母親パートの始まりに映る神社。",
+        "en": "Shrine opening the mother segment.",
+        "zh-Hant": "母親篇章開始的神社。"
+      },
+      "reference": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "source": null,
+      "s": 1245,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-591dc201-d5aeb507.jpg",
+      "origin": "fwht8392.blog.fc2.com",
+      "origin_link": "http://fwht8392.blog.fc2.com/blog-entry-646.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 140001,
+      "id": "m-140001-e204c615",
+      "name": "満福寺",
+      "cn": "满福寺",
+      "lat": 36.077381,
+      "lng": 139.717074,
+      "ep": "21",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "满福寺",
+        "ja": "満福寺",
+        "en": "Manpukuji Temple",
+        "zh-Hant": "滿福寺"
+      },
+      "marks": {
+        "zh-Hans": "一闪而过的寺院画面。",
+        "ja": "一瞬映る寺のカット。",
+        "en": "Temple briefly shown.",
+        "zh-Hant": "一閃而過的寺院畫面。"
+      },
+      "reference": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "source": null,
+      "s": 1303,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-e204c615-4511eae9.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 278826,
+      "id": "m-140001-bdc24d76",
+      "name": "浅間神社",
+      "cn": "浅间神社",
+      "lat": 36.079677,
+      "lng": 139.723118,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "浅间神社",
+        "ja": "浅間神社",
+        "en": "Sengen Shrine",
+        "zh-Hant": "淺間神社"
+      },
+      "marks": {
+        "zh-Hans": "昴与母亲同行时一闪而过的神社。",
+        "ja": "母と歩く場面で一瞬映る神社。",
+        "en": "Shrine briefly shown during walk with mother.",
+        "zh-Hant": "昴與母親同行時一閃而過的神社。"
+      },
+      "reference": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "source": null,
+      "s": 1245,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-bdc24d76-9b82d641.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24204404.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 278826,
+      "id": "m-140001-19c79209",
+      "name": "権現堂堤",
+      "cn": "权现堂堤",
+      "lat": 36.081141,
+      "lng": 139.731096,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "权现堂堤",
+        "ja": "権現堂堤",
+        "en": "Gongendo Embankment",
+        "zh-Hant": "權現堂堤"
+      },
+      "marks": {
+        "zh-Hans": "昴与父亲同行的樱花堤。",
+        "ja": "父と歩く桜堤の場面。",
+        "en": "Cherry embankment walk with father.",
+        "zh-Hant": "昴與父親同行的櫻花堤。"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "source": null,
+      "s": 269,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-19c79209-9866538d.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 278826,
+      "id": "m-140001-14fa8b70",
+      "name": "満福寺",
+      "cn": "满福寺",
+      "lat": 36.077381,
+      "lng": 139.717074,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "满福寺",
+        "ja": "満福寺",
+        "en": "Manpukuji Temple",
+        "zh-Hant": "滿福寺"
+      },
+      "marks": {
+        "zh-Hans": "途中出现的寺院。",
+        "ja": "道中に映る寺。",
+        "en": "Temple shown en route.",
+        "zh-Hant": "途中出現的寺院。"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "source": null,
+      "s": 277,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-14fa8b70-2de1051d.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 278826,
+      "id": "m-140001-50a1bdbe",
+      "name": "北二丁目交差点",
+      "cn": "北二丁目路口",
+      "lat": 36.084053,
+      "lng": 139.723083,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "北二丁目路口",
+        "ja": "北二丁目交差点",
+        "en": "Kita 2-chome Intersection",
+        "zh-Hant": "北二丁目路口"
+      },
+      "marks": {
+        "zh-Hans": "从人行天桥俯瞰的路口画面。",
+        "ja": "歩道橋から見た交差点のカット。",
+        "en": "Intersection viewed from the footbridge.",
+        "zh-Hant": "從人行天橋俯瞰的路口畫面。"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "source": null,
+      "s": 738,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-140001-50a1bdbe-7b4ef7a4.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/24262780.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 14220,
+      "id": "m-14220-750b96a6",
+      "name": "聚宝堂クララ館",
+      "cn": "聚宝堂 Clara馆",
+      "lat": 35.702691,
+      "lng": 139.544284,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "聚宝堂 Clara馆",
+        "ja": "聚宝堂クララ館",
+        "en": "Shuhodo Clara-kan",
+        "zh-Hant": "聚寶堂 Clara館"
+      },
+      "marks": {
+        "zh-Hans": "第3集之后再次出现的书店",
+        "ja": "第3話に続いて登場する本屋",
+        "en": "Bookstore that appears again after episode 3",
+        "zh-Hant": "第3集之後再次出現的書店"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-723.html",
+      "source": null,
+      "s": 535,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-14220-750b96a6-a1522eea.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-723.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 29421,
+      "id": "m-14220-3bac1d0d",
+      "name": "境南ふれあい広場公園",
+      "cn": "境南交流广场公园",
+      "lat": 35.701569,
+      "lng": 139.543747,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "境南交流广场公园",
+        "ja": "境南ふれあい広場公園",
+        "en": "Kyonan Fureai Hiroba Park",
+        "zh-Hant": "境南交流廣場公園"
+      },
+      "marks": {
+        "zh-Hans": "祐希逛完书店在公园休息",
+        "ja": "祐希が本屋の後に公園でくつろぐ",
+        "en": "Yuki relaxes in the park after the bookstore",
+        "zh-Hant": "祐希逛完書店在公園休息"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-810.html",
+      "source": null,
+      "s": 278,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-14220-3bac1d0d-821b6246.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-810.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 29421,
+      "id": "m-14220-8efef23f",
+      "name": "境南ふれあい広場公園",
+      "cn": "境南交流广场公园",
+      "lat": 35.701569,
+      "lng": 139.543747,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "境南交流广场公园",
+        "ja": "境南ふれあい広場公園",
+        "en": "Kyonan Fureai Hiroba Park",
+        "zh-Hant": "境南交流廣場公園"
+      },
+      "marks": {
+        "zh-Hans": "两人并坐长椅的公园",
+        "ja": "二人でベンチに座る公園",
+        "en": "Park where the two sit on a bench",
+        "zh-Hant": "兩人並坐長椅的公園"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
+      "source": null,
+      "s": 140,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-14220-8efef23f-b0e0c93c.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-825.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 29421,
+      "id": "m-14220-015901b8",
+      "name": "大國魂神社",
+      "cn": "大国魂神社",
+      "lat": 35.667479,
+      "lng": 139.47897,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大国魂神社",
+        "ja": "大國魂神社",
+        "en": "Okunitama Shrine",
+        "zh-Hant": "大國魂神社"
+      },
+      "marks": {
+        "zh-Hans": "第二季第5话登场的神社，拍摄了中雀门前挂着茅之轮的景象",
+        "ja": "2期5話に登場、中雀門前に茅の輪が置かれた神社",
+        "en": "Shrine in episode 5; the Chujakumon gate with a chinowa ring",
+        "zh-Hant": "第二季第5話登場的神社，拍攝了中雀門前掛著茅之輪的景象"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-833.html",
+      "source": null,
+      "s": 248,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-14220-015901b8-65a599fa.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-833.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 14729,
+      "id": "m-14729-32c1d390",
+      "name": "ヴェルニー公園",
+      "cn": "凡尔尼公园",
+      "lat": 35.283428,
+      "lng": 139.658978,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "凡尔尼公园",
+        "ja": "ヴェルニー公園",
+        "en": "Verny Park",
+        "zh-Hant": "凡爾尼公園"
+      },
+      "marks": {
+        "zh-Hans": "第8集开头的横须贺海边公园场景",
+        "ja": "8話冒頭の横須賀の海沿い公園の場面",
+        "en": "Waterfront park scene opening episode 8",
+        "zh-Hant": "第8集開頭的橫須賀海邊公園場景"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-8.html",
+      "source": null,
+      "s": 463,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-14729-32c1d390-fa023cc3.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-8.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 159661,
+      "id": "m-159661-a09b38e8",
+      "name": "県庁前公園",
+      "cn": "县厅前公园",
+      "lat": 36.696355,
+      "lng": 137.210985,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "县厅前公园",
+        "ja": "県庁前公園",
+        "en": "Kenchomae Park",
+        "zh-Hant": "縣廳前公園"
+      },
+      "marks": {
+        "zh-Hans": "县厅前公园出现的场景",
+        "ja": "県庁前公園が登場するシーン",
+        "en": "Scene set in Kenchomae Park",
+        "zh-Hant": "縣廳前公園出現的場景"
+      },
+      "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/59899165.html",
+      "source": null,
+      "s": 1124,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-159661-a09b38e8-d4b35772.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/59899165.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 159661,
+      "id": "m-159661-7eaa0b43",
+      "name": "P.A.WORKS本社",
+      "cn": "P.A.WORKS总部大楼",
+      "lat": 36.502331,
+      "lng": 136.87271,
+      "ep": "21",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "P.A.WORKS总部大楼",
+        "ja": "P.A.WORKS本社",
+        "en": "P.A. Works headquarters building",
+        "zh-Hant": "P.A.WORKS總部大樓"
+      },
+      "marks": {
+        "zh-Hans": "第21集中被摧毁的P.A.WORKS大楼正面",
+        "ja": "第21話で破壊される本社ビル正面",
+        "en": "Front of the building destroyed in episode 21",
+        "zh-Hant": "第21集中被摧毀的P.A.WORKS大樓正面"
+      },
+      "reference": "http://mikehattsu.blogspot.jp/search/label/kuromukuro",
+      "source": null,
+      "s": 1082,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-159661-7eaa0b43-c6257cd2.jpg",
+      "origin": "mikehattsu.blogspot.jp",
+      "origin_link": "http://mikehattsu.blogspot.jp/search/label/kuromukuro",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 159661,
+      "id": "m-159661-c6b79a7c",
+      "name": "富山城",
+      "cn": "富山城",
+      "lat": 28.514961,
+      "lng": 115.853695,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "富山城",
+        "ja": "富山城",
+        "en": "Toyama Castle",
+        "zh-Hant": "富山城"
+      },
+      "marks": {
+        "zh-Hans": "剑之介称为安昙城的富山城",
+        "ja": "剣之介が安曇城と呼ぶ富山城",
+        "en": "Toyama Castle, called Azumi Castle by Kennosuke",
+        "zh-Hant": "劍之介稱為安曇城的富山城"
+      },
+      "reference": "http://mikehattsu.blogspot.jp/search/label/kuromukuro",
+      "source": null,
+      "s": 247,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-159661-c6b79a7c-f09e1385.jpg",
+      "origin": "mikehattsu.blogspot.jp",
+      "origin_link": "http://mikehattsu.blogspot.jp/search/label/kuromukuro",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 167655,
+      "id": "m-167655-6d6bf9bf",
+      "name": "東京駅 丸の内口",
+      "cn": "东京站 丸之内口",
+      "lat": 35.681744,
+      "lng": 139.765638,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "东京站 丸之内口",
+        "ja": "東京駅 丸の内口",
+        "en": "Tokyo Station Marunouchi Exit",
+        "zh-Hant": "東京站 丸之內口"
+      },
+      "marks": {
+        "zh-Hans": "转生前的谭雅被推下站台身亡的东京站外观",
+        "ja": "転生前のターニャが死んだ東京駅の外観",
+        "en": "Tokyo Station exterior where Tanya died before reincarnation",
+        "zh-Hant": "轉生前的譚雅被推下站臺身亡的東京站外觀"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2020/03/18/180000",
+      "source": null,
+      "s": 84,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-167655-6d6bf9bf-963260b0.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2020/03/18/180000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 170261,
+      "id": "m-170261-0125ae80",
+      "name": "武蔵境駅 北口",
+      "cn": "武藏境站北口",
+      "lat": 35.702297,
+      "lng": 139.54404,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "武藏境站北口",
+        "ja": "武蔵境駅 北口",
+        "en": "Musashi-Sakai Station North Exit",
+        "zh-Hant": "武藏境站北口"
+      },
+      "marks": {
+        "zh-Hans": "片头中的武蔵境站北口场景。",
+        "ja": "オープニングに描かれた武蔵境駅北口のカット。",
+        "en": "Opening scene showing the north exit of Musashi-Sakai Station.",
+        "zh-Hant": "片頭中的武蔵境站北口場景。"
+      },
+      "reference": "http://sinkirouno.exblog.jp/24521133/",
+      "source": null,
+      "s": 148,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-170261-0125ae80-5e6b1044.jpg",
+      "origin": "sinkirouno.exblog.jp",
+      "origin_link": "http://sinkirouno.exblog.jp/24521133/",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 170261,
+      "id": "m-170261-d01bc8c3",
+      "name": "武蔵野プレイス",
+      "cn": "武藏野Place",
+      "lat": 35.701097,
+      "lng": 139.543704,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "武藏野Place",
+        "ja": "武蔵野プレイス",
+        "en": "Musashino Place",
+        "zh-Hant": "武藏野Place"
+      },
+      "marks": {
+        "zh-Hans": "主角父女在武蔵野Place前广场的场景。",
+        "ja": "武蔵野プレイス前の広場で登場人物が描かれる場面。",
+        "en": "Scene on the plaza in front of Musashino Place.",
+        "zh-Hant": "主角父女在武蔵野Place前廣場的場景。"
+      },
+      "reference": "http://sinkirouno.exblog.jp/24521133/",
+      "source": null,
+      "s": 140,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-170261-d01bc8c3-4ad0c414.jpg",
+      "origin": "sinkirouno.exblog.jp",
+      "origin_link": "http://sinkirouno.exblog.jp/24521133/",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 170261,
+      "id": "m-170261-fc701cb3",
+      "name": "武蔵境駅 北口",
+      "cn": "武藏境站北口",
+      "lat": 35.702297,
+      "lng": 139.54404,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "武藏境站北口",
+        "ja": "武蔵境駅 北口",
+        "en": "Musashi-Sakai Station North Exit",
+        "zh-Hant": "武藏境站北口"
+      },
+      "marks": {
+        "zh-Hans": "片头中如积木般的武蔵境站北口拱门。",
+        "ja": "ブロック風に描かれた武蔵境駅北口のアーチ。",
+        "en": "Block-style depiction of the station's north exit arch.",
+        "zh-Hant": "片頭中如積木般的武蔵境站北口拱門。"
+      },
+      "reference": "http://rosseta.hatenablog.com/entry/2016/07/16/220000",
+      "source": null,
+      "s": 127,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-170261-fc701cb3-0aa78256.jpg",
+      "origin": "rosseta.hatenablog.com",
+      "origin_link": "http://rosseta.hatenablog.com/entry/2016/07/16/220000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 170261,
+      "id": "m-170261-f9ae8f11",
+      "name": "武蔵野プレイス",
+      "cn": "武藏野Place",
+      "lat": 35.701097,
+      "lng": 139.543704,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "武藏野Place",
+        "ja": "武蔵野プレイス",
+        "en": "Musashino Place",
+        "zh-Hant": "武藏野Place"
+      },
+      "marks": {
+        "zh-Hans": "片头结尾的场景，位于武蔵境站南侧。",
+        "ja": "オープニング最後の背景。武蔵境駅南側の施設。",
+        "en": "Final opening scene background south of the station.",
+        "zh-Hant": "片頭結尾的場景，位於武蔵境站南側。"
+      },
+      "reference": "http://rosseta.hatenablog.com/entry/2016/07/16/220000",
+      "source": null,
+      "s": 194,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-170261-f9ae8f11-d781fcbb.jpg",
+      "origin": "rosseta.hatenablog.com",
+      "origin_link": "http://rosseta.hatenablog.com/entry/2016/07/16/220000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-961b87bc",
+      "name": "和光",
+      "cn": "和光钟楼",
+      "lat": 35.671735,
+      "lng": 139.765007,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "和光钟楼",
+        "ja": "和光",
+        "en": "Wako Clock Tower",
+        "zh-Hant": "和光鐘樓"
+      },
+      "marks": {
+        "zh-Hans": "银座四丁目路口的和光钟楼",
+        "ja": "銀座四丁目交差点の和光時計台",
+        "en": "Wako clock tower at Ginza 4-chome crossing",
+        "zh-Hant": "銀座四丁目路口的和光鐘樓"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 34,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-961b87bc-66b79364.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-a79e015f",
+      "name": "東京メトロ銀座駅",
+      "cn": "东京地铁银座站",
+      "lat": 35.671831,
+      "lng": 139.764022,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "东京地铁银座站",
+        "ja": "東京メトロ銀座駅",
+        "en": "Ginza Station",
+        "zh-Hant": "東京地鐵銀座站"
+      },
+      "marks": {
+        "zh-Hans": "弓子在银座线站台下车的场景",
+        "ja": "弓子が銀座線ホームに降りる場面",
+        "en": "Yumiko gets off at Ginza Line platform",
+        "zh-Hant": "弓子在銀座線站臺下車的場景"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 104,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-a79e015f-b41cf0ba.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-2fd10790",
+      "name": "松屋銀座",
+      "cn": "松屋银座",
+      "lat": 35.672404,
+      "lng": 139.766779,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "松屋银座",
+        "ja": "松屋銀座",
+        "en": "Matsuya Ginza",
+        "zh-Hant": "松屋銀座"
+      },
+      "marks": {
+        "zh-Hans": "屋顶上与吉巴尔特斯战斗的百货",
+        "ja": "屋上でギバルテスと戦う百貨店",
+        "en": "Department store rooftop battle with Gibaltes",
+        "zh-Hant": "屋頂上與吉巴爾特斯戰鬥的百貨"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 31,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-2fd10790-635eb008.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-95861973",
+      "name": "代官山駅",
+      "cn": "代官山站",
+      "lat": 35.648121,
+      "lng": 139.703216,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "代官山站",
+        "ja": "代官山駅",
+        "en": "Daikanyama Station",
+        "zh-Hant": "代官山站"
+      },
+      "marks": {
+        "zh-Hans": "弓子乘电车的东横线代官山站正面口",
+        "ja": "弓子が電車に乗る代官山駅正面口",
+        "en": "Yumiko boards a train at Daikanyama Station",
+        "zh-Hant": "弓子乘電車的東橫線代官山站正面口"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 325,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-95861973-1e997414.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-8780a92c",
+      "name": "銀座六丁目交差点",
+      "cn": "银座六丁目路口",
+      "lat": 35.669262,
+      "lng": 139.764435,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "银座六丁目路口",
+        "ja": "銀座六丁目交差点",
+        "en": "Ginza 6-chome Intersection",
+        "zh-Hant": "銀座六丁目路口"
+      },
+      "marks": {
+        "zh-Hans": "寻找美锁途中经过的路口",
+        "ja": "美鎖を探す途中で映る交差点",
+        "en": "Intersection passed while searching for Misa",
+        "zh-Hant": "尋找美鎖途中經過的路口"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 518,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-8780a92c-9ccf8c3e.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-e019dfe8",
+      "name": "数寄屋橋公園",
+      "cn": "数寄屋桥公园",
+      "lat": 35.672537,
+      "lng": 139.762262,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "数寄屋桥公园",
+        "ja": "数寄屋橋公園",
+        "en": "Sukiyabashi Park",
+        "zh-Hant": "數寄屋橋公園"
+      },
+      "marks": {
+        "zh-Hans": "弓子休息并遭遇使魔战斗的喷泉公园",
+        "ja": "弓子が休み使い魔と戦う噴水公園",
+        "en": "Fountain park where Yumiko fights a familiar",
+        "zh-Hant": "弓子休息並遭遇使魔戰鬥的噴泉公園"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "source": null,
+      "s": 1031,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-e019dfe8-a7630d6c.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090718/1247923640",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-9857f9b0",
+      "name": "広尾駅",
+      "cn": "广尾站",
+      "lat": 35.649658,
+      "lng": 139.713043,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "广尾站",
+        "ja": "広尾駅",
+        "en": "Hiroo Station",
+        "zh-Hant": "廣尾站"
+      },
+      "marks": {
+        "zh-Hans": "与嘉穗乘日比谷线地铁的广尾站",
+        "ja": "嘉穂と日比谷線に乗る広尾駅",
+        "en": "Hibiya Line ride from Hiroo Station",
+        "zh-Hant": "與嘉穗乘日比谷線地鐵的廣尾站"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "source": null,
+      "s": 538,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-9857f9b0-44b9a048.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-6b4ae3a4",
+      "name": "秋葉原駅前",
+      "cn": "秋叶原站前",
+      "lat": 35.69716,
+      "lng": 139.775159,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "秋叶原站前",
+        "ja": "秋葉原駅前",
+        "en": "Akihabara Station front",
+        "zh-Hant": "秋葉原站前"
+      },
+      "marks": {
+        "zh-Hans": "电气街口站前的场景",
+        "ja": "電気街口駅前のシーン",
+        "en": "Scene at the Electric Town exit",
+        "zh-Hant": "電氣街口站前的場景"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "source": null,
+      "s": 570,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-6b4ae3a4-75abf6f5.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-6ea50f2c",
+      "name": "秋葉原UDX",
+      "cn": "秋叶原UDX",
+      "lat": 35.70037,
+      "lng": 139.77261,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "秋叶原UDX",
+        "ja": "秋葉原UDX",
+        "en": "Akihabara UDX",
+        "zh-Hant": "秋葉原UDX"
+      },
+      "marks": {
+        "zh-Hans": "小夜子与美锁相遇的大楼",
+        "ja": "こよみが美鎖と遭遇する場所",
+        "en": "Where Koyomi meets Misa",
+        "zh-Hant": "小夜子與美鎖相遇的大樓"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "source": null,
+      "s": 608,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-6ea50f2c-51a5c804.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-5a4efcde",
+      "name": "代官山アドレス",
+      "cn": "代官山Address",
+      "lat": 35.649226,
+      "lng": 139.702831,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "代官山Address",
+        "ja": "代官山アドレス",
+        "en": "Daikanyama Address",
+        "zh-Hant": "代官山Address"
+      },
+      "marks": {
+        "zh-Hans": "弓子逃跑并起火的前广场",
+        "ja": "弓子が逃げ炎上する前広場",
+        "en": "Plaza where Yumiko flees and fire breaks out",
+        "zh-Hant": "弓子逃跑並起火的前廣場"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "source": null,
+      "s": 207,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-5a4efcde-4e1710d8.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090804/1249398861",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 1730,
+      "id": "m-1730-a613f887",
+      "name": "築地川銀座公園",
+      "cn": "筑地川银座公园",
+      "lat": 35.668628,
+      "lng": 139.768854,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "筑地川银座公园",
+        "ja": "築地川銀座公園",
+        "en": "Tsukijigawa Ginza Park",
+        "zh-Hant": "築地川銀座公園"
+      },
+      "marks": {
+        "zh-Hans": "historic 历与弓子为找猫来到公园，背后是名犬吉萝莉纪念碑",
+        "ja": "こよみと弓子が猫探しで訪れる公園。背後にチロリ記念碑がある",
+        "en": "Koyomi and Yumiko search for a cat here, with the Chirori monument behind them.",
+        "zh-Hant": "historic 歷與弓子為找貓來到公園，背後是名犬吉蘿莉紀念碑"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20090831/1251721965",
+      "source": null,
+      "s": 1081,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-1730-a613f887-53014d78.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20090831/1251721965",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 185762,
+      "id": "m-185762-db2f7301",
+      "name": "井の頭恩賜公園 遊びの広場",
+      "cn": "井之头恩赐公园 游乐广场",
+      "lat": 35.677228,
+      "lng": 139.52842,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "井之头恩赐公园 游乐广场",
+        "ja": "井の頭恩賜公園 遊びの広場",
+        "en": "Inokashira Park Asobi no Hiroba",
+        "zh-Hant": "井之頭恩賜公園 遊樂廣場"
+      },
+      "marks": {
+        "zh-Hans": "第4话出现的游具广场",
+        "ja": "第4話に登場する遊具のある広場",
+        "en": "Playground plaza in episode 4",
+        "zh-Hant": "第4話出現的遊具廣場"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2020/04/11/180000",
+      "source": null,
+      "s": 751,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-185762-db2f7301-d982d8c8.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2020/04/11/180000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 188091,
+      "id": "m-188091-1035e03b",
+      "name": "浜松城公園",
+      "cn": "滨松城公园",
+      "lat": 34.834744,
+      "lng": 137.662565,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "滨松城公园",
+        "ja": "浜松城公園",
+        "en": "Hamamatsu Castle Park",
+        "zh-Hant": "濱松城公園"
+      },
+      "marks": {
+        "zh-Hans": "开头下界街景中的天守曲轮",
+        "ja": "冒頭の下界の街並みに映る天守曲輪",
+        "en": "Castle keep area in the opening scene",
+        "zh-Hant": "開頭下界街景中的天守曲輪"
+      },
+      "reference": "http://blog.livedoor.jp/beetle883/archives/15372351.html",
+      "source": null,
+      "s": 61,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-188091-1035e03b-b8e8d106.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/beetle883/archives/15372351.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 188091,
+      "id": "m-188091-4ff06e3e",
+      "name": "弁天島駅",
+      "cn": "弁天岛站",
+      "lat": 34.689862,
+      "lng": 137.60376,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "弁天岛站",
+        "ja": "弁天島駅",
+        "en": "Benten-jima Station",
+        "zh-Hant": "弁天島站"
+      },
+      "marks": {
+        "zh-Hans": "海水浴一行下车的车站月台",
+        "ja": "海水浴に来た一行が降り立つ駅ホーム",
+        "en": "Platform where the group arrives for the beach",
+        "zh-Hant": "海水浴一行下車的車站月臺"
+      },
+      "reference": "http://blog.livedoor.jp/beetle883/archives/15372351.html",
+      "source": null,
+      "s": 391,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-188091-4ff06e3e-68cb8840.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/beetle883/archives/15372351.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 188091,
+      "id": "m-188091-3126457d",
+      "name": "弁天島駅",
+      "cn": "弁天岛站",
+      "lat": 34.689862,
+      "lng": 137.60376,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "弁天岛站",
+        "ja": "弁天島駅",
+        "en": "Bentenjima Station",
+        "zh-Hant": "弁天島站"
+      },
+      "marks": {
+        "zh-Hans": "第4集大量出现的车站场景",
+        "ja": "第4話で多数描かれた駅のシーン",
+        "en": "Station scenes featured heavily in episode 4",
+        "zh-Hant": "第4集大量出現的車站場景"
+      },
+      "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/69816333.html",
+      "source": null,
+      "s": 393,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-188091-3126457d-aab9611f.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/69816333.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 188091,
+      "id": "m-188091-18753a60",
+      "name": "弁天島海浜公園",
+      "cn": "弁天岛海滨公园",
+      "lat": 34.689034,
+      "lng": 137.602603,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "弁天岛海滨公园",
+        "ja": "弁天島海浜公園",
+        "en": "Bentenjima Seaside Park",
+        "zh-Hant": "弁天島海濱公園"
+      },
+      "marks": {
+        "zh-Hans": "角色们在海滨沙滩玩耍的场景",
+        "ja": "キャラクターたちが砂浜で過ごす場面",
+        "en": "Characters spend time on the beach",
+        "zh-Hant": "角色們在海濱沙灘玩耍的場景"
+      },
+      "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/69816333.html",
+      "source": null,
+      "s": 507,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-188091-18753a60-7f9eba58.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/69816333.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 190907,
+      "id": "m-190907-28e67ed0",
+      "name": "井の頭公園駅",
+      "cn": "井之头公园站",
+      "lat": 35.697502,
+      "lng": 139.582728,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "井之头公园站",
+        "ja": "井の頭公園駅",
+        "en": "Inokashira-koen Station",
+        "zh-Hant": "井之頭公園站"
+      },
+      "marks": {
+        "zh-Hans": "众人买鲷鱼烧的站前",
+        "ja": "たい焼きを買う場面の駅前",
+        "en": "Station front where they buy taiyaki",
+        "zh-Hant": "眾人買鯛魚燒的站前"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2021/07/31/180000",
+      "source": null,
+      "s": 885,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-190907-28e67ed0-333e5767.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2021/07/31/180000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 198395,
+      "id": "m-198395-bb0e9c0d",
+      "name": "清澄白河駅 A2出口",
+      "cn": "清澄白河站 A2出口",
+      "lat": 35.68205,
+      "lng": 139.798764,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "清澄白河站 A2出口",
+        "ja": "清澄白河駅 A2出口",
+        "en": "Kiyosumi-shirakawa Station Exit A2",
+        "zh-Hant": "清澄白河站 A2出口"
+      },
+      "marks": {
+        "zh-Hans": "第5集中出现的车站出口场景",
+        "ja": "第5話に登場する駅出口のシーン",
+        "en": "Station exit scene in episode 5",
+        "zh-Hant": "第5集中出現的車站出口場景"
+      },
+      "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/68634232.html",
+      "source": null,
+      "s": 215,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-198395-bb0e9c0d-a7f051e0.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/68634232.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 204483,
+      "id": "m-204483-91adeafa",
+      "name": "大多喜駅",
+      "cn": "大多喜站",
+      "lat": 35.28665,
+      "lng": 140.243995,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大多喜站",
+        "ja": "大多喜駅",
+        "en": "Otaki Station",
+        "zh-Hant": "大多喜站"
+      },
+      "marks": {
+        "zh-Hans": "活动据点陽菜野站的车站全景",
+        "ja": "活動拠点・陽菜野駅の駅全景",
+        "en": "Full view of Hinano Station, the group's base",
+        "zh-Hant": "活動據點陽菜野站的車站全景"
+      },
+      "reference": "http://tanashiri.blog136.fc2.com/blog-entry-80.html",
+      "source": null,
+      "s": 1156,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-204483-91adeafa-8b581739.jpg",
+      "origin": "tanashiri.blog136.fc2.com",
+      "origin_link": "http://tanashiri.blog136.fc2.com/blog-entry-80.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 204483,
+      "id": "m-204483-0f7743c7",
+      "name": "大多喜高校",
+      "cn": "大多喜高中",
+      "lat": 35.286516,
+      "lng": 140.240668,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大多喜高中",
+        "ja": "大多喜高校",
+        "en": "Otaki High School",
+        "zh-Hant": "大多喜高中"
+      },
+      "marks": {
+        "zh-Hans": "陽菜野高中校门的原型",
+        "ja": "陽菜野高校の校門のモデル",
+        "en": "Model for Hinano High School's gate",
+        "zh-Hant": "陽菜野高中校門的原型"
+      },
+      "reference": "http://tanashiri.blog136.fc2.com/blog-entry-80.html",
+      "source": null,
+      "s": 109,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-204483-0f7743c7-f6a861ee.jpg",
+      "origin": "tanashiri.blog136.fc2.com",
+      "origin_link": "http://tanashiri.blog136.fc2.com/blog-entry-80.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 204483,
+      "id": "m-204483-6edd76af",
+      "name": "大多喜高校",
+      "cn": "大多喜高中",
+      "lat": 35.286516,
+      "lng": 140.240668,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大多喜高中",
+        "ja": "大多喜高校",
+        "en": "Otaki High School",
+        "zh-Hant": "大多喜高中"
+      },
+      "marks": {
+        "zh-Hans": "角色们上学的学校原型",
+        "ja": "皆が通う学校のモデル",
+        "en": "Model of the characters' school",
+        "zh-Hant": "角色們上學的學校原型"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2871.html",
+      "source": null,
+      "s": 109,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-204483-6edd76af-08a0db79.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2871.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 204483,
+      "id": "m-204483-84aff6f0",
+      "name": "大多喜城",
+      "cn": "大多喜城",
+      "lat": 35.284542,
+      "lng": 140.233765,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大多喜城",
+        "ja": "大多喜城",
+        "en": "Otaki Castle",
+        "zh-Hant": "大多喜城"
+      },
+      "marks": {
+        "zh-Hans": "俯瞰城下的广场场景",
+        "ja": "城下を見渡す広場の場面",
+        "en": "Plaza scene overlooking the town",
+        "zh-Hant": "俯瞰城下的廣場場景"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2871.html",
+      "source": null,
+      "s": 1328,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-204483-84aff6f0-dd01124c.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2871.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 204483,
+      "id": "m-204483-95d3e3c8",
+      "name": "大多喜駅",
+      "cn": "大多喜站",
+      "lat": 35.28665,
+      "lng": 140.243995,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大多喜站",
+        "ja": "大多喜駅",
+        "en": "Otaki Station",
+        "zh-Hant": "大多喜站"
+      },
+      "marks": {
+        "zh-Hans": "黑酒邸即车站的场景",
+        "ja": "黒酒邸として登場する駅",
+        "en": "Station appearing as the Kurosake residence",
+        "zh-Hant": "黑酒邸即車站的場景"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2023/02/05/180000",
+      "source": null,
+      "s": 1146,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-204483-95d3e3c8-1427bb36.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2023/02/05/180000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 20851,
+      "id": "m-20851-720bffdb",
+      "name": "巖浄閣（福野高校）",
+      "cn": "岩净阁（福野高中）",
+      "lat": 36.588679,
+      "lng": 136.928973,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "岩净阁（福野高中）",
+        "ja": "巖浄閣（福野高校）",
+        "en": "Ganjokaku (Fukuno High School)",
+        "zh-Hant": "巖淨閣（福野高中）"
+      },
+      "marks": {
+        "zh-Hans": "PV中出现的旧校舍入口内侧楼梯平台",
+        "ja": "PVに登場する旧校舎の入口奥の階段踊場",
+        "en": "Stair landing inside the old school building in the PV",
+        "zh-Hant": "PV中出現的舊校舍入口內側樓梯平臺"
+      },
+      "reference": "http://ameblo.jp/t-bunbun/entry-11100011171.html",
+      "source": null,
+      "s": 27,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-20851-720bffdb-a275370d.jpg",
+      "origin": "ameblo.jp",
+      "origin_link": "http://ameblo.jp/t-bunbun/entry-11100011171.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 20851,
+      "id": "m-20851-f528d05d",
+      "name": "小矢部川河川敷（福光橋付近）",
+      "cn": "小矢部川河滩（福光桥附近）",
+      "lat": 36.559975,
+      "lng": 136.867126,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "小矢部川河滩（福光桥附近）",
+        "ja": "小矢部川河川敷（福光橋付近）",
+        "en": "Oyabe River Riverbank near Fukumitsu Bridge",
+        "zh-Hant": "小矢部川河灘（福光橋附近）"
+      },
+      "marks": {
+        "zh-Hans": "第5、6集出现的河滩，从福光厅舍旁的桥上朝福光桥方向看。",
+        "ja": "5・6話の河川敷。福光庁舎脇の橋から福光橋方向を望む。",
+        "en": "Riverbank in episodes 5 and 6, viewed from the bridge by Fukumitsu office toward Fukumitsu Bridge.",
+        "zh-Hant": "第5、6集出現的河灘，從福光廳舍旁的橋上朝福光橋方向看。"
+      },
+      "reference": "http://d.hatena.ne.jp/inoue1024/20120216/1329398034",
+      "source": null,
+      "s": 742,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-20851-f528d05d-a704e3e3.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/inoue1024/20120216/1329398034",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 20851,
+      "id": "m-20851-648d6d66",
+      "name": "閑乗寺公園",
+      "cn": "闲乘寺公园",
+      "lat": 36.5599,
+      "lng": 136.986216,
+      "ep": "12",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "闲乘寺公园",
+        "ja": "閑乗寺公園",
+        "en": "Kanjoji Park",
+        "zh-Hant": "閒乘寺公園"
+      },
+      "marks": {
+        "zh-Hans": "扫墓场景中的草坡与通往展望台的步道原型。",
+        "ja": "墓参りシーンの草原の坂と展望台への歩道のモデル。",
+        "en": "Model for the grassy slope and path to the observatory in the grave-visit scene.",
+        "zh-Hant": "掃墓場景中的草坡與通往展望臺的步道原型。"
+      },
+      "reference": "http://d.hatena.ne.jp/inoue1024/20120329/1332948983",
+      "source": null,
+      "s": 1139,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-20851-648d6d66-b518a648.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/inoue1024/20120329/1332948983",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 20851,
+      "id": "m-20851-5e18840f",
+      "name": "ミラージュランド",
+      "cn": "蜃景乐园",
+      "lat": 36.800298,
+      "lng": 137.38588,
+      "ep": "12",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "蜃景乐园",
+        "ja": "ミラージュランド",
+        "en": "Mirage Land",
+        "zh-Hant": "蜃景樂園"
+      },
+      "marks": {
+        "zh-Hans": "第12集一闪而过的游乐园，摩天轮造型一致。",
+        "ja": "12話にちらりと登場した遊園地。観覧車などが一致。",
+        "en": "Amusement park briefly seen in episode 12, matching the Ferris wheel.",
+        "zh-Hant": "第12集一閃而過的遊樂園，摩天輪造型一致。"
+      },
+      "reference": "http://d.hatena.ne.jp/inoue1024/20120329/1332948983",
+      "source": null,
+      "s": 1213,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-20851-5e18840f-55a03f83.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/inoue1024/20120329/1332948983",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 211066,
+      "id": "m-211066-912b1190",
+      "name": "ガラクタ貿易",
+      "cn": "Garakuta贸易",
+      "lat": 35.709587,
+      "lng": 139.775422,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Garakuta贸易",
+        "ja": "ガラクタ貿易",
+        "en": "Garakuta Boeki",
+        "zh-Hant": "Garakuta貿易"
+      },
+      "marks": {
+        "zh-Hans": "鲸鱼工厂的原型店铺，位于阿美横町",
+        "ja": "ホエールファクトリーのモデルとなった店",
+        "en": "Shop that models Whale Factory in Ameyoko",
+        "zh-Hant": "鯨魚工廠的原型店鋪，位於阿美橫町"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2021/04/17/180000",
+      "source": null,
+      "s": 733,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-211066-912b1190-c4cb54db.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2021/04/17/180000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 212146,
+      "id": "m-212146-0d182507",
+      "name": "ラーメン二郎 三田本店",
+      "cn": "拉面二郎 三田总店",
+      "lat": 35.648053,
+      "lng": 139.741638,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "拉面二郎 三田总店",
+        "ja": "ラーメン二郎 三田本店",
+        "en": "Ramen Jiro Mita Honten",
+        "zh-Hant": "拉麵二郎 三田總店"
+      },
+      "marks": {
+        "zh-Hans": "小泉点了蔬菜加量的二郎拉面",
+        "ja": "小泉さんがヤサイマシで二郎を食べる店",
+        "en": "Koizumi orders extra-vegetable Jiro ramen here",
+        "zh-Hant": "小泉點了蔬菜加量的二郎拉麵"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-1664.html",
+      "source": null,
+      "s": 273,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-212146-0d182507-54f4c9d8.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-1664.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 213076,
+      "id": "m-213076-a14be95c",
+      "name": "金王八幡宮",
+      "cn": "金王八幡宫",
+      "lat": 35.65752,
+      "lng": 139.706391,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "金王八幡宫",
+        "ja": "金王八幡宮",
+        "en": "Konno Hachimangu",
+        "zh-Hant": "金王八幡宮"
+      },
+      "marks": {
+        "zh-Hans": "OP中出现的涩谷神社景象",
+        "ja": "OPに登場する渋谷の神社のカット",
+        "en": "Shrine scene shown in the opening",
+        "zh-Hant": "OP中出現的澀谷神社景象"
+      },
+      "reference": "http://d.hatena.ne.jp/paffue/20171119/1511100233",
+      "source": null,
+      "s": 306,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-213076-a14be95c-24809807.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/paffue/20171119/1511100233",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 220375,
+      "id": "m-220375-1d685886",
+      "name": "具志川ビーチ",
+      "cn": "具志川海滩",
+      "lat": 26.362511,
+      "lng": 127.872636,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "具志川海滩",
+        "ja": "具志川ビーチ",
+        "en": "Gushikawa Beach",
+        "zh-Hant": "具志川海灘"
+      },
+      "marks": {
+        "zh-Hans": "奏家庭院前的海滩，沙滩排球部的练习地",
+        "ja": "かなたの自宅の庭先で部の練習拠点となるビーチ",
+        "en": "Kanata's backyard beach used as the club's practice site",
+        "zh-Hant": "奏家庭院前的海灘，沙灘排球部的練習地"
+      },
+      "reference": "http://blog.livedoor.jp/miyaken46/archives/15387360.html",
+      "source": null,
+      "s": 97,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-220375-1d685886-028f24bb.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/miyaken46/archives/15387360.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-4a10c99c",
+      "name": "神保町交差点",
+      "cn": "神保町十字路口",
+      "lat": 35.69573,
+      "lng": 139.757464,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "神保町十字路口",
+        "ja": "神保町交差点",
+        "en": "Jimbocho Intersection",
+        "zh-Hant": "神保町十字路口"
+      },
+      "marks": {
+        "zh-Hans": "OP标题画面中出现的路口",
+        "ja": "OPタイトル部分に出る交差点",
+        "en": "Intersection shown in the opening title",
+        "zh-Hant": "OP標題畫面中出現的路口"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/10719461.html",
+      "source": null,
+      "s": 58,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-4a10c99c-82f4edc2.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/10719461.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-6f4708f3",
+      "name": "書泉グランデ",
+      "cn": "书泉Grande",
+      "lat": 35.695821,
+      "lng": 139.759755,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "书泉Grande",
+        "ja": "書泉グランデ",
+        "en": "Shosen Grande",
+        "zh-Hant": "書泉Grande"
+      },
+      "marks": {
+        "zh-Hans": "ED中出现的书店前",
+        "ja": "EDに登場する書店前のカット",
+        "en": "Shot in front of the bookstore in the ending",
+        "zh-Hant": "ED中出現的書店前"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/10719461.html",
+      "source": null,
+      "s": 1353,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-6f4708f3-1dc5e74d.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/10719461.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-fa589cec",
+      "name": "神保町交差点",
+      "cn": "神保町十字路口",
+      "lat": 35.69573,
+      "lng": 139.757464,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "神保町十字路口",
+        "ja": "神保町交差点",
+        "en": "Jimbocho Intersection",
+        "zh-Hant": "神保町十字路口"
+      },
+      "marks": {
+        "zh-Hans": "OP标题画面中向南望去的神保町十字路口",
+        "ja": "OPタイトルで南方向を見た神保町交差点",
+        "en": "Intersection shown in the OP title, looking south",
+        "zh-Hant": "OP標題畫面中向南望去的神保町十字路口"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 58,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-fa589cec-e7fca97c.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-090429bd",
+      "name": "書泉グランデ",
+      "cn": "书泉Grande",
+      "lat": 35.695821,
+      "lng": 139.759755,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "书泉Grande",
+        "ja": "書泉グランデ",
+        "en": "Shosen Grande",
+        "zh-Hant": "書泉Grande"
+      },
+      "marks": {
+        "zh-Hans": "第1话中买漫画的书店大楼",
+        "ja": "第1話でコミックスを買う書店のビル",
+        "en": "Bookstore building where comics are bought in ep. 1",
+        "zh-Hant": "第1話中買漫畫的書店大樓"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 145,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-090429bd-989b4a97.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-17095e3d",
+      "name": "すずらん通り入口",
+      "cn": "铃兰通入口",
+      "lat": 35.695042,
+      "lng": 139.76065,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "铃兰通入口",
+        "ja": "すずらん通り入口",
+        "en": "Suzuran-dori Entrance",
+        "zh-Hant": "鈴蘭通入口"
+      },
+      "marks": {
+        "zh-Hans": "第2话出现的三省堂一侧的拱廊入口",
+        "ja": "第2話に登場した三省堂側のアーケード入口",
+        "en": "Arcade entrance on the Sanseido side in ep. 2",
+        "zh-Hant": "第2話出現的三省堂一側的拱廊入口"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 486,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-17095e3d-2f6b0949.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-ff4524d5",
+      "name": "欧風カレー ボンディ",
+      "cn": "欧风咖喱 Bondy",
+      "lat": 35.695562,
+      "lng": 139.757376,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "欧风咖喱 Bondy",
+        "ja": "欧風カレー ボンディ",
+        "en": "Bondy",
+        "zh-Hant": "歐風咖哩 Bondy"
+      },
+      "marks": {
+        "zh-Hans": "第2话登场的咖喱店招牌",
+        "ja": "第2話に登場したカレー店の看板",
+        "en": "Sign of the curry shop in ep. 2",
+        "zh-Hant": "第2話登場的咖哩店招牌"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 667,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-ff4524d5-0a6be096.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-69312efe",
+      "name": "ボンディ裏口",
+      "cn": "Bondy后门入口",
+      "lat": 35.695562,
+      "lng": 139.757376,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Bondy后门入口",
+        "ja": "ボンディ裏口",
+        "en": "Bondy Back Entrance",
+        "zh-Hant": "Bondy後門入口"
+      },
+      "marks": {
+        "zh-Hans": "第2话中Bondy背面的入口",
+        "ja": "第2話のボンディ裏側の入口前",
+        "en": "Rear entrance of Bondy seen in ep. 2",
+        "zh-Hant": "第2話中Bondy背面的入口"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 669,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-69312efe-5e5c544d.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-014f34dc",
+      "name": "さぼうる",
+      "cn": "Sabouru咖啡馆",
+      "lat": 35.695573,
+      "lng": 139.758676,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Sabouru咖啡馆",
+        "ja": "さぼうる",
+        "en": "Sabouru",
+        "zh-Hant": "Sabouru咖啡館"
+      },
+      "marks": {
+        "zh-Hans": "第3话出现的老牌咖啡店门前",
+        "ja": "第3話に登場した喫茶店の前",
+        "en": "In front of the cafe seen in ep. 3",
+        "zh-Hant": "第3話出現的老牌咖啡店門前"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 1098,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-014f34dc-e7c457d2.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-79e6d86a",
+      "name": "芳賀書店本店",
+      "cn": "芳贺书店总店",
+      "lat": 35.695647,
+      "lng": 139.757374,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "芳贺书店总店",
+        "ja": "芳賀書店本店",
+        "en": "Haga Shoten",
+        "zh-Hant": "芳賀書店總店"
+      },
+      "marks": {
+        "zh-Hans": "邪神酱误当成地铁入口走进的书店",
+        "ja": "邪神ちゃんが地下鉄入口と間違えた書店",
+        "en": "Bookstore mistaken for a subway entrance",
+        "zh-Hant": "邪神醬誤當成地鐵入口走進的書店"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 662,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-79e6d86a-0c748195.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-c585de00",
+      "name": "キッチンジロー",
+      "cn": "Kitchen Jiro",
+      "lat": 35.696168,
+      "lng": 139.759408,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Kitchen Jiro",
+        "ja": "キッチンジロー",
+        "en": "Kitchen Jiro",
+        "zh-Hant": "Kitchen Jiro"
+      },
+      "marks": {
+        "zh-Hans": "第5话出现的洋食店",
+        "ja": "第5話に登場した洋食店",
+        "en": "Western-style diner in ep. 5",
+        "zh-Hant": "第5話出現的洋食店"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 144,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-c585de00-10f6688b.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-bca0c3b2",
+      "name": "西神田公園",
+      "cn": "西神田公园",
+      "lat": 35.698424,
+      "lng": 139.755041,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "西神田公园",
+        "ja": "西神田公園",
+        "en": "Nishikanda Park",
+        "zh-Hant": "西神田公園"
+      },
+      "marks": {
+        "zh-Hans": "佩可拉居住的纸箱屋所在公园",
+        "ja": "ぺこらの家があった公園",
+        "en": "Park where Pekora lives",
+        "zh-Hant": "佩可拉居住的紙箱屋所在公園"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "source": null,
+      "s": 224,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-bca0c3b2-2ca9347a.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2018/09/post-f5f6.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-b4230298",
+      "name": "神保町交差点",
+      "cn": "神保町十字路口",
+      "lat": 35.69573,
+      "lng": 139.757464,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "神保町十字路口",
+        "ja": "神保町交差点",
+        "en": "Jimbocho Intersection",
+        "zh-Hant": "神保町十字路口"
+      },
+      "marks": {
+        "zh-Hans": "第一季OP中出现的十字路口",
+        "ja": "1期OPに登場した交差点",
+        "en": "Intersection in season 1 OP",
+        "zh-Hant": "第一季OP中出現的十字路口"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "source": null,
+      "s": 57,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-b4230298-dadf83be.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-a37a4983",
+      "name": "書泉グランデ",
+      "cn": "书泉Grande",
+      "lat": 35.695821,
+      "lng": 139.759755,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "书泉Grande",
+        "ja": "書泉グランデ",
+        "en": "Shosen Grande",
+        "zh-Hant": "書泉Grande"
+      },
+      "marks": {
+        "zh-Hans": "邪神酱她们买书的书店",
+        "ja": "邪神ちゃんたちが本を買う書店",
+        "en": "Bookstore where they buy books",
+        "zh-Hant": "邪神醬她們買書的書店"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "source": null,
+      "s": 5,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-a37a4983-0184c22b.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-0de4a9e2",
+      "name": "西神田公園",
+      "cn": "西神田公园",
+      "lat": 35.698424,
+      "lng": 139.755041,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "西神田公园",
+        "ja": "西神田公園",
+        "en": "Nishikanda Park",
+        "zh-Hant": "西神田公園"
+      },
+      "marks": {
+        "zh-Hans": "佩可拉住纸箱屋的公园",
+        "ja": "ぺこらが段ボールハウスに住む公園",
+        "en": "Park where Pekora lives in a box house",
+        "zh-Hant": "佩可拉住紙箱屋的公園"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "source": null,
+      "s": 224,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-0de4a9e2-10309304.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-5670dead",
+      "name": "小学館本社ビル",
+      "cn": "小学馆总部大楼",
+      "lat": 35.694159,
+      "lng": 139.758152,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "小学馆总部大楼",
+        "ja": "小学館本社ビル",
+        "en": "Shogakukan Building",
+        "zh-Hant": "小學館總部大樓"
+      },
+      "marks": {
+        "zh-Hans": "邪神酱变柯南想跳槽的出版社",
+        "ja": "邪神ちゃんが移籍を企む出版社",
+        "en": "Publisher she tries to transfer to",
+        "zh-Hant": "邪神醬變柯南想跳槽的出版社"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "source": null,
+      "s": 361,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-5670dead-a43d17e3.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2342.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-f00c33b6",
+      "name": "キッチンジロー 南神保町店",
+      "cn": "Kitchen Jiro 南神保町店",
+      "lat": 35.696168,
+      "lng": 139.759408,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Kitchen Jiro 南神保町店",
+        "ja": "キッチンジロー 南神保町店",
+        "en": "Kitchen Jiro Minami-Jimbocho",
+        "zh-Hant": "Kitchen Jiro 南神保町店"
+      },
+      "marks": {
+        "zh-Hans": "邪神酱和百合音吃午饭的店",
+        "ja": "邪神ちゃんとゆりねがランチする店",
+        "en": "Diner where the two have lunch",
+        "zh-Hant": "邪神醬和百合音吃午飯的店"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "source": null,
+      "s": 142,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-f00c33b6-b4da00bf.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-6ef251d5",
+      "name": "さぼうる",
+      "cn": "Sabouru咖啡馆",
+      "lat": 35.695573,
+      "lng": 139.758676,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Sabouru咖啡馆",
+        "ja": "さぼうる",
+        "en": "Sabouru",
+        "zh-Hant": "Sabouru咖啡館"
+      },
+      "marks": {
+        "zh-Hans": "邪神酱畅饮草莓汁的纯喫茶",
+        "ja": "邪神ちゃんがいちごジュースを飲む喫茶店",
+        "en": "Cafe where she drinks strawberry juice",
+        "zh-Hant": "邪神醬暢飲草莓汁的純吃茶"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "source": null,
+      "s": 1100,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-6ef251d5-54504a21.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 231722,
+      "id": "m-231722-326087af",
+      "name": "大丸やき茶房",
+      "cn": "大丸烧茶房",
+      "lat": 35.695334,
+      "lng": 139.75602,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大丸烧茶房",
+        "ja": "大丸やき茶房",
+        "en": "Daimaruyaki Sabo",
+        "zh-Hant": "大丸燒茶房"
+      },
+      "marks": {
+        "zh-Hans": "京京购买大丸烧的和菓子店",
+        "ja": "キョンキョンが大丸やきを買う店",
+        "en": "Wagashi shop where Kyonkyon buys daimaruyaki",
+        "zh-Hant": "京京購買大丸燒的和菓子店"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "source": null,
+      "s": 535,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-231722-326087af-51bf65f2.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2343.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 239646,
+      "id": "m-239646-339a08c7",
+      "name": "吾妻橋",
+      "cn": "吾妻桥",
+      "lat": 35.710107,
+      "lng": 139.798931,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "吾妻桥",
+        "ja": "吾妻橋",
+        "en": "Azumabashi Bridge",
+        "zh-Hant": "吾妻橋"
+      },
+      "marks": {
+        "zh-Hans": "第3集大部分剧情发生在吾妻桥周边",
+        "ja": "第3話の大半の舞台となった吾妻橋周辺",
+        "en": "Most of episode 3 takes place around Azuma Bridge",
+        "zh-Hant": "第3集大部分劇情發生在吾妻橋周邊"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-506.html",
+      "source": null,
+      "s": 13,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-239646-339a08c7-78be93b3.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-506.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 239646,
+      "id": "m-239646-3d0b5151",
+      "name": "雷門",
+      "cn": "雷门",
+      "lat": 35.711133,
+      "lng": 139.796368,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "雷门",
+        "ja": "雷門",
+        "en": "Kaminarimon",
+        "zh-Hant": "雷門"
+      },
+      "marks": {
+        "zh-Hans": "第4集中出现的雷门与仲见世一带",
+        "ja": "第4話に登場する雷門・仲見世周辺",
+        "en": "Kaminarimon and Nakamise area shown in episode 4",
+        "zh-Hant": "第4集中出現的雷門與仲見世一帶"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-515.html",
+      "source": null,
+      "s": 1002,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-239646-3d0b5151-e7024dbd.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-515.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 239646,
+      "id": "m-239646-0327b6e0",
+      "name": "吾妻橋",
+      "cn": "吾妻桥",
+      "lat": 35.710107,
+      "lng": 139.798931,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "吾妻桥",
+        "ja": "吾妻橋",
+        "en": "Azumabashi Bridge",
+        "zh-Hant": "吾妻橋"
+      },
+      "marks": {
+        "zh-Hans": "第4集后半出现的吾妻桥",
+        "ja": "第4話終盤に登場する吾妻橋",
+        "en": "Azuma Bridge in the latter part of episode 4",
+        "zh-Hant": "第4集後半出現的吾妻橋"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-515.html",
+      "source": null,
+      "s": 1064,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-239646-0327b6e0-fc88d409.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-515.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 239646,
+      "id": "m-239646-7922bcdd",
+      "name": "隅田公園（浅草側）",
+      "cn": "隅田公园（浅草一侧）",
+      "lat": 35.715506,
+      "lng": 139.803143,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "隅田公园（浅草一侧）",
+        "ja": "隅田公園（浅草側）",
+        "en": "Sumida Park (Asakusa side)",
+        "zh-Hant": "隅田公園（淺草一側）"
+      },
+      "marks": {
+        "zh-Hans": "第6集中角色们所在的隅田川畔公园场景",
+        "ja": "第6話で登場人物が訪れる隅田川沿いの公園の場面",
+        "en": "Riverside park scene in episode 6 along the Sumida River",
+        "zh-Hant": "第6集中角色們所在的隅田川畔公園場景"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-517.html",
+      "source": null,
+      "s": 333,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-239646-7922bcdd-7daf233a.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-517.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 239646,
+      "id": "m-239646-d2fc04ea",
+      "name": "小梅児童遊園",
+      "cn": "小梅儿童游园",
+      "lat": 35.710513,
+      "lng": 139.808198,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "小梅儿童游园",
+        "ja": "小梅児童遊園",
+        "en": "Koume Children's Park",
+        "zh-Hant": "小梅兒童遊園"
+      },
+      "marks": {
+        "zh-Hans": "三人穿雨衣到达的公园，一稀女装时用其厕所",
+        "ja": "カッパ姿の三人が着いた、一稀が女装時にトイレを使う公園",
+        "en": "Park the raincoat-clad trio reach; Kazuki uses its restroom when crossdressing",
+        "zh-Hant": "三人穿雨衣到達的公園，一稀女裝時用其廁所"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-518.html",
+      "source": null,
+      "s": 244,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-239646-d2fc04ea-ca151882.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-518.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 2464,
+      "id": "m-2464-3c28c190",
+      "name": "千住大橋",
+      "cn": "千住大桥",
+      "lat": 35.742323,
+      "lng": 139.796771,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "千住大桥",
+        "ja": "千住大橋",
+        "en": "Senju Ohashi Bridge",
+        "zh-Hant": "千住大橋"
+      },
+      "marks": {
+        "zh-Hans": "第1集中桥上的场景，对应桥柱有孔和绿化带的特征",
+        "ja": "第1話の橋上シーン。柱の穴や植え込みが特徴",
+        "en": "Bridge scene in ep 1, matching the pillar holes and planters",
+        "zh-Hant": "第1集中橋上的場景，對應橋柱有孔和綠化帶的特徵"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20100419/1271678958",
+      "source": null,
+      "s": 92,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-2464-3c28c190-814cfd8a.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20100419/1271678958",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-0d8c4777",
+      "name": "県庁通り電停",
+      "cn": "县厅通电停",
+      "lat": 34.662627,
+      "lng": 133.930471,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "县厅通电停",
+        "ja": "県庁通り電停",
+        "en": "Kenchodori Tram Stop",
+        "zh-Hant": "縣廳通電停"
+      },
+      "marks": {
+        "zh-Hans": "从县厅通路口东南侧看到的电停",
+        "ja": "県庁通り交差点付近の電停",
+        "en": "Tram stop at Kencho-dori intersection",
+        "zh-Hant": "從縣廳通路口東南側看到的電停"
+      },
+      "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-490.html",
+      "source": null,
+      "s": 1170,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-0d8c4777-339f72c6.jpg",
+      "origin": "tsurebashi.blog123.fc2.com",
+      "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-490.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-f569bd28",
+      "name": "最上稲荷 参道口",
+      "cn": "最上稻荷参道口",
+      "lat": 34.851595,
+      "lng": 133.970105,
+      "ep": "9",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "最上稻荷参道口",
+        "ja": "最上稲荷 参道口",
+        "en": "Saijo Inari Sando Entrance",
+        "zh-Hant": "最上稻荷參道口"
+      },
+      "marks": {
+        "zh-Hans": "初诣前往稻荷的参道入口",
+        "ja": "初詣で通る最上稲荷の参道口",
+        "en": "Approach entrance to Saijo Inari",
+        "zh-Hant": "初詣前往稻荷的參道入口"
+      },
+      "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "source": null,
+      "s": 765,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-f569bd28-a1beaef0.jpg",
+      "origin": "tsurebashi.blog123.fc2.com",
+      "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-8cda981c",
+      "name": "最上稲荷山妙教寺 本堂",
+      "cn": "最上稻荷山妙教寺 本堂",
+      "lat": 34.709938,
+      "lng": 133.831953,
+      "ep": "9",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "最上稻荷山妙教寺 本堂",
+        "ja": "最上稲荷山妙教寺 本堂",
+        "en": "Saijo Inari Myokyoji Main Hall",
+        "zh-Hant": "最上稻荷山妙教寺 本堂"
+      },
+      "marks": {
+        "zh-Hans": "初诣参拜的本堂",
+        "ja": "初詣で参拝する本堂",
+        "en": "Main hall for the New Year visit",
+        "zh-Hant": "初詣參拜的本堂"
+      },
+      "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "source": null,
+      "s": 982,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-8cda981c-1dfe750b.jpg",
+      "origin": "tsurebashi.blog123.fc2.com",
+      "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-d9a8c814",
+      "name": "吉備津神社 提灯の境内",
+      "cn": "吉备津神社 灯笼境内",
+      "lat": 34.670682,
+      "lng": 133.850611,
+      "ep": "9",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "吉备津神社 灯笼境内",
+        "ja": "吉備津神社 提灯の境内",
+        "en": "Kibitsu Shrine lantern precinct",
+        "zh-Hant": "吉備津神社 燈籠境內"
+      },
+      "marks": {
+        "zh-Hans": "挂满灯笼的境内夜景",
+        "ja": "提灯が並ぶ境内の夜景",
+        "en": "Lantern-lit shrine grounds at night",
+        "zh-Hant": "掛滿燈籠的境內夜景"
+      },
+      "reference": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "source": null,
+      "s": 846,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-d9a8c814-1db2616f.jpg",
+      "origin": "tsurebashi.blog123.fc2.com",
+      "origin_link": "http://tsurebashi.blog123.fc2.com/blog-entry-492.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-89ee7f80",
+      "name": "岡山駅前の噴水",
+      "cn": "冈山站前喷泉",
+      "lat": 38.023273,
+      "lng": 140.788605,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "冈山站前喷泉",
+        "ja": "岡山駅前の噴水",
+        "en": "Okayama Station Fountain",
+        "zh-Hant": "岡山站前噴泉"
+      },
+      "marks": {
+        "zh-Hans": "桃太郎像旁的喷泉，是人们碰头休息的地方",
+        "ja": "桃太郎像横の噴水。待ち合わせの場面で登場",
+        "en": "Fountain beside the Momotaro statue, a meeting spot",
+        "zh-Hant": "桃太郎像旁的噴泉，是人們碰頭休息的地方"
+      },
+      "reference": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
+      "source": null,
+      "s": 472,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-89ee7f80-1d5f5018.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-cfbf61e1",
+      "name": "西川緑道公園駅西",
+      "cn": "西川绿道公园站西侧",
+      "lat": 34.668653,
+      "lng": 133.922454,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "西川绿道公园站西侧",
+        "ja": "西川緑道公園駅西",
+        "en": "West of Nishigawa Ryokudo Park Station",
+        "zh-Hant": "西川綠道公園站西側"
+      },
+      "marks": {
+        "zh-Hans": "桃太郎大道沿线，OP与多集出现",
+        "ja": "桃太郎大通り沿いのカット。OPなどに登場",
+        "en": "Momotaro-odori roadside shot seen in the OP and episodes",
+        "zh-Hant": "桃太郎大道沿線，OP與多集出現"
+      },
+      "reference": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
+      "source": null,
+      "s": 1283,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-cfbf61e1-9a072812.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/miyaken46/archives/23335275.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-0955004f",
+      "name": "岡山駅前の噴水",
+      "cn": "冈山站前喷泉",
+      "lat": 38.023273,
+      "lng": 140.788605,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "冈山站前喷泉",
+        "ja": "岡山駅前の噴水",
+        "en": "Okayama Station Fountain",
+        "zh-Hant": "岡山站前噴泉"
+      },
+      "marks": {
+        "zh-Hans": "站前喷泉，也是主视觉的场景",
+        "ja": "駅前の噴水。キービジュアルにもなった場所",
+        "en": "Station fountain, also in the key visual",
+        "zh-Hant": "站前噴泉，也是主視覺的場景"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "source": null,
+      "s": 472,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-0955004f-03bdadc0.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-62f7eedf",
+      "name": "下石井公園",
+      "cn": "下石井公园",
+      "lat": 34.660783,
+      "lng": 133.9221,
+      "ep": "11",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "下石井公园",
+        "ja": "下石井公園",
+        "en": "Shimoishii Park",
+        "zh-Hant": "下石井公園"
+      },
+      "marks": {
+        "zh-Hans": "真妃与梦莉相会的公园",
+        "ja": "眞妃とゆめ莉が会う公園",
+        "en": "Park where Maki and Yumeri meet",
+        "zh-Hant": "真妃與夢莉相會的公園"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "source": null,
+      "s": 497,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-62f7eedf-90bdb223.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-329600e9",
+      "name": "表町商店街",
+      "cn": "表町商店街",
+      "lat": 34.658174,
+      "lng": 133.930313,
+      "ep": "6",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "表町商店街",
+        "ja": "表町商店街",
+        "en": "Omotecho Shopping Street",
+        "zh-Hant": "表町商店街"
+      },
+      "marks": {
+        "zh-Hans": "ChamJam路演的商店街",
+        "ja": "ChamJamが路上ライブを行う商店街",
+        "en": "Shopping street for ChamJam's street live",
+        "zh-Hant": "ChamJam路演的商店街"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "source": null,
+      "s": 921,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-329600e9-b585d281.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2360.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-181d6626",
+      "name": "しゃるろっと",
+      "cn": "女仆咖啡馆Charlotte",
+      "lat": 34.658996,
+      "lng": 133.929652,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "女仆咖啡馆Charlotte",
+        "ja": "しゃるろっと",
+        "en": "Charlotte Maid Cafe",
+        "zh-Hant": "女僕咖啡館Charlotte"
+      },
+      "marks": {
+        "zh-Hans": "文工作的女仆咖啡馆原型",
+        "ja": "あーやが働くメイドカフェのモデル",
+        "en": "Model for the maid cafe where Aya works",
+        "zh-Hant": "文工作的女僕咖啡館原型"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-2361.html",
+      "source": null,
+      "s": 229,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-181d6626-701c39a2.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-2361.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 246915,
+      "id": "m-246915-5db05efa",
+      "name": "吉備津神社",
+      "cn": "吉备津神社",
+      "lat": 34.670682,
+      "lng": 133.850611,
+      "ep": "9",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "吉备津神社",
+        "ja": "吉備津神社",
+        "en": "Kibitsu Shrine",
+        "zh-Hant": "吉備津神社"
+      },
+      "marks": {
+        "zh-Hans": "舞菜她们初诣参拜的神社",
+        "ja": "舞菜達が初詣に訪れた神社",
+        "en": "Shrine where Mana and friends make their New Year visit",
+        "zh-Hant": "舞菜她們初詣參拜的神社"
+      },
+      "reference": "http://furaba-animeseichi.blog.jp/archives/24393177.html",
+      "source": null,
+      "s": 823,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-246915-5db05efa-70ca4e0e.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "http://furaba-animeseichi.blog.jp/archives/24393177.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 253628,
+      "id": "m-253628-3da51ff9",
+      "name": "カラオケBanBan 高円寺店",
+      "cn": "BanBan卡拉OK 高圆寺店",
+      "lat": 35.691032,
+      "lng": 139.650556,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "BanBan卡拉OK 高圆寺店",
+        "ja": "カラオケBanBan 高円寺店",
+        "en": "Karaoke BanBan Koenji",
+        "zh-Hant": "BanBan卡拉OK 高圓寺店"
+      },
+      "marks": {
+        "zh-Hans": "雏姐去看搞笑艺人演出的地点",
+        "ja": "ひな姉がお笑いライブに行った場所",
+        "en": "Where Hina went to a comedy live",
+        "zh-Hant": "雛姐去看搞笑藝人演出的地點"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "source": null,
+      "s": 251,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-253628-3da51ff9-7c39d8b5.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 253628,
+      "id": "m-253628-68e88f32",
+      "name": "セブン-イレブン 高円寺駅東店",
+      "cn": "7-Eleven 高圆寺站东店",
+      "lat": 35.68596,
+      "lng": 139.59233,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "7-Eleven 高圆寺站东店",
+        "ja": "セブン-イレブン 高円寺駅東店",
+        "en": "7-Eleven Koenji Station East",
+        "zh-Hant": "7-Eleven 高圓寺站東店"
+      },
+      "marks": {
+        "zh-Hans": "两人看到雏姐回味发笑的地点",
+        "ja": "思い出し笑いのひな姉を見た場所",
+        "en": "Where they saw Hina laughing to herself",
+        "zh-Hant": "兩人看到雛姐回味發笑的地點"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "source": null,
+      "s": 280,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-253628-68e88f32-6d95f427.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 253628,
+      "id": "m-253628-fe71fdc0",
+      "name": "荻窪駅 西口2階北側",
+      "cn": "荻洼站西口2层北侧",
+      "lat": 35.704234,
+      "lng": 139.618711,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "荻洼站西口2层北侧",
+        "ja": "荻窪駅 西口2階北側",
+        "en": "Ogikubo Station West Exit 2F",
+        "zh-Hant": "荻窪站西口2層北側"
+      },
+      "marks": {
+        "zh-Hans": "尾行雏姐场景中的站前天桥",
+        "ja": "ひな姉尾行シーンの駅前デッキ",
+        "en": "Station deck in the tailing scene",
+        "zh-Hant": "尾行雛姐場景中的站前天橋"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "source": null,
+      "s": 297,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-253628-fe71fdc0-ff371703.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/15477924.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 259790,
+      "id": "m-259790-b6c9a95b",
+      "name": "荒神橋",
+      "cn": "荒神桥",
+      "lat": 35.021757,
+      "lng": 135.772275,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "荒神桥",
+        "ja": "荒神橋",
+        "en": "Kojin Bridge",
+        "zh-Hant": "荒神橋"
+      },
+      "marks": {
+        "zh-Hans": "绫脱下湿衣服的鸭川荒神桥",
+        "ja": "綾が濡れた服を脱いだ荒神橋のシーン",
+        "en": "Kojin Bridge where Aya takes off her wet clothes",
+        "zh-Hant": "綾脫下溼衣服的鴨川荒神橋"
+      },
+      "reference": "http://kabutoyama-tigers.hatenablog.com/entry/2019/10/30/190057",
+      "source": null,
+      "s": 1318,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-259790-b6c9a95b-3ed35dce.jpg",
+      "origin": "kabutoyama-tigers.hatenablog.com",
+      "origin_link": "http://kabutoyama-tigers.hatenablog.com/entry/2019/10/30/190057",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 259790,
+      "id": "m-259790-9a124ad2",
+      "name": "鴨川デルタ",
+      "cn": "鸭川三角洲",
+      "lat": 35.030123,
+      "lng": 135.771741,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "鸭川三角洲",
+        "ja": "鴨川デルタ",
+        "en": "Kamogawa Delta",
+        "zh-Hant": "鴨川三角洲"
+      },
+      "marks": {
+        "zh-Hans": "第5集京都场景中的鸭川三角洲",
+        "ja": "第5話の京都シーンの鴨川デルタ",
+        "en": "Kamogawa Delta in episode 5's Kyoto scene",
+        "zh-Hant": "第5集京都場景中的鴨川三角洲"
+      },
+      "reference": "http://kabutoyama-tigers.hatenablog.com/entry/2020/05/11/171219",
+      "source": null,
+      "s": 3,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-259790-9a124ad2-59091526.jpg",
+      "origin": "kabutoyama-tigers.hatenablog.com",
+      "origin_link": "http://kabutoyama-tigers.hatenablog.com/entry/2020/05/11/171219",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 259790,
+      "id": "m-259790-1590604a",
+      "name": "錦天満宮",
+      "cn": "锦天满宫",
+      "lat": 35.005056,
+      "lng": 135.767415,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "锦天满宫",
+        "ja": "錦天満宮",
+        "en": "Nishiki Tenmangu Shrine",
+        "zh-Hant": "錦天滿宮"
+      },
+      "marks": {
+        "zh-Hans": "OP中出现的锦天满宫",
+        "ja": "OPに登場する錦天満宮",
+        "en": "Nishiki Tenmangu in the OP",
+        "zh-Hant": "OP中出現的錦天滿宮"
+      },
+      "reference": "http://ukatensei.blog50.fc2.com/blog-entry-912.html",
+      "source": null,
+      "s": 92,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-259790-1590604a-958a0d38.jpg",
+      "origin": "ukatensei.blog50.fc2.com",
+      "origin_link": "http://ukatensei.blog50.fc2.com/blog-entry-912.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 2735,
+      "id": "m-2735-0bdafced",
+      "name": "京都駅",
+      "cn": "京都站",
+      "lat": 34.986191,
+      "lng": 135.760063,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "京都站",
+        "ja": "京都駅",
+        "en": "Kyoto Station",
+        "zh-Hant": "京都站"
+      },
+      "marks": {
+        "zh-Hans": "修学旅行返程的京都站",
+        "ja": "帰りの京都駅",
+        "en": "Kyoto Station on the return trip",
+        "zh-Hant": "修學旅行返程的京都站"
+      },
+      "reference": "http://ameblo.jp/shibacha/entry-10406649795.html",
+      "source": null,
+      "s": 1253,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-2735-0bdafced-3412741e.jpg",
+      "origin": "ameblo.jp",
+      "origin_link": "http://ameblo.jp/shibacha/entry-10406649795.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 28225,
+      "id": "m-28225-f4edb655",
+      "name": "有栖川駅（嵐電）",
+      "cn": "有栖川站",
+      "lat": 35.015211,
+      "lng": 135.694615,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "有栖川站",
+        "ja": "有栖川駅（嵐電）",
+        "en": "Arisugawa Station",
+        "zh-Hant": "有棲川站"
+      },
+      "marks": {
+        "zh-Hans": "两人走向帷子之辻方向站台的车站",
+        "ja": "二人が帷子ノ辻方面のホームへ向かう駅",
+        "en": "Station platform toward Katabiranotsuji",
+        "zh-Hant": "兩人走向帷子之辻方向站臺的車站"
+      },
+      "reference": "http://d.hatena.ne.jp/yutonyan/20121208/1354973014",
+      "source": null,
+      "s": 544,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-28225-f4edb655-0b559ebd.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/yutonyan/20121208/1354973014",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 288010,
+      "id": "m-288010-51fefa5a",
+      "name": "柳橋",
+      "cn": "柳桥",
+      "lat": 35.698039,
+      "lng": 139.788284,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "柳桥",
+        "ja": "柳橋",
+        "en": "Yanagibashi Bridge",
+        "zh-Hant": "柳橋"
+      },
+      "marks": {
+        "zh-Hans": "凛追小偷时与美纱相遇的桥",
+        "ja": "凛がミサと出会った橋",
+        "en": "Bridge where Rin meets Misa",
+        "zh-Hant": "凜追小偷時與美紗相遇的橋"
+      },
+      "reference": "http://teo.cocolog-nifty.com/column/2019/12/post-e85b11.html",
+      "source": null,
+      "s": 584,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-288010-51fefa5a-17e8b8f0.jpg",
+      "origin": "teo.cocolog-nifty.com",
+      "origin_link": "http://teo.cocolog-nifty.com/column/2019/12/post-e85b11.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 292712,
+      "id": "m-292712-1336e12d",
+      "name": "勝沼ぶどう郷駅",
+      "cn": "胜沼葡萄乡站",
+      "lat": 35.672281,
+      "lng": 138.7426,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "胜沼葡萄乡站",
+        "ja": "勝沼ぶどう郷駅",
+        "en": "Katsunuma-budokyo Station",
+        "zh-Hant": "勝沼葡萄鄉站"
+      },
+      "marks": {
+        "zh-Hans": "梦结为寻找弹珠汽水抵达的车站。",
+        "ja": "夢結がラムネを探しに着いた駅。",
+        "en": "The station Yuyu reaches while searching for ramune.",
+        "zh-Hant": "夢結為尋找彈珠汽水抵達的車站。"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/25476938.html",
+      "source": null,
+      "s": 699,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-292712-1336e12d-f22dcb24.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/25476938.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 292712,
+      "id": "m-292712-1280539f",
+      "name": "祝橋",
+      "cn": "祝桥",
+      "lat": 35.652877,
+      "lng": 138.743315,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "祝桥",
+        "ja": "祝橋",
+        "en": "Iwai Bridge",
+        "zh-Hant": "祝橋"
+      },
+      "marks": {
+        "zh-Hans": "第1集甲州撤退战的场景。",
+        "ja": "第1話の甲州撤退戦のシーン。",
+        "en": "Setting of the Koshu retreat battle in episode 1.",
+        "zh-Hant": "第1集甲州撤退戰的場景。"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/25476938.html",
+      "source": null,
+      "s": 23,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-292712-1280539f-fa2898d4.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/25476938.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 293532,
+      "id": "m-293532-842fed87",
+      "name": "沢渡交差点",
+      "cn": "泽渡路口",
+      "lat": 35.471706,
+      "lng": 139.616638,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "泽渡路口",
+        "ja": "沢渡交差点",
+        "en": "Sawatari Intersection",
+        "zh-Hant": "澤渡路口"
+      },
+      "marks": {
+        "zh-Hans": "回到原来世界的武与尊人相遇",
+        "ja": "元の世界に戻った武が尊人と出会う場面",
+        "en": "Takeru meets Mikoto after returning to his original world",
+        "zh-Hant": "回到原來世界的武與尊人相遇"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/29093935.html",
+      "source": null,
+      "s": 7,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-293532-842fed87-c110b8f5.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/29093935.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 301469,
+      "id": "m-301469-e40c5b35",
+      "name": "新宿警察署裏交差点",
+      "cn": "新宿警察署后路口",
+      "lat": 35.75819,
+      "lng": 139.859421,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "新宿警察署后路口",
+        "ja": "新宿警察署裏交差点",
+        "en": "Shinjuku Police Station rear intersection",
+        "zh-Hant": "新宿警察署後路口"
+      },
+      "marks": {
+        "zh-Hans": "第1话开头上学场景",
+        "ja": "第1話冒頭の登校シーン",
+        "en": "Opening school-commute scene in episode 1",
+        "zh-Hant": "第1話開頭上學場景"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "source": null,
+      "s": 160,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-301469-e40c5b35-94951795.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 301469,
+      "id": "m-301469-dfa4852c",
+      "name": "タカラスタンダード 新宿ショールーム",
+      "cn": "Takara Standard新宿展厅",
+      "lat": 35.75819,
+      "lng": 139.859421,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "Takara Standard新宿展厅",
+        "ja": "タカラスタンダード 新宿ショールーム",
+        "en": "Takara Standard Shinjuku Showroom",
+        "zh-Hant": "Takara Standard新宿展廳"
+      },
+      "marks": {
+        "zh-Hans": "第1话上学俯拍镜头",
+        "ja": "第1話登校の俯瞰カット",
+        "en": "Overhead shot of the commute in episode 1",
+        "zh-Hant": "第1話上學俯拍鏡頭"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "source": null,
+      "s": 174,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-301469-dfa4852c-e00a9cc1.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 301469,
+      "id": "m-301469-d65ba0ca",
+      "name": "新宿グリーンタワービル脇道路",
+      "cn": "新宿Green Tower旁道路",
+      "lat": 35.692372,
+      "lng": 139.68965,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "新宿Green Tower旁道路",
+        "ja": "新宿グリーンタワービル脇道路",
+        "en": "Road beside Shinjuku Green Tower Building",
+        "zh-Hant": "新宿Green Tower旁道路"
+      },
+      "marks": {
+        "zh-Hans": "第2话四谷与箱崎放学同行",
+        "ja": "第2話の四谷と箱崎の下校シーン",
+        "en": "Yotsuya and Hakozaki walking home, episode 2",
+        "zh-Hant": "第2話四谷與箱崎放學同行"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "source": null,
+      "s": 1195,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-301469-d65ba0ca-4ba228ad.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 301469,
+      "id": "m-301469-824e2776",
+      "name": "新宿中央公園北交差点",
+      "cn": "新宿中央公园北路口",
+      "lat": 35.75819,
+      "lng": 139.859421,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "新宿中央公园北路口",
+        "ja": "新宿中央公園北交差点",
+        "en": "Shinjuku Central Park North Intersection",
+        "zh-Hant": "新宿中央公園北路口"
+      },
+      "marks": {
+        "zh-Hans": "第2话放学场景",
+        "ja": "第2話下校シーン",
+        "en": "After-school scene in episode 2",
+        "zh-Hant": "第2話放學場景"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "source": null,
+      "s": 1258,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-301469-824e2776-a3289987.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/24988881.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 315069,
+      "id": "m-315069-757d1877",
+      "name": "天丼てんや 町田東店付近",
+      "cn": "天丼てんや 町田东店附近",
+      "lat": 35.543025,
+      "lng": 139.44437,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "天丼てんや 町田东店附近",
+        "ja": "天丼てんや 町田東店付近",
+        "en": "Near Tendon Tenya Machida Higashi",
+        "zh-Hant": "天丼てんや 町田東店附近"
+      },
+      "marks": {
+        "zh-Hans": "堀与宫村擦肩而过的街道，画面右下有天丼屋招牌",
+        "ja": "堀と宮村がすれ違う道。右下にてんやの看板が描かれる",
+        "en": "The street where Hori and Miyamura pass each other, Tenya sign visible",
+        "zh-Hant": "堀與宮村擦肩而過的街道，畫面右下有天丼屋招牌"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/26178041.html",
+      "source": null,
+      "s": 194,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-315069-757d1877-47421f39.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/26178041.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 315069,
+      "id": "m-315069-7aba38b5",
+      "name": "ゆうちょ銀行 西荻窪駅前出張所",
+      "cn": "邮储银行 西荻洼站前办事处",
+      "lat": 35.710886,
+      "lng": 139.609543,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "邮储银行 西荻洼站前办事处",
+        "ja": "ゆうちょ銀行 西荻窪駅前出張所",
+        "en": "Japan Post Bank Nishi-Ogikubo Ekimae",
+        "zh-Hant": "郵儲銀行 西荻窪站前辦事處"
+      },
+      "marks": {
+        "zh-Hans": "宫村遇到进藤的地点",
+        "ja": "宮村が進藤と出会った場所",
+        "en": "Where Miyamura runs into Shindo",
+        "zh-Hant": "宮村遇到進藤的地點"
+      },
+      "reference": "https://furaba-animeseichi.blog.jp/archives/26178041.html",
+      "source": null,
+      "s": 618,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-315069-7aba38b5-7fd07672.jpg",
+      "origin": "furaba-animeseichi.blog.jp",
+      "origin_link": "https://furaba-animeseichi.blog.jp/archives/26178041.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 323626,
+      "id": "m-323626-c627560b",
+      "name": "観音崎ボードウォーク南端の堤防",
+      "cn": "观音崎木栈道南端的堤防",
+      "lat": 35.261319,
+      "lng": 139.735933,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "观音崎木栈道南端的堤防",
+        "ja": "観音崎ボードウォーク南端の堤防",
+        "en": "Kannonzaki Boardwalk Seawall",
+        "zh-Hant": "觀音崎木棧道南端的堤防"
+      },
+      "marks": {
+        "zh-Hans": "小春负气离开后与日和和好的常去堤防",
+        "ja": "小春がひよりと仲直りするいつもの堤防",
+        "en": "The usual seawall where Koharu makes up with Hiyori",
+        "zh-Hant": "小春負氣離開後與日和和好的常去堤防"
+      },
+      "reference": "http://blog.livedoor.jp/miyaken46/archives/29705474.html",
+      "source": null,
+      "s": 81,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-323626-c627560b-7df53098.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/miyaken46/archives/29705474.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 3271,
+      "id": "m-3271-7cca3644",
+      "name": "泰明小学校",
+      "cn": "泰明小学",
+      "lat": 35.672327,
+      "lng": 139.761492,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "泰明小学",
+        "ja": "泰明小学校",
+        "en": "Taimei Elementary School",
+        "zh-Hant": "泰明小學"
+      },
+      "marks": {
+        "zh-Hans": "玉兔高中的原型，校门和围栏被再现",
+        "ja": "玉兎高等学校のモデル。門や柵が再現された",
+        "en": "Model for Gyokuto High School; gate and fence recreated",
+        "zh-Hant": "玉兔高中的原型，校門和圍欄被再現"
+      },
+      "reference": "https://kimamanidance.hatenablog.com/entry/2020/01/01/000000",
+      "source": null,
+      "s": 658,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-3271-7cca3644-e94d4071.jpg",
+      "origin": "kimamanidance.hatenablog.com",
+      "origin_link": "https://kimamanidance.hatenablog.com/entry/2020/01/01/000000",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 329906,
+      "id": "m-329906-aacb7711",
+      "name": "セーチェーニ鎖橋",
+      "cn": "塞切尼链桥",
+      "lat": 47.498979,
+      "lng": 19.043649,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "塞切尼链桥",
+        "ja": "セーチェーニ鎖橋",
+        "en": "Széchenyi Chain Bridge",
+        "zh-Hant": "塞切尼鏈橋"
+      },
+      "marks": {
+        "zh-Hans": "尤里出差的胡加利亚首都街景，原型是布达佩斯的多瑙河与链桥",
+        "ja": "ユーリが訪れたフーガリアの首都の風景のモデル",
+        "en": "Model for the Hunguria capital cityscape Yuri visits",
+        "zh-Hant": "尤里出差的胡加利亞首都街景，原型是布達佩斯的多瑙河與鏈橋"
+      },
+      "reference": "https://sazanami.net/20220602-spyxfamily/",
+      "source": null,
+      "s": 1007,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-329906-aacb7711-645d5154.jpg",
+      "origin": "sazanami.net",
+      "origin_link": "https://sazanami.net/20220602-spyxfamily/",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 354414,
+      "id": "m-354414-c12f2c6e",
+      "name": "下北沢南口商店街",
+      "cn": "下北泽南口商店街",
+      "lat": 35.660682,
+      "lng": 139.667517,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "下北泽南口商店街",
+        "ja": "下北沢南口商店街",
+        "en": "Shimokitazawa Minamiguchi Shopping Street",
+        "zh-Hant": "下北澤南口商店街"
+      },
+      "marks": {
+        "zh-Hans": "剧场所在的下北泽南口商店街拱门",
+        "ja": "劇場がある設定の商店街のゲート",
+        "en": "Shopping street gate near the theater",
+        "zh-Hant": "劇場所在的下北澤南口商店街拱門"
+      },
+      "reference": "https://riyot.hatenablog.com/entry/2023/08/05/163321",
+      "source": null,
+      "s": 138,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-354414-c12f2c6e-7674d9c9.jpg",
+      "origin": "riyot.hatenablog.com",
+      "origin_link": "https://riyot.hatenablog.com/entry/2023/08/05/163321",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 354414,
+      "id": "m-354414-c8249e7f",
+      "name": "ファミリーマート 杉並成田東五丁目店",
+      "cn": "全家 杉并成田东五丁目店",
+      "lat": 35.691525,
+      "lng": 139.650158,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "全家 杉并成田东五丁目店",
+        "ja": "ファミリーマート 杉並成田東五丁目店",
+        "en": "FamilyMart Suginami Naritahigashi 5-chome",
+        "zh-Hant": "全家 杉併成田東五丁目店"
+      },
+      "marks": {
+        "zh-Hans": "TINGS成员常去的便利店",
+        "ja": "TINGSメンバー行きつけのコンビニ",
+        "en": "Convenience store the TINGS members frequent",
+        "zh-Hant": "TINGS成員常去的便利店"
+      },
+      "reference": "https://riyot.hatenablog.com/entry/2023/08/05/163321",
+      "source": null,
+      "s": 185,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-354414-c8249e7f-80abe2ac.jpg",
+      "origin": "riyot.hatenablog.com",
+      "origin_link": "https://riyot.hatenablog.com/entry/2023/08/05/163321",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 374206,
+      "id": "m-374206-62160f61",
+      "name": "旧前田家本邸洋館",
+      "cn": "旧前田家本邸洋馆",
+      "lat": 35.662244,
+      "lng": 139.680154,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "旧前田家本邸洋馆",
+        "ja": "旧前田家本邸洋館",
+        "en": "Former Maeda Family Residence Western-style House",
+        "zh-Hant": "舊前田家本邸洋館"
+      },
+      "marks": {
+        "zh-Hans": "作中主要舞台洋馆的外观",
+        "ja": "作中の主な舞台となる洋館の外観",
+        "en": "Exterior of the mansion that serves as the main setting",
+        "zh-Hant": "作中主要舞臺洋館的外觀"
+      },
+      "reference": "http://lohirocke.blog.fc2.com/blog-entry-3041.html",
+      "source": null,
+      "s": 176,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-374206-62160f61-94e2bc6d.jpg",
+      "origin": "lohirocke.blog.fc2.com",
+      "origin_link": "http://lohirocke.blog.fc2.com/blog-entry-3041.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 384672,
+      "id": "m-384672-2ab89d01",
+      "name": "新宿中央公園",
+      "cn": "新宿中央公园",
+      "lat": 35.690029,
+      "lng": 139.689585,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "新宿中央公园",
+        "ja": "新宿中央公園",
+        "en": "Shinjuku Central Park",
+        "zh-Hant": "新宿中央公園"
+      },
+      "marks": {
+        "zh-Hans": "第8集中带游乐设施的公园场景",
+        "ja": "遊具のある公園での場面",
+        "en": "Park scene with playground equipment",
+        "zh-Hant": "第8集中帶遊樂設施的公園場景"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/22278595.html",
+      "source": null,
+      "s": 239,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-384672-2ab89d01-acf4f64e.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/22278595.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 409088,
+      "id": "m-409088-ab6ed72e",
+      "name": "花やしき通り",
+      "cn": "花屋敷通",
+      "lat": 35.71521,
+      "lng": 139.794567,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "花屋敷通",
+        "ja": "花やしき通り",
+        "en": "Hanayashiki-dori Street",
+        "zh-Hant": "花屋敷通"
+      },
+      "marks": {
+        "zh-Hans": "第1集三人穿过浅草寺旁走进花屋敷通的场景。",
+        "ja": "第1話、浅草寺の横を抜けて花やしき通りへ向かう場面。",
+        "en": "The girls walk down Hanayashiki-dori past Sensoji in episode 1.",
+        "zh-Hant": "第1集三人穿過淺草寺旁走進花屋敷通的場景。"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/21423977.html",
+      "source": null,
+      "s": 531,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-409088-ab6ed72e-e927cd3d.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/21423977.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 409088,
+      "id": "m-409088-6a37b134",
+      "name": "上野駅（JR構内）",
+      "cn": "上野站（JR站内）",
+      "lat": 35.714041,
+      "lng": 139.777116,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "上野站（JR站内）",
+        "ja": "上野駅（JR構内）",
+        "en": "Ueno Station (JR concourse)",
+        "zh-Hant": "上野站（JR站內）"
+      },
+      "marks": {
+        "zh-Hans": "第1集从青森来的两人在上野站遇到卡特莉娜。",
+        "ja": "第1話、青森から来た二人がカトリナと出会う上野駅構内。",
+        "en": "Ueno Station where the two from Aomori meet Katrina in episode 1.",
+        "zh-Hant": "第1集從青森來的兩人在上野站遇到卡特莉娜。"
+      },
+      "reference": "https://deep-adultweet.blog.jp/archives/21962434.html",
+      "source": null,
+      "s": 359,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-409088-6a37b134-25c799a7.jpg",
+      "origin": "deep-adultweet.blog.jp",
+      "origin_link": "https://deep-adultweet.blog.jp/archives/21962434.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 4255,
+      "id": "m-4255-c4cffd7a",
+      "name": "札幌駅前通（札幌日興ビル・札幌国際ビル前）",
+      "cn": "札幌站前通",
+      "lat": 43.052179,
+      "lng": 141.354202,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "札幌站前通",
+        "ja": "札幌駅前通（札幌日興ビル・札幌国際ビル前）",
+        "en": "Sapporo Ekimae-dori",
+        "zh-Hant": "札幌站前通"
+      },
+      "marks": {
+        "zh-Hans": "小钓奈在街头奔跑招募新员工的场景。",
+        "ja": "ぽぷらが新人バイトを募集して街を走る場面。",
+        "en": "Poplar runs down the street recruiting new part-timers.",
+        "zh-Hant": "小釣奈在街頭奔跑招募新員工的場景。"
+      },
+      "reference": "https://genesis.hatenadiary.jp/entry/20100406/1270479600",
+      "source": null,
+      "s": 165,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-4255-c4cffd7a-bdf8b891.jpg",
+      "origin": "genesis.hatenadiary.jp",
+      "origin_link": "https://genesis.hatenadiary.jp/entry/20100406/1270479600",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 4255,
+      "id": "m-4255-bb4e1e01",
+      "name": "二見公園（定山渓）",
+      "cn": "二见公园",
+      "lat": 42.964571,
+      "lng": 141.159643,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "二见公园",
+        "ja": "二見公園（定山渓）",
+        "en": "Futami Park",
+        "zh-Hant": "二見公園"
+      },
+      "marks": {
+        "zh-Hans": "两人散步的河边步道，有紫藤架。",
+        "ja": "二人が散歩する川沿いの散策路と藤棚。",
+        "en": "Riverside promenade with wisteria trellis for the walk.",
+        "zh-Hant": "兩人散步的河邊步道，有紫藤架。"
+      },
+      "reference": "https://genesis.hatenadiary.jp/entry/20100526/1274799600",
+      "source": null,
+      "s": 1055,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-4255-bb4e1e01-6e0374bd.jpg",
+      "origin": "genesis.hatenadiary.jp",
+      "origin_link": "https://genesis.hatenadiary.jp/entry/20100526/1274799600",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 4255,
+      "id": "m-4255-738b9805",
+      "name": "平岡公園 芝生広場",
+      "cn": "平冈公园草坪广场",
+      "lat": 42.997099,
+      "lng": 141.458563,
+      "ep": "13",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "平冈公园草坪广场",
+        "ja": "平岡公園 芝生広場",
+        "en": "Hiraoka Park Lawn Plaza",
+        "zh-Hant": "平岡公園草坪廣場"
+      },
+      "marks": {
+        "zh-Hans": "草坪广场上长椅的场景。",
+        "ja": "芝生広場のベンチが舞台となる場面。",
+        "en": "Bench scene on the lawn plaza.",
+        "zh-Hant": "草坪廣場上長椅的場景。"
+      },
+      "reference": "https://genesis.hatenadiary.jp/entry/20100629/1277737200",
+      "source": null,
+      "s": 983,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-4255-738b9805-98c349fb.jpg",
+      "origin": "genesis.hatenadiary.jp",
+      "origin_link": "https://genesis.hatenadiary.jp/entry/20100629/1277737200",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 4255,
+      "id": "m-4255-970f4e2a",
+      "name": "平岡公園 あづまや",
+      "cn": "平冈公园凉亭",
+      "lat": 42.997099,
+      "lng": 141.458563,
+      "ep": "13",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "平冈公园凉亭",
+        "ja": "平岡公園 あづまや",
+        "en": "Hiraoka Park Gazebo",
+        "zh-Hant": "平岡公園涼亭"
+      },
+      "marks": {
+        "zh-Hans": "凉亭及旁边告示牌出现的场景。",
+        "ja": "あづまやと看板が映る場面。",
+        "en": "Scene with the gazebo and signboard.",
+        "zh-Hant": "涼亭及旁邊告示牌出現的場景。"
+      },
+      "reference": "https://genesis.hatenadiary.jp/entry/20100629/1277737200",
+      "source": null,
+      "s": 1132,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-4255-970f4e2a-8f985c6b.jpg",
+      "origin": "genesis.hatenadiary.jp",
+      "origin_link": "https://genesis.hatenadiary.jp/entry/20100629/1277737200",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 43951,
+      "id": "m-43951-0ea24532",
+      "name": "ポートアイランド北公園",
+      "cn": "港岛北公园",
+      "lat": 34.676833,
+      "lng": 135.204305,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "港岛北公园",
+        "ja": "ポートアイランド北公園",
+        "en": "Port Island North Park",
+        "zh-Hant": "港島北公園"
+      },
+      "marks": {
+        "zh-Hans": "第4至6集战斗的舞台，位于神户大桥南端",
+        "ja": "4〜6話のバトルの舞台となった神戸大橋南詰の公園",
+        "en": "Park at the bridge's south end used for battles",
+        "zh-Hant": "第4至6集戰鬥的舞臺，位於神戶大橋南端"
+      },
+      "reference": "http://d.hatena.ne.jp/nobumichi02/20130714/1373814030",
+      "source": null,
+      "s": 24,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-43951-0ea24532-d14ced64.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/nobumichi02/20130714/1373814030",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 43951,
+      "id": "m-43951-f49fb257",
+      "name": "神戸大橋",
+      "cn": "神户大桥",
+      "lat": 34.678343,
+      "lng": 135.203733,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "神户大桥",
+        "ja": "神戸大橋",
+        "en": "Kobe Ohashi Bridge",
+        "zh-Hant": "神戶大橋"
+      },
+      "marks": {
+        "zh-Hans": "OP中出现的红色大桥西侧步道",
+        "ja": "OPに登場する赤い大橋の西側歩道",
+        "en": "West-side walkway of the red bridge in the OP",
+        "zh-Hant": "OP中出現的紅色大橋西側步道"
+      },
+      "reference": "http://d.hatena.ne.jp/paffue/20130907/1378602407",
+      "source": null,
+      "s": 393,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-43951-f49fb257-39b7ade4.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/paffue/20130907/1378602407",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 43951,
+      "id": "m-43951-91c8707f",
+      "name": "ポートアイランド北公園",
+      "cn": "港岛北公园",
+      "lat": 34.676833,
+      "lng": 135.204305,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "港岛北公园",
+        "ja": "ポートアイランド北公園",
+        "en": "Port Island North Park",
+        "zh-Hant": "港島北公園"
+      },
+      "marks": {
+        "zh-Hans": "伊莉雅化身弓兵战斗的公园",
+        "ja": "イリヤが戦闘を行う北公園",
+        "en": "Park where Illya fights in episode 4",
+        "zh-Hant": "伊莉雅化身弓兵戰鬥的公園"
+      },
+      "reference": "http://d.hatena.ne.jp/paffue/20130907/1378602407",
+      "source": null,
+      "s": 275,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-43951-91c8707f-54e2a80d.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/paffue/20130907/1378602407",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 46826,
+      "id": "m-46826-644b449f",
+      "name": "西東京いこいの森公園",
+      "cn": "西东京憩之森公园",
+      "lat": 35.740984,
+      "lng": 139.53949,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "西东京憩之森公园",
+        "ja": "西東京いこいの森公園",
+        "en": "Nishitokyo Ikoi no Mori Park",
+        "zh-Hant": "西東京憩之森公園"
+      },
+      "marks": {
+        "zh-Hans": "第3集出现的公园场景",
+        "ja": "3話に登場した公園の場面",
+        "en": "Park scene from episode 3",
+        "zh-Hant": "第3集出現的公園場景"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-297.html",
+      "source": null,
+      "s": 172,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-46826-644b449f-02a29a86.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-297.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 46826,
+      "id": "m-46826-e35319e7",
+      "name": "穎明館中学高等学校",
+      "cn": "颖明馆中学高中",
+      "lat": 35.623667,
+      "lng": 139.293057,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "颖明馆中学高中",
+        "ja": "穎明館中学高等学校",
+        "en": "Eimeikan Junior and Senior High School",
+        "zh-Hant": "穎明館中學高中"
+      },
+      "marks": {
+        "zh-Hans": "第4集文化节场景，中学楼前的广场，原型为圣悠学馆。",
+        "ja": "4話の文化祭シーン。中学棟前の広場で、聖悠学館のモデル。",
+        "en": "Episode 4 school festival scene in the plaza before the junior high building, model for Seiyu Academy.",
+        "zh-Hant": "第4集文化節場景，中學樓前的廣場，原型為聖悠學館。"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-469.html",
+      "source": null,
+      "s": 152,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-46826-e35319e7-b7013d57.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-469.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 228254,
+      "id": "m-49131-f5c637b0",
+      "name": "町田駅前広場",
+      "cn": "町田站前广场",
+      "lat": 35.545671,
+      "lng": 139.445478,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "町田站前广场",
+        "ja": "町田駅前広場",
+        "en": "Machida Station Plaza",
+        "zh-Hant": "町田站前廣場"
+      },
+      "marks": {
+        "zh-Hans": "JR町田站前广场出现在动画画面中",
+        "ja": "JR町田駅前の広場が作中に登場",
+        "en": "The JR Machida Station plaza appears in the anime.",
+        "zh-Hant": "JR町田站前廣場出現在動畫畫面中"
+      },
+      "reference": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/78162767.html",
+      "source": null,
+      "s": 349,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-49131-f5c637b0-7a5679b2.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/touyokojunrei-yokofuji3/archives/78162767.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 55703,
+      "id": "m-55703-97af5068",
+      "name": "飯能駅 コンコース",
+      "cn": "饭能站 站厅",
+      "lat": 35.851005,
+      "lng": 139.319059,
+      "ep": "12",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "饭能站 站厅",
+        "ja": "飯能駅 コンコース",
+        "en": "Hanno Station Concourse",
+        "zh-Hant": "飯能站 站廳"
+      },
+      "marks": {
+        "zh-Hans": "从温泉回来后角色走过的车站站厅",
+        "ja": "温泉帰りの登場人物が歩く駅コンコース",
+        "en": "Characters walk the station concourse after returning from the hot spring",
+        "zh-Hant": "從溫泉回來后角色走過的車站站廳"
+      },
+      "reference": "http://sinkirouno.exblog.jp/22306858/",
+      "source": null,
+      "s": 620,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-55703-97af5068-590a273a.jpg",
+      "origin": "sinkirouno.exblog.jp",
+      "origin_link": "http://sinkirouno.exblog.jp/22306858/",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 55703,
+      "id": "m-55703-da42abe1",
+      "name": "飯能駅南口バス停",
+      "cn": "饭能站南口公交站",
+      "lat": 35.850805,
+      "lng": 139.318285,
+      "ep": "10",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "饭能站南口公交站",
+        "ja": "飯能駅南口バス停",
+        "en": "Hanno Station South Exit Bus Stop",
+        "zh-Hant": "飯能站南口公交站"
+      },
+      "marks": {
+        "zh-Hans": "第10集出现的饭能站南口公交站",
+        "ja": "第10話に登場する飯能駅南口のバス停",
+        "en": "The bus stop at the south exit of Hanno Station",
+        "zh-Hant": "第10集出現的飯能站南口公交站"
+      },
+      "reference": "http://sinkirouno.exblog.jp/22326751/",
+      "source": null,
+      "s": 1016,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-55703-da42abe1-45a16c89.jpg",
+      "origin": "sinkirouno.exblog.jp",
+      "origin_link": "http://sinkirouno.exblog.jp/22326751/",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 5648,
+      "id": "m-5648-cad9139c",
+      "name": "与儀公園",
+      "cn": "与仪公园",
+      "lat": 26.208489,
+      "lng": 127.692556,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "与仪公园",
+        "ja": "与儀公園",
+        "en": "Yogi Park",
+        "zh-Hant": "與儀公園"
+      },
+      "marks": {
+        "zh-Hans": "第2集的公园场景",
+        "ja": "2話の公園の場面",
+        "en": "Park scene in episode 2",
+        "zh-Hant": "第2集的公園場景"
+      },
+      "reference": "http://d.hatena.ne.jp/paffue/20141026/1414290613",
+      "source": null,
+      "s": 581,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-5648-cad9139c-55d70173.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/paffue/20141026/1414290613",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 5648,
+      "id": "m-5648-12fccdd5",
+      "name": "金城町石畳道",
+      "cn": "金城町石板路",
+      "lat": 26.216004,
+      "lng": 127.715217,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "金城町石板路",
+        "ja": "金城町石畳道",
+        "en": "Kinjo-cho Ishidatami Road",
+        "zh-Hant": "金城町石板路"
+      },
+      "marks": {
+        "zh-Hans": "片头中出现的石板坡道。",
+        "ja": "OPに登場する石畳の坂道。",
+        "en": "Stone-paved slope shown in the opening.",
+        "zh-Hant": "片頭中出現的石板坡道。"
+      },
+      "reference": "http://astral01.hatenablog.com/entry/2016/10/22/180345",
+      "source": null,
+      "s": 103,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-5648-12fccdd5-90d319f4.jpg",
+      "origin": "astral01.hatenablog.com",
+      "origin_link": "http://astral01.hatenablog.com/entry/2016/10/22/180345",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 5648,
+      "id": "m-5648-0a349db8",
+      "name": "沖縄県立図書館",
+      "cn": "冲绳县立图书馆",
+      "lat": 26.211208,
+      "lng": 127.676552,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "冲绳县立图书馆",
+        "ja": "沖縄県立図書館",
+        "en": "Okinawa Prefectural Library",
+        "zh-Hant": "沖繩縣立圖書館"
+      },
+      "marks": {
+        "zh-Hans": "艾莉丝查资料的图书馆。",
+        "ja": "エリスが調べ物をした図書館。",
+        "en": "Library where Eris researched.",
+        "zh-Hant": "艾莉絲查資料的圖書館。"
+      },
+      "reference": "http://astral01.hatenablog.com/entry/2016/10/22/180345",
+      "source": null,
+      "s": 382,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-5648-0a349db8-bc22c2af.jpg",
+      "origin": "astral01.hatenablog.com",
+      "origin_link": "http://astral01.hatenablog.com/entry/2016/10/22/180345",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 59632,
+      "id": "m-59632-79fe75c6",
+      "name": "渋谷駅ハチ公前",
+      "cn": "涩谷站八公前",
+      "lat": 35.661812,
+      "lng": 139.704285,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "涩谷站八公前",
+        "ja": "渋谷駅ハチ公前",
+        "en": "Shibuya Station Hachiko Square",
+        "zh-Hant": "澀谷站八公前"
+      },
+      "marks": {
+        "zh-Hans": "第1集中的涩谷站八公前镜头",
+        "ja": "1話に登場した渋谷駅ハチ公前のカット",
+        "en": "Hachiko Square shot in episode 1",
+        "zh-Hant": "第1集中的澀谷站八公前鏡頭"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-260.html",
+      "source": null,
+      "s": 803,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-59632-79fe75c6-9953d14a.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-260.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 66262,
+      "id": "m-66262-669c803f",
+      "name": "眼鏡橋",
+      "cn": "眼镜桥",
+      "lat": 32.747165,
+      "lng": 129.880102,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "眼镜桥",
+        "ja": "眼鏡橋",
+        "en": "Megane Bridge",
+        "zh-Hant": "眼鏡橋"
+      },
+      "marks": {
+        "zh-Hans": "长崎标志性的眼镜桥河岸",
+        "ja": "長崎の象徴、眼鏡橋の川岸",
+        "en": "Megane Bridge riverbank",
+        "zh-Hant": "長崎標誌性的眼鏡橋河岸"
+      },
+      "reference": "http://beetle883.blog.fc2.com/blog-entry-204.html",
+      "source": null,
+      "s": 102,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-66262-669c803f-8f36112d.jpg",
+      "origin": "beetle883.blog.fc2.com",
+      "origin_link": "http://beetle883.blog.fc2.com/blog-entry-204.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 66262,
+      "id": "m-66262-442ee119",
+      "name": "眼鏡橋",
+      "cn": "眼镜桥",
+      "lat": 32.747165,
+      "lng": 129.880102,
+      "ep": "7",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "眼镜桥",
+        "ja": "眼鏡橋",
+        "en": "Megane Bridge",
+        "zh-Hant": "眼鏡橋"
+      },
+      "marks": {
+        "zh-Hans": "第7集中中岛川上的石拱桥场景",
+        "ja": "第7話に登場する中島川の石橋の場面",
+        "en": "Stone arch bridge over Nakashima River in episode 7",
+        "zh-Hant": "第7集中中島川上的石拱橋場景"
+      },
+      "reference": "http://bradbury3404.blog.fc2.com/blog-entry-47.html",
+      "source": null,
+      "s": 529,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-66262-442ee119-478e5211.jpg",
+      "origin": "bradbury3404.blog.fc2.com",
+      "origin_link": "http://bradbury3404.blog.fc2.com/blog-entry-47.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 67376,
+      "id": "m-67376-c3d86937",
+      "name": "七里ガ浜海岸",
+      "cn": "七里滨海岸",
+      "lat": 35.304503,
+      "lng": 139.513281,
+      "ep": "8",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "七里滨海岸",
+        "ja": "七里ガ浜海岸",
+        "en": "Shichirigahama Beach",
+        "zh-Hant": "七里濱海岸"
+      },
+      "marks": {
+        "zh-Hans": "雄二和蒔菜骑摩托沿国道134号飞驰的海岸",
+        "ja": "雄二と蒔菜がバイクで疾走する国道134号沿いの海岸",
+        "en": "The coastal road where Yuji and Makina ride a motorcycle",
+        "zh-Hant": "雄二和蒔菜騎摩托沿國道134號飛馳的海岸"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20141130/1417339619",
+      "source": null,
+      "s": 709,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-67376-c3d86937-d25767c6.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20141130/1417339619",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 69494,
+      "id": "m-69494-a12f7ccc",
+      "name": "豊洲駅 3番出口",
+      "cn": "丰洲站3号出口",
+      "lat": 35.655404,
+      "lng": 139.796339,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "丰洲站3号出口",
+        "ja": "豊洲駅 3番出口",
+        "en": "Toyosu Station Exit 3",
+        "zh-Hant": "豐洲站3號出口"
+      },
+      "marks": {
+        "zh-Hans": "第4集中丰洲站出口的场景。",
+        "ja": "第4話の豊洲駅出口の場面。",
+        "en": "Toyosu Station exit scene in episode 4.",
+        "zh-Hant": "第4集中豐洲站出口的場景。"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-303.html",
+      "source": null,
+      "s": 1141,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-69494-a12f7ccc-327af752.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-303.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 73440,
+      "id": "m-73440-fc735aa1",
+      "name": "ヤマダ電機 LABI1 日本総本店池袋",
+      "cn": "山田电机 LABI1 日本总本店池袋",
+      "lat": 35.730929,
+      "lng": 139.713728,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "山田电机 LABI1 日本总本店池袋",
+        "ja": "ヤマダ電機 LABI1 日本総本店池袋",
+        "en": "Yamada Denki LABI1 Nippon Main Store Ikebukuro",
+        "zh-Hant": "山田電機 LABI1 日本總本店池袋"
+      },
+      "marks": {
+        "zh-Hans": "对手店阿玛达魔法王都总店，劳尔等人排队的地方",
+        "ja": "ライバル店アマダマジック王都総本店のモデル、ラウルたちが並ぶ場所",
+        "en": "Model for the rival Amada Magic shop where Raul's group queued",
+        "zh-Hant": "對手店阿瑪達魔法王都總店，勞爾等人排隊的地方"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-362.html",
+      "source": null,
+      "s": 667,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-73440-fc735aa1-6b6b0412.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-362.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 75702,
+      "id": "m-75702-e58625d4",
+      "name": "井荻駅 南口",
+      "cn": "井荻站南口",
+      "lat": 35.724748,
+      "lng": 139.614855,
+      "ep": "12",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "井荻站南口",
+        "ja": "井荻駅 南口",
+        "en": "Igusa Station South Exit",
+        "zh-Hant": "井荻站南口"
+      },
+      "marks": {
+        "zh-Hans": "第12集中出现的西武新宿线井荻站南口，售票机与检票口位置被改动。",
+        "ja": "12話の西武新宿線井荻駅南口のカット。券売機と改札の配置は変えられている。",
+        "en": "Episode 12 shot of Igusa Station south exit, with ticket machine and gate layout altered.",
+        "zh-Hant": "第12集中出現的西武新宿線井荻站南口，售票機與檢票口位置被改動。"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-363.html",
+      "source": null,
+      "s": 788,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-75702-e58625d4-26328f32.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-363.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 77171,
+      "id": "m-77171-4d6cb308",
+      "name": "東京駅 丸の内北口",
+      "cn": "东京站丸之内北口",
+      "lat": 35.681744,
+      "lng": 139.765638,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "东京站丸之内北口",
+        "ja": "東京駅 丸の内北口",
+        "en": "Tokyo Station Marunouchi North Exit",
+        "zh-Hant": "東京站丸之內北口"
+      },
+      "marks": {
+        "zh-Hans": "红砖站舍丸之内北口的画面",
+        "ja": "赤レンガ駅舎の丸の内北口が描かれたカット",
+        "en": "The red-brick station building at the Marunouchi North Exit",
+        "zh-Hant": "紅磚站舍丸之內北口的畫面"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-1114.html",
+      "source": null,
+      "s": 204,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-77171-4d6cb308-293a230a.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-1114.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 105875,
+      "id": "m-77171-2aabdb03",
+      "name": "阿佐ケ谷駅 北口",
+      "cn": "阿佐谷站北口",
+      "lat": 35.704971,
+      "lng": 139.635418,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "阿佐谷站北口",
+        "ja": "阿佐ケ谷駅 北口",
+        "en": "Asagaya Station",
+        "zh-Hant": "阿佐谷站北口"
+      },
+      "marks": {
+        "zh-Hans": "第1集中出现的JR中央线阿佐谷站北口",
+        "ja": "第1話に登場したJR中央線阿佐ケ谷駅北口",
+        "en": "Asagaya Station north exit shown in episode 1",
+        "zh-Hant": "第1集中出現的JR中央線阿佐谷站北口"
+      },
+      "reference": "http://jokejokken.blog.fc2.com/blog-entry-1317.html",
+      "source": null,
+      "s": 430,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-77171-2aabdb03-41c0e791.jpg",
+      "origin": "jokejokken.blog.fc2.com",
+      "origin_link": "http://jokejokken.blog.fc2.com/blog-entry-1317.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 7842,
+      "id": "m-7842-6520291a",
+      "name": "由比ヶ浜海岸",
+      "cn": "由比滨海岸",
+      "lat": 35.315674,
+      "lng": 139.545929,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "由比滨海岸",
+        "ja": "由比ヶ浜海岸",
+        "en": "Yuigahama Beach",
+        "zh-Hant": "由比濱海岸"
+      },
+      "marks": {
+        "zh-Hans": "海之家「檸檬」所在的海滩原型，第1集多处场景取景。",
+        "ja": "海の家れもんがある海岸のモデル。第1話の舞台。",
+        "en": "Model for the beach with the Lemon beach house, seen in episode 1.",
+        "zh-Hant": "海之家「檸檬」所在的海灘原型，第1集多處場景取景。"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20111030/1319959362",
+      "source": null,
+      "s": 242,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-7842-6520291a-58edc3ca.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20111030/1319959362",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 78542,
+      "id": "m-78542-d7b2d25e",
+      "name": "センター街入口",
+      "cn": "中心街入口",
+      "lat": 35.660114,
+      "lng": 139.699532,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "中心街入口",
+        "ja": "センター街入口",
+        "en": "Center Gai Entrance",
+        "zh-Hant": "中心街入口"
+      },
+      "marks": {
+        "zh-Hans": "登场了涩谷中心街入口处的街景。",
+        "ja": "渋谷センター街の入口付近の街角シーン。",
+        "en": "The street scene at the entrance of Shibuya Center Gai.",
+        "zh-Hant": "登場了澀谷中心街入口處的街景。"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-344.html",
+      "source": null,
+      "s": 1190,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-78542-d7b2d25e-16a49b4d.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-344.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 79676,
+      "id": "m-79676-ce1005ee",
+      "name": "野毛山公園",
+      "cn": "野毛山公园",
+      "lat": 35.446312,
+      "lng": 139.623171,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "野毛山公园",
+        "ja": "野毛山公園",
+        "en": "Nogeyama Park",
+        "zh-Hant": "野毛山公園"
+      },
+      "marks": {
+        "zh-Hans": "野毛山公园周边的场景。",
+        "ja": "野毛山公園周辺の場面。",
+        "en": "Scene around Nogeyama Park.",
+        "zh-Hant": "野毛山公園周邊的場景。"
+      },
+      "reference": "http://anosaka.blog.fc2.com/blog-entry-450.html",
+      "source": null,
+      "s": 1246,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-79676-ce1005ee-9675c01e.jpg",
+      "origin": "anosaka.blog.fc2.com",
+      "origin_link": "http://anosaka.blog.fc2.com/blog-entry-450.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 798,
+      "id": "m-798-edbfd689",
+      "name": "眼鏡橋",
+      "cn": "眼镜桥",
+      "lat": 32.747165,
+      "lng": 129.880102,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "眼镜桥",
+        "ja": "眼鏡橋",
+        "en": "Spectacles Bridge",
+        "zh-Hant": "眼鏡橋"
+      },
+      "marks": {
+        "zh-Hans": "第2集中出现的眼镜桥。",
+        "ja": "第2話に登場するめがね橋。",
+        "en": "Spectacles Bridge in episode 2.",
+        "zh-Hant": "第2集中出現的眼鏡橋。"
+      },
+      "reference": "http://fukusuu.blog48.fc2.com/blog-entry-1244.html",
+      "source": null,
+      "s": 1097,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-798-edbfd689-3bd24f42.jpg",
+      "origin": "fukusuu.blog48.fc2.com",
+      "origin_link": "http://fukusuu.blog48.fc2.com/blog-entry-1244.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 798,
+      "id": "m-798-c8d6990e",
+      "name": "グラバー園",
+      "cn": "哥拉巴园",
+      "lat": 32.733367,
+      "lng": 129.869055,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "哥拉巴园",
+        "ja": "グラバー園",
+        "en": "Glover Garden",
+        "zh-Hant": "哥拉巴園"
+      },
+      "marks": {
+        "zh-Hans": "从哥拉巴园望出去的景色，对应第1集画面。",
+        "ja": "グラバー園から望む景色が登場する場面。",
+        "en": "The view from Glover Garden in episode 1.",
+        "zh-Hant": "從哥拉巴園望出去的景色，對應第1集畫面。"
+      },
+      "reference": "https://dotproducer.kan-be.com/seiti/sola/sola.html",
+      "source": null,
+      "s": 386,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-798-c8d6990e-b7b69dbd.jpg",
+      "origin": "dotproducer.kan-be.com",
+      "origin_link": "https://dotproducer.kan-be.com/seiti/sola/sola.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 81186,
+      "id": "m-81186-13bdb603",
+      "name": "台場駅西側",
+      "cn": "台场站西侧",
+      "lat": 35.625913,
+      "lng": 139.771418,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "台场站西侧",
+        "ja": "台場駅西側",
+        "en": "West of Daiba Station",
+        "zh-Hant": "臺場站西側"
+      },
+      "marks": {
+        "zh-Hans": "第1集中与实景最吻合的一幕，放大后几乎重合。",
+        "ja": "第1話で最も実景と一致するカット。",
+        "en": "The shot that matches reality best in episode 1.",
+        "zh-Hant": "第1集中與實景最吻合的一幕，放大後幾乎重合。"
+      },
+      "reference": "http://d.hatena.ne.jp/paffue/20140413/1397403897",
+      "source": null,
+      "s": 509,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-81186-13bdb603-60b80054.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/paffue/20140413/1397403897",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 82572,
+      "id": "m-82572-c8922e45",
+      "name": "大泉学園駅ホーム",
+      "cn": "大泉学园站站台",
+      "lat": 35.749505,
+      "lng": 139.586522,
+      "ep": "3",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "大泉学园站站台",
+        "ja": "大泉学園駅ホーム",
+        "en": "Oizumi-gakuen Station Platform",
+        "zh-Hant": "大泉學園站站臺"
+      },
+      "marks": {
+        "zh-Hans": "第3集西武池袋线站台的场景",
+        "ja": "第3話の西武池袋線ホームの場面",
+        "en": "Seibu Ikebukuro Line platform scene in episode 3",
+        "zh-Hant": "第3集西武池袋線站臺的場景"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-233.html",
+      "source": null,
+      "s": 982,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-82572-c8922e45-79681cb8.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-233.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 82572,
+      "id": "m-82572-c06ebf6d",
+      "name": "石神井公園 三宝寺池遊歩道",
+      "cn": "石神井公园三宝寺池步道",
+      "lat": 35.743952,
+      "lng": 139.606225,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "石神井公园三宝寺池步道",
+        "ja": "石神井公園 三宝寺池遊歩道",
+        "en": "Sanpoji Pond Promenade, Shakujii Park",
+        "zh-Hant": "石神井公園三寶寺池步道"
+      },
+      "marks": {
+        "zh-Hans": "第4集三宝寺池入口附近的步道",
+        "ja": "第4話の三宝寺池入口近くの遊歩道",
+        "en": "Promenade near the Sanpoji Pond entrance in episode 4",
+        "zh-Hant": "第4集三寶寺池入口附近的步道"
+      },
+      "reference": "http://inish.blog1.fc2.com/blog-entry-234.html",
+      "source": null,
+      "s": 323,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-82572-c06ebf6d-33649a57.jpg",
+      "origin": "inish.blog1.fc2.com",
+      "origin_link": "http://inish.blog1.fc2.com/blog-entry-234.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 8402,
+      "id": "m-8402-1b2c7f1f",
+      "name": "歌舞伎町一番街",
+      "cn": "歌舞伎町一番街",
+      "lat": 35.697522,
+      "lng": 139.700752,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "歌舞伎町一番街",
+        "ja": "歌舞伎町一番街",
+        "en": "Kabukicho Ichibangai",
+        "zh-Hant": "歌舞伎町一番街"
+      },
+      "marks": {
+        "zh-Hans": "第10话开头俯瞰小东京街景的大楼群",
+        "ja": "リトルトーキョーを俯瞰する冒頭のビル群のカット",
+        "en": "Opening overhead shot of Little Tokyo's building cluster",
+        "zh-Hant": "第10話開頭俯瞰小東京街景的大樓群"
+      },
+      "reference": "http://d.hatena.ne.jp/riyot/20101107/1289137659",
+      "source": null,
+      "s": 638,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-8402-1b2c7f1f-8d9aaf3f.jpg",
+      "origin": "d.hatena.ne.jp",
+      "origin_link": "http://d.hatena.ne.jp/riyot/20101107/1289137659",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 84171,
+      "id": "m-84171-acb19e38",
+      "name": "仙台市体育館（カメイアリーナ仙台）",
+      "cn": "仙台市体育馆（龟井竞技场仙台）",
+      "lat": 38.218035,
+      "lng": 140.869135,
+      "ep": "15",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "仙台市体育馆（龟井竞技场仙台）",
+        "ja": "仙台市体育館（カメイアリーナ仙台）",
+        "en": "Kamei Arena Sendai",
+        "zh-Hant": "仙台市體育館（龜井競技場仙台）"
+      },
+      "marks": {
+        "zh-Hans": "片头出现的体育馆正门前道路",
+        "ja": "OPに登場した正門前の道路",
+        "en": "Road in front of the main gate seen in the opening",
+        "zh-Hant": "片頭出現的體育館正門前道路"
+      },
+      "reference": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "source": null,
+      "s": 165,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-84171-acb19e38-6445f35e.jpg",
+      "origin": "tianlang.s601.xrea.com",
+      "origin_link": "http://tianlang.s601.xrea.com/hq_anime.htm",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 84873,
+      "id": "m-84873-51682fcb",
+      "name": "西郊ロッヂング",
+      "cn": "西郊小屋",
+      "lat": 35.702858,
+      "lng": 139.625438,
+      "ep": "1",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "西郊小屋",
+        "ja": "西郊ロッヂング",
+        "en": "Seiko Lodging",
+        "zh-Hant": "西郊小屋"
+      },
+      "marks": {
+        "zh-Hans": "莲太郎家的原型建筑",
+        "ja": "蓮太郎の家のモデルとなった建物",
+        "en": "Model for Rentaro's home",
+        "zh-Hant": "蓮太郎家的原型建築"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-437.html",
+      "source": null,
+      "s": 1187,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-84873-51682fcb-2d04a034.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-437.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 87718,
+      "id": "m-87718-4f9c6376",
+      "name": "中華街 市場通り",
+      "cn": "中华街 市场通",
+      "lat": 35.441443,
+      "lng": 139.646668,
+      "ep": "5",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "中华街 市场通",
+        "ja": "中華街 市場通り",
+        "en": "Ichiba-dori, Chinatown",
+        "zh-Hant": "中華街 市場通"
+      },
+      "marks": {
+        "zh-Hans": "抽奖会场所在的食材店前",
+        "ja": "福引き会場が置かれた食材店前",
+        "en": "Front of grocery store used as lottery venue",
+        "zh-Hant": "抽獎會場所在的食材店前"
+      },
+      "reference": "http://tianlang.s601.xrea.com/hamatora3.htm",
+      "source": null,
+      "s": 22,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-87718-4f9c6376-31fb1986.jpg",
+      "origin": "tianlang.s601.xrea.com",
+      "origin_link": "http://tianlang.s601.xrea.com/hamatora3.htm",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 880,
+      "id": "m-880-1d5ce6f8",
+      "name": "スターバックスコーヒー 新宿3丁目店前",
+      "cn": "星巴克新宿3丁目店前",
+      "lat": 35.69038,
+      "lng": 139.701787,
+      "ep": "9",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "星巴克新宿3丁目店前",
+        "ja": "スターバックスコーヒー 新宿3丁目店前",
+        "en": "Starbucks Shinjuku 3-chome Store",
+        "zh-Hant": "星巴克新宿3丁目店前"
+      },
+      "marks": {
+        "zh-Hans": "潑春迷路时所在的新宿街道",
+        "ja": "はるが道に迷っていた新宿の路上",
+        "en": "Shinjuku street where Haru gets lost",
+        "zh-Hant": "潑春迷路時所在的新宿街道"
+      },
+      "reference": "http://blog.livedoor.jp/fly_ask/archives/18109698.html",
+      "source": null,
+      "s": 5,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-880-1d5ce6f8-22f6e58f.jpg",
+      "origin": "blog.livedoor.jp",
+      "origin_link": "http://blog.livedoor.jp/fly_ask/archives/18109698.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 88039,
+      "id": "m-88039-ac7adda7",
+      "name": "鎌倉中央公園",
+      "cn": "镰仓中央公园",
+      "lat": 35.334615,
+      "lng": 139.532051,
+      "ep": "2",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "镰仓中央公园",
+        "ja": "鎌倉中央公園",
+        "en": "Kamakura Central Park",
+        "zh-Hant": "鎌倉中央公園"
+      },
+      "marks": {
+        "zh-Hans": "第2集中角色活动的公园场景",
+        "ja": "第2話で登場人物が過ごす公園の場面",
+        "en": "Park scene in episode 2",
+        "zh-Hant": "第2集中角色活動的公園場景"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-379.html",
+      "source": null,
+      "s": 84,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-88039-ac7adda7-62618ee1.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-379.html",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 88039,
+      "id": "m-88039-77070950",
+      "name": "鎌倉中央公園",
+      "cn": "镰仓中央公园",
+      "lat": 35.334615,
+      "lng": 139.532051,
+      "ep": "4",
+      "src": "ja",
+      "names": {
+        "zh-Hans": "镰仓中央公园",
+        "ja": "鎌倉中央公園",
+        "en": "Kamakura Central Park",
+        "zh-Hant": "鎌倉中央公園"
+      },
+      "marks": {
+        "zh-Hans": "两人在公园里拍摄舞蹈视频的场景",
+        "ja": "公園で踊りの動画を撮影する場面",
+        "en": "The girls film their dance video in the park.",
+        "zh-Hant": "兩人在公園裡拍攝舞蹈影片的場景"
+      },
+      "reference": "http://rimatai.blog.fc2.com/blog-entry-383.html",
+      "source": null,
+      "s": 125,
+      "image": "https://cdn.jannchie.com/junrei/shots/m-88039-77070950-4e69b559.jpg",
+      "origin": "rimatai.blog.fc2.com",
+      "origin_link": "http://rimatai.blog.fc2.com/blog-entry-383.html",
       "updated": "2026-10-24"
     }
   ]
