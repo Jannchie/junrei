@@ -15,11 +15,11 @@ importers:
         specifier: 0.12.0
         version: 0.12.0(@jannchie/icons@0.12.0)(vue@3.5.44(typescript@7.0.2))
       '@mapette/core':
-        specifier: ^0.1.3
-        version: 0.1.3(maplibre-gl@5.24.0)(pmtiles@4.5.0)
+        specifier: ^0.1.4
+        version: 0.1.4(maplibre-gl@5.24.0)(pmtiles@4.5.0)
       '@mapette/vue':
-        specifier: ^0.1.3
-        version: 0.1.3(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))
+        specifier: ^0.1.4
+        version: 0.1.4(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))
       hono:
         specifier: ^4.11.9
         version: 4.13.13
@@ -938,8 +938,8 @@ packages:
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
 
-  '@mapette/core@0.1.3':
-    resolution: {integrity: sha512-DIssC+CtEPRYGEtBu1GitedMcFVflW8453lfCBBp9pD+N8TLd5/XzSI84NsX9JIHihk0BOH2xYybvbx2v/81Zw==}
+  '@mapette/core@0.1.4':
+    resolution: {integrity: sha512-O5h9DainapxIIoSR95gdTBB3yjVz+12v3Asq+rrb2d99nmkBMa3g9jzG3pSymPLj0zEE6lg51qW03X+//rAc1A==}
     peerDependencies:
       maplibre-gl: ^5.9.0
       pmtiles: ^4.5.0
@@ -947,8 +947,8 @@ packages:
       pmtiles:
         optional: true
 
-  '@mapette/vue@0.1.3':
-    resolution: {integrity: sha512-3d7Rd7Vq6q5seOiY3hix+DNu4324Xy8CpBPyeYErjCSWUA7KS7BPtvZ1hDKMngi1F4L+/Nb1Vu3f3SyaEm+TWA==}
+  '@mapette/vue@0.1.4':
+    resolution: {integrity: sha512-u0DwISwMLtjwx3ZRZglkURC9IukN9tSmsn3WQQZqEBfqgYZFTDz+p2H+bLW+SAWLMgbWW4dXsbfq1mUjC9cAHA==}
     peerDependencies:
       maplibre-gl: ^5.9.0
       vue: ^3.5.0
@@ -2732,7 +2732,7 @@ snapshots:
 
   '@mapbox/whoots-js@3.1.0': {}
 
-  '@mapette/core@0.1.3(maplibre-gl@5.24.0)(pmtiles@4.5.0)':
+  '@mapette/core@0.1.4(maplibre-gl@5.24.0)(pmtiles@4.5.0)':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@types/geojson': 7946.0.16
@@ -2740,9 +2740,9 @@ snapshots:
     optionalDependencies:
       pmtiles: 4.5.0
 
-  '@mapette/vue@0.1.3(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))':
+  '@mapette/vue@0.1.4(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))':
     dependencies:
-      '@mapette/core': 0.1.3(maplibre-gl@5.24.0)(pmtiles@4.5.0)
+      '@mapette/core': 0.1.4(maplibre-gl@5.24.0)(pmtiles@4.5.0)
       maplibre-gl: 5.24.0
       vue: 3.5.44(typescript@7.0.2)
     transitivePeerDependencies:
