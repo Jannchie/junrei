@@ -23,7 +23,7 @@ export default defineConfig({
       { "name": "apple-mobile-web-app-status-bar-style", "content": "default" }
     ],
     // PWA 清单、主屏名称、OpenSearch 按页面语言在 src/server/seo.ts 里给出
-    // 首次绘制前应用用户保存的外观选择（src/theme.ts），避免刷新时闪一下
+    // 首次绘制前应用用户保存的外观选择（与 @mapette/core 的 themeInitScript("junrei:theme") 相同），避免刷新时闪一下
     "script": [
       { "innerHTML": "try{var t=localStorage.getItem('junrei:theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}" }
     ],
