@@ -230,6 +230,7 @@ onMounted(() => {
   // 定位用 maplibre 自带的控件画位置点，按钮换成自己的（见模板），原按钮用 CSS 隐藏
   geolocate = new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true });
   m.addControl(geolocate, "bottom-right");
+  m.addControl(new maplibregl.ScaleControl({ maxWidth: 96 }), "bottom-right"); // 比例尺：在缩放按钮下方，样式见下
 
   // 首次加载，以及换主题时 diff 失败退回整体重载，都会触发 style.load；全局状态和高亮要重新应用
   m.on("style.load", () => {
@@ -314,6 +315,24 @@ watch(() => props.focusPointId, (next, prev) => {
 }
 .map :deep(.maplibregl-ctrl-geolocate) {
   display: none;
+}
+/* 右下角的控件容器（只有比例尺看得见）：跟着手机抽屉上移，摆在缩放按钮下面 */
+.map :deep(.maplibregl-ctrl-bottom-right) {
+  right: 12px;
+  bottom: calc(var(--panel-inset-bottom, 0px) + 10px);
+}
+.map :deep(.maplibregl-ctrl-scale) {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1.5px solid var(--muted);
+  border-top: 0;
+  backdrop-filter: var(--glass);
 }
 .map :deep(.photo-pin) {
   /* 不要设 position：maplibre 靠 .maplibregl-marker 的 absolute 与 transform 定位标记 */
