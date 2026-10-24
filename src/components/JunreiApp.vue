@@ -1619,7 +1619,13 @@ figcaption a {
 }
 @media (max-width: 640px) {
   /* 手机半屏（可用高度两百多像素）：截图占满宽度，顶部的位置提示先不显示（拉到全屏时出现），
-     截图下面紧接名称、导航按钮与集数，都在第一屏 */
+     截图下面紧接名称、导航按钮与集数，都在第一屏。
+     16:9 的截图在半屏里会把名称挤到页脚下面，所以半屏时截图的高度 = 半屏高度减去
+     把手与搜索框（约 90px）、页脚（约 52px）、名称、原名与集数（约 100px），裁成更扁的横幅 */
+  :where(.mapette-sheet-half) .point-shot img {
+    aspect-ratio: auto;
+    height: clamp(110px, calc(var(--half) - 250px), 200px);
+  }
   :where(.mapette-sheet:not(.mapette-sheet-full)) .point-bar {
     display: none;
   }
