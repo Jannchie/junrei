@@ -1,78 +1,16 @@
-/* junrei 的全部配色，参照 Apple 地图：冷调素净的底、明亮的水与草绿、白色道路、暖黄高速、毛玻璃面板。
-   面板用 --*，地图皮肤用 --map-*（src/map-style.ts 读取）。
-   每个颜色用 light-dark(亮色, 暗色) 只写一处；用哪一套由 color-scheme 决定：
-   默认跟随系统，用户手动选择后 <html data-theme="light|dark"> 固定（见 src/theme.ts）。 */
+/* junrei 的配色来自 @mapette/core 的默认主题（参照 Apple 地图，最早就是在这里做的），这里只做别名：
+   面板样式沿用 --bg、--fg 这些短名字。要换色就覆盖 --mapette-* 变量，或者用 mapette 的 applyTheme。
+   亮暗：<html data-theme="light|dark"> 由 mapette.css 映射成 color-scheme（切换见 src/theme.ts）。 */
 :root {
-  color-scheme: light dark;
-  /* 浮层底色：默认几乎不透明、不做磨砂（磨砂在地图移动时每帧都要重新模糊，弱 GPU 上会掉帧） */
-  --bg: light-dark(rgb(255 255 255 / 0.96), rgb(30 30 32 / 0.95));
-  --glass: none;
-  --bg-solid: light-dark(#ffffff, #1e1e20);
-  --fg: light-dark(#1d1d1f, #f5f5f7);
-  --muted: light-dark(#86868b, #98989d);
-  --line: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.1));
-  --hover: light-dark(rgb(0 0 0 / 0.045), rgb(255 255 255 / 0.07));
-  --accent: light-dark(#d2405a, #ee6a80); /* 茜色：和蓝水、青绿地面形成冷暖对比 */
-  --scroll-thumb: light-dark(rgb(0 0 0 / 0.16), rgb(255 255 255 / 0.18));
-  --scroll-thumb-hover: light-dark(rgb(0 0 0 / 0.32), rgb(255 255 255 / 0.34));
-
-  --map-land: light-dark(#f2f4f6, #212327);
-  --map-urban: light-dark(#eaedf0, #26292d);
-  --map-wood: light-dark(#c3e6cf, #1b332a);
-  --map-grass: light-dark(#d3ecda, #1e342c);
-  --map-park: light-dark(#bde3c9, #1c3a2e);
-  --map-sand: light-dark(#f2e7ca, #3a3529);
-  --map-water: light-dark(#a7d3f2, #1b3a55);
-  --map-building: light-dark(#e1e4e8, #2f3237);
-  --map-building-line: light-dark(#d6dadf, #383c42);
-  --map-road: light-dark(#ffffff, #3b3b3e);
-  --map-road-casing: light-dark(#dde1e6, #212327);
-  --map-major: light-dark(#ffffff, #4a4a4e);
-  --map-major-casing: light-dark(#d0d5dc, #212327);
-  --map-motorway: light-dark(#fcd26a, #8a7140);
-  --map-motorway-casing: light-dark(#e8b44a, #212327);
-  --map-rail: light-dark(#b0b5bc, #5a5a5e);
-  --map-label: light-dark(#3a3a3c, #ebebf0);
-  --map-label-muted: light-dark(#8e8e93, #98989d);
-  --map-water-label: light-dark(#3f86bf, #6aa6d6);
-  --map-depth-shelf: light-dark(#93c6ec, #173450);
-  --map-depth-mid: light-dark(#69a2d8, #10273f);
-  --map-depth-deep: light-dark(#346cb0, #07172b);
-  --map-hillshade-shadow: light-dark(rgb(40 55 80 / 0.15), rgb(0 0 0 / 0.35));
-  --map-hillshade-highlight: light-dark(rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.04));
-  --map-focus-ring: light-dark(#1d1d1f, #f5f5f7);
-  /* 热力图色带：淡紫 → 品红 → 珊瑚橙 → 暖金，越密越亮，像城市夜景的灯光 */
-  --map-heat-1: light-dark(#c070a0, #b0609a);
-  --map-heat-2: light-dark(#d2405a, #e0506a);
-  --map-heat-3: light-dark(#ec6a48, #f87650);
-  --map-heat-4: light-dark(#ff9a5c, #ffa860);
-  --map-heat-5: light-dark(#ffd36b, #ffe08a);
-  --map-space: light-dark(#e4e9f0, #07090d);
-  --map-horizon: light-dark(#cfe3f5, #1d3c5c);
-
-  /* 浮层与地图的分隔：一圈细描边 + 很淡的贴身投影，不要大面积的阴影 */
-  --shadow-color: light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.25));
-  --shadow-edge: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.08));
-  --shadow: 0 0 0 1px var(--shadow-edge), 0 2px 6px var(--shadow-color);
-}
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-}
-
-/* 鼠标设备（多为桌面）才用半透明磨砂 */
-@media (hover: hover) and (pointer: fine) {
-  :root {
-    --bg: light-dark(rgb(255 255 255 / 0.8), rgb(30 30 32 / 0.78));
-    --glass: blur(16px);
-  }
-}
-/* 用户在系统里要求降低透明度时退回不透明（不支持这个查询的浏览器会忽略这一段） */
-@media (prefers-reduced-transparency: reduce) {
-  :root {
-    --bg: light-dark(rgb(255 255 255 / 0.96), rgb(30 30 32 / 0.95));
-    --glass: none;
-  }
+  --bg: var(--mapette-bg);
+  --glass: var(--mapette-glass);
+  --bg-solid: var(--mapette-bg-solid);
+  --fg: var(--mapette-fg);
+  --muted: var(--mapette-muted);
+  --line: var(--mapette-line);
+  --hover: var(--mapette-hover);
+  --accent: var(--mapette-accent);
+  --scroll-thumb: var(--mapette-scroll-thumb);
+  --scroll-thumb-hover: var(--mapette-scroll-thumb-hover);
+  --shadow: var(--mapette-shadow);
 }

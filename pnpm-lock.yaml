@@ -14,6 +14,12 @@ importers:
       '@jannchie/icons-vue':
         specifier: 0.12.0
         version: 0.12.0(@jannchie/icons@0.12.0)(vue@3.5.44(typescript@7.0.2))
+      '@mapette/core':
+        specifier: link:../mapette/packages/core
+        version: link:../mapette/packages/core
+      '@mapette/vue':
+        specifier: link:../mapette/packages/vue
+        version: link:../mapette/packages/vue
       hono:
         specifier: ^4.11.9
         version: 4.13.13

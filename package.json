@@ -25,6 +25,8 @@
   "dependencies": {
     "@jannchie/icons": "0.12.0",
     "@jannchie/icons-vue": "0.12.0",
+    "@mapette/core": "link:../mapette/packages/core",
+    "@mapette/vue": "link:../mapette/packages/vue",
     "hono": "^4.11.9",
     "maplibre-gl": "^5.9.0",
     "pmtiles": "^4.5.0",

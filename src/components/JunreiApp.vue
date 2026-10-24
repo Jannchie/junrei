@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
-import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
+import type { KeyHandler, SheetSnap, StyleContext } from "@mapette/core";
+import { MapExplorer } from "@mapette/vue";
+import type { PaddingOptions } from "maplibre-gl";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatDate, formatEpisode, formatTime, imageUrl } from "../format";
 import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, spotNames, stripLocale, workNames } from "../i18n";
 import { ICONS } from "../icons";
 import { recoverImages, retryImage } from "../image-retry";
-import { onShortcuts } from "../keyboard";
 import LogoMark from "./LogoMark.vue";
+import PilgrimLayers from "./PilgrimLayers.vue";
+import { createStyle, KEEP_SOURCES } from "../map-style";
 import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail, seedDetails } from "../detail";
@@ -50,8 +54,9 @@ const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" 
 // 图片失败重试见 src/image-retry.ts；模板里的 @error 直接用它
 const onImageError = (e: Event) => retryImage(e.target as HTMLImageElement);
 
-// maplibre 体积大且只在浏览器里用，单独分包，也不进服务端 bundle
-const PilgrimMap = defineAsyncComponent(() => import("./PilgrimMap.vue"));
+// 地图骨架（地图、侧栏 / 抽屉、留白、通用快捷键）来自 @mapette/vue 的 MapExplorer；maplibre 在挂载时才按需加载，不进服务端 bundle。
+// 样式函数不随语言变：语言通过 locale 传给 MapExplorer，由它换地名字段
+const mapStyle = (ctx: StyleContext) => createStyle(ctx);
 const mounted = ref(false);
 
 /** 苹果设备用 Apple 地图，其余用 Google 地图（服务端渲染时先按 Google 出链接，挂载后再判断） */
@@ -295,49 +300,8 @@ function goBack() {
 
 // ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏 ----
 // 像地图 App 一样，平时停在半屏：只有输入搜索时展开到全屏，输入结束、选中结果、碰地图都回到半屏
-type Sheet = "peek" | "half" | "full";
-const sheet = ref<Sheet>("half");
-const SHEETS: Sheet[] = ["peek", "half", "full"];
-/** 各档高度（px），和下面 CSS 里 .sheet-* 的高度对应 */
-const sheetHeight = (s: Sheet) => (s === "peek" ? 84 : s === "half" ? innerHeight * 0.46 : innerHeight - 48);
-let drag: { y: number; height: number; lastY: number; lastT: number; v: number } | null = null;
-// 拖动中的高度直接写到面板的 style 上，不经过响应式：每帧重渲染整个面板太重
-let dragHeight: number | null = null;
-function onHandleDown(e: PointerEvent) {
-  drag = { y: e.clientY, height: panel.value!.getBoundingClientRect().height, lastY: e.clientY, lastT: e.timeStamp, v: 0 };
-  (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-}
-function onHandleMove(e: PointerEvent) {
-  if (!drag) return;
-  if (e.timeStamp > drag.lastT) drag.v = (e.clientY - drag.lastY) / (e.timeStamp - drag.lastT); // px/ms，向下为正
-  drag.lastY = e.clientY;
-  drag.lastT = e.timeStamp;
-  // 位移很小时仍算轻点，不进入拖动
-  if (dragHeight != null || Math.abs(e.clientY - drag.y) > 6) {
-    dragHeight = Math.max(72, drag.height + drag.y - e.clientY);
-    panel.value!.style.transition = "none";
-    panel.value!.style.height = `${dragHeight}px`;
-  }
-}
-function onHandleUp() {
-  const h = dragHeight;
-  if (!drag || h == null) {
-    // 轻点把手：全屏 → 半屏，半屏 → 收起，收起 → 半屏
-    sheet.value = sheet.value === "half" ? "peek" : "half";
-  } else if (Math.abs(drag.v) > 0.4) {
-    // 快速甩动：顺着方向切到下一档
-    const down = drag.v > 0;
-    const next = down ? [...SHEETS].reverse().find((s) => sheetHeight(s) < h - 1) : SHEETS.find((s) => sheetHeight(s) > h + 1);
-    sheet.value = next ?? (down ? "peek" : "full");
-  } else {
-    // 慢慢拖：停到最近的一档
-    sheet.value = SHEETS.reduce((a, b) => (Math.abs(sheetHeight(b) - h) < Math.abs(sheetHeight(a) - h) ? b : a));
-  }
-  drag = null;
-  dragHeight = null;
-  panel.value!.style.transition = "";
-  panel.value!.style.height = "";
-}
+// 拖动、甩动与吸附由 mapette 的 MapSheet 处理，这里只决定什么时候切到哪一档
+const sheet = ref<SheetSnap>("half");
 /** 碰到地图：抽屉让开，回到半屏 */
 function onMapPointer() {
   if (sheet.value === "full") sheet.value = "half";
@@ -419,10 +383,10 @@ watch([detail, focusPointId, debouncedQuery, () => !!recent.value], () => {
     : recent.value ? `${t("recent")} · ${t("brand")}` : t("brand");
 });
 
-// 面板浮在地图上：量出它挡住的区域，交给地图做 padding，并给地图控件留出位置
-const app = ref<HTMLElement>();
-const panel = ref<HTMLElement>();
-const mapPadding = ref({ top: 0, right: 0, bottom: 0, left: 0 });
+// 面板浮在地图上：MapExplorer 量出它挡住的区域交给地图；这里也记一份，撤销提示要避开抽屉
+const explorer = ref<InstanceType<typeof MapExplorer>>();
+const panel = computed(() => explorer.value?.panel ?? null);
+const mapPadding = ref<PaddingOptions>({ top: 0, right: 0, bottom: 0, left: 0 });
 // 来源浮层：支持 CSS 锚点定位时由样式摆放；否则打开时按按钮位置算一次
 const creditsBtn = ref<HTMLElement>();
 const creditsPop = ref<HTMLElement>();
@@ -460,7 +424,6 @@ function revealAdult() {
 }
 const overviewList = computed(() => inView.value ?? props.popular?.map((b) => ({ ...b, inView: b.pointCount })) ?? []);
 
-let panelObserver: ResizeObserver | undefined;
 
 // ---- 手机键盘：布局不随键盘缩放（见 void.config.ts 的 viewport），抽屉留出被键盘挡住的高度，列表能滚到键盘上方 ----
 const keyboard = ref(0);
@@ -483,9 +446,10 @@ function expandForTyping() {
 function onSearchTouch(e: TouchEvent) {
   if ((e.target as Element).closest("button") || !e.cancelable) return; // 返回按钮照常；滑动中的不管
   e.preventDefault();
-  const el = panel.value!;
+  const el = panel.value;
+  if (!el) return;
   el.style.transition = "none";
-  el.style.height = "calc(100dvh - 48px - env(safe-area-inset-top))"; // 同 .sheet-full：同步撑开，聚焦时布局已经是展开后的
+  el.style.height = "calc(100dvh - 48px - env(safe-area-inset-top))"; // 同 .mapette-sheet-full：同步撑开，聚焦时布局已经是展开后的
   sheet.value = "full";
   searchInput.value!.focus({ preventScroll: true });
   void nextTick(() => {
@@ -504,7 +468,6 @@ function onSearchBlur() {
 }
 
 // ---- 键盘快捷键（按 ? 查看）----
-const mapView = ref<{ zoomIn(): void; zoomOut(): void; locate(): void }>();
 const searchInput = ref<HTMLInputElement>();
 const shortcutsPop = ref<HTMLElement>();
 
@@ -529,7 +492,7 @@ function stepPoint(delta: number) {
 }
 /** 搜索结果：↑↓ 在输入框与结果之间移动焦点，回车即点击 */
 function stepRow(e: KeyboardEvent, delta: number) {
-  const list = [...panel.value!.querySelectorAll<HTMLElement>(".row")];
+  const list = [...(panel.value?.querySelectorAll<HTMLElement>(".row") ?? [])];
   if (!list.length) return false;
   const i = list.indexOf(e.target as HTMLElement);
   if (i + delta < 0) searchInput.value?.focus();
@@ -540,9 +503,8 @@ const arrow = (delta: number) => (e: KeyboardEvent) => {
   return query.value.trim() ? stepRow(e, delta) : stepPoint(delta);
 };
 
-let offShortcuts: (() => void) | undefined;
-function bindShortcuts() {
-  offShortcuts = onShortcuts({
+// 缩放（+ −）与定位（L）由 MapExplorer 内置；这里是巡礼自己的快捷键，同名的覆盖内置的（Esc 逐层退出）
+const shortcuts: Record<string, KeyHandler> = {
     "/": focusSearch,
     "mod+k": focusSearch,
     Escape: escape,
@@ -555,17 +517,12 @@ function bindShortcuts() {
       if (!p) return false;
       window.open(mapsUrl(p), "_blank", "noopener");
     },
-    "+": () => mapView.value?.zoomIn(),
-    "=": () => mapView.value?.zoomIn(),
-    "-": () => mapView.value?.zoomOut(),
-    l: () => mapView.value?.locate(),
     t: () => cycleTheme(),
     "?": () => shortcutsPop.value?.togglePopover(),
     // 输入框里交还浏览器，撤销的是输入的文字
     "mod+z": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : e.shiftKey ? redo() : undo()),
     "mod+y": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : redo()),
-  });
-}
+};
 
 const SHORTCUTS = computed(() => [
   { keys: ["/", "Ctrl K"], label: t("kbSearch") },
@@ -583,31 +540,17 @@ const SHORTCUTS = computed(() => [
 onMounted(() => {
   addEventListener("pointerdown", (e) => {
     pressing = true;
-    if ((e.target as Element).closest?.(".map")) onMapPointer();
+    if ((e.target as Element).closest?.(".mapette-map")) onMapPointer();
   }, { capture: true });
   for (const type of ["pointerup", "pointercancel"]) addEventListener(type, () => (pressing = false), { capture: true });
   appleMaps.value = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
   recoverImages();
 
-  bindShortcuts();
   visualViewport?.addEventListener("resize", onVisualViewport);
   visualViewport?.addEventListener("scroll", onVisualViewport);
   mounted.value = true;
   initTheme();
   initAdult();
-  panelObserver = new ResizeObserver(() => {
-    if (drag) return; // 拖动中不跟着改地图留白，松手停稳后再量一次
-    const a = app.value!.getBoundingClientRect();
-    const r = panel.value!.getBoundingClientRect();
-    const beside = r.width < a.width * 0.6; // 桌面端在左侧，手机端在底部
-    const next = beside
-      ? { top: 0, right: 0, bottom: 0, left: Math.round(r.right - a.left) }
-      : { top: 0, right: 0, bottom: Math.round(a.bottom - r.top), left: 0 };
-    const cur = mapPadding.value;
-    if (cur.bottom !== next.bottom || cur.left !== next.left) mapPadding.value = next;
-  });
-  panelObserver.observe(panel.value!);
-  panelObserver.observe(app.value!);
   // ?p= 定位地标（作品页）；旧链接 /?b=…&p=…
   const params = new URLSearchParams(location.search);
   const b = Number(params.get("b"));
@@ -621,39 +564,31 @@ onMounted(() => {
   if (import.meta.env.PROD && "serviceWorker" in navigator) void navigator.serviceWorker.register("/sw.js");
 });
 onBeforeUnmount(() => {
-  panelObserver?.disconnect();
   moreObserver?.disconnect();
   recentObserver?.disconnect();
-  offShortcuts?.();
   visualViewport?.removeEventListener("resize", onVisualViewport);
   visualViewport?.removeEventListener("scroll", onVisualViewport);
 });
 </script>
 
 <template>
-  <div ref="app" class="app" :style="{ '--panel-inset-bottom': `${mapPadding.bottom}px`, '--keyboard': `${keyboard}px` }">
-    <PilgrimMap
-      v-if="mounted"
-      ref="mapView"
-      :selected="selected"
-      :focus-point-id="focusPointId"
-      :padding="mapPadding"
-      @pick="(b, p) => select(b, p)"
-      @view="onView"
-    />
-
-    <aside
-      ref="panel"
-      class="panel"
-      :class="`sheet-${sheet}`"
+  <div class="app" :style="{ '--panel-inset-bottom': `${mapPadding.bottom}px`, '--keyboard': `${keyboard}px` }">
+    <MapExplorer
+      ref="explorer"
+      v-model:snap="sheet"
+      :map-style="mapStyle"
+      :locale="locale"
+      :keep-sources="KEEP_SOURCES"
+      :center="[137.5, 36.2]"
+      :zoom="4.6"
+      :labels="{ locate: t('locate'), zoomIn: t('zoomIn'), zoomOut: t('zoomOut') }"
+      :shortcuts="shortcuts"
+      @padding="mapPadding = $event"
     >
-      <div
-        class="handle"
-        @pointerdown="onHandleDown"
-        @pointermove="onHandleMove"
-        @pointerup="onHandleUp"
-        @pointercancel="onHandleUp"
-      />
+      <template #map>
+        <PilgrimLayers :selected="selected" :focus-point-id="focusPointId" @pick="(b, p) => select(b, p)" @view="onView" />
+      </template>
+      <template #header>
       <label class="search" @touchend="onSearchTouch">
         <button
           v-if="(detail || recent) && !query.trim()"
@@ -671,6 +606,7 @@ onBeforeUnmount(() => {
           <JIcon :icon="ICONS.clear" />
         </button>
       </label>
+      </template>
 
       <!-- 搜索结果 -->
       <section v-if="query.trim()" class="scroll">
@@ -921,6 +857,7 @@ onBeforeUnmount(() => {
         </ul>
       </section>
 
+      <template #footer>
       <footer class="foot">
         <!-- OSM 要求地图署名始终可见：署名本身就是按钮，点开是全部来源、源代码与快捷键（原生 popover，点外部或 Esc 关闭） -->
         <button ref="creditsBtn" type="button" class="credits-btn" popovertarget="credits" :title="t('credits')">
@@ -971,7 +908,8 @@ onBeforeUnmount(() => {
           </select>
         </label>
       </footer>
-    </aside>
+      </template>
+    </MapExplorer>
 
     <!-- 返回之后的撤销提示 -->
     <Transition name="toast">
@@ -1011,8 +949,28 @@ body {
 a {
   color: inherit;
 }
+/* 面板骨架是 mapette 的 MapSheet：各个 section 自己滚动（.scroll），抽屉主体只负责撑满；分隔线由 .scroll / .foot 自己画 */
+.mapette-sheet-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mapette-sheet-header,
+.mapette-sheet-footer {
+  border: 0;
+}
+@media (max-width: 640px) {
+  /* 键盘弹出时，内容区底部让出键盘的高度（抽屉本身不动） */
+  .mapette-sheet-full {
+    padding-bottom: max(env(safe-area-inset-bottom), var(--keyboard, 0px));
+  }
+}
+/* 地图上的截图标记比 mapette 默认的宽一些（动画截图多是 16:9） */
+.mapette-photo-pin {
+  width: 128px;
+}
 /* 图片：加载中、等待重试时是占位底色；重试用尽后显示「图片不可用」图标，和加载中区分开 */
-.panel img {
+.mapette-sheet img {
   background-color: var(--hover);
 }
 img.img-failed {
@@ -1052,63 +1010,7 @@ img.img-failed {
   position: fixed;
   inset: 0;
 }
-.panel {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  bottom: 12px;
-  width: 380px;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  backdrop-filter: var(--glass);
-  overflow: hidden;
-}
-.handle {
-  display: none;
-}
 @media (max-width: 640px) {
-  .panel {
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    padding-bottom: env(safe-area-inset-bottom);
-    border-radius: 16px 16px 0 0;
-    transition: height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .sheet-peek {
-    height: calc(84px + env(safe-area-inset-bottom));
-  }
-  .sheet-half {
-    height: 46dvh;
-  }
-  .sheet-full {
-    height: calc(100dvh - 48px - env(safe-area-inset-top));
-    /* 键盘弹出时，内容区底部让出键盘的高度（抽屉本身不动） */
-    padding-bottom: max(env(safe-area-inset-bottom), var(--keyboard, 0px));
-  }
-  .handle {
-    display: block;
-    flex: none;
-    height: 22px;
-    margin-bottom: -10px;
-    touch-action: none;
-    cursor: grab;
-  }
-  .handle::before {
-    content: "";
-    display: block;
-    width: 36px;
-    height: 5px;
-    margin: 8px auto 0;
-    border-radius: 3px;
-    background: var(--muted);
-    opacity: 0.45;
-  }
   .search input {
     font-size: 16px; /* 小于 16px 时 iOS 聚焦会自动放大页面 */
   }
