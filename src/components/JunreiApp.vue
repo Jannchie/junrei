@@ -353,6 +353,8 @@ const workName = (id: number) => {
   const w = detail.value?.series.find((s) => s.id === id);
   return w ? pickName(workNames(w)) : "";
 };
+/** 来源没写名字时显示网址的域名（模板里拿不到全局的 URL） */
+const hostOf = (url: string) => new URL(url).hostname;
 /** 报告地标问题：预填好作品、地标、坐标与来源的 GitHub issue */
 function reportUrl(p: ViewPoint) {
   const work = detail.value?.series.find((w) => w.id === p.bangumiId);
@@ -894,7 +896,7 @@ onBeforeUnmount(() => {
           <!-- 数据出处：每个地标都能跳到原文；地标有误时开一个预填好的 GitHub issue -->
           <span class="source-row">
             <a v-if="focusedPoint.sourceUrl" :href="focusedPoint.sourceUrl" target="_blank" rel="noopener" class="source stat">
-              <JIcon :icon="ICONS.external" :size="12" /><span class="tx">{{ t("sourceLabel") }}：{{ focusedPoint.source ?? new URL(focusedPoint.sourceUrl).hostname }}</span>
+              <JIcon :icon="ICONS.external" :size="12" /><span class="tx">{{ t("sourceLabel") }}：{{ focusedPoint.source ?? hostOf(focusedPoint.sourceUrl) }}</span>
             </a>
             <a :href="reportUrl(focusedPoint)" target="_blank" rel="noopener" class="source stat">
               <JIcon :icon="ICONS.report" :size="12" /><span class="tx">{{ t("report") }}</span>
