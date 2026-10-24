@@ -15,11 +15,11 @@ importers:
         specifier: 0.12.0
         version: 0.12.0(@jannchie/icons@0.12.0)(vue@3.5.44(typescript@7.0.2))
       '@mapette/core':
-        specifier: link:../mapette/packages/core
-        version: link:../mapette/packages/core
+        specifier: ^0.1.0
+        version: 0.1.0(maplibre-gl@5.24.0)(pmtiles@4.5.0)
       '@mapette/vue':
-        specifier: link:../mapette/packages/vue
-        version: link:../mapette/packages/vue
+        specifier: ^0.1.0
+        version: 0.1.0(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))
       hono:
         specifier: ^4.11.9
         version: 4.13.13
@@ -739,6 +739,15 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@floating-ui/core@1.8.0':
+    resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
+
+  '@floating-ui/dom@1.8.0':
+    resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
+
+  '@floating-ui/utils@0.2.12':
+    resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
     engines: {node: '>=18'}
@@ -928,6 +937,21 @@ packages:
   '@mapbox/whoots-js@3.1.0':
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
+
+  '@mapette/core@0.1.0':
+    resolution: {integrity: sha512-YevxmA7UPOW7k8nwHZuwpygkEto1PoAViRVS+TGvtiFpYQnJfDPDCOZ2jdIxBw0fg5d9TkXNQC92c3CNy7z46Q==}
+    peerDependencies:
+      maplibre-gl: ^5.9.0
+      pmtiles: ^4.5.0
+    peerDependenciesMeta:
+      pmtiles:
+        optional: true
+
+  '@mapette/vue@0.1.0':
+    resolution: {integrity: sha512-kpjvKBrQrVjCNa/20G5WJdCky6NKpYI8cmNMySDoAP1VXAIi6Odxi5xhbtsm/Q247CfyiQEF+OPSDo6VQz3Owg==}
+    peerDependencies:
+      maplibre-gl: ^5.9.0
+      vue: ^3.5.0
 
   '@maplibre/geojson-vt@6.3.0':
     resolution: {integrity: sha512-3Zw2jsU9pIJG3G2CQFbLjWj2MlAHodhD7cSY+15iywUuLmmkgzcKRnueVRZ4AcC/5wOtfhidcJAAzBpoBNs3Xg==}
@@ -2557,6 +2581,17 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
+  '@floating-ui/core@1.8.0':
+    dependencies:
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/dom@1.8.0':
+    dependencies:
+      '@floating-ui/core': 1.8.0
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/utils@0.2.12': {}
+
   '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.5':
@@ -2696,6 +2731,22 @@ snapshots:
       pbf: 4.0.2
 
   '@mapbox/whoots-js@3.1.0': {}
+
+  '@mapette/core@0.1.0(maplibre-gl@5.24.0)(pmtiles@4.5.0)':
+    dependencies:
+      '@floating-ui/dom': 1.8.0
+      '@types/geojson': 7946.0.16
+      maplibre-gl: 5.24.0
+    optionalDependencies:
+      pmtiles: 4.5.0
+
+  '@mapette/vue@0.1.0(maplibre-gl@5.24.0)(pmtiles@4.5.0)(vue@3.5.44(typescript@7.0.2))':
+    dependencies:
+      '@mapette/core': 0.1.0(maplibre-gl@5.24.0)(pmtiles@4.5.0)
+      maplibre-gl: 5.24.0
+      vue: 3.5.44(typescript@7.0.2)
+    transitivePeerDependencies:
+      - pmtiles
 
   '@maplibre/geojson-vt@6.3.0':
     dependencies:
