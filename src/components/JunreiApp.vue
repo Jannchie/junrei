@@ -18,6 +18,7 @@ import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGa
 import { initAdult, setShowAdult, showAdult } from "../adult";
 import type { CreditName, Credits } from "@schema";
 import type { RecentPoint } from "../server/bangumi";
+import "@mapette/core/mapette.css";
 import "../theme.css";
 
 /** 首页、系列页 /s/:id 与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
