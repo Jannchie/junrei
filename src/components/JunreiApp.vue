@@ -23,6 +23,8 @@ const props = defineProps<{
   /** 系列页、作品页：所在系列与筛选的作品（null 为全部） */
   initialGroup?: Group | null;
   initialFilter?: number | null;
+  /** 地标页 /b/:id?p=：展开的地标（服务端渲染时就展开，供搜索引擎读取） */
+  initialPoint?: string | null;
   /** 概览里展示的热门系列 */
   popular?: Card[];
   /** 最近更新页 /recent：第一页地标 */
@@ -75,7 +77,7 @@ const gated = computed(() => !!group.value && !adultFor(group.value) && needsAdu
 const detail = computed<View | null>(() =>
   group.value ? buildView(visibleGroup(group.value, adultFor(group.value), filter.value), filter.value) : null,
 );
-const focusPointId = ref<string | null>(null);
+const focusPointId = ref<string | null>(props.initialPoint ?? null);
 const query = ref("");
 const results = shallowRef<SearchResult | null>(null);
 const searching = ref(false);
@@ -109,6 +111,9 @@ const split = computed(() => {
 const orderedPoints = computed(() => [...split.value.inside, ...split.value.outside]);
 const listedCount = computed(() => (outOpen.value ? orderedPoints.value.length : split.value.inside.length));
 const visiblePoints = computed(() => orderedPoints.value.slice(0, Math.min(visibleCount.value, listedCount.value)));
+// 地标页：展开的地标要在首批渲染出来的列表里
+const initialIndex = props.initialPoint && detail.value ? detail.value.points.findIndex((p) => p.id === props.initialPoint) : -1;
+if (initialIndex >= PAGE) visibleCount.value = initialIndex + PAGE;
 const moreSentinel = ref<HTMLElement>();
 let moreObserver: IntersectionObserver | undefined;
 watch(moreSentinel, (el) => {
@@ -313,7 +318,7 @@ function reportUrl(p: ViewPoint) {
     "",
     "",
     "---",
-    `- 地标：${location.origin}${localePath(locale.value, `/b/${p.bangumiId}`)}?p=${p.id}`,
+    `- 地标：https://junrei.jannchie.com${localePath(locale.value, `/b/${p.bangumiId}`)}?p=${p.id}`,
     `- id：\`${p.bangumiId}:${p.id}\``,
     `- 坐标：${p.lat}, ${p.lng}`,
     ...(p.sourceUrl ? [`- 来源：${p.sourceUrl}`] : []),
@@ -332,8 +337,9 @@ watch([detail, focusPointId, debouncedQuery, () => !!recent.value], () => {
   if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
   url.hash = location.hash;
   history.replaceState(null, "", url);
+  const spot = detail.value?.points.find((p) => p.id === focusPointId.value);
   document.title = detail.value
-    ? `${pickName(workNames(detail.value))} · ${t("brand")}`
+    ? `${spot ? `${pickName(spotNames(spot))} · ` : ""}${pickName(workNames(detail.value))} · ${t("brand")}`
     : recent.value ? `${t("recent")} · ${t("brand")}` : t("brand");
 });
 
@@ -728,7 +734,8 @@ onBeforeUnmount(() => {
               </figcaption>
             </figure>
             <div class="point-body">
-              <strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong>
+              <!-- 地标名是到地标页的真实链接（搜索引擎据此找到每个地标）；点击仍交给整行处理 -->
+              <a :href="`${localePath(locale, `/b/${p.bangumiId}`)}?p=${p.id}`" class="spot-link" @click.prevent><strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong></a>
               <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
               <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
               <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(p.bangumiId) }}</span>
@@ -1240,7 +1247,7 @@ h2 {
 .points li.active {
   background: color-mix(in oklab, var(--accent) 8%, transparent);
 }
-.points li.active .point-body > strong {
+.points li.active .point-body > .spot-link {
   color: var(--accent);
 }
 figure {
@@ -1326,6 +1333,10 @@ figcaption a {
 }
 .recent-link:hover {
   color: var(--accent);
+}
+.spot-link {
+  color: inherit;
+  text-decoration: none;
 }
 .points li.fold {
   display: block;

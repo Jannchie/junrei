@@ -50,9 +50,11 @@ export default defineConfig({
       "/v1/*": 31536000,
       "/md": 31536000,
       "/md/*": 31536000,
-      "/sitemap.xml": 31536000
+      "/sitemap.xml": 31536000,
+      "/sitemap/*": 31536000
     },
-    "revalidateQueryAllowlist": { "/v1/search": ["q", "adult"], "/v1/recent": ["offset", "adult"], "/v1/bangumi/*": ["lang"] },
+    // 作品页的 ?p= 是地标页（单独收录），按地标分别缓存
+    "revalidateQueryAllowlist": { "/b/*": ["p"], "/zh-hant/*": ["p"], "/ja/*": ["p"], "/en/*": ["p"], "/v1/search": ["q", "adult"], "/v1/recent": ["offset", "adult"], "/v1/bangumi/*": ["lang"] },
     "headers": {
       "/v1/*": ["Cache-Control: public, max-age=3600"],
       "/data/*": ["Cache-Control: public, max-age=3600, stale-while-revalidate=86400"],

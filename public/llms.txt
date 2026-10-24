@@ -1,23 +1,35 @@
 # 圣地巡礼地图（junrei）
 
-> 动画、游戏的圣地巡礼（取景地）地图。收录数千部作品、数万个取景地，每个地点有坐标、集数与时间点、截图来源。界面支持简体中文、繁體中文、日本語、English。
+> 动画、游戏的圣地巡礼（取景地）地图。收录数千部作品、五万多个取景地，每个地点有坐标、集数与时间点、截图与出处。界面支持简体中文、繁體中文、日本語、English。
 
-数据来自 Anitabi 社区投稿，作品信息来自番组计划（Bangumi）。截图采用 CC BY-NC-SA 4.0，引用时请注明来源；本站为非商业项目。
+> Anime Pilgrimage Map: real-world locations from anime and games. Thousands of titles and over 50,000 spots, each with coordinates, episode and timestamp, screenshot and source. Available in Simplified Chinese, Traditional Chinese, Japanese and English (prefix `/zh-hant`, `/ja`, `/en`).
 
-## 适合 LLM 读取的页面
+数据主要来自 Anitabi 社区投稿，另有探访博客、Anime Pilgrimage、Anime Tourism（日本动画观光协会「动画圣地 88」）等来源，每个取景地都标明出处；作品信息来自番组计划（Bangumi）。截图采用 CC BY-NC-SA 4.0，引用时请注明来源；本站为非商业项目。
 
-- [作品索引](https://junrei.jannchie.com/md)：全部作品的 Markdown 列表，按取景地数量排序，链接到各作品页
-- 作品取景地：`https://junrei.jannchie.com/md/b/{id}`，Markdown 表格，含名称、原名、集数与时间、坐标、备注；`{id}` 为番组计划（bgm.tv）的作品 ID
+## 适合 LLM 读取的页面 / For LLMs
 
-## 网页
+- [作品索引 / Title index](https://junrei.jannchie.com/md)：全部作品的 Markdown 列表，按取景地数量排序
+- 作品取景地 / Spots of a title：`https://junrei.jannchie.com/md/b/{id}`，Markdown 表格，含名称、原名、英文名、集数与时间、坐标、备注、出处、更新日期；`{id}` 为番组计划（bgm.tv）的作品 ID
 
-- [地图首页](https://junrei.jannchie.com/)
-- 搜索结果页：`https://junrei.jannchie.com/?q={关键词}`，全语种、模糊匹配（中文、日文、英文、罗马音都可以）
+## 引用某个取景地 / Citing a spot
+
+每个取景地都有单独的页面，标题是地名与作品名，正文含截图、备注、坐标与导航链接。引用具体地点时请链接到它：
+
+- 取景地页 / Spot page：`https://junrei.jannchie.com/b/{作品 id}?p={地标 id}`（英文 `https://junrei.jannchie.com/en/b/{id}?p={地标 id}`）
+- 地标 id 见 `/md/b/{id}` 表格里的链接
+
+## 网页 / Pages
+
+- [地图首页 / Home](https://junrei.jannchie.com/)
+- [最近更新 / Recently updated](https://junrei.jannchie.com/recent)：全站最近新增和改动的取景地
+- 搜索 / Search：`https://junrei.jannchie.com/?q={关键词}`，全语种、模糊匹配（中文、日文、英文、罗马音都可以）
+- 作品页 / Title page：`https://junrei.jannchie.com/b/{id}`；系列页 / Series page：`https://junrei.jannchie.com/s/{id}`
 - 任意页面可加 `#map={缩放}/{纬度}/{经度}` 指定地图视野
-- 作品页：`https://junrei.jannchie.com/b/{id}`，可加 `?p={地标 id}` 定位到某个取景地
-- [站点地图](https://junrei.jannchie.com/sitemap.xml)
+- [站点地图 / Sitemap](https://junrei.jannchie.com/sitemap.xml)：作品页与每个取景地页
 
-## JSON 接口
+## JSON 接口 / JSON API
 
-- 搜索：`https://junrei.jannchie.com/v1/search?q={关键词}`，按作品名、城市、地标名搜索
-- 作品详情：`https://junrei.jannchie.com/v1/bangumi/{id}`
+- 搜索 / Search：`https://junrei.jannchie.com/v1/search?q={关键词}`，按作品名、城市、地标名搜索
+- 作品详情 / Title detail：`https://junrei.jannchie.com/v1/bangumi/{id}`
+- 最近更新 / Recently updated：`https://junrei.jannchie.com/v1/recent?offset=0`，每页 100 个
+- KML 导出 / KML export：`https://junrei.jannchie.com/v1/bangumi/{id}/kml?lang={zh-Hans|zh-Hant|ja|en}`

@@ -139,3 +139,17 @@ export async function listRecent(offset: number, adult: boolean): Promise<Recent
   const parse = (s: string | null): I18n | null => (s ? JSON.parse(s) : null);
   return rows.map((r) => ({ ...r, i18n: parse(r.i18n), bangumiI18n: parse(r.bangumiI18n) }));
 }
+
+/** 可单独收录的地标（一般向作品的）：sitemap 用 */
+const SPOT_WHERE = sql`p.bangumi_id IN (SELECT id FROM bangumi WHERE nsfw = 0)`;
+
+export async function countSpots(): Promise<number> {
+  const [r] = await db.all<{ n: number }>(sql`SELECT count(*) AS n FROM point p WHERE ${SPOT_WHERE}`);
+  return r?.n ?? 0;
+}
+
+export function listSpots(offset: number, limit: number) {
+  return db.all<{ bangumiId: number; id: string; updated: number | null }>(sql`
+    SELECT p.bangumi_id AS bangumiId, p.id, p.updated FROM point p WHERE ${SPOT_WHERE}
+    ORDER BY p.bangumi_id, p.id LIMIT ${limit} OFFSET ${offset}`);
+}

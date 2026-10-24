@@ -1,19 +1,14 @@
 import { defineHandler } from "void";
-import { LOCALES, localePath } from "../src/i18n";
-import { listBangumi, listSeriesKeys, SITE } from "../src/server/bangumi";
+import { countSpots, SITE } from "../src/server/bangumi";
+import { SPOTS_PER_SITEMAP } from "./sitemap/[file]";
 
-// 首页 + 最近更新 + 每个系列页 + 每个作品页，每个页面列出全部语言版本（xhtml:link 互链）；随部署缓存（见 void.config.ts）
+// sitemap 索引：页面（首页、最近更新、系列页、作品页）一份，地标页按 SPOTS_PER_SITEMAP 个一份（单个 sitemap 最多 5 万个网址）
 export const GET = defineHandler(async () => {
-  const [rows, series] = await Promise.all([listBangumi(), listSeriesKeys()]);
-  const paths = ["/", "/recent", ...series.map((id) => `/s/${id}`), ...rows.map((b) => `/b/${b.id}`)];
-  const entry = (path: string) => {
-    const links = LOCALES.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${localePath(l, path)}"/>`).join("");
-    return LOCALES.map((l) => `  <url><loc>${SITE}${localePath(l, path)}</loc>${links}</url>`).join("\n");
-  };
+  const files = ["pages.xml", ...Array.from({ length: Math.ceil((await countSpots()) / SPOTS_PER_SITEMAP) }, (_, i) => `spots-${i}.xml`)];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${paths.map(entry).join("\n")}
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${files.map((f) => `  <sitemap><loc>${SITE}/sitemap/${f}</loc></sitemap>`).join("\n")}
+</sitemapindex>
 `;
   return new Response(xml, { headers: { "Content-Type": "application/xml; charset=utf-8" } });
 });

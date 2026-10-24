@@ -1,5 +1,5 @@
 // 面向 LLM 的 Markdown 版本（llms.txt 约定）：纯文本、无脚本，链接都是绝对地址
-import { formatEpisode, formatTime } from "../format";
+import { formatDate, formatEpisode, formatTime } from "../format";
 import { type BangumiDetail, displayName, SITE } from "./bangumi";
 
 export const markdownResponse = (body: string) =>
@@ -30,13 +30,15 @@ export function bangumiMarkdown(d: BangumiDetail) {
     "",
     "## 取景地",
     "",
-    "| 名称 | 原名 | 场景 | 坐标（纬度, 经度） | 备注 | 来源 |",
-    "|---|---|---|---|---|---|",
+    "名称链接到该取景地的单独页面（含截图与地图），引用某个地点时请用这个链接。",
+    "",
+    "| 名称 | 原名 | English | 场景 | 坐标（纬度, 经度） | 备注 | 来源 | 更新 |",
+    "|---|---|---|---|---|---|---|---|",
     ...d.points.map((p) =>
-      `| ${esc(p.cn ?? p.name ?? "")} | ${esc(p.cn && p.name ? p.name : "")} | ${scene(p.ep, p.s)} | ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} | ${esc(p.mark ?? "")} | ${p.sourceUrl ? `[${esc(p.source ?? "link")}](${p.sourceUrl})` : ""} |`,
+      `| [${esc(p.cn ?? p.name ?? p.id)}](${SITE}/b/${d.id}?p=${encodeURIComponent(p.id)}) | ${esc(p.cn && p.name ? p.name : "")} | ${esc(p.i18n?.name?.en ?? "")} | ${scene(p.ep, p.s)} | ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} | ${esc(p.mark ?? "")} | ${p.sourceUrl ? `[${esc(p.source ?? "link")}](${p.sourceUrl})` : ""} | ${p.updated ? formatDate(p.updated) : ""} |`,
     ),
     "",
-    "数据主要来自 Anitabi（https://www.anitabi.cn/）社区投稿，其余地标的出处见「来源」列；截图采用 CC BY-NC-SA 4.0，引用时请署名来源。",
+    "数据主要来自 Anitabi（https://www.anitabi.cn/）社区投稿，另有探访博客、Anime Pilgrimage、Anime Tourism 等来源，每个地标的出处见「来源」列；截图采用 CC BY-NC-SA 4.0，引用时请署名来源。",
     "",
   ];
   return lines.join("\n");

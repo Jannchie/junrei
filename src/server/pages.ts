@@ -2,9 +2,9 @@
 import { defineHandler, defineHead, type InferProps } from "void";
 import { type Locale, localeFromSegment } from "../i18n";
 import { getGroup, listCards, listRecent } from "./bangumi";
-import { bangumiHead, homeHead, recentHead } from "./seo";
+import { bangumiHead, homeHead, recentHead, spotHead } from "./seo";
 
-type Params = { req: { param(name: string): string | undefined } };
+type Params = { req: { param(name: string): string | undefined; query(name: string): string | undefined } };
 
 /** 路由里没有 :lang 段就是简体中文；有但不认识的语言返回 null（404） */
 function localeOf(c: Params): Locale | null {
@@ -36,10 +36,13 @@ export const groupLoader = (series: boolean) =>
     const id = idParam(c);
     const group = lang && id ? await getGroup(id, series) : null;
     if (!lang || !group) return c.notFound();
-    return { group, filter: (series ? null : id) as number | null, lang };
+    // 作品页的 ?p=：地标页，服务端渲染时就展开这个地标（系列页不单独收录地标）
+    const p = series ? undefined : c.req.query("p");
+    const point = p && group.details.some((d) => d.points.some((x) => x.id === p)) ? p : null;
+    return { group, filter: (series ? null : id) as number | null, point, lang };
   });
-export const groupPageHead = defineHead<InferProps<ReturnType<typeof groupLoader>>>((_c, { group, filter, lang }) =>
-  bangumiHead(lang, group, filter),
+export const groupPageHead = defineHead<InferProps<ReturnType<typeof groupLoader>>>((_c, { group, filter, point, lang }) =>
+  point && filter != null ? spotHead(lang, group, filter, point) : bangumiHead(lang, group, filter),
 );
 
 /** 最近更新：服务端渲染第一页（全站最近新增或改动的地标），其余在浏览器里翻页 */

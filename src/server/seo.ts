@@ -1,6 +1,6 @@
 import type { HeadDescriptor } from "void";
-import { cityFor, type Locale, LOCALES, localePath, pickNameFor, spotNames, subNameFor, translate, workNames } from "../i18n";
-import { imageUrl } from "../format";
+import { cityFor, type Locale, LOCALES, localNameFor, localePath, markFor, pickNameFor, spotNames, subNameFor, translate, workNames } from "../i18n";
+import { formatEpisode, formatTime, imageUrl } from "../format";
 import { type BangumiDetail, SITE } from "./bangumi";
 import { buildView, type Group, needsAdultGate, viewPath, visibleGroup } from "../series";
 
@@ -45,7 +45,7 @@ function bangumiDescription(locale: Locale, b: BangumiDetail, name: string, orig
 }
 
 /** 页面通用的 SEO head：语言、description、canonical、各语言互链、Open Graph、Twitter 卡片与 JSON-LD */
-function siteHead(locale: Locale, path: string, o: { title: string; description: string; image?: string; jsonLd?: object; noindex?: boolean }): HeadDescriptor {
+function siteHead(locale: Locale, path: string, o: { title: string; description: string; image?: string; jsonLd?: object; noindex?: boolean; markdown?: string }): HeadDescriptor {
   const url = SITE + localePath(locale, path);
   return {
     title: o.title,
@@ -71,6 +71,8 @@ function siteHead(locale: Locale, path: string, o: { title: string; description:
       // 同一页面的各语言版本互相指向，搜索引擎据此按用户语言展示
       ...LOCALES.map((l) => ({ rel: "alternate", hreflang: l, href: SITE + localePath(l, path) })),
       { rel: "alternate", hreflang: "x-default", href: SITE + localePath("zh-Hans", path) },
+      // 给 LLM 读的 Markdown 版本（routes/md）
+      ...(o.markdown ? [{ rel: "alternate", type: "text/markdown", href: SITE + o.markdown }] : []),
     ],
     // JSON 里的 "</" 要转义，避免提前结束 script 标签
     script: o.jsonLd ? [{ type: "application/ld+json", innerHTML: JSON.stringify(o.jsonLd).replace(/</g, "\\u003c") }] : [],
@@ -107,6 +109,82 @@ const RECENT: Record<Locale, { title: string; description: string }> = {
 
 export const recentHead = (locale: Locale): HeadDescriptor => siteHead(locale, "/recent", RECENT[locale]);
 
+/** 截到 max 字以内：优先在句末断开，其次在空格处，都没有就硬截并加省略号 */
+function clip(text: string, max: number) {
+  if (text.length <= max) return text;
+  const head = text.slice(0, max);
+  const end = Math.max(...["。", ". ", "！", "？", "! ", "? "].map((p) => head.lastIndexOf(p)));
+  if (end > max / 3) return head.slice(0, end + 1).trim();
+  const space = head.lastIndexOf(" ");
+  return `${(space > max / 2 ? head.slice(0, space) : head).trim()}…`;
+}
+
+/** 地标页的标题：地名在前（搜地名的人先看到），再是作品名，各语言按习惯写「圣地巡礼」 */
+function spotTitle(locale: Locale, spot: string, work: string) {
+  switch (locale) {
+    case "zh-Hans":
+      return `${spot} · ${work} 圣地巡礼取景地`;
+    case "zh-Hant":
+      return `${spot} · ${work} 聖地巡禮取景地`;
+    case "ja":
+      return `${spot}｜${work} 聖地巡礼スポット`;
+    case "en":
+      return `${spot} – ${work} anime pilgrimage spot`;
+  }
+}
+
+function spotDescription(locale: Locale, spot: string, local: string | null, work: string, scene: string, mark: string | null, city: string | null) {
+  const m = mark ? clip(mark.replace(/\s+/g, " "), 120) : "";
+  switch (locale) {
+    case "zh-Hans":
+      return `${spot}${local ? `（${local}）` : ""}是${work}${scene ? ` ${scene}` : ""}中出现的取景地${city ? `，位于${city}` : ""}。${m}附截图、地图位置与导航。`;
+    case "zh-Hant":
+      return `${spot}${local ? `（${local}）` : ""}是${work}${scene ? ` ${scene}` : ""}中出現的取景地${city ? `，位於${city}` : ""}。${m}附截圖、地圖位置與導航。`;
+    case "ja":
+      return `${spot}${local ? `（${local}）` : ""}は${work}${scene ? ` ${scene}` : ""}に登場する聖地${city ? `（${city}）` : ""}。${m}場面写真と地図・ルート案内つき。`;
+    case "en":
+      return `${spot}${local ? ` (${local})` : ""} appears in ${work}${scene ? ` ${scene}` : ""}${city ? `, in ${city}` : ""}. ${m}${m ? " " : ""}With the anime screenshot, map location and directions.`;
+  }
+}
+
+/**
+ * 地标页 /b/:作品?p=:地标：每个地标单独收录，canonical 指向自己。标题和描述以地名开头，正文由服务端渲染展开的地标（名称、当地原名、备注）。
+ * 地标不在这部作品里时退回作品页的 head
+ */
+export function spotHead(locale: Locale, g: Group, filter: number, pointId: string): HeadDescriptor {
+  const d = buildView(visibleGroup(g, false, filter), filter)!;
+  const p = d.points.find((x) => x.id === pointId);
+  if (!p || needsAdultGate(g, filter)) return bangumiHead(locale, g, filter);
+  const work = pickNameFor(locale, workNames(d));
+  const spot = pickNameFor(locale, spotNames(p)) || work;
+  const local = localNameFor(locale, p);
+  const scene = [p.ep ? formatEpisode(p.ep) : "", p.s ? formatTime(p.s) : ""].filter(Boolean).join(" ");
+  const mark = markFor(locale, p).text;
+  const path = `/b/${d.id}?p=${encodeURIComponent(p.id)}`;
+  const url = SITE + localePath(locale, path);
+  return siteHead(locale, path, {
+    // 同一地点常有多个镜头（各集都出现的编辑部、教室…）：标题带上集数与时间，各页标题不重复
+    title: spotTitle(locale, scene ? `${spot} (${scene})` : spot, work),
+    description: spotDescription(locale, spot, local, work, scene, mark, cityFor(locale, d)),
+    image: p.image ? imageUrl(p.image, "h360") : d.cover ? imageUrl(d.cover, "h360") : undefined,
+    markdown: `/md/b/${d.id}`,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "TouristAttraction",
+      name: spot,
+      alternateName: local ?? undefined,
+      description: mark ?? undefined,
+      url,
+      inLanguage: locale,
+      geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lng },
+      hasMap: `https://www.google.com/maps/search/?api=1&query=${p.lat}%2C${p.lng}`,
+      image: p.image ? imageUrl(p.image, "h360") : undefined,
+      touristType: "Anime pilgrimage",
+      subjectOf: { "@type": "CreativeWork", name: d.title ?? work, alternateName: [d.cn, d.en].filter(Boolean), url: SITE + localePath(locale, `/b/${d.id}`), sameAs: `https://bgm.tv/subject/${d.id}` },
+    },
+  });
+}
+
 /**
  * 作品页与系列页：筛选到某部作品时路径是 /b/:id，系列「全部」时是 /s/:key。
  * 按默认（不显示成人向）的样子组装；成人向作品页不让搜索引擎收录，也不带封面和地标。
@@ -129,6 +207,7 @@ export function bangumiHead(locale: Locale, g: Group, filter: number | null): He
     image: adult || !d.cover ? undefined : imageUrl(d.cover, "h360"),
     // 还没有地标的作品页内容很少、成人向作品页，都不让搜索引擎收录（也不在 sitemap 里）
     noindex: d.points.length === 0 || adult,
+    markdown: adult || d.filter == null ? undefined : `/md/b/${d.id}`,
     jsonLd: adult ? undefined : {
       "@context": "https://schema.org",
       "@type": "ItemList",
