@@ -41,6 +41,7 @@ export default defineConfig({
       "/b/*": 31536000,
       "/s/*": 31536000,
       "/recent": 31536000,
+      "/privacy": 31536000,
       "/zh-hant": 31536000,
       "/zh-hant/*": 31536000,
       "/ja": 31536000,

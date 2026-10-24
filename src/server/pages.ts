@@ -2,7 +2,7 @@
 import { defineHandler, defineHead, type InferProps } from "void";
 import { type Locale, localeFromSegment } from "../i18n";
 import { getGroup, listCards, listRecent } from "./bangumi";
-import { bangumiHead, homeHead, recentHead, spotHead } from "./seo";
+import { bangumiHead, homeHead, privacyHead, recentHead, spotHead } from "./seo";
 
 type Params = { req: { param(name: string): string | undefined; query(name: string): string | undefined } };
 
@@ -52,3 +52,11 @@ export const recentLoader = defineHandler(async (c) => {
   return { recent: await listRecent(0, false), lang };
 });
 export const recentPageHead = defineHead<InferProps<typeof recentLoader>>((_c, { lang }) => recentHead(lang));
+
+/** 隐私政策：静态文字，只需要语言 */
+export const privacyLoader = defineHandler(async (c) => {
+  const lang = localeOf(c);
+  if (!lang) return c.notFound();
+  return { lang };
+});
+export const privacyPageHead = defineHead<InferProps<typeof privacyLoader>>((_c, { lang }) => privacyHead(lang));

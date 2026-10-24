@@ -110,6 +110,15 @@ const RECENT: Record<Locale, { title: string; description: string }> = {
 
 export const recentHead = (locale: Locale): HeadDescriptor => siteHead(locale, "/recent", RECENT[locale]);
 
+/** 隐私政策（网站与 iOS App 共用） */
+const PRIVACY: Record<Locale, { title: string; description: string }> = {
+  "zh-Hans": { title: "隐私政策 · 圣地巡礼地图", description: "圣地巡礼地图网站与 iOS App 的隐私政策：不收集个人数据，没有账号、统计、广告或追踪。" },
+  "zh-Hant": { title: "隱私政策 · 聖地巡禮地圖", description: "聖地巡禮地圖網站與 iOS App 的隱私政策：不收集個人資料，沒有帳號、統計、廣告或追蹤。" },
+  ja: { title: "プライバシーポリシー · 聖地巡礼マップ", description: "聖地巡礼マップのウェブサイトと iOS アプリのプライバシーポリシー。個人データを収集せず、アカウント、解析、広告、トラッキングはありません。" },
+  en: { title: "Privacy Policy · Anime Pilgrimage Map", description: "Privacy policy of the Anime Pilgrimage Map website and iOS app: no personal data collected, no accounts, analytics, ads or tracking." },
+};
+export const privacyHead = (locale: Locale): HeadDescriptor => siteHead(locale, "/privacy", PRIVACY[locale]);
+
 /** 截到 max 字以内：优先在句末断开，其次在空格处，都没有就硬截并加省略号 */
 function clip(text: string, max: number) {
   if (text.length <= max) return text;
