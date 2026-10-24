@@ -7,6 +7,7 @@ import {
   IconCalendar,
   IconCamera,
   IconClock,
+  IconDots,
   IconDownload,
   IconExternalLink,
   IconEyeOff,
@@ -56,6 +57,7 @@ export const ICONS = {
   github: IconGithub,
   navigate: IconNavigation,
   download: IconDownload,
+  more: IconDots, // 收起来的次要操作（作品的外部链接、KML）
   external: IconExternalLink, // 跳到站外原文
   report: IconFlag, // 报告地标问题
   adult: IconEyeOff, // 成人向作品默认隐藏

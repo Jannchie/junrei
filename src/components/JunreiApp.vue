@@ -464,6 +464,15 @@ function onSearchBlur() {
 
 // ---- 键盘快捷键（按 ? 查看）----
 const searchInput = ref<HTMLInputElement>();
+// 作品的 ⋯ 菜单：打开时贴在按钮下方、右边对齐（不依赖 CSS 锚点定位）
+const linksBtn = ref<HTMLElement>();
+const linksPop = ref<HTMLElement>();
+function onLinksToggle(e: Event) {
+  if ((e as ToggleEvent).newState !== "open") return;
+  const r = linksBtn.value!.getBoundingClientRect();
+  Object.assign(linksPop.value!.style, { top: `${r.bottom + 4}px`, left: "auto", right: `${innerWidth - r.right}px` });
+}
+
 // 页脚（mapette 的 MapFooter）：快捷键说明的开关也在它那里
 const footer = ref<InstanceType<typeof MapFooter>>();
 
@@ -689,13 +698,15 @@ onBeforeUnmount(() => {
                 <span v-if="detail.city" class="stat"><JIcon :icon="ICONS.city" :size="14" /><span v-auto-lang class="tx">{{ cityOf(detail) }}</span></span>
                 <span class="stat"><JIcon :icon="ICONS.point" :size="14" /><span class="tx">{{ detail.pointCount }}</span></span>
               </p>
-              <p class="links">
-                <a :href="`https://bgm.tv/subject/${detail.linkId}`" target="_blank" rel="noopener">Bangumi</a>
-                <a :href="`https://www.anitabi.cn/map?bangumiId=${detail.linkId}`" target="_blank" rel="noopener">Anitabi</a>
-                <a :href="`/v1/bangumi/${detail.linkId}/kml?lang=${locale}`" class="stat" :title="t('exportKml')" download>
-                  <JIcon :icon="ICONS.download" :size="14" /><span class="tx">KML</span>
-                </a>
-              </p>
+            </div>
+            <!-- 作品的外部链接与 KML 导出：次要操作，收在标题右侧的 ⋯ 菜单里（原生 popover，点外部或 Esc 关闭） -->
+            <button ref="linksBtn" type="button" class="icon-btn more-btn" popovertarget="work-links" :title="t('moreLinks')" :aria-label="t('moreLinks')">
+              <JIcon :icon="ICONS.more" :size="18" />
+            </button>
+            <div id="work-links" ref="linksPop" popover class="links-pop" @toggle="onLinksToggle">
+              <a :href="`https://bgm.tv/subject/${detail.linkId}`" target="_blank" rel="noopener"><JIcon :icon="ICONS.external" :size="14" />Bangumi</a>
+              <a :href="`https://www.anitabi.cn/map?bangumiId=${detail.linkId}`" target="_blank" rel="noopener"><JIcon :icon="ICONS.external" :size="14" />Anitabi</a>
+              <a :href="`/v1/bangumi/${detail.linkId}/kml?lang=${locale}`" :title="t('exportKml')" download><JIcon :icon="ICONS.download" :size="14" />{{ t("kmlShort") }}</a>
             </div>
           </div>
           <!-- 主要人员与角色（Bangumi）：服务端渲染，按人名、角色名搜索的人也能从搜索引擎找到 -->
@@ -1194,6 +1205,7 @@ hr {
   gap: 12px;
 }
 .title-main {
+  flex: 1;
   min-width: 0;
 }
 .cover {
@@ -1256,11 +1268,40 @@ h2 {
   border: 0;
   cursor: pointer;
 }
-.links {
+.more-btn {
+  flex: none;
+  align-self: flex-start;
+  margin: -4px -6px 0 0;
+}
+.links-pop {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  min-width: 168px;
+  padding: 4px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  backdrop-filter: var(--glass);
+}
+.links-pop:popover-open {
   display: flex;
-  gap: 12px;
-  margin: 8px 0 0;
+  flex-direction: column;
+}
+.links-pop a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
   font-size: 13px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 8px;
+}
+.links-pop a:hover {
+  background: var(--hover);
 }
 .points {
   margin: 0;
