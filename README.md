@@ -2,47 +2,62 @@
   <img src="public/icons/icon-192.png" width="96" height="96" alt="" />
 </p>
 
-<h1 align="center">圣地巡礼地图</h1>
+<h1 align="center">Anime Pilgrimage Map</h1>
 
 <p align="center"><a href="https://junrei.jannchie.com">junrei.jannchie.com</a></p>
 
-<p align="center"><img src="public/icons/og-zh-hans.png" width="720" alt="圣地巡礼地图的地图与作品列表" /></p>
+<p align="center">English · <a href="README.zh-CN.md">简体中文</a> · <a href="README.ja.md">日本語</a></p>
 
-圣地巡礼地图在地图上标出动画、游戏中出现过的真实地点，并附上对应的画面、集数与原始出处，方便出行前规划路线、到现场后对照取景。
+Anime Pilgrimage Map shows the real places that appear in anime and games on a map, with the matching frame, episode, timestamp and original source for each spot. It is meant for planning a route before a trip and for comparing the scene with what is in front of you on site.
 
-收录 5.2 万多个取景地点，涉及 1600 多部作品；Bangumi 上的 3.1 万多部动画均可搜索。界面提供简体中文、繁體中文、日本語与 English。
+It covers over 55,000 spots from about 1,900 titles, and all 31,000+ anime on Bangumi can be searched. The interface is available in Simplified Chinese, Traditional Chinese, Japanese and English.
 
-## 使用方法
+## Why I built it
 
-打开 <https://junrei.jannchie.com>，在搜索框中输入作品名或地点名。作品名可以使用中文、日文原名、英文名或罗马音。
+I used [Anitabi](https://www.anitabi.cn/map) for a long time, and its data is still the core of this map. These are the things I wanted that it did not give me:
 
-- **按系列浏览**：第一季、续作与剧场版归为同一系列，打开后显示系列内全部作品的地点，也可以只看其中一部。
-- **查看地点**：在列表或地图上选择地点，可查看动画画面、所在集数与时间，以及地点在当地语言中的名称。
-- **前往现场**：每个地点可直接在 Google 地图或 Apple 地图中打开并导航；整部作品的地点可导出为 KML 文件，导入 Google 我的地图等应用后统一查看。
-- **按区域查找**：首页列出当前地图范围内有取景地点的作品，移动地图即可查看附近的作品。
-- **安装为应用**：手机浏览器中选择「添加到主屏幕」，即可像普通应用一样从桌面打开。
+- **More titles.** About 570 titles and 3,400 spots that Anitabi does not have were added by hand from fan field reports and anime-tourism.jp (see [Data sources](#data-sources)).
+- **Episode and timestamp.** Where known, a spot shows the episode and the time in it where the scene appears. For many hand-added spots, they come from matching the frame against trace.moe, so the scene can be found again in the episode.
+- **One series, one page.** Every season, sequel, film and OVA of a series opens together with all their spots, and can be narrowed to one title.
+- **Search that tolerates spelling.** A title can be found by its Chinese, Japanese, English or romanized name. Simplified and Traditional characters, Japanese kanji forms, hiragana and katakana, and full-width and half-width letters match each other, so 「聖地巡禮」 finds 「圣地巡礼」.
+- **Names in my language, and in the local one.** Titles, spot names and notes are shown in the interface language; the selected spot also shows its local name to match against signs on site. Machine-translated text is labeled as such.
+- **From map to trip.** Each spot opens in Google Maps or Apple Maps for directions, and a whole title can be exported as KML for Google My Maps. Every view has its own URL, so a title, a spot or a search can be shared as a link.
 
-在电脑上按 `?` 可查看键盘快捷键。
+## How to use it
 
-成人向作品（主要是美少女游戏）的取景同样收录，但默认隐藏，可在页面底部「数据来源」中开启显示。
+Open <https://junrei.jannchie.com> and type a title or a place name into the search box.
 
-## 数据从哪里来
+- **Browse by area**: the home page lists the titles that have spots inside the current map view. Move the map to see the titles nearby.
+- **Look at a spot**: select a spot in the list or on the map to see the frame, episode and time, a short note, and a link to the source.
+- **Install as an app**: on a phone, choose "Add to Home Screen" in the browser to open the map from the home screen.
 
-- 大部分取景地点与画面来自 [Anitabi](https://www.anitabi.cn/map)，每日同步。
-- 作品信息、别名与封面来自 [Bangumi 番组计划](https://bgm.tv)。
-- Anitabi 尚未收录的作品，依据粉丝的实地探访记录补充，线索来自[舞台探訪アーカイブ](https://wikiwiki.jp/legwork/)与[錦鮒出版 聖地巡礼特集](https://nishikibuna.web.fc2.com/EXTRA/seichi.html)。这类地点均附有原文链接，集数与时间点借助 [trace.moe](https://trace.moe) 核对。
-- 地图底图来自 [OpenFreeMap](https://openfreemap.org)（© OpenStreetMap contributors）。
+On a computer, press `?` to see the keyboard shortcuts.
 
-每个地点都标明来源，并可跳转到原始出处。
+Spots from adult titles (mostly bishōjo games) are included but hidden by default. They can be shown with "Show adult titles" in the menu behind the "© OpenStreetMap" button at the bottom of the page.
 
-## 报告问题
+## Data sources
 
-地点位置不准确、对应的作品或集数有误，或者地点已不存在、禁止进入，请点击该地点下方的「报告问题」。链接会打开一个已填好作品、地点与坐标的 GitHub issue，补充说明后提交即可。
+- [Anitabi](https://www.anitabi.cn/map): most of the spots and frames, synced daily.
+- [Bangumi](https://bgm.tv): titles, alternative names, covers and series relations, via its [API](https://bangumi.github.io/api/) and its weekly [data archive](https://github.com/bangumi/Archive).
+- Hand-added spots in [`sync/manual.json`](sync/manual.json), for titles Anitabi does not cover:
+  - [舞台探訪アーカイブ](https://wikiwiki.jp/legwork/), a wiki that indexes fan field reports by title, and the fan pilgrimage blogs it lists;
+  - fan pilgrimage blogs that Anitabi itself cites as sources;
+  - [錦鮒出版 聖地巡礼特集](https://nishikibuna.web.fc2.com/EXTRA/seichi.html), field reports on bishōjo games;
+  - [anime-tourism.jp](https://anime-tourism.jp) (Anime Tourism), its pilgrimage spot database.
+- [trace.moe](https://trace.moe): its public [frame database](https://huggingface.co/datasets/soruly/trace.moe-database-dump) (CC0) is used to match screenshots to an episode and timestamp.
+- [Wikidata](https://www.wikidata.org): city names in each language.
+- [OpenFreeMap](https://openfreemap.org): the base map (© OpenStreetMap contributors, © OpenMapTiles), with terrain from [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/).
 
-想补充尚未收录的地点，也可以直接[新建 issue](https://github.com/Jannchie/junrei/issues/new)，附上探访文章或照片的链接。
+Every spot names its source and links to the original page. Hand-added spots record only the location, episode, time and at most a one-line description written for this site; the text and photos of the original articles are not copied. Comparison photos taken by others are linked, not reposted.
 
-## 许可
+## Reporting a problem
 
-来自 Anitabi 的数据以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可发布，本站据此仅作非商业用途。
+If a spot is in the wrong place, belongs to another title or episode, or no longer exists or cannot be entered, click "Report an issue" under that spot. It opens a GitHub issue with the title, spot and coordinates already filled in.
 
-本地运行与数据处理流程见 [docs/development.md](docs/development.md)。
+To suggest spots that are not on the map yet, [open an issue](https://github.com/Jannchie/junrei/issues/new) with a link to the field report or photos.
+
+## License
+
+Data from Anitabi is published under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/); this site uses it for non-commercial purposes only.
+
+Running locally and the data pipeline: [docs/development.md](docs/development.md).
