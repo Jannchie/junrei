@@ -8,6 +8,8 @@
 
 <p align="center"><a href="README.md">English</a> · 简体中文 · <a href="README.ja.md">日本語</a></p>
 
+<p align="center"><img src="docs/screenshots/readme-zh-CN.png" width="720" alt="《吹响吧！上低音号》在宇治的取景地点，侧边栏显示选中地点的画面、集数与时间点" /></p>
+
 圣地巡礼地图在地图上标出动画、游戏中出现过的真实地点，并为每个地点附上对应的画面、集数、时间点与原始出处，用于出行前规划路线，以及到现场后对照取景。
 
 收录 5.5 万多个取景地点，涉及约 1900 部作品；Bangumi 上的 3.1 万多部动画均可搜索。界面提供简体中文、繁體中文、日本語与 English。

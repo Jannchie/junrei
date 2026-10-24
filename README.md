@@ -8,6 +8,8 @@
 
 <p align="center">English · <a href="README.zh-CN.md">简体中文</a> · <a href="README.ja.md">日本語</a></p>
 
+<p align="center"><img src="docs/screenshots/readme-en.png" width="720" alt="The spots of Sound! Euphonium around Uji on the map, with the selected spot's frame, episode and time in the side panel" /></p>
+
 Anime Pilgrimage Map shows the real places that appear in anime and games on a map, with the matching frame, episode, timestamp and original source for each spot. It is meant for planning a route before a trip and for comparing the scene with what is in front of you on site.
 
 It covers over 55,000 spots from about 1,900 titles, and all 31,000+ anime on Bangumi can be searched. The interface is available in Simplified Chinese, Traditional Chinese, Japanese and English.
