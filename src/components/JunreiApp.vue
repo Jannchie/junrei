@@ -2,7 +2,7 @@
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
-import { formatEpisode, formatTime, imageUrl } from "../format";
+import { formatDate, formatEpisode, formatTime, imageUrl } from "../format";
 import { type Locale, LOCALE_NAMES, LOCALES, localePath, provideLocale, spotNames, stripLocale, workNames } from "../i18n";
 import { ICONS } from "../icons";
 import { recoverImages, retryImage } from "../image-retry";
@@ -90,7 +90,21 @@ const selected = computed(() =>
 // 地标列表分批渲染：首屏（含服务端渲染）只出前一批，滚到底再追加；上千个地标的作品也不卡
 const PAGE = 60;
 const visibleCount = ref(PAGE);
-const visiblePoints = computed(() => detail.value?.points.slice(0, visibleCount.value) ?? []);
+// 放大到局部时，列表只列出视野内的地标（选中的那个总算在内），视野外的折叠在最后，点开才列出
+const outOpen = ref(false);
+const sortRecent = ref(false); // 按更新时间排序（最近的在前）；不知道时间的排在最后
+const split = computed(() => {
+  const all = detail.value?.points ?? [];
+  const points = sortRecent.value ? [...all].sort((a, b) => (b.updated ?? 0) - (a.updated ?? 0)) : all;
+  const b = viewBounds.value;
+  const inside: typeof points = [];
+  const outside: typeof points = [];
+  for (const p of points) (!b || p.id === focusPointId.value || inBounds(p, b) ? inside : outside).push(p);
+  return { inside, outside };
+});
+const orderedPoints = computed(() => [...split.value.inside, ...split.value.outside]);
+const listedCount = computed(() => (outOpen.value ? orderedPoints.value.length : split.value.inside.length));
+const visiblePoints = computed(() => orderedPoints.value.slice(0, Math.min(visibleCount.value, listedCount.value)));
 const moreSentinel = ref<HTMLElement>();
 let moreObserver: IntersectionObserver | undefined;
 watch(moreSentinel, (el) => {
@@ -119,6 +133,7 @@ async function open(anyId: number, filterId: number | null, pointId: string | nu
     group.value = g;
     filter.value = filterId;
     visibleCount.value = PAGE;
+    outOpen.value = false;
     headHidden.value = false;
   }
   await focus(pointId);
@@ -133,10 +148,10 @@ async function select(bangumiId: number, pointId: string | null = null) {
 
 async function focus(pointId: string | null) {
   if (!detail.value) return;
-  const index = pointId ? detail.value.points.findIndex((p) => p.id === pointId) : -1;
+  focusPointId.value = pointId; // 先设好：选中的地标总排在视野内的那一组里
+  const index = pointId ? orderedPoints.value.findIndex((p) => p.id === pointId) : -1;
   if (index >= visibleCount.value) visibleCount.value = index + PAGE;
   sheet.value = "half"; // 选中后回到半屏，地图上要看得到它
-  focusPointId.value = pointId;
   await nextTick(); // 新作品的列表要等渲染后才能滚动到选中项
   if (pointId) document.getElementById(`p-${pointId}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
@@ -287,11 +302,15 @@ function onCreditsToggle(e: Event) {
 }
 
 type Bounds = { west: number; south: number; east: number; north: number };
+const viewBounds = shallowRef<Bounds | null>(null);
+const inBounds = (p: { lat: number; lng: number }, b: Bounds) =>
+  p.lat >= b.south && p.lat <= b.north && (b.west <= b.east ? p.lng >= b.west && p.lng <= b.east : p.lng >= b.west || p.lng <= b.east);
 const inView = shallowRef<Awaited<ReturnType<typeof bangumiInView>> | null>(null);
 let viewSeq = 0;
 let lastBounds: Bounds | null = null;
 async function onView(bounds: Bounds) {
   lastBounds = bounds;
+  viewBounds.value = bounds;
   const id = ++viewSeq;
   const list = await bangumiInView(bounds, showAdult.value);
   if (id === viewSeq) inView.value = list;
@@ -633,11 +652,17 @@ onBeforeUnmount(() => {
           </a>
         </nav>
         <p v-if="!detail.points.length" class="empty no-spots">{{ t("noSpots") }}</p>
+        <div v-if="detail.points.length > 1" class="sort" role="group">
+          <button type="button" :aria-pressed="!sortRecent" @click="sortRecent = false">{{ t("sortDefault") }}</button>
+          <button type="button" :aria-pressed="sortRecent" @click="sortRecent = true">{{ t("sortRecent") }}</button>
+        </div>
         <ol class="points">
+          <template v-for="(p, i) in visiblePoints" :key="p.id">
+          <li v-if="outOpen && i === split.inside.length" class="fold" @click="outOpen = false">
+            <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ t("outOfView") }} · {{ split.outside.length }}</span></span>
+          </li>
           <li
-            v-for="p in visiblePoints"
             :id="`p-${p.id}`"
-            :key="p.id"
             :class="{ active: p.id === focusPointId }"
             @click="select(p.bangumiId, p.id)"
           >
@@ -659,9 +684,10 @@ onBeforeUnmount(() => {
               <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
               <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
               <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(p.bangumiId) }}</span>
-              <span v-if="p.ep || p.s" class="meta">
+              <span v-if="p.ep || p.s || p.updated" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
+                <span v-if="p.updated" class="stat" :title="t('updatedOn')"><JIcon :icon="ICONS.updated" :size="14" /><span class="tx">{{ formatDate(p.updated) }}</span></span>
               </span>
               <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
               <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
@@ -689,8 +715,12 @@ onBeforeUnmount(() => {
               </a>
             </div>
           </li>
+          </template>
+          <li v-if="!outOpen && split.outside.length && visibleCount >= split.inside.length" class="fold" @click="outOpen = true">
+            <span class="stat"><JIcon :icon="ICONS.point" :size="12" /><span class="tx">{{ t("outOfView") }} · {{ split.outside.length }}</span></span>
+          </li>
         </ol>
-        <div v-if="visibleCount < detail.points.length" ref="moreSentinel" class="more" />
+        <div v-if="visibleCount < listedCount" ref="moreSentinel" class="more" />
         </template>
       </section>
 
@@ -1183,6 +1213,32 @@ figcaption a {
 }
 .more {
   height: 1px;
+}
+.sort {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px 4px;
+}
+.sort button {
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.sort button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.points li.fold {
+  display: block;
+  padding: 8px 16px;
+  color: var(--muted);
+  font-size: 12px;
+  background: var(--hover);
 }
 .series {
   display: flex;

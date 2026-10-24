@@ -50,6 +50,13 @@
       "when": 1792738075287,
       "tag": "20261023064755_new_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1792818511128,
+      "tag": "20261024050831_free_daredevil",
+      "breakpoints": true
     }
   ]
 }

@@ -53,6 +53,7 @@ export const point = sqliteTable(
     mark: text("mark"),
     source: text("source"), // 地标数据的出处（Anitabi、探访博客的网站名…），与截图署名 origin 分开
     sourceUrl: text("source_url"), // 出处原文链接
+    updated: integer("updated"), // 地标最近一次新增或改动的时间（Unix 秒，sync/export.py 的 point_updated）；不知道时为空
     i18n: text("i18n", { mode: "json" }).$type<I18n>(), // 各语言地标名与备注（含机翻）
     search: text("search"), // 名称折叠后的搜索键，FTS5 索引建在这一列上
   },

@@ -4,6 +4,7 @@ import type { Icon } from "@jannchie/icons";
 import {
   IconArrowLeft,
   IconBuilding,
+  IconCalendar,
   IconCamera,
   IconClock,
   IconDownload,
@@ -41,6 +42,7 @@ export const ICONS = {
   city: IconBuilding,
   episode: IconTv,
   time: IconClock,
+  updated: IconCalendar, // 地标最近一次新增或改动的日期
   credit: IconCamera,
   zoomIn: IconPlus,
   zoomOut: IconMinus,

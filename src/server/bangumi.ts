@@ -22,6 +22,7 @@ const POINT_FIELDS = {
   mark: point.mark,
   source: point.source,
   sourceUrl: point.sourceUrl,
+  updated: point.updated,
   i18n: point.i18n,
 };
 const SERIES_FIELDS = { id: bangumi.id, cn: bangumi.cn, title: bangumi.title, en: bangumi.en, cat: bangumi.cat, pointCount: bangumi.pointCount, airDate: bangumi.airDate, i18n: bangumi.i18n, nsfw: bangumi.nsfw, cover: bangumi.cover };

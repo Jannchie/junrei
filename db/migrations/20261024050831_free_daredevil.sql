@@ -1,0 +1,1 @@
+ALTER TABLE `point` ADD `updated` integer;

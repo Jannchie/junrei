@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS point (
   ep TEXT, s REAL, mark TEXT, origin TEXT, origin_link TEXT, density INTEGER,
   in_index INTEGER, in_detail INTEGER,
   raw TEXT,
+  first_seen TEXT, updated_at TEXT,
   PRIMARY KEY (bangumi_id, id)
 );
 CREATE INDEX IF NOT EXISTS point_geo ON point (lat, lng);
@@ -229,6 +230,9 @@ def sync(db: sqlite3.Connection, fetcher: Fetcher, full: bool) -> None:
 def write_points(db, bid, detail_points, index_points):
     geo = {p["id"]: p for p in index_points}
     detail_ids = {p["id"] for p in detail_points}
+    # 每个地标第一次见到、最近一次内容（详情或坐标）变化的时间：重写前先记下旧的，内容没变就沿用
+    old = {r[0]: r[1:] for r in db.execute(
+        "SELECT id, raw, lat, lng, first_seen, updated_at FROM point WHERE bangumi_id=?", (bid,))}
     db.execute("DELETE FROM point WHERE bangumi_id=?", (bid,))
     rows = []
     for p in detail_points:
@@ -239,9 +243,17 @@ def write_points(db, bid, detail_points, index_points):
         if pid not in detail_ids:
             rows.append({"id": pid, "bangumi_id": bid, "lat": g["lat"], "lng": g["lng"],
                          "priority": g["priority"], "in_index": 1, "in_detail": 0})
+    now = now_iso()
+    for r in rows:
+        prev = old.get(r["id"])
+        if prev is None:
+            r["first_seen"] = r["updated_at"] = now
+        else:
+            r["first_seen"] = prev[3]
+            r["updated_at"] = prev[4] if prev[:3] == (r.get("raw"), r["lat"], r["lng"]) else now
     cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "is_folder", "folder", "mid",
             "uid", "image", "fid", "ep", "s", "mark", "origin", "origin_link", "density",
-            "in_index", "in_detail", "raw"]
+            "in_index", "in_detail", "raw", "first_seen", "updated_at"]
     db.executemany(
         f"INSERT INTO point ({','.join(cols)}) VALUES ({','.join(':' + c for c in cols)})",
         [{c: r.get(c) for c in cols} for r in rows],
@@ -420,6 +432,11 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     db = sqlite3.connect(out / "anitabi.sqlite")
     db.executescript(SCHEMA)
+    # 早先建的库没有这两列（地标的首次出现与最近变化时间）
+    have = {r[1] for r in db.execute("PRAGMA table_info(point)")}
+    for col in ("first_seen", "updated_at"):
+        if col not in have:
+            db.execute(f"ALTER TABLE point ADD COLUMN {col} TEXT")
     if not args.report:
         raw = out / "raw" / args.cache_key if args.keep_raw else None
         sync(db, Fetcher(args.cache_key, raw), args.full)

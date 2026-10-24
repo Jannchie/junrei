@@ -16,7 +16,9 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import json
+import re
 import sqlite3
 from pathlib import Path
 import sys
@@ -102,6 +104,19 @@ def bgm_cover(url: str | None) -> str | None:
     return url
 
 
+def point_updated(changed_at: str | None = None, image: str | None = None, date: str | None = None) -> int | None:
+    """地标最近一次新增或改动的时间（Unix 秒）：同步时记下的变化时间（sync.sync 的 updated_at）优先；
+    其次是 Anitabi 截图文件名里的上传时间（「…/jnw3cjfgd-1719484643157.jpg」「…/nhsy44j4n_1752908483032_c16v9.jpg」，毫秒）；
+    手动补充的地标用 manual.json 的 updated（YYYY-MM-DD）。都没有就留空"""
+    if changed_at:
+        return int(dt.datetime.fromisoformat(changed_at).timestamp())
+    if image and (m := re.search(r"[-_](1\d{12})(?:_\w+)?\.\w+$", image.split("?")[0])):
+        return int(m.group(1)) // 1000
+    if date:
+        return int(dt.datetime.fromisoformat(date).replace(tzinfo=dt.timezone.utc).timestamp())
+    return None
+
+
 def seconds(v) -> float | None:
     """画面时间统一成秒：Anitabi 里大多是秒数，也有「07:41」「01:00:29」这样的文字，甚至「ed」，换算不了的留空"""
     if v is None or isinstance(v, (int, float)):
@@ -159,7 +174,7 @@ def merge_manual(rows: list, points: list, counts: dict[int, int], i18n: dict) -
         ref = p.get("reference")
         points.append((p["bangumi"], p["id"], p.get("name"), p.get("cn"), p["lat"], p["lng"], p.get("priority", 0),
                        p.get("ep"), p.get("s"), p.get("image"), p.get("origin"), p.get("origin_link"), p.get("mark"),
-                       p.get("source") or (urlparse(ref).hostname if ref else None), ref))
+                       p.get("source") or (urlparse(ref).hostname if ref else None), ref, point_updated(date=p.get("updated"))))
         counts[p["bangumi"]] = counts.get(p["bangumi"], 0) + 1
         item = {k: v for k, v in (("name", p.get("names")), ("mark", p.get("marks")), ("src", p.get("src"))) if v}
         if item:
@@ -228,9 +243,9 @@ def main():
     src = sqlite3.connect(DEFAULT_OUT / "anitabi.sqlite")
 
     points = []
-    for (bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark) in src.execute(
+    for (bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark, changed) in src.execute(
         """SELECT p.bangumi_id, p.id, p.name, p.cn, p.lat, p.lng, p.priority, p.ep, p.s, p.image,
-                  p.origin, p.origin_link, p.mark
+                  p.origin, p.origin_link, p.mark, p.updated_at
            FROM point p JOIN bangumi b ON b.id = p.bangumi_id
            WHERE b.deleted = 0 ORDER BY p.bangumi_id, p.priority, p.id"""):
         if not valid_geo(lat, lng):
@@ -239,7 +254,7 @@ def main():
             origin, link = attribution(bid, pid, origin, link)
         # 数据来源（与截图署名分开）：Anitabi 的地标都指向 Anitabi 地图上的这个地标
         points.append((bid, pid, name, cn, lat, lng, prio, ep, s, image, origin, link, mark,
-                       "Anitabi", f"https://www.anitabi.cn/map?bangumiId={bid}&pid={pid}"))
+                       "Anitabi", f"https://www.anitabi.cn/map?bangumiId={bid}&pid={pid}", point_updated(changed, image)))
 
     i18n = load_i18n()
 
@@ -316,7 +331,7 @@ def main():
                 "series_id", "i18n", "search", "series_points", "series_works", "nsfw"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
-                "origin_link", "mark", "source", "source_url", "i18n", "search"]
+                "origin_link", "mark", "source", "source_url", "updated", "i18n", "search"]
         f.writelines(insert_statements("point", cols, points))
         f.write("INSERT INTO point_fts(point_fts) VALUES('rebuild');\n")
         f.write("INSERT INTO bangumi_fts(bangumi_fts) VALUES('rebuild');\n")
