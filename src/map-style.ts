@@ -7,6 +7,12 @@ import type { ExpressionSpecification, LayerSpecification, StyleSpecification } 
 /** 按线路配色的铁路（sync/rail.py 从 OSM 线路关系生成的 PMTiles，放在 R2）；底图的灰色铁路垫在下面，覆盖不到的地区照常显示 */
 export const RAIL_TILES = "pmtiles://https://cdn.jannchie.com/junrei/rail/rail-v4.pmtiles";
 
+/**
+ * 气泡密度：radius 是合并半径（屏幕像素），越大气泡越少；maxZoom 以上不再聚合，全部显示成单个地标。
+ * 运行时也能改：setClusterOptions(map, "points", { radius })
+ */
+export const CLUSTER = { radius: 72, maxZoom: 11 };
+
 /** 换主题、换语言时原样保留的数据源：5 万个点的 points 不要重新加载、重新聚合 */
 export const KEEP_SOURCES = ["points", "selected"];
 
@@ -21,7 +27,7 @@ export function createStyle({ palette: c, locale }: StyleContext): StyleSpecific
     sources: {
       // 全部地标：maplibre 在 worker 里抓取、解析并按缩放聚合，主线程不碰这 5 万个点。
       // 成人向地标（带 n 属性）默认隐藏，气泡要另外数一份不含它们的数量（visible）
-      points: clusterSource("/data/points.geojson", { radius: 48, maxZoom: 11, properties: { visible: ["+", ["case", ["has", "n"], 0, 1]] } }),
+      points: clusterSource("/data/points.geojson", { ...CLUSTER, properties: { visible: ["+", ["case", ["has", "n"], 0, 1]] } }),
       // 选中作品的地标，焦点用 feature-state 标记
       selected: { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "p" },
     },
