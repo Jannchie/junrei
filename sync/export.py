@@ -133,12 +133,12 @@ def seconds(v) -> float | None:
         return None
 
 
-FIELDS = {"name": 2, "cn": 3, "lat": 4, "lng": 5, "ep": 7, "s": 8, "mark": 12}
+FIELDS = {"name": 2, "cn": 3, "lat": 4, "lng": 5, "ep": 7, "s": 8, "image": 9, "origin": 10, "origin_link": 11, "mark": 12}
 
 
 def apply_overrides(points: list) -> list:
     """sync/overrides.json：处理用户报告的问题，对所有来源的地标生效（Anitabi 的数据每天重新同步，改源数据会被覆盖）。
-    hide：要隐藏的地标「作品id:地标id」；patch：要修正的字段（name、cn、lat、lng、ep、s、mark）"""
+    hide：要隐藏的地标「作品id:地标id」；patch：要修正的字段（name、cn、lat、lng、ep、s、mark，以及补截图用的 image、origin、origin_link）"""
     if not OVERRIDES.exists():
         return points
     o = json.loads(OVERRIDES.read_text(encoding="utf-8"))

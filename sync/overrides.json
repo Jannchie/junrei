@@ -1,5 +1,25 @@
 {
   "_comment": "处理用户报告（GitHub issue，标签 spot-report）：hide 隐藏地标，patch 修正字段；键是「作品id:地标id」，对 Anitabi 与手动补充的地标都生效。Anitabi 的问题最好同时回报给 Anitabi。",
   "hide": [],
-  "patch": {}
+  "patch": {
+    "329906:51i52hx16": {
+      "ep": "1",
+      "s": 249
+    },
+    "329906:51i52hww9": {
+      "ep": "2",
+      "s": 881
+    },
+    "329906:51i52hx0s": {
+      "ep": "3",
+      "s": 671
+    },
+    "329906:51i52hx1g": {
+      "ep": "3",
+      "s": 715,
+      "image": "https://cdn.jannchie.com/junrei/shots/x-329906-51i52hx1g.jpg",
+      "origin": "@DailyOtakuLife",
+      "origin_link": "https://x.com/DailyOtakuLife/status/1522862213031395329"
+    }
+  }
 }
