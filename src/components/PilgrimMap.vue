@@ -60,6 +60,18 @@ function restyle() {
   });
 }
 
+// ---- 比例尺：黑白相间的分段尺（像纸质地图），长度取 1、2、5 × 10ⁿ 中不超过 SCALE_MAX 像素的最大值 ----
+const SCALE_MAX = 100;
+const scale = ref<{ width: number; label: string } | null>(null);
+function updateScale() {
+  if (!map) return;
+  // Web 墨卡托、512px 瓦片：每像素对应的米数随纬度按 cos 缩小
+  const mpp = (40075016.686 * Math.cos((map.getCenter().lat * Math.PI) / 180)) / (512 * 2 ** map.getZoom());
+  const pow = 10 ** Math.floor(Math.log10(mpp * SCALE_MAX));
+  const meters = [5, 2, 1].map((f) => f * pow).find((d) => d / mpp <= SCALE_MAX) ?? pow;
+  scale.value = { width: Math.round(meters / mpp), label: meters >= 1000 ? `${meters / 1000} km` : `${meters} m` };
+}
+
 /** 选中作品变化：换高亮源的数据，切换淡化状态 */
 function syncSelected() {
   if (!ready.value || !map) return;
@@ -230,7 +242,8 @@ onMounted(() => {
   // 定位用 maplibre 自带的控件画位置点，按钮换成自己的（见模板），原按钮用 CSS 隐藏
   geolocate = new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true });
   m.addControl(geolocate, "bottom-right");
-  m.addControl(new maplibregl.ScaleControl({ maxWidth: 96 }), "bottom-right"); // 比例尺：在缩放按钮下方，样式见下
+  m.on("move", updateScale);
+  updateScale();
 
   // 首次加载，以及换主题时 diff 失败退回整体重载，都会触发 style.load；全局状态和高亮要重新应用
   m.on("style.load", () => {
@@ -297,6 +310,10 @@ watch(() => props.focusPointId, (next, prev) => {
 
 <template>
   <div ref="el" class="map" />
+  <div v-if="scale" class="scale" :style="{ '--pad-left': `${padding.left ?? 0}px` }" aria-hidden="true">
+    <span class="scale-bar" :style="{ width: `${scale.width}px` }"><i /><i /><i /><i /></span>
+    <span>{{ scale.label }}</span>
+  </div>
   <div class="controls">
     <button :title="t('locate')" :aria-label="t('locate')" @click="geolocate?.trigger()"><JIcon :icon="ICONS.locate" /></button>
     <div class="group">
@@ -316,23 +333,46 @@ watch(() => props.focusPointId, (next, prev) => {
 .map :deep(.maplibregl-ctrl-geolocate) {
   display: none;
 }
-/* 右下角的控件容器（只有比例尺看得见）：跟着手机抽屉上移，摆在缩放按钮下面 */
-.map :deep(.maplibregl-ctrl-bottom-right) {
-  right: 12px;
-  bottom: calc(var(--panel-inset-bottom, 0px) + 10px);
-}
-.map :deep(.maplibregl-ctrl-scale) {
-  margin: 0;
-  padding: 0 4px;
+/* 比例尺：桌面端在地图可见区域的左下角（面板右侧），不占右下角的按钮；手机端在顶部居中（底部是抽屉） */
+.scale {
+  position: absolute;
+  left: calc(var(--pad-left, 0px) + 12px);
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
   font-size: 11px;
   font-weight: 500;
-  line-height: 16px;
   font-variant-numeric: tabular-nums;
   color: var(--fg);
   background: var(--bg);
-  border: 1.5px solid var(--muted);
-  border-top: 0;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
   backdrop-filter: var(--glass);
+  pointer-events: none;
+}
+/* 四段黑白相间，外加细边框 */
+.scale-bar {
+  display: flex;
+  height: 5px;
+  border: 1px solid var(--fg);
+  box-sizing: content-box;
+}
+.scale-bar i {
+  flex: 1;
+  background: var(--fg);
+}
+.scale-bar i:nth-child(even) {
+  background: var(--bg-solid);
+}
+@media (max-width: 640px) {
+  .scale {
+    top: calc(env(safe-area-inset-top) + 10px);
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 .map :deep(.photo-pin) {
   /* 不要设 position：maplibre 靠 .maplibregl-marker 的 absolute 与 transform 定位标记 */
