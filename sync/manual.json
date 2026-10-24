@@ -100920,6 +100920,3149 @@
       "source": "Wikipedia",
       "image": "https://cdn.jannchie.com/junrei/shots/m-329906-frankfurt-justitia.jpg",
       "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 411427,
+      "id": "m-411427-d042d7c4",
+      "name": "ドイツ連邦議会議事堂（ライヒスターク）",
+      "cn": "德国国会大厦",
+      "lat": 52.518589,
+      "lng": 13.376665,
+      "ep": "4",
+      "s": 672,
+      "src": "ja",
+      "names": {
+        "ja": "ドイツ連邦議会議事堂（ライヒスターク）",
+        "zh-Hans": "德国国会大厦",
+        "zh-Hant": "德國國會大廈",
+        "en": "Reichstag building"
+      },
+      "marks": {
+        "ja": "イーデン校の全景。奥の本館はガラスドームと列柱の正面、四隅の塔を持つ",
+        "zh-Hans": "伊甸学园全景鸟瞰，后方主楼有玻璃穹顶、柱廊正面和四角塔楼",
+        "zh-Hant": "伊甸學園全景鳥瞰，後方主樓有玻璃穹頂、柱廊正面和四角塔樓"
+      },
+      "reference": "https://spy-x-family.fandom.com/wiki/Eden_Academy",
+      "source": "spy-x-family.fandom.com",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-067dd977",
+      "name": "清水寺",
+      "cn": "清水寺",
+      "lat": 34.9947,
+      "lng": 135.7851,
+      "ep": "8",
+      "s": 611,
+      "src": "ja",
+      "names": {
+        "ja": "清水寺",
+        "zh-Hans": "清水寺",
+        "zh-Hant": "清水寺",
+        "en": "Kiyomizu-dera"
+      },
+      "marks": {
+        "ja": "京都・清水寺",
+        "zh-Hans": "京都清水寺",
+        "zh-Hant": "京都清水寺"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/067dd977-d25a-4ddb-9ea0-9714dd2e16d9",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-067dd977.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/067dd977-d25a-4ddb-9ea0-9714dd2e16d9",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-f5be9e9f",
+      "name": "吉祥寺プラザ",
+      "cn": "吉祥寺广场",
+      "lat": 35.70663,
+      "lng": 139.58061,
+      "ep": "8",
+      "s": 1202,
+      "src": "ja",
+      "names": {
+        "ja": "吉祥寺プラザ",
+        "zh-Hans": "吉祥寺广场",
+        "zh-Hant": "吉祥寺廣場",
+        "en": "Kichijoji Plaza"
+      },
+      "marks": {
+        "ja": "吉祥寺プラザ（キネマシネマのモデル）",
+        "zh-Hans": "吉祥寺广场（Kinema Cinema 的原型）",
+        "zh-Hant": "吉祥寺廣場（Kinema Cinema 的原型）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f5be9e9f-dda6-4d59-9857-bd6166d79353",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-f5be9e9f.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f5be9e9f-dda6-4d59-9857-bd6166d79353",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-58b40bc9",
+      "name": "幕張メッセ 国際展示場 1-3ホール",
+      "cn": "幕张展览馆 国际展示场 1-3号馆",
+      "lat": 35.64835,
+      "lng": 140.03322,
+      "ep": "8",
+      "s": 1353,
+      "src": "ja",
+      "names": {
+        "ja": "幕張メッセ 国際展示場 1-3ホール",
+        "zh-Hans": "幕张展览馆 国际展示场 1-3号馆",
+        "zh-Hant": "幕張展覽館 國際展示場 1-3號館",
+        "en": "Makuhari Messe International Exhibition Hall 1-3"
+      },
+      "marks": {
+        "ja": "幕張メッセ 国際展示場 1-3ホール",
+        "zh-Hans": "幕张展览馆 国际展示场 1-3 号馆",
+        "zh-Hant": "幕張展覽館 國際展示場 1-3 號館"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/58b40bc9-2357-4a8b-9281-f00274c84c25",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-58b40bc9.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/58b40bc9-2357-4a8b-9281-f00274c84c25",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-083fae7c",
+      "name": "幕張メッセ 国際展示場 展示ホール9～11",
+      "cn": "幕张展览馆 国际展示场 展示厅9-11",
+      "lat": 35.64889,
+      "lng": 140.03562,
+      "ep": "8",
+      "s": 1410,
+      "src": "ja",
+      "names": {
+        "ja": "幕張メッセ 国際展示場 展示ホール9～11",
+        "zh-Hans": "幕张展览馆 国际展示场 展示厅9-11",
+        "zh-Hant": "幕張展覽館 國際展示場 展示廳9-11",
+        "en": "Makuhari Messe International Exhibition Hall 9-11"
+      },
+      "marks": {
+        "ja": "幕張メッセ 国際展示場 9-11ホール",
+        "zh-Hans": "幕张展览馆 国际展示场 9-11 号馆",
+        "zh-Hant": "幕張展覽館 國際展示場 9-11 號館"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/083fae7c-e376-454a-a53c-39e815c2cf1c",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-083fae7c.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/083fae7c-e376-454a-a53c-39e815c2cf1c",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-2b800f87",
+      "name": "ワールドビジネスガーデン 第2駐車場",
+      "cn": "World Business Garden 第2停车场",
+      "lat": 35.64769,
+      "lng": 140.03699,
+      "ep": "8",
+      "s": 1420,
+      "src": "ja",
+      "names": {
+        "ja": "ワールドビジネスガーデン 第2駐車場",
+        "zh-Hans": "World Business Garden 第2停车场",
+        "zh-Hant": "World Business Garden 第2停車場",
+        "en": "World Business Garden No. 2 Parking Lot"
+      },
+      "marks": {
+        "ja": "ワールドビジネスガーデン第2駐車場（幕張）",
+        "zh-Hans": "幕张 World Business Garden 第 2 停车场",
+        "zh-Hant": "幕張 World Business Garden 第 2 停車場"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/2b800f87-d164-4ef6-8945-7c487e777e7e",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-2b800f87.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/2b800f87-d164-4ef6-8945-7c487e777e7e",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-ba5efed3",
+      "name": "大黒寿司",
+      "cn": "大黑寿司",
+      "lat": 35.70615,
+      "lng": 139.63636,
+      "ep": "11",
+      "s": 542,
+      "src": "ja",
+      "names": {
+        "ja": "大黒寿司",
+        "zh-Hans": "大黑寿司",
+        "zh-Hant": "大黑壽司",
+        "en": "Daikoku Sushi"
+      },
+      "marks": {
+        "ja": "阿佐ヶ谷の大黒寿司",
+        "zh-Hans": "阿佐谷的大黑寿司",
+        "zh-Hant": "阿佐谷的大黑壽司"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/ba5efed3-829c-40cc-a75a-743fe462962c",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-ba5efed3.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ba5efed3-829c-40cc-a75a-743fe462962c",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-21e2d132",
+      "name": "日本工業倶楽部",
+      "cn": "日本工业俱乐部",
+      "lat": 35.68317,
+      "lng": 139.76506,
+      "ep": "14",
+      "s": 224,
+      "src": "ja",
+      "names": {
+        "ja": "日本工業倶楽部",
+        "zh-Hans": "日本工业俱乐部",
+        "zh-Hant": "日本工業俱樂部",
+        "en": "The Industry Club of Japan"
+      },
+      "marks": {
+        "ja": "日本工業倶楽部会館",
+        "zh-Hans": "日本工业俱乐部会馆",
+        "zh-Hant": "日本工業俱樂部會館"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/21e2d132-57d4-40bd-adf0-0259332776a7",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-21e2d132.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/21e2d132-57d4-40bd-adf0-0259332776a7",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-430fdff6",
+      "name": "八木山橋",
+      "cn": "八木山桥",
+      "lat": 38.25068,
+      "lng": 140.85286,
+      "ep": "22",
+      "s": 641,
+      "src": "ja",
+      "names": {
+        "ja": "八木山橋",
+        "zh-Hans": "八木山桥",
+        "zh-Hant": "八木山橋",
+        "en": "Yagiyama Bridge Tatsunoguchi Valley"
+      },
+      "marks": {
+        "ja": "竜ノ口渓谷にかかる八木山橋",
+        "zh-Hans": "横跨龙之口溪谷的八木山桥",
+        "zh-Hant": "橫跨龍之口溪谷的八木山橋"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/430fdff6-9fe7-4865-a0d5-304998d0c170",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-430fdff6.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/430fdff6-9fe7-4865-a0d5-304998d0c170",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-bf650de4",
+      "name": "阿佐ヶ谷駅",
+      "cn": "阿佐谷站",
+      "lat": 35.70441,
+      "lng": 139.63637,
+      "ep": "23",
+      "s": 1349,
+      "src": "ja",
+      "names": {
+        "ja": "阿佐ヶ谷駅",
+        "zh-Hans": "阿佐谷站",
+        "zh-Hant": "阿佐谷站",
+        "en": "Asagaya Station"
+      },
+      "marks": {
+        "ja": "阿佐ヶ谷駅",
+        "zh-Hans": "阿佐谷站",
+        "zh-Hant": "阿佐谷站"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/bf650de4-d41c-404f-8a6e-398a12a4bd87",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-bf650de4.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/bf650de4-d41c-404f-8a6e-398a12a4bd87",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-75f30858",
+      "name": "阿佐谷パールセンター 商店街",
+      "cn": "阿佐谷 Pearl Center 商店街",
+      "lat": 35.70462,
+      "lng": 139.63681,
+      "ep": "23",
+      "s": 1407,
+      "src": "ja",
+      "names": {
+        "ja": "阿佐谷パールセンター 商店街",
+        "zh-Hans": "阿佐谷 Pearl Center 商店街",
+        "zh-Hant": "阿佐谷 Pearl Center 商店街",
+        "en": "Asagaya Pearl Center Shopping Street"
+      },
+      "marks": {
+        "ja": "阿佐谷パールセンター商店街",
+        "zh-Hans": "阿佐谷 Pearl Center 商店街",
+        "zh-Hant": "阿佐谷 Pearl Center 商店街"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/75f30858-0b92-40ea-bca5-95c6e260c05c",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-75f30858.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/75f30858-0b92-40ea-bca5-95c6e260c05c",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 294993,
+      "id": "m-294993-ap-5ba05b37",
+      "name": "スターバックス コーヒー 京王新宿三丁目ビル店",
+      "cn": "Starbucks Coffee 京王新宿三丁目Building店",
+      "lat": 35.69051,
+      "lng": 139.70556,
+      "ep": "24",
+      "s": 1367,
+      "src": "ja",
+      "names": {
+        "ja": "スターバックス コーヒー 京王新宿三丁目ビル店",
+        "zh-Hans": "Starbucks Coffee 京王新宿三丁目Building店",
+        "zh-Hant": "Starbucks Coffee 京王新宿三丁目Building店",
+        "en": "Starbucks Coffee - Keio Shinjuku 3-chome Building"
+      },
+      "marks": {
+        "ja": "最終話ラスト、虎杖・伏黒・釘崎が買い物に出かける新宿三丁目の街角",
+        "zh-Hans": "最终话结尾，虎杖、伏黑、钉崎一起去购物的新宿三丁目街角",
+        "zh-Hant": "最終話結尾，虎杖、伏黑、釘崎一起去購物的新宿三丁目街角"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5ba05b37-0a93-4c4e-8a25-8645e2a51930",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-294993-ap-5ba05b37.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5ba05b37-0a93-4c4e-8a25-8645e2a51930",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-1ba6d6b9",
+      "name": "BOAT RACE 多摩川(多摩川ボートレース場)",
+      "cn": "BOAT RACE 多摩川",
+      "lat": 35.6579,
+      "lng": 139.4962,
+      "ep": "2",
+      "s": 109,
+      "src": "ja",
+      "names": {
+        "ja": "BOAT RACE 多摩川(多摩川ボートレース場)",
+        "zh-Hans": "BOAT RACE 多摩川",
+        "zh-Hant": "BOAT RACE 多摩川",
+        "en": "Boat Race Tamagawa"
+      },
+      "marks": {
+        "ja": "ボートレース多摩川（伏黒甚爾がいる競艇場）",
+        "zh-Hans": "多摩川竞艇场（伏黑甚尔所在的竞艇场）",
+        "zh-Hant": "多摩川競艇場（伏黑甚爾所在的競艇場）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/1ba6d6b9-12d9-4e69-91ab-734d250e3341",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-1ba6d6b9.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/1ba6d6b9-12d9-4e69-91ab-734d250e3341",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-24d39827",
+      "name": "桑実商店",
+      "cn": "桑实商店",
+      "lat": 35.658031,
+      "lng": 139.499585,
+      "ep": "2",
+      "s": 528,
+      "src": "ja",
+      "names": {
+        "ja": "桑実商店",
+        "zh-Hans": "桑实商店",
+        "zh-Hant": "桑實商店",
+        "en": "Kuwanomi store"
+      },
+      "marks": {
+        "ja": "是政・多摩川競艇場周辺の商店",
+        "zh-Hans": "是政·多摩川竞艇场周边的商店",
+        "zh-Hant": "是政·多摩川競艇場周邊的商店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/24d39827-c576-4578-856a-c9d52ca0ef2b",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-24d39827.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/24d39827-c576-4578-856a-c9d52ca0ef2b",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-f42ab189",
+      "name": "よへなあじさい園",
+      "cn": "与那绣球花园",
+      "lat": 26.647129,
+      "lng": 127.94521,
+      "ep": "3",
+      "s": 485,
+      "src": "ja",
+      "names": {
+        "ja": "よへなあじさい園",
+        "zh-Hans": "与那绣球花园",
+        "zh-Hant": "與那繡球花園",
+        "en": "Hydrangea Garden Yohena"
+      },
+      "marks": {
+        "ja": "沖縄・よへなあじさい園",
+        "zh-Hans": "冲绳与那绣球花园",
+        "zh-Hant": "沖繩與那繡球花園"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f42ab189-c9db-414d-ac54-c502426df5c0",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-f42ab189.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f42ab189-c9db-414d-ac54-c502426df5c0",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-5642c8e7",
+      "name": "水の階段（海洋博公園）",
+      "cn": "水之阶梯，海洋博公园",
+      "lat": 26.691662,
+      "lng": 127.877021,
+      "ep": "3",
+      "s": 492,
+      "src": "ja",
+      "names": {
+        "ja": "水の階段（海洋博公園）",
+        "zh-Hans": "水之阶梯，海洋博公园",
+        "zh-Hant": "水之階梯，海洋博公園",
+        "en": "Water Stairs (Kaiyohaku Park)"
+      },
+      "marks": {
+        "ja": "海洋博公園の水の階段",
+        "zh-Hans": "海洋博公园的水之阶梯",
+        "zh-Hant": "海洋博公園的水之階梯"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5642c8e7-c852-40ac-83e4-1134c38be6e9",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-5642c8e7.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5642c8e7-c852-40ac-83e4-1134c38be6e9",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-f7eb7874",
+      "name": "JR新宿駅 東口駅前広場",
+      "cn": "JR新宿站东口站前广场",
+      "lat": 35.69227,
+      "lng": 139.7009,
+      "ep": "5",
+      "s": 911,
+      "src": "ja",
+      "names": {
+        "ja": "JR新宿駅 東口駅前広場",
+        "zh-Hans": "JR新宿站东口站前广场",
+        "zh-Hant": "JR新宿站東口站前廣場",
+        "en": "JR Shinjuku East Exit Station Square"
+      },
+      "marks": {
+        "ja": "JR新宿駅東口駅前広場（五条と夏油が再会する新宿）",
+        "zh-Hans": "JR 新宿站东口站前广场（五条与夏油重逢的新宿）",
+        "zh-Hant": "JR 新宿站東口站前廣場（五條與夏油重逢的新宿）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f7eb7874-43e6-4a53-8eee-d79374a981ad",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-f7eb7874.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f7eb7874-43e6-4a53-8eee-d79374a981ad",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-34700437",
+      "name": "三井住友信託銀行 立川支店",
+      "cn": "三井住友信托银行 立川支行",
+      "lat": 35.69905,
+      "lng": 139.41357,
+      "ep": "6",
+      "s": 15,
+      "src": "ja",
+      "names": {
+        "ja": "三井住友信託銀行 立川支店",
+        "zh-Hans": "三井住友信托银行 立川支行",
+        "zh-Hant": "三井住友信託銀行 立川支行",
+        "en": "SMBC Trust Bank Tachikawa Branch"
+      },
+      "marks": {
+        "ja": "立川駅北口の三井住友信託銀行前",
+        "zh-Hans": "立川站北口三井住友信托银行前",
+        "zh-Hant": "立川站北口三井住友信託銀行前"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/34700437-c248-4463-81ba-9d0bd8b06b2a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-34700437.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/34700437-c248-4463-81ba-9d0bd8b06b2a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-4ef48553",
+      "name": "ウェンディーズ・ファーストキッチン 立川フロム中武店",
+      "cn": "Wendy's First Kitchen 立川From中武店",
+      "lat": 35.69978,
+      "lng": 139.41456,
+      "ep": "6",
+      "s": 289,
+      "src": "ja",
+      "names": {
+        "ja": "ウェンディーズ・ファーストキッチン 立川フロム中武店",
+        "zh-Hans": "Wendy's First Kitchen 立川From中武店",
+        "zh-Hant": "Wendy's First Kitchen 立川From中武店",
+        "en": "Wendy’s First Kitchen - Tachikawa From Chubu"
+      },
+      "marks": {
+        "ja": "立川駅北口 フロム中武",
+        "zh-Hans": "立川站北口 From 中武",
+        "zh-Hant": "立川站北口 From 中武"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/4ef48553-3a55-403c-9263-fc9cc9095a4a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-4ef48553.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/4ef48553-3a55-403c-9263-fc9cc9095a4a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-5132dff1",
+      "name": "立川駅",
+      "cn": "立川站",
+      "lat": 35.69857,
+      "lng": 139.4139,
+      "ep": "6",
+      "s": 711,
+      "src": "ja",
+      "names": {
+        "ja": "立川駅",
+        "zh-Hans": "立川站",
+        "zh-Hant": "立川站",
+        "en": "Tachikawa Station"
+      },
+      "marks": {
+        "ja": "立川駅",
+        "zh-Hans": "立川站",
+        "zh-Hant": "立川站"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5132dff1-3e69-4422-90d6-237308563d08",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-5132dff1.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5132dff1-3e69-4422-90d6-237308563d08",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-2c3133b0",
+      "name": "インド定食ターリー屋 立川北口店",
+      "cn": "印度定食Thali屋 立川北口店",
+      "lat": 35.69965,
+      "lng": 139.41419,
+      "ep": "6",
+      "s": 748,
+      "src": "ja",
+      "names": {
+        "ja": "インド定食ターリー屋 立川北口店",
+        "zh-Hans": "印度定食Thali屋 立川北口店",
+        "zh-Hant": "印度定食Thali屋 立川北口店",
+        "en": "Indoteishokutariya Tachikawakitaguchiten"
+      },
+      "marks": {
+        "ja": "立川駅北口の飲食店街",
+        "zh-Hans": "立川站北口的餐饮街",
+        "zh-Hant": "立川站北口的餐飲街"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/2c3133b0-0264-423b-a5c6-65e28c7d2ccb",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-2c3133b0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/2c3133b0-0264-423b-a5c6-65e28c7d2ccb",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-eb91997b",
+      "name": "カフェ・ベローチェ 渋谷駅新南口店",
+      "cn": "Caffè Veloce 涩谷站新南口店",
+      "lat": 35.65578,
+      "lng": 139.70423,
+      "ep": "7",
+      "s": 1222,
+      "src": "ja",
+      "names": {
+        "ja": "カフェ・ベローチェ 渋谷駅新南口店",
+        "zh-Hans": "Caffè Veloce 涩谷站新南口店",
+        "zh-Hant": "Caffè Veloce 澀谷站新南口店",
+        "en": "Caffè Veloce - Shibuya Station New South Entrance"
+      },
+      "marks": {
+        "ja": "渋谷駅新南口 カフェ・ベローチェ前",
+        "zh-Hans": "涩谷站新南口 Caffè Veloce 门前",
+        "zh-Hant": "澀谷站新南口 Caffè Veloce 門前"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/eb91997b-d352-4052-9a42-99d0e2307e4f",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-eb91997b.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/eb91997b-d352-4052-9a42-99d0e2307e4f",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-16decf4d",
+      "name": "ミスターミニット東京メトロ 明治神宮前",
+      "cn": "Mister Minit 东京地铁 明治神宫前",
+      "lat": 35.6693,
+      "lng": 139.70375,
+      "ep": "8",
+      "s": 475,
+      "src": "ja",
+      "names": {
+        "ja": "ミスターミニット東京メトロ 明治神宮前",
+        "zh-Hans": "Mister Minit 东京地铁 明治神宫前",
+        "zh-Hant": "Mister Minit 東京地鐵 明治神宮前",
+        "en": "Misutaminittotokyometoro Meijijingumae"
+      },
+      "marks": {
+        "ja": "明治神宮前駅構内 ミスターミニット付近",
+        "zh-Hans": "明治神宫前站内 Mister Minit 附近",
+        "zh-Hant": "明治神宮前站內 Mister Minit 附近"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/16decf4d-5be3-42b8-9737-3d1736757198",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-16decf4d.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/16decf4d-5be3-42b8-9737-3d1736757198",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-528764a5",
+      "name": "B2F 明治神宮前〈原宿〉駅",
+      "cn": "B2F 明治神宫前 原宿站",
+      "lat": 35.66917,
+      "lng": 139.70402,
+      "ep": "8",
+      "s": 515,
+      "src": "ja",
+      "names": {
+        "ja": "B2F 明治神宮前〈原宿〉駅",
+        "zh-Hans": "B2F 明治神宫前 原宿站",
+        "zh-Hant": "B2F 明治神宮前 原宿站",
+        "en": "B2F Meiji Jingumae (Harajuku) Station"
+      },
+      "marks": {
+        "ja": "明治神宮前〈原宿〉駅 B2F",
+        "zh-Hans": "明治神宫前〈原宿〉站 B2F",
+        "zh-Hant": "明治神宮前〈原宿〉站 B2F"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/528764a5-05c8-4801-8ef5-020072ed4a41",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-528764a5.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/528764a5-05c8-4801-8ef5-020072ed4a41",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-cc289d28",
+      "name": "渋谷駅 東京メトロ副都心線 5・6番線",
+      "cn": "涩谷站 东京地铁副都心线 5·6号站台",
+      "lat": 35.658583,
+      "lng": 139.702609,
+      "ep": "9",
+      "s": 1170,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷駅 東京メトロ副都心線 5・6番線",
+        "zh-Hans": "涩谷站 东京地铁副都心线 5·6号站台",
+        "zh-Hant": "澀谷站 東京地鐵副都心線 5·6號站臺",
+        "en": "Shibuya Station Tokyo Metro Fukutoshin Line Platforms 5 and 6"
+      },
+      "marks": {
+        "ja": "渋谷駅 副都心線5・6番線ホーム（五条封印の舞台）",
+        "zh-Hans": "涩谷站副都心线 5·6 号站台（五条被封印的地方）",
+        "zh-Hant": "澀谷站副都心線 5·6 號站臺（五條被封印的地方）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/cc289d28-2fd2-46e2-b7ae-b57194d8051e",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-cc289d28.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/cc289d28-2fd2-46e2-b7ae-b57194d8051e",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-a5bc1442",
+      "name": "Mothership",
+      "cn": "原宿 Mothership",
+      "lat": 35.66934,
+      "lng": 139.70278,
+      "ep": "10",
+      "s": 570,
+      "src": "ja",
+      "names": {
+        "ja": "Mothership",
+        "zh-Hans": "原宿 Mothership",
+        "zh-Hant": "原宿 Mothership",
+        "en": "Mothership"
+      },
+      "marks": {
+        "ja": "原宿の Mothership",
+        "zh-Hans": "原宿的 Mothership",
+        "zh-Hant": "原宿的 Mothership"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/a5bc1442-210b-4a57-9101-449a0c09e199",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-a5bc1442.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/a5bc1442-210b-4a57-9101-449a0c09e199",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-d679ac41",
+      "name": "ファミリーマート 渋谷一丁目店",
+      "cn": "全家 涩谷一丁目店",
+      "lat": 35.660784,
+      "lng": 139.702242,
+      "ep": "10",
+      "s": 634,
+      "src": "ja",
+      "names": {
+        "ja": "ファミリーマート 渋谷一丁目店",
+        "zh-Hans": "全家 涩谷一丁目店",
+        "zh-Hant": "全家 澀谷一丁目店",
+        "en": "FamilyMart Shibuya 1-chome"
+      },
+      "marks": {
+        "ja": "ファミリーマート渋谷一丁目店",
+        "zh-Hans": "全家 涩谷一丁目店",
+        "zh-Hant": "全家 澀谷一丁目店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/d679ac41-57bd-4a89-8f3b-8a582449a38a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-d679ac41.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/d679ac41-57bd-4a89-8f3b-8a582449a38a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-670906ba",
+      "name": "セカンドストリート渋谷神南店",
+      "cn": "2nd Street 涩谷神南店",
+      "lat": 35.661526,
+      "lng": 139.700787,
+      "ep": "10",
+      "s": 867,
+      "src": "ja",
+      "names": {
+        "ja": "セカンドストリート渋谷神南店",
+        "zh-Hans": "2nd Street 涩谷神南店",
+        "zh-Hant": "2nd Street 澀谷神南店",
+        "en": "2nd Street Shibuya Jinnan Store"
+      },
+      "marks": {
+        "ja": "セカンドストリート渋谷神南店前",
+        "zh-Hans": "2nd Street 涩谷神南店门前",
+        "zh-Hant": "2nd Street 澀谷神南店門前"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/670906ba-ae30-4005-a0ba-e8f8df564395",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-670906ba.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/670906ba-ae30-4005-a0ba-e8f8df564395",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-7a1d81c5",
+      "name": "渋谷東急REIホテル",
+      "cn": "涩谷东急REI酒店",
+      "lat": 35.66025,
+      "lng": 139.70219,
+      "ep": "10",
+      "s": 868,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷東急REIホテル",
+        "zh-Hans": "涩谷东急REI酒店",
+        "zh-Hant": "澀谷東急REI酒店",
+        "en": "Shibuya Tokyu REI Hotel"
+      },
+      "marks": {
+        "ja": "渋谷東急REIホテル",
+        "zh-Hans": "涩谷东急 REI 酒店",
+        "zh-Hant": "澀谷東急 REI 酒店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/7a1d81c5-7785-4de3-a98c-fb4038062fae",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-7a1d81c5.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/7a1d81c5-7785-4de3-a98c-fb4038062fae",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-e698edae",
+      "name": "渋谷モディ",
+      "cn": "涩谷MODI",
+      "lat": 35.66124,
+      "lng": 139.700787,
+      "ep": "11",
+      "s": 15,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷モディ",
+        "zh-Hans": "涩谷MODI",
+        "zh-Hant": "澀谷MODI",
+        "en": "Shibuya MODI"
+      },
+      "marks": {
+        "ja": "渋谷モディ",
+        "zh-Hans": "涩谷 MODI",
+        "zh-Hant": "澀谷 MODI"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/e698edae-1f82-47c7-b5d7-d2d5473925b1",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-e698edae.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/e698edae-1f82-47c7-b5d7-d2d5473925b1",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-de6aadcd",
+      "name": "ブリッジ渋谷21",
+      "cn": "Bridge涩谷21",
+      "lat": 35.65659,
+      "lng": 139.699,
+      "ep": "11",
+      "s": 1147,
+      "src": "ja",
+      "names": {
+        "ja": "ブリッジ渋谷21",
+        "zh-Hans": "Bridge涩谷21",
+        "zh-Hant": "Bridge澀谷21",
+        "en": "Shibuya Bridge 21"
+      },
+      "marks": {
+        "ja": "渋谷ブリッジ21",
+        "zh-Hans": "涩谷 Bridge 21",
+        "zh-Hant": "澀谷 Bridge 21"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/de6aadcd-dae4-4a56-8397-6c6aa572f102",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-de6aadcd.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/de6aadcd-dae4-4a56-8397-6c6aa572f102",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-9a9bae7b",
+      "name": "渋谷駅（バス）",
+      "cn": "涩谷站",
+      "lat": 35.656781,
+      "lng": 139.69948,
+      "ep": "12",
+      "s": 474,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷駅（バス）",
+        "zh-Hans": "涩谷站",
+        "zh-Hant": "澀谷站",
+        "en": "Shibuya Eki(Bus)"
+      },
+      "marks": {
+        "ja": "渋谷駅西口・南口のバス乗り場",
+        "zh-Hans": "涩谷站西口·南口公交站",
+        "zh-Hant": "澀谷站西口·南口公交站"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/9a9bae7b-6e89-40e6-a08f-c326befcf787",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-9a9bae7b.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/9a9bae7b-6e89-40e6-a08f-c326befcf787",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-e4ff784d",
+      "name": "俺流塩らーめん 東急本店前店",
+      "cn": "俺流盐拉面 东急本店前店",
+      "lat": 35.66032,
+      "lng": 139.69636,
+      "ep": "12",
+      "s": 1089,
+      "src": "ja",
+      "names": {
+        "ja": "俺流塩らーめん 東急本店前店",
+        "zh-Hans": "俺流盐拉面 东急本店前店",
+        "zh-Hant": "俺流鹽拉麵 東急本店前店",
+        "en": "Oreryu Shio-Ramen Tokyu Main Store Front"
+      },
+      "marks": {
+        "ja": "俺流塩らーめん 東急本店前店",
+        "zh-Hans": "俺流盐拉面 东急本店前店",
+        "zh-Hant": "俺流鹽拉麵 東急本店前店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/e4ff784d-b67b-4ca5-b1d4-1355234add1e",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-e4ff784d.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/e4ff784d-b67b-4ca5-b1d4-1355234add1e",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-539d3618",
+      "name": "北海道スープカレーSuage 渋谷店",
+      "cn": "北海道 Soup Curry Suage 涩谷店",
+      "lat": 35.65834,
+      "lng": 139.70313,
+      "ep": "13",
+      "s": 57,
+      "src": "ja",
+      "names": {
+        "ja": "北海道スープカレーSuage 渋谷店",
+        "zh-Hans": "北海道 Soup Curry Suage 涩谷店",
+        "zh-Hant": "北海道 Soup Curry Suage 澀谷店",
+        "en": "Hokkaido Soup Curry Suage SHIBUYA"
+      },
+      "marks": {
+        "ja": "渋谷駅東口 北海道スープカレーSuage前",
+        "zh-Hans": "涩谷站东口 北海道汤咖喱 Suage 门前",
+        "zh-Hant": "澀谷站東口 北海道湯咖哩 Suage 門前"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/539d3618-5aa7-40c8-a5d1-f2abb29afe5d",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-539d3618.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/539d3618-5aa7-40c8-a5d1-f2abb29afe5d",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-e518e714",
+      "name": "B4F 渋谷ヒカリエ1改札付近",
+      "cn": "涩谷Hikarie B4F 1号检票口附近",
+      "lat": 35.6591,
+      "lng": 139.70256,
+      "ep": "13",
+      "s": 542,
+      "src": "ja",
+      "names": {
+        "ja": "B4F 渋谷ヒカリエ1改札付近",
+        "zh-Hans": "涩谷Hikarie B4F 1号检票口附近",
+        "zh-Hant": "澀谷Hikarie B4F 1號檢票口附近",
+        "en": "Near the B4F Shibuya Hikarie 1 gate"
+      },
+      "marks": {
+        "ja": "渋谷駅B4F ヒカリエ1改札付近（虎杖 vs 脹相）",
+        "zh-Hans": "涩谷站 B4F Hikarie 1 号检票口附近（虎杖 vs 胀相）",
+        "zh-Hant": "澀谷站 B4F Hikarie 1 號檢票口附近（虎杖 vs 脹相）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/e518e714-9236-4ea9-ad4a-f34e126e48e5",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-e518e714.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/e518e714-9236-4ea9-ad4a-f34e126e48e5",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-417ccddd",
+      "name": "岡本太郎「明日の神話」",
+      "cn": "明日的神话",
+      "lat": 35.658771,
+      "lng": 139.700264,
+      "ep": "15",
+      "s": 664,
+      "src": "ja",
+      "names": {
+        "ja": "岡本太郎「明日の神話」",
+        "zh-Hans": "明日的神话",
+        "zh-Hant": "明日的神話",
+        "en": "Myth of Tomorrow"
+      },
+      "marks": {
+        "ja": "渋谷マークシティ連絡通路の壁画「明日の神話」",
+        "zh-Hans": "涩谷 Mark City 连络通道的壁画《明日的神话》",
+        "zh-Hant": "澀谷 Mark City 連絡通道的壁畫《明日的神話》"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/417ccddd-053a-46e7-893e-2a481777c4d9",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-417ccddd.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/417ccddd-053a-46e7-893e-2a481777c4d9",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-7599e297",
+      "name": "SHIBUYAフレンズ動物病院",
+      "cn": "SHIBUYA Friends 动物医院",
+      "lat": 35.65673,
+      "lng": 139.7047,
+      "ep": "16",
+      "s": 0,
+      "src": "ja",
+      "names": {
+        "ja": "SHIBUYAフレンズ動物病院",
+        "zh-Hans": "SHIBUYA Friends 动物医院",
+        "zh-Hant": "SHIBUYA Friends 動物醫院",
+        "en": "SHIBUYA Friends Animal Clinic"
+      },
+      "marks": {
+        "ja": "SHIBUYAフレンズ動物病院付近",
+        "zh-Hans": "SHIBUYA Friends 动物医院附近",
+        "zh-Hant": "SHIBUYA Friends 動物醫院附近"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/7599e297-9ba5-432a-8223-3ea4a599a812",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-7599e297.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/7599e297-9ba5-432a-8223-3ea4a599a812",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-1b3c9244",
+      "name": "RELX VAPE &NEWS STAND",
+      "cn": "RELX VAPE &NEWS STAND",
+      "lat": 35.6588,
+      "lng": 139.70024,
+      "ep": "16",
+      "s": 156,
+      "src": "ja",
+      "names": {
+        "ja": "RELX VAPE &NEWS STAND",
+        "zh-Hans": "RELX VAPE &NEWS STAND",
+        "zh-Hant": "RELX VAPE &NEWS STAND",
+        "en": "RELX VAPE &NEWS STAND"
+      },
+      "marks": {
+        "ja": "マークシティ連絡通路の売店（明日の神話前）",
+        "zh-Hans": "Mark City 连络通道的小卖部（《明日的神话》前）",
+        "zh-Hant": "Mark City 連絡通道的小賣部（《明日的神話》前）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/1b3c9244-f371-4525-bad4-7e681b9b2515",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-1b3c9244.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/1b3c9244-f371-4525-bad4-7e681b9b2515",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-7a1ef25e",
+      "name": "京都駅",
+      "cn": "京都站",
+      "lat": 34.98601,
+      "lng": 135.75889,
+      "ep": "16",
+      "s": 510,
+      "src": "ja",
+      "names": {
+        "ja": "京都駅",
+        "zh-Hans": "京都站",
+        "zh-Hant": "京都站",
+        "en": "Kyoto Station"
+      },
+      "marks": {
+        "ja": "京都駅",
+        "zh-Hans": "京都站",
+        "zh-Hant": "京都站"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/7a1ef25e-c49f-4bf5-8cb3-82be7a2882fc",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-7a1ef25e.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/7a1ef25e-c49f-4bf5-8cb3-82be7a2882fc",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-579a9349",
+      "name": "渋谷ストリーム ホール",
+      "cn": "渋谷ストリーム ホール",
+      "lat": 35.657311,
+      "lng": 139.702541,
+      "ep": "16",
+      "s": 1007,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷ストリーム ホール",
+        "zh-Hans": "渋谷ストリーム ホール",
+        "zh-Hant": "渋谷ストリーム ホール",
+        "en": "Shibuya Stream Hall"
+      },
+      "marks": {
+        "ja": "渋谷ストリーム ホール",
+        "zh-Hans": "涩谷 Stream 大厅",
+        "zh-Hant": "澀谷 Stream 大廳"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/579a9349-966a-4a80-be25-582caebdb25e",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-579a9349.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/579a9349-966a-4a80-be25-582caebdb25e",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-cd57671d",
+      "name": "宝くじロトハウス 渋谷駅井の頭口店",
+      "cn": "彩票 Lotto House 涩谷站井之头口店",
+      "lat": 35.65904,
+      "lng": 139.69983,
+      "ep": "16",
+      "s": 485,
+      "src": "ja",
+      "names": {
+        "ja": "宝くじロトハウス 渋谷駅井の頭口店",
+        "zh-Hans": "彩票 Lotto House 涩谷站井之头口店",
+        "zh-Hant": "彩票 Lotto House 澀谷站井之頭口店",
+        "en": "Lottery Lotto House Shibuya Station Inokashira Exit Store"
+      },
+      "marks": {
+        "ja": "宝くじロトハウス 渋谷駅井の頭口店",
+        "zh-Hans": "彩票 Lotto House 涩谷站井之头口店",
+        "zh-Hant": "彩票 Lotto House 澀谷站井之頭口店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/cd57671d-fd85-4058-8850-68f60a08dce7",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-cd57671d.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/cd57671d-fd85-4058-8850-68f60a08dce7",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-a1ed0276",
+      "name": "薬 マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+      "cn": "薬 マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+      "lat": 35.65967,
+      "lng": 139.69937,
+      "ep": "17",
+      "s": 396,
+      "src": "ja",
+      "names": {
+        "ja": "薬 マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+        "zh-Hans": "薬 マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+        "zh-Hant": "薬 マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+        "en": "Matsumoto Kiyoshi Shibuya Dogenzaka Flag"
+      },
+      "marks": {
+        "ja": "マツモトキヨシ SHIBUYA DOGENZAKA FLAG",
+        "zh-Hans": "松本清 SHIBUYA DOGENZAKA FLAG",
+        "zh-Hant": "松本清 SHIBUYA DOGENZAKA FLAG"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/a1ed0276-5ec3-4d05-a0f6-5058525cb285",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-a1ed0276.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/a1ed0276-5ec3-4d05-a0f6-5058525cb285",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-8645fd14",
+      "name": "渋谷スクランブル交差点",
+      "cn": "涩谷十字路口",
+      "lat": 35.65953,
+      "lng": 139.70049,
+      "ep": "17",
+      "s": 760,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷スクランブル交差点",
+        "zh-Hans": "涩谷十字路口",
+        "zh-Hant": "澀谷十字路口",
+        "en": "Shibuya scramble crossing"
+      },
+      "marks": {
+        "ja": "渋谷スクランブル交差点",
+        "zh-Hans": "涩谷十字路口",
+        "zh-Hant": "澀谷十字路口"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/8645fd14-6755-4617-acb7-26dc1e55927a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-8645fd14.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/8645fd14-6755-4617-acb7-26dc1e55927a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-186f6457",
+      "name": "ファミリーマート 渋谷１０９前店",
+      "cn": "ファミリーマート 渋谷１０９前店",
+      "lat": 35.65983,
+      "lng": 139.69878,
+      "ep": "17",
+      "s": 1196,
+      "src": "ja",
+      "names": {
+        "ja": "ファミリーマート 渋谷１０９前店",
+        "zh-Hans": "ファミリーマート 渋谷１０９前店",
+        "zh-Hant": "ファミリーマート 渋谷１０９前店",
+        "en": "FamilyMart Shibuya 109-mae store"
+      },
+      "marks": {
+        "ja": "ファミリーマート渋谷109前店",
+        "zh-Hans": "全家 涩谷 109 前店",
+        "zh-Hant": "全家 澀谷 109 前店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/186f6457-d2e4-4bb0-a611-a78a4218e1e5",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-186f6457.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/186f6457-d2e4-4bb0-a611-a78a4218e1e5",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-4f2d915a",
+      "name": "ハチ公改札",
+      "cn": "八公检票口",
+      "lat": 35.659551,
+      "lng": 139.700269,
+      "ep": "18",
+      "s": 620,
+      "src": "ja",
+      "names": {
+        "ja": "ハチ公改札",
+        "zh-Hans": "八公检票口",
+        "zh-Hant": "八公檢票口",
+        "en": "Hachiko Ticket Gate"
+      },
+      "marks": {
+        "ja": "渋谷駅 ハチ公改札",
+        "zh-Hans": "涩谷站 八公检票口",
+        "zh-Hant": "澀谷站 八公檢票口"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/4f2d915a-4d15-4b6d-9b98-959702f60382",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-4f2d915a.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/4f2d915a-4d15-4b6d-9b98-959702f60382",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-30a55beb",
+      "name": "焼肉 もうもうくうくう 渋谷店",
+      "cn": "烤肉 Moumoukuukuu 涩谷店",
+      "lat": 35.65978,
+      "lng": 139.69775,
+      "ep": "18",
+      "s": 1274,
+      "src": "ja",
+      "names": {
+        "ja": "焼肉 もうもうくうくう 渋谷店",
+        "zh-Hans": "烤肉 Moumoukuukuu 涩谷店",
+        "zh-Hant": "烤肉 Moumoukuukuu 澀谷店",
+        "en": "Yakiniku Moumokukuu"
+      },
+      "marks": {
+        "ja": "道玄坂小路 焼肉もうもうくうくう前",
+        "zh-Hans": "道玄坂小路 烤肉 Moumoukuukuu 门前",
+        "zh-Hant": "道玄坂小路 烤肉 Moumoukuukuu 門前"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/30a55beb-81ac-4ff9-9dc8-ff7d29c6cd6d",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-30a55beb.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/30a55beb-81ac-4ff9-9dc8-ff7d29c6cd6d",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-66333ee9",
+      "name": "B1F Bunkamura Street Exit 3a",
+      "cn": "涩谷站 B1F 文化村通 3a 出口",
+      "lat": 35.65955,
+      "lng": 139.6993,
+      "ep": "19",
+      "s": 409,
+      "src": "ja",
+      "names": {
+        "ja": "B1F Bunkamura Street Exit 3a",
+        "zh-Hans": "涩谷站 B1F 文化村通 3a 出口",
+        "zh-Hant": "澀谷站 B1F 文化村通 3a 出口",
+        "en": "B1F Bunkamura Street Exit 3a"
+      },
+      "marks": {
+        "ja": "渋谷駅B1F 文化村通り3a出口",
+        "zh-Hans": "涩谷站 B1F 文化村通 3a 出口",
+        "zh-Hant": "澀谷站 B1F 文化村通 3a 出口"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/66333ee9-904b-4697-9361-5b26753c9f2a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-66333ee9.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/66333ee9-904b-4697-9361-5b26753c9f2a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-5b7c2705",
+      "name": "B1F プライム出口1",
+      "cn": "B1F Prime出口1",
+      "lat": 35.659337,
+      "lng": 139.698732,
+      "ep": "19",
+      "s": 575,
+      "src": "ja",
+      "names": {
+        "ja": "B1F プライム出口1",
+        "zh-Hans": "B1F Prime出口1",
+        "zh-Hant": "B1F Prime出口1",
+        "en": "B1F Prime Exit 1"
+      },
+      "marks": {
+        "ja": "渋谷駅B1F プライム出口1",
+        "zh-Hans": "涩谷站 B1F Prime 出口 1",
+        "zh-Hant": "澀谷站 B1F Prime 出口 1"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5b7c2705-b1de-416e-ac21-e34033e6396e",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-5b7c2705.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5b7c2705-b1de-416e-ac21-e34033e6396e",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-1688fc65",
+      "name": "渋谷駅 田園都市線 1番線",
+      "cn": "涩谷站 田园都市线 1号站台",
+      "lat": 35.659451,
+      "lng": 139.700324,
+      "ep": "20",
+      "s": 1224,
+      "src": "ja",
+      "names": {
+        "ja": "渋谷駅 田園都市線 1番線",
+        "zh-Hans": "涩谷站 田园都市线 1号站台",
+        "zh-Hant": "澀谷站 田園都市線 1號站臺",
+        "en": "Shibuya Station, Denentoshi Line, Platform 1"
+      },
+      "marks": {
+        "ja": "渋谷駅 田園都市線1番線ホーム",
+        "zh-Hans": "涩谷站 田园都市线 1 号站台",
+        "zh-Hant": "澀谷站 田園都市線 1 號站臺"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/1688fc65-f3fb-46bc-b0f1-1bbef8696183",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-1688fc65.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/1688fc65-f3fb-46bc-b0f1-1bbef8696183",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-f8d53454",
+      "name": "サーティワンアイスクリーム 渋谷店",
+      "cn": "31 冰淇淋（Baskin-Robbins）涩谷店",
+      "lat": 35.65977,
+      "lng": 139.69892,
+      "ep": "21",
+      "s": 213,
+      "src": "ja",
+      "names": {
+        "ja": "サーティワンアイスクリーム 渋谷店",
+        "zh-Hans": "31 冰淇淋（Baskin-Robbins）涩谷店",
+        "zh-Hant": "31 冰淇淋（Baskin-Robbins）澀谷店",
+        "en": "Baskin-Robbins - Shibuya"
+      },
+      "marks": {
+        "ja": "サーティワンアイスクリーム渋谷店付近",
+        "zh-Hans": "31 冰淇淋 涩谷店附近",
+        "zh-Hant": "31 冰淇淋 澀谷店附近"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f8d53454-0500-4fa6-9c8b-87ae15330eac",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-f8d53454.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f8d53454-0500-4fa6-9c8b-87ae15330eac",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-63380a7a",
+      "name": "B3F 田園都市線ホーム",
+      "cn": "田园都市线站台 B3F",
+      "lat": 35.65946,
+      "lng": 139.70101,
+      "ep": "22",
+      "s": 198,
+      "src": "ja",
+      "names": {
+        "ja": "B3F 田園都市線ホーム",
+        "zh-Hans": "田园都市线站台 B3F",
+        "zh-Hant": "田園都市線站臺 B3F",
+        "en": "B3F Denentoshi Line platform"
+      },
+      "marks": {
+        "ja": "渋谷駅B3F 田園都市線ホーム",
+        "zh-Hans": "涩谷站 B3F 田园都市线站台",
+        "zh-Hant": "澀谷站 B3F 田園都市線站臺"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/63380a7a-229e-43e3-bc8c-e243d1888fe6",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-63380a7a.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/63380a7a-229e-43e3-bc8c-e243d1888fe6",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-65e426f5",
+      "name": "飯田橋駅",
+      "cn": "饭田桥站",
+      "lat": 35.70001,
+      "lng": 139.74356,
+      "ep": "23",
+      "s": 1137,
+      "src": "ja",
+      "names": {
+        "ja": "飯田橋駅",
+        "zh-Hans": "饭田桥站",
+        "zh-Hant": "飯田橋站",
+        "en": "Iidabashi Station"
+      },
+      "marks": {
+        "ja": "飯田橋駅",
+        "zh-Hans": "饭田桥站",
+        "zh-Hant": "飯田橋站"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/65e426f5-d2e6-4fde-a92f-1fe459973312",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-65e426f5.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/65e426f5-d2e6-4fde-a92f-1fe459973312",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 369304,
+      "id": "m-369304-ap-0a802527",
+      "name": "佃大橋",
+      "cn": "佃大桥",
+      "lat": 35.66777,
+      "lng": 139.78114,
+      "ep": "23",
+      "s": 1320,
+      "src": "ja",
+      "names": {
+        "ja": "佃大橋",
+        "zh-Hans": "佃大桥",
+        "zh-Hant": "佃大橋",
+        "en": "Tsukuda Ohashi Bridge"
+      },
+      "marks": {
+        "ja": "佃大橋",
+        "zh-Hans": "佃大桥",
+        "zh-Hant": "佃大橋"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/0a802527-dcda-48ff-a260-44ed6fd1927a",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-369304-ap-0a802527.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/0a802527-dcda-48ff-a260-44ed6fd1927a",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-fyFa8bOq",
+      "name": "コメダ珈琲店 新宿靖国通り店付近",
+      "cn": "客美多咖啡 新宿靖国通店附近",
+      "lat": 35.69357,
+      "lng": 139.701709,
+      "ep": "OP",
+      "s": 232,
+      "src": "ja",
+      "names": {
+        "ja": "コメダ珈琲店 新宿靖国通り店付近",
+        "zh-Hans": "客美多咖啡 新宿靖国通店附近",
+        "zh-Hant": "客美多咖啡 新宿靖國通店附近",
+        "en": "Komeda's Coffee Shinjuku Yasukuni-dori"
+      },
+      "marks": {
+        "ja": "OP に映る新宿・靖国通りの街角",
+        "zh-Hans": "OP 中出现的新宿靖国通街角",
+        "zh-Hant": "OP 中出現的新宿靖國通街角"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/fyFa8bOq6rYOMJKZfJaj",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-KxXZHUSj",
+      "name": "ファミリーマート 渋谷松濤一丁目店付近",
+      "cn": "全家 涩谷松涛一丁目店附近",
+      "lat": 35.660072,
+      "lng": 139.695614,
+      "ep": "OP",
+      "s": 243,
+      "src": "ja",
+      "names": {
+        "ja": "ファミリーマート 渋谷松濤一丁目店付近",
+        "zh-Hans": "全家 涩谷松涛一丁目店附近",
+        "zh-Hant": "全家 澀谷松濤一丁目店附近",
+        "en": "FamilyMart Shibuya Shoto 1-chome"
+      },
+      "marks": {
+        "ja": "OP の伏黒のカット",
+        "zh-Hans": "OP 伏黑的镜头",
+        "zh-Hant": "OP 伏黑的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/KxXZHUSjlMLHZ44i19MU",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-S3ntcuE9",
+      "name": "岡本太郎「明日の神話」（渋谷マークシティ連絡通路）",
+      "cn": "冈本太郎《明日的神话》（涩谷 Mark City 连络通道）",
+      "lat": 35.658748,
+      "lng": 139.700258,
+      "ep": "OP",
+      "s": 244,
+      "src": "ja",
+      "names": {
+        "ja": "岡本太郎「明日の神話」（渋谷マークシティ連絡通路）",
+        "zh-Hans": "冈本太郎《明日的神话》（涩谷 Mark City 连络通道）",
+        "zh-Hant": "岡本太郎《明日的神話》（澀谷 Mark City 連絡通道）",
+        "en": "Myth of Tomorrow"
+      },
+      "marks": {
+        "ja": "OP に壁画「明日の神話」が映る",
+        "zh-Hans": "OP 中出现壁画《明日的神话》",
+        "zh-Hant": "OP 中出現壁畫《明日的神話》"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/S3ntcuE9bqP7HT8qLgcA",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-XwaujqOz",
+      "name": "東京大学 本郷キャンパス",
+      "cn": "东京大学 本乡校区",
+      "lat": 35.71237,
+      "lng": 139.760868,
+      "ep": "OP",
+      "s": 245,
+      "src": "ja",
+      "names": {
+        "ja": "東京大学 本郷キャンパス",
+        "zh-Hans": "东京大学 本乡校区",
+        "zh-Hant": "東京大學 本鄉校區",
+        "en": "University of Tokyo"
+      },
+      "marks": {
+        "ja": "OP「AIZO」に東大の建物が映る",
+        "zh-Hans": "OP 中出现东京大学建筑",
+        "zh-Hant": "OP 中出現東京大學建築"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/XwaujqOzOQfSSQdut1Si",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-XwaujqOz.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/XwaujqOzOQfSSQdut1Si",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-KdIDorfj",
+      "name": "SHIBUYA SKY",
+      "cn": "SHIBUYA SKY",
+      "lat": 35.658837,
+      "lng": 139.702025,
+      "ep": "OP",
+      "s": 250,
+      "src": "ja",
+      "names": {
+        "ja": "SHIBUYA SKY",
+        "zh-Hans": "SHIBUYA SKY",
+        "zh-Hant": "SHIBUYA SKY",
+        "en": "Shibuya Sky"
+      },
+      "marks": {
+        "ja": "OP で渋谷スクランブルスクエア屋上が映る",
+        "zh-Hans": "OP 中出现涩谷 Scramble Square 楼顶",
+        "zh-Hant": "OP 中出現澀谷 Scramble Square 樓頂"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/KdIDorfjeiaDJALSDz0A",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-KdIDorfj.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/KdIDorfjeiaDJALSDz0A",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-JjreGU23",
+      "name": "道玄坂小路・麗郷",
+      "cn": "道玄坂小路・丽乡",
+      "lat": 35.659323,
+      "lng": 139.697715,
+      "ep": "OP",
+      "s": 280,
+      "src": "ja",
+      "names": {
+        "ja": "道玄坂小路・麗郷",
+        "zh-Hans": "道玄坂小路・丽乡",
+        "zh-Hant": "道玄坂小路・麗鄉",
+        "en": "Reikyo, Dogenzaka"
+      },
+      "marks": {
+        "ja": "OP の道玄坂の路地裏、レンガ造りの台湾料理店",
+        "zh-Hans": "OP 中道玄坂后巷的红砖台湾料理店",
+        "zh-Hant": "OP 中道玄坂後巷的紅磚臺灣料理店"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/JjreGU23Qf0Z5aaQEs2n",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-cpSwpq6m",
+      "name": "代々木公園アートスタジオ",
+      "cn": "代代木公园艺术工作室",
+      "lat": 35.669205,
+      "lng": 139.689928,
+      "ep": "OP",
+      "s": 281,
+      "src": "ja",
+      "names": {
+        "ja": "代々木公園アートスタジオ",
+        "zh-Hans": "代代木公园艺术工作室",
+        "zh-Hant": "代代木公園藝術工作室",
+        "en": "Yoyogi Park Art Studio"
+      },
+      "marks": {
+        "ja": "OP の Y 字路に建つアート作品のある建物",
+        "zh-Hans": "OP 中 Y 字路口带艺术作品的建筑",
+        "zh-Hant": "OP 中 Y 字路口帶藝術作品的建築"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/cpSwpq6mkLk2Q6RLTxRo",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-iFbCW3GD",
+      "name": "合衆国最高裁判所",
+      "cn": "美国最高法院",
+      "lat": 38.890597,
+      "lng": -77.005336,
+      "ep": "OP",
+      "s": 294,
+      "src": "ja",
+      "names": {
+        "ja": "合衆国最高裁判所",
+        "zh-Hans": "美国最高法院",
+        "zh-Hant": "美國最高法院",
+        "en": "Supreme Court of the United States"
+      },
+      "marks": {
+        "ja": "OP の名画・建築オマージュの一つ",
+        "zh-Hans": "OP 中致敬名画/名建筑的镜头之一",
+        "zh-Hant": "OP 中致敬名畫/名建築的鏡頭之一"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/iFbCW3GDQ2Aiit3bJOC9",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-iFbCW3GD.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/iFbCW3GDQ2Aiit3bJOC9",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-Pu3KtNKL",
+      "name": "子宝湯（江戸東京たてもの園）",
+      "cn": "子宝汤（江户东京建筑园）",
+      "lat": 35.716588,
+      "lng": 139.515033,
+      "ep": "OP",
+      "s": 295,
+      "src": "ja",
+      "names": {
+        "ja": "子宝湯（江戸東京たてもの園）",
+        "zh-Hans": "子宝汤（江户东京建筑园）",
+        "zh-Hant": "子寶湯（江戶東京建築園）",
+        "en": "Kodakara-yu"
+      },
+      "marks": {
+        "ja": "OP／禪院家の場面に映る銭湯建築",
+        "zh-Hans": "OP／禅院家场景中出现的钱汤建筑",
+        "zh-Hant": "OP／禪院家場景中出現的錢湯建築"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/Pu3KtNKLC07DYDF3Va0L",
+      "source": "Anime Pilgrimage",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-0232e742",
+      "name": "歌舞伎座",
+      "cn": "歌舞伎座",
+      "lat": 35.66941,
+      "lng": 139.76774,
+      "ep": "1",
+      "s": 207,
+      "src": "ja",
+      "names": {
+        "ja": "歌舞伎座",
+        "zh-Hans": "歌舞伎座",
+        "zh-Hant": "歌舞伎座",
+        "en": "Kabuki-za"
+      },
+      "marks": {
+        "ja": "歌舞伎座の外観（乙骨と虎杖の戦闘の舞台）",
+        "zh-Hans": "歌舞伎座外观（乙骨与虎杖交战的舞台）",
+        "zh-Hant": "歌舞伎座外觀（乙骨與虎杖交戰的舞臺）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/0232e742-641f-467a-b11d-fc9fb51f7c69",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-0232e742.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/0232e742-641f-467a-b11d-fc9fb51f7c69",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-2272de66",
+      "name": "西川家別邸",
+      "cn": "西川家别邸",
+      "lat": 35.71595,
+      "lng": 139.51357,
+      "ep": "1",
+      "s": 333,
+      "src": "ja",
+      "names": {
+        "ja": "西川家別邸",
+        "zh-Hans": "西川家别邸",
+        "zh-Hant": "西川家別邸",
+        "en": "Nishikawa Residence Annex"
+      },
+      "marks": {
+        "ja": "禪院家の屋敷として登場、直哉が縁側を歩く",
+        "zh-Hans": "作为禅院家宅邸出现，直哉走过檐廊",
+        "zh-Hant": "作為禪院家宅邸出現，直哉走過簷廊"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/2272de66-b264-4421-a67e-c1c1f94e6e60",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-2272de66.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/2272de66-b264-4421-a67e-c1c1f94e6e60",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-e78a5716",
+      "name": "飯田橋ラムラ（区境ホール）",
+      "cn": "饭田桥 RAMLA（区境大厅）",
+      "lat": 35.70138,
+      "lng": 139.74412,
+      "ep": "1",
+      "s": 590,
+      "src": "ja",
+      "names": {
+        "ja": "飯田橋ラムラ（区境ホール）",
+        "zh-Hans": "饭田桥 RAMLA（区境大厅）",
+        "zh-Hant": "飯田橋 RAMLA（區境大廳）",
+        "en": "Iidabashi Ramla (Kukyo Hall)"
+      },
+      "marks": {
+        "ja": "飯田橋ラムラのステンドグラス階段前で虎杖と脹相が会話",
+        "zh-Hans": "饭田桥 RAMLA 彩绘玻璃楼梯前，虎杖与胀相交谈",
+        "zh-Hant": "飯田橋 RAMLA 彩繪玻璃樓梯前，虎杖與脹相交談"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/e78a5716-dc88-466b-98c8-65586a103551",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-e78a5716.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/e78a5716-dc88-466b-98c8-65586a103551",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-3f6d0050",
+      "name": "佃大橋",
+      "cn": "佃大桥",
+      "lat": 35.66788,
+      "lng": 139.78093,
+      "ep": "1",
+      "s": 682,
+      "src": "ja",
+      "names": {
+        "ja": "佃大橋",
+        "zh-Hans": "佃大桥",
+        "zh-Hant": "佃大橋",
+        "en": "Tsukuda-ohashi Bridge"
+      },
+      "marks": {
+        "ja": "佃大橋で虎杖が呪霊をおびき寄せ祓う",
+        "zh-Hans": "虎杖在佃大桥引出并祓除咒灵",
+        "zh-Hant": "虎杖在佃大橋引出並祓除咒靈"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/3f6d0050-5dfc-46a7-950f-21577bfedaa5",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-3f6d0050.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/3f6d0050-5dfc-46a7-950f-21577bfedaa5",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-9fa7148b",
+      "name": "銀座一郵便局付近",
+      "cn": "银座一邮局附近",
+      "lat": 35.67292,
+      "lng": 139.76981,
+      "ep": "1",
+      "s": 748,
+      "src": "ja",
+      "names": {
+        "ja": "銀座一郵便局付近",
+        "zh-Hans": "银座一邮局附近",
+        "zh-Hant": "銀座一郵局附近",
+        "en": "Ginza 1 Post Office"
+      },
+      "marks": {
+        "ja": "東銀座周辺の街並み（虎杖の移動シーン）",
+        "zh-Hans": "东银座一带街景（虎杖移动场景）",
+        "zh-Hant": "東銀座一帶街景（虎杖移動場景）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/9fa7148b-5517-449a-9dcd-37544ee14035",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-9fa7148b.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/9fa7148b-5517-449a-9dcd-37544ee14035",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-6001c1b7",
+      "name": "コートヤード・マリオット銀座東武ホテル",
+      "cn": "东京银座万怡酒店（银座东武酒店）",
+      "lat": 35.66823,
+      "lng": 139.76517,
+      "ep": "1",
+      "s": 964,
+      "src": "ja",
+      "names": {
+        "ja": "コートヤード・マリオット銀座東武ホテル",
+        "zh-Hans": "东京银座万怡酒店（银座东武酒店）",
+        "zh-Hant": "東京銀座萬怡酒店（銀座東武酒店）",
+        "en": "Courtyard by Marriott Tokyo Ginza"
+      },
+      "marks": {
+        "ja": "ホテル屋上に乙骨が現れ、虎杖と脹相を見下ろす",
+        "zh-Hans": "乙骨出现在酒店屋顶，俯视虎杖与胀相",
+        "zh-Hant": "乙骨出現在酒店屋頂，俯視虎杖與脹相"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/6001c1b7-5f9d-43bc-9912-df0ac9830760",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-6001c1b7.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/6001c1b7-5f9d-43bc-9912-df0ac9830760",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-4843db88",
+      "name": "ヤマト運輸 東銀座営業所付近",
+      "cn": "大和运输 东银座营业所附近",
+      "lat": 35.67225,
+      "lng": 139.76972,
+      "ep": "1",
+      "s": 976,
+      "src": "ja",
+      "names": {
+        "ja": "ヤマト運輸 東銀座営業所付近",
+        "zh-Hans": "大和运输 东银座营业所附近",
+        "zh-Hant": "大和運輸 東銀座營業所附近",
+        "en": "Yamato Transport Higashi-Ginza"
+      },
+      "marks": {
+        "ja": "東銀座の路地（乙骨戦前後のカット）",
+        "zh-Hans": "东银座小巷（乙骨战前后的镜头）",
+        "zh-Hant": "東銀座小巷（乙骨戰前後的鏡頭）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/4843db88-ac33-4f52-97e8-493786ec19fc",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-4843db88.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/4843db88-ac33-4f52-97e8-493786ec19fc",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-3ccf10a0",
+      "name": "歌舞伎座",
+      "cn": "歌舞伎座",
+      "lat": 35.66929,
+      "lng": 139.76759,
+      "ep": "1",
+      "s": 1189,
+      "src": "ja",
+      "names": {
+        "ja": "歌舞伎座",
+        "zh-Hans": "歌舞伎座",
+        "zh-Hant": "歌舞伎座",
+        "en": "Kabuki-za"
+      },
+      "marks": {
+        "ja": "歌舞伎座前で乙骨と虎杖が激闘、虎杖が追い詰められる",
+        "zh-Hans": "歌舞伎座前乙骨与虎杖激战，虎杖被逼入绝境",
+        "zh-Hant": "歌舞伎座前乙骨與虎杖激戰，虎杖被逼入絕境"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/3ccf10a0-92f2-4ac8-a6dd-ca290c6e74c6",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-3ccf10a0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/3ccf10a0-92f2-4ac8-a6dd-ca290c6e74c6",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-f81e4056",
+      "name": "大宮ラクーン",
+      "cn": "大宫 RAKUUN",
+      "lat": 35.90785,
+      "lng": 139.62655,
+      "ep": "3",
+      "s": 1224,
+      "src": "ja",
+      "names": {
+        "ja": "大宮ラクーン",
+        "zh-Hans": "大宫 RAKUUN",
+        "zh-Hant": "大宮 RAKUUN",
+        "en": "Omiya Rakuun"
+      },
+      "marks": {
+        "ja": "高羽の場面に切り替わる際の建物外観（大宮ラクーンよしもと劇場）",
+        "zh-Hans": "切到高羽时出现的大楼外观（大宫 RAKUUN 吉本剧场）",
+        "zh-Hant": "切到高羽時出現的大樓外觀（大宮 RAKUUN 吉本劇場）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f81e4056-2928-4ec4-b3fc-9d1575a6a126",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-f81e4056.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f81e4056-2928-4ec4-b3fc-9d1575a6a126",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-9a92a1b1",
+      "name": "トナリエ宇都宮 立体駐車場",
+      "cn": "TONARIE 宇都宫 立体停车场",
+      "lat": 36.56123,
+      "lng": 139.8977,
+      "ep": "5",
+      "s": 499,
+      "src": "ja",
+      "names": {
+        "ja": "トナリエ宇都宮 立体駐車場",
+        "zh-Hans": "TONARIE 宇都宫 立体停车场",
+        "zh-Hant": "TONARIE 宇都宮 立體停車場",
+        "en": "Tonarie Utsunomiya"
+      },
+      "marks": {
+        "ja": "秤が賭け試合を主催する立体駐車場（栃木）",
+        "zh-Hans": "秤主办赌斗的立体停车场（栃木）",
+        "zh-Hant": "秤主辦賭鬥的立體停車場（栃木）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/9a92a1b1-e8d5-4b1d-9099-48574fbbc6a2",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-9a92a1b1.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/9a92a1b1-e8d5-4b1d-9099-48574fbbc6a2",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-671037a2",
+      "name": "かむり大橋",
+      "cn": "冠大桥",
+      "lat": 38.31768,
+      "lng": 140.883,
+      "ep": "7",
+      "s": 114,
+      "src": "ja",
+      "names": {
+        "ja": "かむり大橋",
+        "zh-Hans": "冠大桥",
+        "zh-Hant": "冠大橋",
+        "en": "Kamuri-ohashi Bridge"
+      },
+      "marks": {
+        "ja": "羂索が夢遊状態の佐々木を連れて橋を渡る",
+        "zh-Hans": "羂索带着梦游状态的佐佐木过桥",
+        "zh-Hant": "羂索帶著夢遊狀態的佐佐木過橋"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/671037a2-972a-46b7-8246-87a5ad3f8127",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-671037a2.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/671037a2-972a-46b7-8246-87a5ad3f8127",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-57440852",
+      "name": "パタゴニア仙台付近（勾当台〜広瀬通）",
+      "cn": "巴塔哥尼亚仙台店附近（勾当台～广濑通之间）",
+      "lat": 38.26368,
+      "lng": 140.87278,
+      "ep": "7",
+      "s": 179,
+      "src": "ja",
+      "names": {
+        "ja": "パタゴニア仙台付近（勾当台〜広瀬通）",
+        "zh-Hans": "巴塔哥尼亚仙台店附近（勾当台～广濑通之间）",
+        "zh-Hant": "巴塔哥尼亞仙台店附近（勾當臺～廣瀨通之間）",
+        "en": "Patagonia Sendai"
+      },
+      "marks": {
+        "ja": "佐々木が目覚め、井口が「勾当台と広瀬通の間」と言う場面",
+        "zh-Hans": "佐佐木醒来，井口说“在勾当台和广濑通之间”",
+        "zh-Hant": "佐佐木醒來，井口說“在勾當臺和廣瀨通之間”"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/57440852-ecb2-4c50-bf76-1ce9a8616b08",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-57440852.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/57440852-ecb2-4c50-bf76-1ce9a8616b08",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-31c34131",
+      "name": "東京芸術劇場",
+      "cn": "东京艺术剧场",
+      "lat": 35.73011,
+      "lng": 139.70813,
+      "ep": "7",
+      "s": 654,
+      "src": "ja",
+      "names": {
+        "ja": "東京芸術劇場",
+        "zh-Hans": "东京艺术剧场",
+        "zh-Hant": "東京藝術劇場",
+        "en": "Tokyo Metropolitan Theatre"
+      },
+      "marks": {
+        "ja": "東京第1結界（池袋）で東京芸術劇場が映るカット",
+        "zh-Hans": "东京第1结界（池袋）中出现东京艺术剧场的镜头",
+        "zh-Hant": "東京第1結界（池袋）中出現東京藝術劇場的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/31c34131-59ec-4015-a082-8958d5b2cded",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-31c34131.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/31c34131-59ec-4015-a082-8958d5b2cded",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-17ba0f07",
+      "name": "志村三丁目交差点付近（hairsalon de Forever）",
+      "cn": "志村三丁目路口附近",
+      "lat": 35.78031,
+      "lng": 139.69058,
+      "ep": "7",
+      "s": 761,
+      "src": "ja",
+      "names": {
+        "ja": "志村三丁目交差点付近（hairsalon de Forever）",
+        "zh-Hans": "志村三丁目路口附近",
+        "zh-Hant": "志村三丁目路口附近",
+        "en": "Near Shimura-sanchome crossing"
+      },
+      "marks": {
+        "ja": "虎杖と伏黒が東京第1結界に向かって歩く道路",
+        "zh-Hans": "虎杖与伏黑走向东京第1结界的道路",
+        "zh-Hant": "虎杖與伏黑走向東京第1結界的道路"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/17ba0f07-c677-4c11-8f32-7aed781aa3f5",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-17ba0f07.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/17ba0f07-c677-4c11-8f32-7aed781aa3f5",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-d74c44e0",
+      "name": "中目黒アトラスタワー",
+      "cn": "中目黑 Atlas Tower",
+      "lat": 35.64383,
+      "lng": 139.70042,
+      "ep": "7",
+      "s": 769,
+      "src": "ja",
+      "names": {
+        "ja": "中目黒アトラスタワー",
+        "zh-Hans": "中目黑 Atlas Tower",
+        "zh-Hant": "中目黑 Atlas Tower",
+        "en": "Nakameguro Atlas Tower"
+      },
+      "marks": {
+        "ja": "羽生が屋上で甘井と無線でやり取りする",
+        "zh-Hans": "羽生在楼顶通过无线电与甘井对话",
+        "zh-Hant": "羽生在樓頂透過無線電與甘井對話"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/d74c44e0-7db6-4f7f-8140-c81dea20be83",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-d74c44e0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/d74c44e0-7db6-4f7f-8140-c81dea20be83",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-f108acc0",
+      "name": "正美堂セレモニーホール付近（志村三丁目）",
+      "cn": "正美堂殡仪馆附近（志村三丁目）",
+      "lat": 35.77984,
+      "lng": 139.69104,
+      "ep": "7",
+      "s": 822,
+      "src": "ja",
+      "names": {
+        "ja": "正美堂セレモニーホール付近（志村三丁目）",
+        "zh-Hans": "正美堂殡仪馆附近（志村三丁目）",
+        "zh-Hant": "正美堂殯儀館附近（志村三丁目）",
+        "en": "Masamido Ceremony Hall"
+      },
+      "marks": {
+        "ja": "志村三丁目付近、虎杖と伏黒の結界侵入シーンの別カット",
+        "zh-Hans": "志村三丁目附近，虎杖与伏黑进入结界的另一镜头",
+        "zh-Hant": "志村三丁目附近，虎杖與伏黑進入結界的另一鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/f108acc0-e5fc-45fa-85cd-1a246ce0a102",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-f108acc0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/f108acc0-e5fc-45fa-85cd-1a246ce0a102",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-504db9a1",
+      "name": "中野セントラルパーク・サウス（ナカノサウステラ）",
+      "cn": "中野南 Stella（中野中央公园南）",
+      "lat": 35.70523,
+      "lng": 139.66658,
+      "ep": "7",
+      "s": 910,
+      "src": "ja",
+      "names": {
+        "ja": "中野セントラルパーク・サウス（ナカノサウステラ）",
+        "zh-Hans": "中野南 Stella（中野中央公园南）",
+        "zh-Hant": "中野南 Stella（中野中央公園南）",
+        "en": "Nakano Central Park South"
+      },
+      "marks": {
+        "ja": "結界内の高層ビル街のカット",
+        "zh-Hans": "结界内高楼街区的镜头",
+        "zh-Hant": "結界內高樓街區的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/504db9a1-2bae-4ffc-bcb1-8d62364c618d",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-504db9a1.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/504db9a1-2bae-4ffc-bcb1-8d62364c618d",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-e7df6f24",
+      "name": "岩森書店",
+      "cn": "岩森书店",
+      "lat": 35.70428,
+      "lng": 139.62154,
+      "ep": "7",
+      "s": 930,
+      "src": "ja",
+      "names": {
+        "ja": "岩森書店",
+        "zh-Hans": "岩森书店",
+        "zh-Hant": "巖森書店",
+        "en": "Iwamori Books"
+      },
+      "marks": {
+        "ja": "古書店の店先のカット",
+        "zh-Hans": "旧书店门面的镜头",
+        "zh-Hant": "舊書店門面的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/e7df6f24-cb6e-4313-8807-c92d15300032",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-e7df6f24.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/e7df6f24-cb6e-4313-8807-c92d15300032",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-c2b26106",
+      "name": "盛岡地方裁判所",
+      "cn": "盛冈地方法院",
+      "lat": 39.70365,
+      "lng": 141.151,
+      "ep": "8",
+      "s": 94,
+      "src": "ja",
+      "names": {
+        "ja": "盛岡地方裁判所",
+        "zh-Hans": "盛冈地方法院",
+        "zh-Hant": "盛岡地方法院",
+        "en": "Morioka District Court"
+      },
+      "marks": {
+        "ja": "日車の回想、法廷のある裁判所の外観（背景に岩手銀行本店）",
+        "zh-Hans": "日车回忆中的法院外观（背景可见岩手银行总行）",
+        "zh-Hant": "日車回憶中的法院外觀（背景可見巖手銀行總行）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/c2b26106-0831-4ea5-b1b9-5f937e08ef9d",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-c2b26106.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/c2b26106-0831-4ea5-b1b9-5f937e08ef9d",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-9ed61357",
+      "name": "医大内丸メディカルセンター前バス停付近",
+      "cn": "医大内丸医疗中心前公交站附近",
+      "lat": 39.7044,
+      "lng": 141.15094,
+      "ep": "8",
+      "s": 325,
+      "src": "ja",
+      "names": {
+        "ja": "医大内丸メディカルセンター前バス停付近",
+        "zh-Hans": "医大内丸医疗中心前公交站附近",
+        "zh-Hant": "醫大內丸醫療中心前公交站附近",
+        "en": "Idai Uchimaru Medical Center bus stop"
+      },
+      "marks": {
+        "ja": "日車の回想、盛岡市中心部の街角",
+        "zh-Hans": "日车回忆，盛冈市中心街角",
+        "zh-Hant": "日車回憶，盛岡市中心街角"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/9ed61357-2291-4098-a80f-b00998c3a9bc",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-9ed61357.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/9ed61357-2291-4098-a80f-b00998c3a9bc",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-4864675e",
+      "name": "中津川沿い（岩手公園対岸）",
+      "cn": "中津川沿岸（岩手公园对岸）",
+      "lat": 39.69931,
+      "lng": 141.15299,
+      "ep": "8",
+      "s": 440,
+      "src": "ja",
+      "names": {
+        "ja": "中津川沿い（岩手公園対岸）",
+        "zh-Hans": "中津川沿岸（岩手公园对岸）",
+        "zh-Hant": "中津川沿岸（巖手公園對岸）",
+        "en": "Nakatsu River bank, Morioka"
+      },
+      "marks": {
+        "ja": "被告・大江が警察官に声をかけられる回想。カーブミラーも再現",
+        "zh-Hans": "被告大江被警察叫住的回忆，连道路反光镜都还原了",
+        "zh-Hant": "被告大江被警察叫住的回憶，連道路反光鏡都還原了"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/4864675e-5694-4037-aa5d-04dabb50d12b",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-4864675e.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/4864675e-5694-4037-aa5d-04dabb50d12b",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-d1bc4db0",
+      "name": "門一丁目バス停（ローソン盛岡門店前）",
+      "cn": "门一丁目公交站（罗森盛冈门店前）",
+      "lat": 39.66867,
+      "lng": 141.16981,
+      "ep": "8",
+      "s": 452,
+      "src": "ja",
+      "names": {
+        "ja": "門一丁目バス停（ローソン盛岡門店前）",
+        "zh-Hans": "门一丁目公交站（罗森盛冈门店前）",
+        "zh-Hant": "門一丁目公交站（羅森盛岡門店前）",
+        "en": "Kado 1-chome bus stop, Morioka"
+      },
+      "marks": {
+        "ja": "日車と清水が河川沿いのバス停で待つ",
+        "zh-Hans": "日车与清水在河边公交站等车",
+        "zh-Hant": "日車與清水在河邊公交站等車"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/d1bc4db0-95d1-4edb-be2e-c367ed3497d7",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-d1bc4db0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/d1bc4db0-95d1-4edb-be2e-c367ed3497d7",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-3c358030",
+      "name": "やよい軒 要町店付近",
+      "cn": "Yayoiken 要町店附近",
+      "lat": 35.73327,
+      "lng": 139.69879,
+      "ep": "8",
+      "s": 828,
+      "src": "ja",
+      "names": {
+        "ja": "やよい軒 要町店付近",
+        "zh-Hans": "Yayoiken 要町店附近",
+        "zh-Hant": "Yayoiken 要町店附近",
+        "en": "Yayoiken Kanamecho"
+      },
+      "marks": {
+        "ja": "池袋・要町周辺の街角",
+        "zh-Hans": "池袋要町一带街角",
+        "zh-Hant": "池袋要町一帶街角"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/3c358030-a38e-4bd8-9421-667c01f805da",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-3c358030.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/3c358030-a38e-4bd8-9421-667c01f805da",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-0c66a016",
+      "name": "東京芸術劇場 シアターウエスト",
+      "cn": "东京艺术剧场 West 剧场",
+      "lat": 35.72997,
+      "lng": 139.70802,
+      "ep": "8",
+      "s": 892,
+      "src": "ja",
+      "names": {
+        "ja": "東京芸術劇場 シアターウエスト",
+        "zh-Hans": "东京艺术剧场 West 剧场",
+        "zh-Hant": "東京藝術劇場 West 劇場",
+        "en": "Theatre West, Tokyo Metropolitan Theatre"
+      },
+      "marks": {
+        "ja": "日車が拠点にする劇場内部、虎杖との対峙",
+        "zh-Hans": "日车作为据点的剧场内部，与虎杖对峙",
+        "zh-Hant": "日車作為據點的劇場內部，與虎杖對峙"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/0c66a016-3cf4-472d-b16a-16962d844de9",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-0c66a016.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/0c66a016-3cf4-472d-b16a-16962d844de9",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-ad842235",
+      "name": "3rrrd（池袋 立教通り付近）",
+      "cn": "3rrrd（池袋立教通附近）",
+      "lat": 35.73231,
+      "lng": 139.70417,
+      "ep": "10",
+      "s": 705,
+      "src": "ja",
+      "names": {
+        "ja": "3rrrd（池袋 立教通り付近）",
+        "zh-Hans": "3rrrd（池袋立教通附近）",
+        "zh-Hant": "3rrrd（池袋立教通附近）",
+        "en": "3rrrd"
+      },
+      "marks": {
+        "ja": "東京第1結界、立教大学周辺の街並み",
+        "zh-Hans": "东京第1结界，立教大学周边街景",
+        "zh-Hant": "東京第1結界，立教大學周邊街景"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/ad842235-0ca6-4384-9c79-f46bce8c6adc",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-ad842235.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ad842235-0ca6-4384-9c79-f46bce8c6adc",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-1c68c53d",
+      "name": "3rrrd 付近（別カット）",
+      "cn": "3rrrd 附近（另一镜头）",
+      "lat": 35.7319,
+      "lng": 139.7039,
+      "ep": "10",
+      "s": 921,
+      "src": "ja",
+      "names": {
+        "ja": "3rrrd 付近（別カット）",
+        "zh-Hans": "3rrrd 附近（另一镜头）",
+        "zh-Hant": "3rrrd 附近（另一鏡頭）",
+        "en": "3rrrd"
+      },
+      "marks": {
+        "ja": "立教通り付近の別カット",
+        "zh-Hans": "立教通附近的另一镜头",
+        "zh-Hant": "立教通附近的另一鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/1c68c53d-39cd-4dac-bf9d-aab764547ae2",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-1c68c53d.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/1c68c53d-39cd-4dac-bf9d-aab764547ae2",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-5f9d3d4b",
+      "name": "立教大学 池袋キャンパス",
+      "cn": "立教大学 池袋校区",
+      "lat": 35.73013,
+      "lng": 139.70291,
+      "ep": "10",
+      "s": 987,
+      "src": "ja",
+      "names": {
+        "ja": "立教大学 池袋キャンパス",
+        "zh-Hans": "立教大学 池袋校区",
+        "zh-Hant": "立教大學 池袋校區",
+        "en": "Rikkyo University"
+      },
+      "marks": {
+        "ja": "赤レンガの校舎が映る東京第1結界のカット",
+        "zh-Hans": "东京第1结界中出现红砖校舎的镜头",
+        "zh-Hant": "東京第1結界中出現紅磚校舎的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5f9d3d4b-d920-465c-adaa-e8d3867d1b41",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-5f9d3d4b.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5f9d3d4b-d920-465c-adaa-e8d3867d1b41",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-9d35a0e0",
+      "name": "立教学院諸聖徒礼拝堂",
+      "cn": "立教学院诸圣徒礼拜堂",
+      "lat": 35.73071,
+      "lng": 139.70357,
+      "ep": "10",
+      "s": 1042,
+      "src": "ja",
+      "names": {
+        "ja": "立教学院諸聖徒礼拝堂",
+        "zh-Hans": "立教学院诸圣徒礼拜堂",
+        "zh-Hant": "立教學院諸聖徒禮拜堂",
+        "en": "All Saints Chapel, Rikkyo"
+      },
+      "marks": {
+        "ja": "礼拝堂が映るカット",
+        "zh-Hans": "出现礼拜堂的镜头",
+        "zh-Hant": "出現禮拜堂的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/9d35a0e0-a366-4cd1-99d9-2aca0a3cc969",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-9d35a0e0.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/9d35a0e0-a366-4cd1-99d9-2aca0a3cc969",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-43a9de4a",
+      "name": "鐘山苑 別墅然然",
+      "cn": "钟山苑 别墅然然（富士吉田）",
+      "lat": 35.46658,
+      "lng": 138.81313,
+      "ep": "10",
+      "s": 1054,
+      "src": "ja",
+      "names": {
+        "ja": "鐘山苑 別墅然然",
+        "zh-Hans": "钟山苑 别墅然然（富士吉田）",
+        "zh-Hant": "鐘山苑 別墅然然（富士吉田）",
+        "en": "Kanzanen Bessho Sasa"
+      },
+      "marks": {
+        "ja": "旅館の客室・庭園のカット",
+        "zh-Hans": "旅馆客房/庭院的镜头",
+        "zh-Hant": "旅館客房/庭院的鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/43a9de4a-19b9-4215-befd-6eac93752012",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-43a9de4a.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/43a9de4a-19b9-4215-befd-6eac93752012",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-5ffee257",
+      "name": "谷端川南緑道",
+      "cn": "谷端川南绿道",
+      "lat": 35.7349,
+      "lng": 139.7011,
+      "ep": "11",
+      "s": 1006,
+      "src": "ja",
+      "names": {
+        "ja": "谷端川南緑道",
+        "zh-Hans": "谷端川南绿道",
+        "zh-Hant": "谷端川南綠道",
+        "en": "Yabatagawa South Greenway"
+      },
+      "marks": {
+        "ja": "池袋西側の緑道（東京第1結界）",
+        "zh-Hans": "池袋西侧的绿道（东京第1结界）",
+        "zh-Hant": "池袋西側的綠道（東京第1結界）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5ffee257-0896-4793-b5bf-bd36f4dd2168",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-5ffee257.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5ffee257-0896-4793-b5bf-bd36f4dd2168",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-5ea243f8",
+      "name": "ユアテックスタジアム仙台",
+      "cn": "Yurtec 体育场仙台",
+      "lat": 38.31916,
+      "lng": 140.88258,
+      "ep": "11",
+      "s": 1212,
+      "src": "ja",
+      "names": {
+        "ja": "ユアテックスタジアム仙台",
+        "zh-Hans": "Yurtec 体育场仙台",
+        "zh-Hant": "Yurtec 體育場仙台",
+        "en": "Yurtec Stadium Sendai"
+      },
+      "marks": {
+        "ja": "仙台結界、ドルゥヴが陣取るスタジアム／乙骨がドルゥヴを倒す",
+        "zh-Hans": "仙台结界，德鲁夫盘踞的体育场／乙骨击败德鲁夫",
+        "zh-Hant": "仙台結界，德魯夫盤踞的體育場／乙骨擊敗德魯夫"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/5ea243f8-712e-4c13-8121-ff4bfedd023b",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-5ea243f8.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/5ea243f8-712e-4c13-8121-ff4bfedd023b",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-ad1023b1",
+      "name": "仙台市泉図書館",
+      "cn": "仙台市泉图书馆",
+      "lat": 38.321,
+      "lng": 140.88125,
+      "ep": "11",
+      "s": 1234,
+      "src": "ja",
+      "names": {
+        "ja": "仙台市泉図書館",
+        "zh-Hans": "仙台市泉图书馆",
+        "zh-Hant": "仙台市泉圖書館",
+        "en": "Sendai City Izumi Library"
+      },
+      "marks": {
+        "ja": "石流が図書館の屋上でくつろぐ（仙台結界紹介）",
+        "zh-Hans": "石流在图书馆屋顶休息（仙台结界介绍）",
+        "zh-Hant": "石流在圖書館屋頂休息（仙台結界介紹）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/ad1023b1-3a6e-4efd-931d-9ddb215ca98c",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-ad1023b1.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ad1023b1-3a6e-4efd-931d-9ddb215ca98c",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-T90aQbVL",
+      "name": "かむり大橋（第59話）",
+      "cn": "冠大桥（第59话）",
+      "lat": 38.31828,
+      "lng": 140.88319,
+      "ep": "12",
+      "s": 92,
+      "src": "ja",
+      "names": {
+        "ja": "かむり大橋（第59話）",
+        "zh-Hans": "冠大桥（第59话）",
+        "zh-Hant": "冠大橋（第59話）",
+        "en": "Kamuri-ohashi Bridge"
+      },
+      "marks": {
+        "ja": "乙骨がドルゥヴ討伐後、黒沐死と戦う",
+        "zh-Hans": "乙骨击败德鲁夫后与黑沐死交战",
+        "zh-Hant": "乙骨擊敗德魯夫後與黑沐死交戰"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/T90aQbVLDW7niZVOY9SG",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-T90aQbVL.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/T90aQbVLDW7niZVOY9SG",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-oU77fSWo",
+      "name": "市名坂さくら公園",
+      "cn": "市名坂樱花公园",
+      "lat": 38.31541,
+      "lng": 140.88983,
+      "ep": "12",
+      "s": 204,
+      "src": "ja",
+      "names": {
+        "ja": "市名坂さくら公園",
+        "zh-Hans": "市名坂樱花公园",
+        "zh-Hant": "市名坂櫻花公園",
+        "en": "Ichinazaka Sakura Park"
+      },
+      "marks": {
+        "ja": "七北田川近くの公園（黒沐死戦周辺）",
+        "zh-Hans": "七北田川附近公园（黑沐死战一带）",
+        "zh-Hant": "七北田川附近公園（黑沐死戰一帶）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/oU77fSWolE32rI9uPmL7",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-oU77fSWo.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/oU77fSWolE32rI9uPmL7",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-0sOVuddj",
+      "name": "七北田公園庭球場",
+      "cn": "七北田公园网球场",
+      "lat": 38.31791,
+      "lng": 140.88483,
+      "ep": "12",
+      "s": 282,
+      "src": "ja",
+      "names": {
+        "ja": "七北田公園庭球場",
+        "zh-Hans": "七北田公园网球场",
+        "zh-Hant": "七北田公園網球場",
+        "en": "Nanakita Park Tennis Courts"
+      },
+      "marks": {
+        "ja": "七北田公園周辺のカット",
+        "zh-Hans": "七北田公园一带镜头",
+        "zh-Hant": "七北田公園一帶鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/0sOVuddjQN6146cxT3CL",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-0sOVuddj.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/0sOVuddjQN6146cxT3CL",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-zDNCfDwJ",
+      "name": "仙台市博物館",
+      "cn": "仙台市博物馆",
+      "lat": 38.25627,
+      "lng": 140.85752,
+      "ep": "12",
+      "s": 423,
+      "src": "ja",
+      "names": {
+        "ja": "仙台市博物館",
+        "zh-Hans": "仙台市博物馆",
+        "zh-Hant": "仙台市博物館",
+        "en": "Sendai City Museum"
+      },
+      "marks": {
+        "ja": "乙骨が烏鷺に飛ばされ館内へ、展示の巻物で過去を語る",
+        "zh-Hans": "乙骨被乌鹭打飞进馆内，借展出的卷轴讲述过去",
+        "zh-Hant": "乙骨被烏鷺打飛進館內，借展出的卷軸講述過去"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/zDNCfDwJrRHwPSCJIkSW",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-zDNCfDwJ.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/zDNCfDwJrRHwPSCJIkSW",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-KPeyHNyU",
+      "name": "ステーキ宮 仙台八乙女店",
+      "cn": "牛排宫 仙台八乙女店",
+      "lat": 38.31574,
+      "lng": 140.88318,
+      "ep": "12",
+      "s": 447,
+      "src": "ja",
+      "names": {
+        "ja": "ステーキ宮 仙台八乙女店",
+        "zh-Hans": "牛排宫 仙台八乙女店",
+        "zh-Hant": "牛排宮 仙台八乙女店",
+        "en": "Steak Miya Sendai Yaotome"
+      },
+      "marks": {
+        "ja": "県道22号沿いの「ステーキ宮」看板が映る",
+        "zh-Hans": "县道22号旁可见“牛排宫”招牌",
+        "zh-Hant": "縣道22號旁可見“牛排宮”招牌"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/KPeyHNyUOALqxw6hGygs",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-KPeyHNyU.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/KPeyHNyUOALqxw6hGygs",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-3DcywxXp",
+      "name": "ズーズーカンパニー八乙女店付近",
+      "cn": "ZooZoo Company 八乙女店附近",
+      "lat": 38.31276,
+      "lng": 140.88159,
+      "ep": "12",
+      "s": 450,
+      "src": "ja",
+      "names": {
+        "ja": "ズーズーカンパニー八乙女店付近",
+        "zh-Hans": "ZooZoo Company 八乙女店附近",
+        "zh-Hant": "ZooZoo Company 八乙女店附近",
+        "en": "ZooZoo Company Yaotome"
+      },
+      "marks": {
+        "ja": "県道22号沿いの別カット",
+        "zh-Hans": "县道22号沿线另一镜头",
+        "zh-Hant": "縣道22號沿線另一鏡頭"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/3DcywxXpDMkLKWByiLGG",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-3DcywxXp.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/3DcywxXpDMkLKWByiLGG",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-nZ1GT1T6",
+      "name": "ＳＡＫＡＥ泉中央ビル",
+      "cn": "SAKAE 泉中央大楼",
+      "lat": 38.32129,
+      "lng": 140.88316,
+      "ep": "12",
+      "s": 593,
+      "src": "ja",
+      "names": {
+        "ja": "ＳＡＫＡＥ泉中央ビル",
+        "zh-Hans": "SAKAE 泉中央大楼",
+        "zh-Hant": "SAKAE 泉中央大樓",
+        "en": "SAKAE Izumi-Chuo Building"
+      },
+      "marks": {
+        "ja": "乙骨がビルの屋上を跳び移る",
+        "zh-Hans": "乙骨在楼顶间跳跃",
+        "zh-Hant": "乙骨在樓頂間跳躍"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/nZ1GT1T6DJVgYI1lZVeK",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-nZ1GT1T6.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/nZ1GT1T6DJVgYI1lZVeK",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-tSzGwdTV",
+      "name": "仙台市泉図書館（第59話）",
+      "cn": "仙台市泉图书馆（第59话）",
+      "lat": 38.32094,
+      "lng": 140.88096,
+      "ep": "12",
+      "s": 641,
+      "src": "ja",
+      "names": {
+        "ja": "仙台市泉図書館（第59話）",
+        "zh-Hans": "仙台市泉图书馆（第59话）",
+        "zh-Hant": "仙台市泉圖書館（第59話）",
+        "en": "Sendai City Izumi Library"
+      },
+      "marks": {
+        "ja": "石流と乙骨の戦闘で図書館屋上が映る",
+        "zh-Hans": "石流与乙骨交战时出现图书馆屋顶",
+        "zh-Hant": "石流與乙骨交戰時出現圖書館屋頂"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/tSzGwdTVYJerZiTElELk",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-tSzGwdTV.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/tSzGwdTVYJerZiTElELk",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-JraVDEcI",
+      "name": "泉中央駅ビル SWING・ペデストリアンデッキ",
+      "cn": "泉中央站大楼 SWING／人行平台",
+      "lat": 38.3232,
+      "lng": 140.88085,
+      "ep": "12",
+      "s": 700,
+      "src": "ja",
+      "names": {
+        "ja": "泉中央駅ビル SWING・ペデストリアンデッキ",
+        "zh-Hans": "泉中央站大楼 SWING／人行平台",
+        "zh-Hant": "泉中央站大樓 SWING／人行平臺",
+        "en": "Izumi-Chuo Station Building SWING"
+      },
+      "marks": {
+        "ja": "泉中央駅のデッキで乙骨と石流が遠距離戦（アニメオリジナル）",
+        "zh-Hans": "泉中央站人行平台上乙骨与石流远程对战（动画原创）",
+        "zh-Hant": "泉中央站人行平臺上乙骨與石流遠端對戰（動畫原創）"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/JraVDEcIhSpVV9X4Fpk5",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-JraVDEcI.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/JraVDEcIhSpVV9X4Fpk5",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-Oh06ykVS",
+      "name": "セルバ",
+      "cn": "SELVA 购物中心",
+      "lat": 38.32311,
+      "lng": 140.88163,
+      "ep": "12",
+      "s": 815,
+      "src": "ja",
+      "names": {
+        "ja": "セルバ",
+        "zh-Hans": "SELVA 购物中心",
+        "zh-Hant": "SELVA 購物中心",
+        "en": "SELVA"
+      },
+      "marks": {
+        "ja": "セルバ屋上、乙骨がドルゥヴの術式で烏鷺に対抗",
+        "zh-Hans": "SELVA 楼顶，乙骨用德鲁夫的术式对抗乌鹭",
+        "zh-Hant": "SELVA 樓頂，乙骨用德魯夫的術式對抗烏鷺"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/Oh06ykVSmxPM1WTolkkG",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-Oh06ykVS.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/Oh06ykVSmxPM1WTolkkG",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-nZgjPqiA",
+      "name": "タイムズ泉中央駐車場",
+      "cn": "Times 泉中央停车场",
+      "lat": 38.32304,
+      "lng": 140.88206,
+      "ep": "12",
+      "s": 959,
+      "src": "ja",
+      "names": {
+        "ja": "タイムズ泉中央駐車場",
+        "zh-Hans": "Times 泉中央停车场",
+        "zh-Hant": "Times 泉中央停車場",
+        "en": "Times Izumi-Chuo"
+      },
+      "marks": {
+        "ja": "泉中央駅前の駐車場で三者同時の領域展開",
+        "zh-Hans": "泉中央站前停车场三方同时领域展开",
+        "zh-Hant": "泉中央站前停車場三方同時領域展開"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/nZgjPqiAUDOL1xWs6YGf",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-nZgjPqiA.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/nZgjPqiAUDOL1xWs6YGf",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-UdaWeMEo",
+      "name": "泉中央駅ビル SWING（別カット）",
+      "cn": "泉中央站大楼 SWING（另一镜头）",
+      "lat": 38.32247,
+      "lng": 140.88085,
+      "ep": "12",
+      "s": 1585,
+      "src": "ja",
+      "names": {
+        "ja": "泉中央駅ビル SWING（別カット）",
+        "zh-Hans": "泉中央站大楼 SWING（另一镜头）",
+        "zh-Hant": "泉中央站大樓 SWING（另一鏡頭）",
+        "en": "Izumi-Chuo Station Building SWING"
+      },
+      "marks": {
+        "ja": "決着後の泉中央駅周辺",
+        "zh-Hans": "决胜后的泉中央站一带",
+        "zh-Hant": "決勝後的泉中央站一帶"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/UdaWeMEor05DsNo6DNFp",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-UdaWeMEo.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/UdaWeMEor05DsNo6DNFp",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 472741,
+      "id": "m-472741-ap-ZHyouuUW",
+      "name": "ダイヤと花の大観覧車（葛西臨海公園）",
+      "cn": "钻石与花大摩天轮（葛西临海公园）",
+      "lat": 35.64412,
+      "lng": 139.85719,
+      "ep": "12",
+      "s": 1599,
+      "src": "ja",
+      "names": {
+        "ja": "ダイヤと花の大観覧車（葛西臨海公園）",
+        "zh-Hans": "钻石与花大摩天轮（葛西临海公园）",
+        "zh-Hant": "鑽石與花大摩天輪（葛西臨海公園）",
+        "en": "Diamond and Flower Ferris Wheel"
+      },
+      "marks": {
+        "ja": "最終話ラストの観覧車",
+        "zh-Hans": "最终话结尾出现的摩天轮",
+        "zh-Hant": "最終話結尾出現的摩天輪"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/ZHyouuUWoTLVYocjboEb",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-472741-ap-ZHyouuUW.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ZHyouuUWoTLVYocjboEb",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-6fe7a273",
+      "name": "奥の正法寺",
+      "cn": "奥之正法寺（岩手县奥州市）",
+      "lat": 39.067168,
+      "lng": 141.223964,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "奥の正法寺",
+        "zh-Hans": "奥之正法寺（岩手县奥州市）",
+        "zh-Hant": "奧之正法寺（巖手縣奧州市）",
+        "en": "Shoboji Temple"
+      },
+      "marks": {
+        "ja": "乙骨が登校する朝、高専の寺社建築として映る",
+        "zh-Hans": "乙骨上学的早晨，作为高专的寺院建筑出现",
+        "zh-Hant": "乙骨上學的早晨，作為高專的寺院建築出現"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/6fe7a273-abcf-4f75-980a-7ec4437b2192",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-6fe7a273.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/6fe7a273-abcf-4f75-980a-7ec4437b2192",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-917c6b41",
+      "name": "ヨドバシカメラ マルチメディア京都",
+      "cn": "友都八喜 京都店",
+      "lat": 34.987613,
+      "lng": 135.759823,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "ヨドバシカメラ マルチメディア京都",
+        "zh-Hans": "友都八喜 京都店",
+        "zh-Hant": "友都八喜 京都店",
+        "en": "Yodobashi Camera Multimedia Kyoto"
+      },
+      "marks": {
+        "ja": "百鬼夜行・京都、七海が大型呪霊と戦う",
+        "zh-Hans": "百鬼夜行京都篇，七海与大型咒灵交战",
+        "zh-Hant": "百鬼夜行京都篇，七海與大型咒靈交戰"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/917c6b41-6c43-4bbd-aed1-05f29e4bdd88",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-917c6b41.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/917c6b41-6c43-4bbd-aed1-05f29e4bdd88",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-378bfd7d",
+      "name": "花見小路通",
+      "cn": "花见小路",
+      "lat": 35.003583,
+      "lng": 135.77503,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "花見小路通",
+        "zh-Hans": "花见小路",
+        "zh-Hant": "花見小路",
+        "en": "Hanamikoji Street"
+      },
+      "marks": {
+        "ja": "京都校メンバーが呪霊を足止めする",
+        "zh-Hans": "京都校成员在此拖住咒灵",
+        "zh-Hant": "京都校成員在此拖住咒靈"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/378bfd7d-afa1-4a5e-98ee-4c34b6f498a3",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-378bfd7d.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/378bfd7d-afa1-4a5e-98ee-4c34b6f498a3",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-6ded4727",
+      "name": "ハピナ名掛丁商店街",
+      "cn": "HAPINA 名挂丁商店街（仙台）",
+      "lat": 38.262113,
+      "lng": 140.880777,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "ハピナ名掛丁商店街",
+        "zh-Hans": "HAPINA 名挂丁商店街（仙台）",
+        "zh-Hant": "HAPINA 名掛丁商店街（仙台）",
+        "en": "Hapina Nakakecho"
+      },
+      "marks": {
+        "ja": "狗巻と乙骨が呪霊祓いに向かう商店街",
+        "zh-Hans": "狗卷与乙骨前往祓除咒灵的商店街",
+        "zh-Hant": "狗卷與乙骨前往祓除咒靈的商店街"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/6ded4727-07ec-43f4-a562-347e8b3ffceb",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-6ded4727.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/6ded4727-07ec-43f4-a562-347e8b3ffceb",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-62c9cfd4",
+      "name": "新宿遊歩道公園（四季の路）",
+      "cn": "新宿游步道公园（四季之路）",
+      "lat": 35.693827,
+      "lng": 139.704231,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "新宿遊歩道公園（四季の路）",
+        "zh-Hans": "新宿游步道公园（四季之路）",
+        "zh-Hant": "新宿遊步道公園（四季之路）",
+        "en": "Shiki no Michi"
+      },
+      "marks": {
+        "ja": "百鬼夜行・新宿の戦闘シーン",
+        "zh-Hans": "百鬼夜行新宿篇的战斗场景",
+        "zh-Hant": "百鬼夜行新宿篇的戰鬥場景"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/62c9cfd4-fc81-40c3-92e7-8e3ea7f04283",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-62c9cfd4.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/62c9cfd4-fc81-40c3-92e7-8e3ea7f04283",
+      "updated": "2026-10-24"
+    },
+    {
+      "bangumi": 331559,
+      "id": "m-331559-ap-ee087be5",
+      "name": "カラオケルーム歌広場 新宿三丁目店付近",
+      "cn": "歌广场 新宿三丁目店附近",
+      "lat": 35.69251,
+      "lng": 139.705631,
+      "ep": null,
+      "s": null,
+      "src": "ja",
+      "names": {
+        "ja": "カラオケルーム歌広場 新宿三丁目店付近",
+        "zh-Hans": "歌广场 新宿三丁目店附近",
+        "zh-Hant": "歌廣場 新宿三丁目店附近",
+        "en": "Utahiroba Shinjuku 3-chome"
+      },
+      "marks": {
+        "ja": "百鬼夜行・新宿の街並み",
+        "zh-Hans": "百鬼夜行新宿篇街景",
+        "zh-Hant": "百鬼夜行新宿篇街景"
+      },
+      "reference": "https://www.animepilgrimage.com/ja/maps/place/ee087be5-15e8-4661-bdac-b9d281858d87",
+      "source": "Anime Pilgrimage",
+      "image": "https://cdn.jannchie.com/junrei/shots/m-331559-ap-ee087be5.jpg",
+      "origin": "Anime Pilgrimage",
+      "origin_link": "https://www.animepilgrimage.com/ja/maps/place/ee087be5-15e8-4661-bdac-b9d281858d87",
+      "updated": "2026-10-24"
     }
   ]
 }
