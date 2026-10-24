@@ -745,7 +745,6 @@ onBeforeUnmount(() => {
                 <span v-if="p.updated" class="stat" :title="t('updatedOn')"><JIcon :icon="ICONS.updated" :size="14" /><span class="tx">{{ formatDate(p.updated) }}</span></span>
               </span>
               <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
-              <small v-if="p.id === focusPointId && markOf(p).machine" class="mt" :title="p.mark ?? undefined">{{ t("machineTranslated") }}</small>
               <!-- 数据出处：每个地标都能跳到原文（截图的署名在图片角上，另算） -->
               <span v-if="p.id === focusPointId" class="source-row">
                 <a v-if="p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source stat" @click.stop>
@@ -1465,10 +1464,6 @@ figcaption a {
 }
 .source:hover {
   color: var(--fg);
-}
-.mt {
-  font-size: 11px;
-  color: var(--muted);
 }
 .mark {
   margin: 4px 0 0;
