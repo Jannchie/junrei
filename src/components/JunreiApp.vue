@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
-import type { KeyHandler, SheetSnap, StyleContext } from "@mapette/core";
+import { kitText, type KeyHandler, type SheetSnap, type StyleContext } from "@mapette/core";
 import { MapExplorer, MapFooter, MapPopover, useThemePref } from "@mapette/vue";
 import type { PaddingOptions } from "maplibre-gl";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
@@ -536,6 +536,7 @@ const SHORTCUTS = computed(() => [
   { keys: ["O"], label: t("openInMaps") },
   { keys: ["+", "−"], label: `${t("zoomIn")} / ${t("zoomOut")}` },
   { keys: ["L"], label: t("locate") },
+  { keys: ["N"], label: kitText(locale.value).resetNorth },
   { keys: ["T"], label: t("kbTheme") },
   { keys: ["?"], label: t("shortcuts") },
 ]);
