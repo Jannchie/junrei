@@ -1565,7 +1565,6 @@ figcaption a {
   font-size: 16px;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--accent);
 }
 .point-names small {
   font-size: 12px;
@@ -1575,30 +1574,16 @@ figcaption a {
   font-size: 12px;
 }
 @media (max-width: 640px) {
-  /* 手机半屏（可用高度只有两百来像素）：截图缩到左边，名称、导航、集数与出处排在右边，都在第一屏。
-     抽屉拉到全屏时恢复上下排、大截图 */
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-page {
-    display: grid;
-    grid-template-columns: 132px minmax(0, 1fr);
-    align-content: start;
-  }
+  /* 手机半屏（可用高度两百多像素）：截图占满宽度，顶部的位置提示先不显示（拉到全屏时出现），
+     截图下面紧接名称、导航按钮与集数，都在第一屏 */
   :where(.mapette-sheet:not(.mapette-sheet-full)) .point-bar {
-    grid-column: 1 / -1;
-  }
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot {
-    margin: 2px 0 0 12px;
-  }
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot img {
-    border-radius: 8px;
-  }
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot figcaption {
     display: none;
   }
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-info {
-    padding: 0 12px 12px;
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot {
+    margin-top: 10px;
   }
-  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-names h2 {
-    font-size: 15px;
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-info {
+    padding-top: 8px;
   }
 }
 .open-maps {
