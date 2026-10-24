@@ -84,8 +84,9 @@ const detail = computed<View | null>(() =>
   group.value ? buildView(visibleGroup(group.value, adultFor(group.value), filter.value), filter.value) : null,
 );
 const focusPointId = ref<string | null>(props.initialPoint ?? null);
-/** 当前地标（地图上的弹出卡片用） */
+/** 当前地标：面板里单独一页（地图上的弹出卡片也用它）；focusedIndex 是它在列表里的位置 */
 const focusedPoint = computed(() => detail.value?.points.find((p) => p.id === focusPointId.value) ?? null);
+const focusedIndex = computed(() => (focusPointId.value ? orderedPoints.value.findIndex((p) => p.id === focusPointId.value) : -1));
 const query = ref("");
 const results = shallowRef<SearchResult | null>(null);
 const searching = ref(false);
@@ -94,7 +95,6 @@ const selected = computed(() =>
   detail.value && !gated.value
     ? {
         bangumiId: detail.value.id,
-        color: detail.value.color,
         points: detail.value.points.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName(spotNames(p)), lng: p.lng, lat: p.lat })),
       }
     : // 最近更新：地图上高亮列表里的地标
@@ -658,7 +658,8 @@ onBeforeUnmount(() => {
       </section>
 
       <!-- 作品详情 -->
-      <section v-else-if="detail" :key="detail.id" class="scroll" @scroll.passive="onDetailScroll">
+      <!-- 作品：标题、系列与地标列表。选中地标时隐藏而不销毁（地标单独一页，见下方），返回时停在原来的滚动位置 -->
+      <section v-else-if="detail" v-show="!focusedPoint || gated" :key="detail.id" class="scroll" @scroll.passive="onDetailScroll">
         <!-- 标题区滚出去后，作品名浮在列表顶部；点一下回到顶部 -->
         <div class="detail-bar" :class="{ shown: headHidden }" :aria-hidden="!headHidden">
           <button v-auto-lang type="button" class="bar-title" tabindex="-1" @click="($event.currentTarget as HTMLElement).closest('.scroll')!.scrollTo({ top: 0, behavior: 'smooth' })">
@@ -675,7 +676,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <template v-else>
-        <div class="detail-head" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
+        <div class="detail-head">
           <div ref="titleRow" class="title-row">
             <img @error="onImageError" v-if="detail.cover" :src="imageUrl(detail.cover)" class="cover" referrerpolicy="no-referrer" alt="" />
             <div class="title-main">
@@ -719,7 +720,7 @@ onBeforeUnmount(() => {
           </dl>
         </div>
         <!-- 同系列作品（TV 各季、剧场版、OVA…）：横向一排，当前作品高亮，没有地标的淡一些 -->
-        <nav v-if="detail.series.length > 1" class="series" :aria-label="t('series')" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
+        <nav v-if="detail.series.length > 1" class="series" :aria-label="t('series')">
           <a
             :href="localePath(locale, `/s/${detail.key}`)"
             :class="{ current: detail.filter == null }"
@@ -769,7 +770,7 @@ onBeforeUnmount(() => {
           >
             <figure v-if="p.image">
               <img @error="onImageError"
-                :src="imageUrl(p.image, p.id === focusPointId ? 'h360' : 'h160')"
+                :src="imageUrl(p.image, 'h160')"
                 loading="lazy"
                 referrerpolicy="no-referrer"
                 alt=""
@@ -783,37 +784,12 @@ onBeforeUnmount(() => {
             <div class="point-body">
               <!-- 地标名是到地标页的真实链接（搜索引擎据此找到每个地标）；点击仍交给整行处理 -->
               <a :href="`${localePath(locale, `/b/${p.bangumiId}`)}?p=${p.id}`" class="spot-link" @click.prevent><strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong></a>
-              <!-- 列表里只显示当前语言；展开的地标再给出当地原名，方便到现场对照 -->
-              <small v-if="p.id === focusPointId && localName(p)" v-auto-lang>{{ localName(p) }}</small>
               <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(p.bangumiId) }}</span>
               <span v-if="p.ep || p.s || p.updated" class="meta">
                 <span v-if="p.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span>
                 <span v-if="p.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(p.s) }}</span></span>
                 <span v-if="p.updated" class="stat" :title="t('updatedOn')"><JIcon :icon="ICONS.updated" :size="14" /><span class="tx">{{ formatDate(p.updated) }}</span></span>
               </span>
-              <p v-if="p.id === focusPointId && markOf(p).text" v-auto-lang class="mark">{{ markOf(p).text }}</p>
-              <!-- 数据出处：每个地标都能跳到原文（截图的署名在图片角上，另算） -->
-              <span v-if="p.id === focusPointId" class="source-row">
-                <a v-if="p.sourceUrl" :href="p.sourceUrl" target="_blank" rel="noopener" class="source stat" @click.stop>
-                  <JIcon :icon="ICONS.external" :size="12" /><span class="tx">{{ t("sourceLabel") }}：{{ p.source ?? new URL(p.sourceUrl).hostname }}</span>
-                </a>
-                <!-- 地标有误（位置不对、不是这部作品、已经消失）：开一个预填好的 GitHub issue -->
-                <a :href="reportUrl(p)" target="_blank" rel="noopener" class="source stat" @click.stop>
-                  <JIcon :icon="ICONS.report" :size="12" /><span class="tx">{{ t("report") }}</span>
-                </a>
-              </span>
-              <a
-                v-if="p.id === focusPointId"
-                :href="mapsUrl(p)"
-                target="_blank"
-                rel="noopener"
-                class="open-maps"
-                :title="t('openInMaps')"
-                :aria-label="t('openInMaps')"
-                @click.stop
-              >
-                <JIcon :icon="ICONS.navigate" :size="16" />
-              </a>
             </div>
           </li>
           </template>
@@ -868,6 +844,51 @@ onBeforeUnmount(() => {
             </a>
           </li>
         </ul>
+      </section>
+
+      <!-- 地标：单独一页。返回列表用搜索框左边的 ←（与 Esc 相同，各层只有这一个返回）；J / K 切换前后的地标。
+           顶部一行只是位置提示：所在作品与第几个地标。手机半屏时截图、名称与导航按钮都在第一屏 -->
+      <section v-if="!query.trim() && detail && focusedPoint && !gated" :key="focusedPoint.id" class="scroll point-page">
+        <div class="point-bar muted">
+          <span v-auto-lang class="point-work">{{ pickName(workNames(detail)) }}</span>
+          <span v-if="focusedIndex >= 0" class="stat point-index">{{ focusedIndex + 1 }} / {{ orderedPoints.length }}</span>
+        </div>
+        <figure v-if="focusedPoint.image" class="point-shot">
+          <img @error="onImageError" :src="imageUrl(focusedPoint.image, 'h360')" referrerpolicy="no-referrer" alt="" />
+          <figcaption v-if="focusedPoint.origin">
+            <a :href="focusedPoint.originLink ?? undefined" target="_blank" rel="noopener">
+              <JIcon :icon="ICONS.credit" :size="12" />{{ focusedPoint.origin }}
+            </a>
+          </figcaption>
+        </figure>
+        <div class="point-info">
+          <div class="point-title">
+            <div class="point-names">
+              <h2 v-auto-lang>{{ pickName(spotNames(focusedPoint)) }}</h2>
+              <!-- 当地原名，方便到现场对照 -->
+              <small v-if="localName(focusedPoint)" v-auto-lang>{{ localName(focusedPoint) }}</small>
+            </div>
+            <a :href="mapsUrl(focusedPoint)" target="_blank" rel="noopener" class="open-maps" :title="t('openInMaps')" :aria-label="t('openInMaps')">
+              <JIcon :icon="ICONS.navigate" :size="16" />
+            </a>
+          </div>
+          <span v-if="detail.filter == null && detail.series.length > 1" v-auto-lang class="from">{{ workName(focusedPoint.bangumiId) }}</span>
+          <span v-if="focusedPoint.ep || focusedPoint.s || focusedPoint.updated" class="meta">
+            <span v-if="focusedPoint.ep" class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(focusedPoint.ep) }}</span></span>
+            <span v-if="focusedPoint.s" class="stat"><JIcon :icon="ICONS.time" :size="14" /><span class="tx">{{ formatTime(focusedPoint.s) }}</span></span>
+            <span v-if="focusedPoint.updated" class="stat" :title="t('updatedOn')"><JIcon :icon="ICONS.updated" :size="14" /><span class="tx">{{ formatDate(focusedPoint.updated) }}</span></span>
+          </span>
+          <p v-if="markOf(focusedPoint).text" v-auto-lang class="mark">{{ markOf(focusedPoint).text }}</p>
+          <!-- 数据出处：每个地标都能跳到原文；地标有误时开一个预填好的 GitHub issue -->
+          <span class="source-row">
+            <a v-if="focusedPoint.sourceUrl" :href="focusedPoint.sourceUrl" target="_blank" rel="noopener" class="source stat">
+              <JIcon :icon="ICONS.external" :size="12" /><span class="tx">{{ t("sourceLabel") }}：{{ focusedPoint.source ?? new URL(focusedPoint.sourceUrl).hostname }}</span>
+            </a>
+            <a :href="reportUrl(focusedPoint)" target="_blank" rel="noopener" class="source stat">
+              <JIcon :icon="ICONS.report" :size="12" /><span class="tx">{{ t("report") }}</span>
+            </a>
+          </span>
+        </div>
       </section>
 
       <template #footer>
@@ -1258,11 +1279,10 @@ h2 {
 .points li:hover {
   background: var(--hover);
 }
-.points li:not(:has(figure)),
-.points li.active {
+.points li:not(:has(figure)) {
   grid-template-columns: minmax(0, 1fr);
 }
-.points li:not(.active) figcaption {
+.points li figcaption {
   display: none;
 }
 .points li.active {
@@ -1435,11 +1455,11 @@ figcaption a {
   background: var(--hover);
 }
 .series a.current {
-  background: color-mix(in oklab, var(--bangumi-color, var(--accent)) 10%, transparent);
-  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--bangumi-color, var(--accent)) 70%, transparent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent) 70%, transparent);
 }
 .series a.current .series-name {
-  color: color-mix(in oklab, var(--bangumi-color, var(--accent)) 75%, var(--fg));
+  color: color-mix(in oklab, var(--accent) 75%, var(--fg));
 }
 .series a.dim:not(.current) {
   opacity: 0.55;
@@ -1497,17 +1517,92 @@ figcaption a {
   font-size: 13px;
   text-align: center;
 }
-/* 选中地标标题右侧的小圆按钮，不额外占一行 */
-.point-body {
-  position: relative;
+/* 地标页：顶部返回栏、截图、名称与导航按钮。手机半屏（约 46dvh）时这些都在第一屏 */
+.point-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px 8px;
+  font-size: 12px;
 }
-.points li.active .point-body {
-  padding-right: 36px;
+.point-work {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.point-index {
+  flex: none;
+  font-size: 12px;
+}
+.point-shot {
+  margin: 0 12px;
+}
+.point-shot img {
+  border-radius: 10px;
+}
+.point-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px 16px;
+}
+.point-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.point-names {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.point-names h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--accent);
+}
+.point-names small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.point-info .meta {
+  font-size: 12px;
+}
+@media (max-width: 640px) {
+  /* 手机半屏（可用高度只有两百来像素）：截图缩到左边，名称、导航、集数与出处排在右边，都在第一屏。
+     抽屉拉到全屏时恢复上下排、大截图 */
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-page {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    align-content: start;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-bar {
+    grid-column: 1 / -1;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot {
+    margin: 2px 0 0 12px;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot img {
+    border-radius: 8px;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-shot figcaption {
+    display: none;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-info {
+    padding: 0 12px 12px;
+  }
+  :where(.mapette-sheet:not(.mapette-sheet-full)) .point-names h2 {
+    font-size: 15px;
+  }
 }
 .open-maps {
-  position: absolute;
-  top: 0;
-  right: 0;
+  flex: none;
   display: grid;
   place-items: center;
   width: 28px;

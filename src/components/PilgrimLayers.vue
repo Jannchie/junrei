@@ -22,7 +22,7 @@ export interface SelectedPoint {
 
 const props = defineProps<{
   /** 选中作品的地标，高亮并显示名称 */
-  selected: { bangumiId: number; color: string | null; points: SelectedPoint[] } | null;
+  selected: { bangumiId: number; points: SelectedPoint[] } | null;
   focusPointId: string | null;
 }>();
 
@@ -50,12 +50,8 @@ function syncSelected() {
   });
   m.setGlobalStateProperty("selected", sel != null);
   m.setGlobalStateProperty("adult", showAdult.value);
-  // 选中地标的截图描边用作品色：mapette 的照片标记读地图容器上的 --mapette-accent
-  const el = m.getContainer();
-  el.style.removeProperty("--mapette-accent");
-  const color = sel?.color ?? readPalette(el).accent;
-  if (sel?.color) el.style.setProperty("--mapette-accent", sel.color);
-  m.setGlobalStateProperty("selectedColor", color);
+  // 选中作品的地标用主题色（不再按作品分颜色，界面颜色保持稳定）
+  m.setGlobalStateProperty("selectedColor", readPalette(m.getContainer()).accent);
 }
 
 /** 焦点变化：只改 feature-state，不重建数据 */

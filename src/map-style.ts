@@ -21,7 +21,7 @@ export function createStyle({ palette: c, locale }: StyleContext): StyleSpecific
     palette: c,
     locale,
     rail: RAIL_TILES,
-    // selected：是否选中了作品（其余地标淡化）；selectedColor：选中作品的主题色，由组件设置。
+    // selected：是否选中了作品（其余地标淡化）；selectedColor：选中地标的颜色（当前配色的主题色），由组件设置。
     // 默认值必须与主题无关，换主题时样式才能按 diff 更新，而不是整体重载
     state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" }, adult: { default: false } },
     sources: {
