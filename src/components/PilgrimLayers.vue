@@ -5,7 +5,7 @@
 import { readPalette } from "@mapette/core";
 import { ClusterPopover, PhotoPins, useMap } from "@mapette/vue";
 import ClusterWorks from "./ClusterWorks.vue";
-import type { GeoJSONSource, LngLatBounds, MapGeoJSONFeature } from "maplibre-gl";
+import type { GeoJSONSource, LngLatBounds, Map as MaplibreMap, MapGeoJSONFeature } from "maplibre-gl";
 import { computed, ref, watch } from "vue";
 import { showAdult } from "../adult";
 import { fetchDetail } from "../detail";
@@ -85,13 +85,22 @@ function syncCamera() {
   // 在地图上直接点的地标：它就在眼前，镜头不动
   if (key === pickedOnMap) return;
   const focus = sel.points.find((p) => p.id === props.focusPointId);
-  // 选中地标：看不到才平移过去，从不改缩放（自动放大对用户是负担）。
-  // 选中作品：框住它的主要区域，用 fitBounds（linear）：flyTo 途中会先拉远再推近，像跳了一下
+  // 选中地标、换作品都从不改缩放（自动缩放对用户是负担）。
+  // 地标：看不到才平移过去。作品：已经能看到它的地标就不动，一个都看不到才平移到它主要区域的中心
   if (focus) {
     controller.value?.reveal([focus.lng, focus.lat]);
-  } else {
-    m.fitBounds(coreBounds(sel.points), { padding: 80, maxZoom: 15, linear: true, duration: 800 });
+  } else if (!sel.points.some((p) => inView(m, p))) {
+    const c = coreBounds(sel.points).getCenter();
+    controller.value?.reveal([c.lng, c.lat]);
   }
+}
+
+/** 地标是否在可见区域里（面板挡住的部分不算） */
+function inView(m: MaplibreMap, p: SelectedPoint) {
+  const pad = controller.value!.getPadding();
+  const c = m.getContainer();
+  const { x, y } = m.project([p.lng, p.lat]);
+  return x >= pad.left! && x <= c.clientWidth - pad.right! && y >= pad.top! && y <= c.clientHeight - pad.bottom!;
 }
 
 /** 作品的主要区域：去掉经纬度两端各 10% 的离群地标（外地零星的点不该把镜头拉远） */
