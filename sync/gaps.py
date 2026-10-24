@@ -6,6 +6,7 @@
   python -m sync.gaps run --top 5           # 取前 5 部：抓作品页与探访文章 → LLM 提取地点与集数 → 地理编码 → 草稿
   python -m sync.gaps run --ids 181354      # 指定作品（Bangumi id）
   python -m sync.gaps run --list nishikibuna --top 20   # 錦鮒出版「聖地巡礼特集」探访过的美少女游戏（成人向标 nsfw，网站默认隐藏）
+  python -m sync.gaps run --list sources --top 50       # Anitabi 引用过的探访博客里的其他文章（清单由 python -m sync.sources list 生成）
   python -m sync.gaps trace                 # 老草稿的来源截图在本地 trace.moe 帧库里比对：对上作品的提高把握度，补集数与时间
   python -m sync.gaps apply                 # 草稿里 approved 为 true 的地标（或审核页导出的 approved.json）并入 manual.json
 
@@ -21,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
 import html
 import json
@@ -30,6 +32,7 @@ from pathlib import Path
 
 from sync import llm
 from sync.enrich_common import Http, add_data_arg, now_iso, open_db, setup_stdout
+from sync.export import seconds
 from sync.fold import loose
 from sync.net import request
 from sync.sync import haversine_km
@@ -261,8 +264,14 @@ def work_names(title: str | None, cn: str | None, sub: dict) -> list[str]:
     return [n for n in [title, cn, sub.get("name"), sub.get("cn"), sub.get("en"), *sub.get("aliases", [])] if n]
 
 
+def draft_path(out_dir: Path, bid: int, list_name: str) -> Path:
+    """草稿文件：sources 清单单独一份（<id>.sources.json），同一部作品不会覆盖其他清单的草稿"""
+    return out_dir / (f"{bid}.sources.json" if list_name == "sources" else f"{bid}.json")
+
+
 def drafts(out_dir: Path) -> list[tuple[Path, dict]]:
-    return [(p, json.loads(p.read_text(encoding="utf-8"))) for p in sorted(out_dir.glob("*.json")) if p.stem.isdigit()]
+    return [(p, json.loads(p.read_text(encoding="utf-8"))) for p in sorted(out_dir.glob("*.json"))
+            if re.fullmatch(r"\d+(\.sources)?", p.stem)]
 
 
 def load_manual() -> dict:
@@ -270,6 +279,16 @@ def load_manual() -> dict:
 
 
 def save_manual(manual: dict) -> None:
+    """写回 manual.json；和文件里原来的相比新增或改动过的地标，updated 记为今天（网站按它显示与排序更新时间）"""
+    strip = lambda p: {k: v for k, v in p.items() if k != "updated"}  # noqa: E731
+    old = {p["id"]: p for p in load_manual()["points"]} if MANUAL.exists() else {}
+    today = dt.date.today().isoformat()
+    for p in manual["points"]:
+        before = old.get(p["id"])
+        if before is None or strip(before) != strip(p):
+            p["updated"] = today
+        elif before.get("updated"):
+            p["updated"] = before["updated"]
     MANUAL.write_text(json.dumps(manual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
@@ -400,7 +419,8 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         want = {int(i) for i in args.ids.split(",")}
         gaps = [g for g in gaps if int(g["bangumi_id"]) in want]
     else:
-        done = {d["bangumi"] for _, d in drafts(data / "review" / "gaps")}
+        out = data / "review" / "gaps"
+        done = {d["bangumi"] for p, d in drafts(out) if p == draft_path(out, d["bangumi"], args.list)}
         # --redo：已有草稿的作品按现在的规则重做（文章、提取结果、地理编码都有缓存）
         gaps = [g for g in gaps if (int(g["bangumi_id"]) in done) == args.redo][: args.top]
     subs = all_subjects(data)
@@ -522,7 +542,7 @@ def cmd_run(db, http: Http, geo: Http, data: Path, args) -> None:
         sub = subs.get(bid, {})
         draft = {"bangumi": bid, "title": g["title"], "cn": sub.get("cn"), "legwork": g["legwork_page"], "spots": spots,
                  **({"nsfw": True} if sub.get("nsfw") else {})}
-        (out_dir / f"{bid}.json").write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
+        draft_path(out_dir, bid, args.list).write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  {g['title']}：{len(spots)} 个候选地标，{sum(1 for s in spots if s['lat'])} 个定位成功"
               + (f"，{dropped} 个与已有地标重复已去掉" if dropped else ""))
     write_review(out_dir)
@@ -566,8 +586,9 @@ def same_shot(a: dict, b: dict) -> bool:
     ea, eb = str(a.get("ep") or ""), str(b.get("ep") or "")
     if ea and eb and ea != eb:
         return False
-    if a.get("s") is not None and b.get("s") is not None:
-        return abs(float(a["s"]) - float(b["s"])) <= SHOT_SECONDS
+    sa, sb = seconds(a.get("s")), seconds(b.get("s"))
+    if sa is not None and sb is not None:
+        return abs(sa - sb) <= SHOT_SECONDS
     return True
 
 
@@ -878,8 +899,9 @@ def main():
     sub.add_parser("list")
     run = sub.add_parser("run")
     run.add_argument("--top", type=int, default=5, help="取清单里还没有草稿的前 N 部")
-    run.add_argument("--list", choices=["gaps", "thin", "nishikibuna"], default="gaps",
-                     help="gaps：没有地标的作品；thin：地标偏少的作品；nishikibuna：錦鮒出版探访过的美少女游戏")
+    run.add_argument("--list", choices=["gaps", "thin", "nishikibuna", "sources"], default="gaps",
+                     help="gaps：没有地标的作品；thin：地标偏少的作品；nishikibuna：錦鮒出版探访过的美少女游戏；"
+                          "sources：Anitabi 引用过的探访博客里的其他文章")
     run.add_argument("--ids", help="指定作品的 Bangumi id，逗号分隔")
     run.add_argument("--redo", action="store_true", help="重做已有草稿的作品（去重规则等改了之后）")
     run.add_argument("--model", default=MODEL)

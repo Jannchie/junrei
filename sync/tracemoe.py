@@ -241,11 +241,11 @@ def wanted_names(data: Path) -> list[list[str | None]]:
 
     subs = all_subjects(data)
     ids = set()
-    for name in ["legwork-gaps.csv", "legwork-thin.csv"]:
+    for name in ["legwork-gaps.csv", "legwork-thin.csv", "legwork-sources.csv", "legwork-sources-noframes.csv"]:
         path = data / "review" / name
         if path.exists():
             ids |= {int(r["bangumi_id"]) for r in csv.DictReader(path.open(encoding="utf-8-sig"))}
-    ids |= {int(p.stem) for p in (data / "review" / "gaps").glob("*.json") if p.stem.isdigit()}
+    ids |= {int(p.stem.split(".")[0]) for p in (data / "review" / "gaps").glob("*.json") if p.stem.split(".")[0].isdigit()}
     return [[s.get("name"), s.get("cn"), s.get("en"), *s.get("aliases", [])]
             for i in ids if (s := subs.get(i)) and s.get("cat") != "游戏"]
 
