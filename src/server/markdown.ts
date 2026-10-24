@@ -1,9 +1,16 @@
 // 面向 LLM 的 Markdown 版本（llms.txt 约定）：纯文本、无脚本，链接都是绝对地址
+import type { CreditName, Credits } from "@schema";
 import { formatDate, formatEpisode, formatTime } from "../format";
 import { type BangumiDetail, displayName, SITE } from "./bangumi";
 
 export const markdownResponse = (body: string) =>
   new Response(body, { headers: { "Content-Type": "text/markdown; charset=utf-8" } });
+
+const ROLE: Record<Credits["staff"][number]["r"], string> = {
+  original: "原作", director: "监督", composition: "系列构成", studio: "动画制作", originalDesign: "人物原案", characterDesign: "人物设定", music: "音乐",
+};
+/** 人名：中文名（原名），没有中文名就只写原名 */
+const nameOf = (e: CreditName) => (e.cn && e.n && e.cn !== e.n ? `${e.cn}（${e.n}）` : (e.cn ?? e.n ?? ""));
 
 const esc = (s: string) => s.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 
@@ -21,6 +28,8 @@ export function bangumiMarkdown(d: BangumiDetail) {
       d.en ? `- 英文名：${d.en}` : null,
       d.cat ? `- 类型：${d.cat}` : null,
       d.city ? `- 主要城市：${d.city}` : null,
+      ...(d.credits?.staff ?? []).map((s) => `- ${ROLE[s.r]}：${s.p.map(nameOf).join("、")}`),
+      d.credits?.cast.length ? `- 主要角色：${d.credits.cast.map((c) => `${nameOf(c)}${c.cv?.length ? `（CV ${c.cv.map(nameOf).join("、")}）` : ""}`).join("、")}` : null,
       `- 取景地数量：${d.pointCount}`,
       `- 地图：${SITE}/b/${d.id}`,
       `- Bangumi：https://bgm.tv/subject/${d.id}`,

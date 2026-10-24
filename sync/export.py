@@ -34,6 +34,9 @@ MANUAL = Path(__file__).resolve().parent / "manual.json"
 OVERRIDES = Path(__file__).resolve().parent / "overrides.json"
 FOLD_MAP = DEFAULT_OUT.parent / "src" / "fold-map.json"
 BGM_ANIME = DEFAULT_OUT / "bgm-anime.json"
+BGM_CREDITS = DEFAULT_OUT / "bgm-credits.json"
+# 作品页显示的职位顺序（sync.bgm_archive 的 STAFF）
+STAFF_ORDER = ["original", "director", "composition", "studio", "originalDesign", "characterDesign", "music"]
 BGM_COVER = "https://api.bgm.tv/v0/subjects/{}/image?type=common"  # 数据包里没有封面地址，用官方接口的跳转
 ROWS_PER_INSERT = 200  # 分批插入
 MAX_STATEMENT_BYTES = 90_000  # D1 单条语句上限 100 KB
@@ -214,6 +217,48 @@ def merge_bgm(rows: list, i18n: dict) -> tuple[dict[int, dict], set[int]]:
     return extra, set(archive.get("nsfw", []))
 
 
+def load_credits(ids: set[int], to_hant) -> tuple[dict[int, str], dict[int, list[str]]]:
+    """有地标的作品的主要人员与角色（data/bgm-credits.json，sync.bgm_archive 生成）。
+    返回 (作品 id → credits 列的 JSON, 作品 id → 搜索用的名称：原名、中文名、英文名、别名)"""
+    if not BGM_CREDITS.exists():
+        print("没有 data/bgm-credits.json，作品不带人员与角色（先跑 python -m sync.bgm_archive）")
+        return {}, {}
+    data = json.loads(BGM_CREDITS.read_text(encoding="utf-8"))
+    persons, characters = data["persons"], data["characters"]
+
+    def shown(e: dict) -> dict:
+        # 显示用：原名、简体中文名、繁体中文名（由简体转换）、英文名
+        return {k: v for k, v in {"n": e.get("n"), "cn": e.get("cn"), "tw": to_hant(e["cn"]) if e.get("cn") else None, "en": e.get("en")}.items() if v}
+
+    out, names = {}, {}
+    for sid, c in data["subjects"].items():
+        if int(sid) not in ids:
+            continue
+        roles: dict[str, list[dict]] = {}
+        seen: set[tuple[str, int]] = set()
+        used: list[dict] = []
+        for role, pid in c["staff"]:
+            if (role, pid) in seen or str(pid) not in persons:
+                continue
+            seen.add((role, pid))
+            roles.setdefault(role, []).append(shown(persons[str(pid)]))
+            used.append(persons[str(pid)])
+        cast = []
+        for cid, cvs in c["cast"]:
+            if str(cid) not in characters:
+                continue
+            ch = characters[str(cid)]
+            actors = [persons[str(p)] for p in cvs if str(p) in persons]
+            cast.append({**shown(ch), **({"cv": [shown(a) for a in actors]} if actors else {})})
+            used += [ch, *actors]
+        staff = [{"r": r, "p": roles[r]} for r in STAFF_ORDER if r in roles]
+        if staff or cast:
+            out[int(sid)] = json.dumps({"staff": staff, "cast": cast}, ensure_ascii=False, separators=(",", ":"))
+            names[int(sid)] = [t for e in used for t in [e.get("n"), e.get("cn"), e.get("en"), *e.get("a", [])] if t]
+    print(f"人员与角色：{len(out)} 部有地标的作品")
+    return out, names
+
+
 def sql_value(v) -> str:
     if v is None:
         return "NULL"
@@ -293,15 +338,19 @@ def main():
     for item in i18n.values():
         item.pop("_orig", None)
     names = lambda item: list((item or {}).get("name", {}).values())  # noqa: E731
+    credits, credit_names = load_credits({b for b, n in counts.items() if n}, opencc_converter("s2twp"))
     char_map = build_char_map(
         [t for r in rows for t in [*r[1:5], *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", [])]]
-        + [t for p in points for t in [*p[2:4], *names(spots[(p[0], p[1])])]])
+        + [t for p in points for t in [*p[2:4], *names(spots[(p[0], p[1])])]]
+        + [t for ns in credit_names.values() for t in ns])
     def keys(*texts):
         return "|".join(dict.fromkeys(k for k in (fold(t, char_map) for t in texts) if k))
     bangumi = [
         (*r, counts.get(r[0], 0), extra.get(r[0], {}).get("popularity", 0), extra.get(r[0], {}).get("date"),
          extra.get(r[0], {}).get("series"), i18n_json(titles[r[0]]),
-         keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", [])))
+         # 搜索键里也有原作者、监督、制作公司、角色与声优的名字：按人名、角色名也能搜到作品
+         keys(r[1], r[2], r[3], r[4], romaji(r[2]), *names(titles[r[0]]), *extra.get(r[0], {}).get("aliases", []),
+              *credit_names.get(r[0], [])))
         for r in rows
     ]
     points = [(*p, i18n_json(spots[(p[0], p[1])]), keys(p[2], p[3], *names(spots[(p[0], p[1])]))) for p in points]
@@ -316,7 +365,7 @@ def main():
             if b[8] and (g["top"] is None or b[8] > g["top"][8]):
                 g["top"] = b
     bangumi = [(*b, series[b[11]]["points"] if b[11] is not None else b[8], series[b[11]]["works"] if b[11] is not None else 1,
-                int(b[0] in nsfw))
+                int(b[0] in nsfw), credits.get(b[0]))
                for b in bangumi]
     # 成人向的系列：系列里有地标的作品全是成人向（混有一般向作品的系列照常显示，只隐藏其中的成人向作品）
     for b in bangumi:
@@ -328,7 +377,7 @@ def main():
     with out_sql.open("w", encoding="utf-8") as f:
         f.write("DELETE FROM point;\nDELETE FROM bangumi;\n")
         cols = ["id", "cn", "title", "en", "city", "cat", "color", "cover", "point_count", "popularity", "air_date",
-                "series_id", "i18n", "search", "series_points", "series_works", "nsfw"]
+                "series_id", "i18n", "search", "series_points", "series_works", "nsfw", "credits"]
         f.writelines(insert_statements("bangumi", cols, bangumi))
         cols = ["bangumi_id", "id", "name", "cn", "lat", "lng", "priority", "ep", "s", "image", "origin",
                 "origin_link", "mark", "source", "source_url", "updated", "i18n", "search"]

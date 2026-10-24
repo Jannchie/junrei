@@ -13,6 +13,7 @@ import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail, seedDetails } from "../detail";
 import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, viewPath, type ViewPoint, visibleGroup } from "../series";
 import { initAdult, setShowAdult, showAdult } from "../adult";
+import type { CreditName, Credits } from "@schema";
 import type { RecentPoint } from "../server/bangumi";
 import "../theme.css";
 
@@ -170,6 +171,17 @@ watch(recentSentinel, (el) => {
   recentObserver.observe(el);
 });
 
+// ---- 主要人员与角色（Bangumi）：人名按当前语言取，没有就用原名；角色先列 CAST_SHOWN 个，可以展开 ----
+const ROLE_LABEL = {
+  original: "roleOriginal", director: "roleDirector", composition: "roleComposition", studio: "roleStudio",
+  originalDesign: "roleOriginalDesign", characterDesign: "roleCharacterDesign", music: "roleMusic",
+} as const satisfies Record<Credits["staff"][number]["r"], string>;
+const CAST_SHOWN = 6;
+const castOpen = ref(false);
+const creditName = (e: CreditName) =>
+  (locale.value === "zh-Hans" ? e.cn : locale.value === "zh-Hant" ? (e.tw ?? e.cn) : locale.value === "en" ? e.en : null) ?? e.n ?? "";
+const sep = computed(() => (locale.value === "en" ? ", " : "、"));
+
 // 作品标题区滚出可视范围时，列表顶部浮出作品名
 const titleRow = ref<HTMLElement>();
 const headHidden = ref(false);
@@ -188,6 +200,7 @@ async function open(anyId: number, filterId: number | null, pointId: string | nu
     filter.value = filterId;
     visibleCount.value = PAGE;
     outOpen.value = false;
+    castOpen.value = false;
     headHidden.value = false;
   }
   await focus(pointId);
@@ -735,6 +748,26 @@ onBeforeUnmount(() => {
               </p>
             </div>
           </div>
+          <!-- 主要人员与角色（Bangumi）：服务端渲染，按人名、角色名搜索的人也能从搜索引擎找到 -->
+          <dl v-if="detail.credits?.staff.length || detail.credits?.cast.length" class="credits">
+            <template v-for="s in detail.credits.staff" :key="s.r">
+              <dt>{{ t(ROLE_LABEL[s.r]) }}</dt>
+              <dd v-auto-lang>{{ s.p.map(creditName).join(sep) }}</dd>
+            </template>
+            <template v-if="detail.credits.cast.length">
+              <dt>{{ t("cast") }}</dt>
+              <dd>
+                <ul class="cast">
+                  <li v-for="c in castOpen ? detail.credits.cast : detail.credits.cast.slice(0, CAST_SHOWN)" :key="c.n">
+                    <span v-auto-lang>{{ creditName(c) }}</span><small v-if="c.cv?.length" v-auto-lang>CV {{ c.cv.map(creditName).join(sep) }}</small>
+                  </li>
+                  <li v-if="!castOpen && detail.credits.cast.length > CAST_SHOWN">
+                    <button type="button" class="more-cast" @click="castOpen = true">{{ t("showAll") }} · {{ detail.credits.cast.length }}</button>
+                  </li>
+                </ul>
+              </dd>
+            </template>
+          </dl>
         </div>
         <!-- 同系列作品（TV 各季、剧场版、OVA…）：横向一排，当前作品高亮，没有地标的淡一些 -->
         <nav v-if="detail.series.length > 1" class="series" :aria-label="t('series')" :style="{ '--bangumi-color': detail.color ?? 'var(--accent)' }">
@@ -1285,6 +1318,41 @@ h2 {
   margin: 8px 0 0;
   font-size: 13px;
   color: var(--muted);
+}
+/* 主要人员：职位在左、人名在右的两列；角色是可换行的一串 */
+.credits {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 12px 0 0;
+  font-size: 12px;
+}
+.credits dt {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.credits dd {
+  margin: 0;
+}
+.cast {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cast small {
+  margin-left: 4px;
+  color: var(--muted);
+}
+.more-cast {
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
 .links {
   display: flex;

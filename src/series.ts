@@ -96,6 +96,8 @@ export function buildView(g: Group, filter: number | null): View | null {
     en: head.en,
     city: home.city,
     i18n: { ...head.i18n, city: home.i18n?.city },
+    // 人员与角色取系列第一部（已加载时），否则取地标最多的那部
+    credits: (loaded.find((d) => d.id === g.key) ?? top).credits,
     cat: null,
     pointCount: loaded.reduce((n, d) => n + d.pointCount, 0),
     points: loaded.flatMap(tag),

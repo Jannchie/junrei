@@ -32,8 +32,23 @@ export const bangumi = sqliteTable("bangumi", {
   seriesWorks: integer("series_works").notNull().default(1), // 所在系列的作品数
   nsfw: integer("nsfw", { mode: "boolean" }).notNull().default(false), // 成人向（Bangumi 标为 nsfw，或 manual.json 显式标注）：网站默认隐藏
   i18n: text("i18n", { mode: "json" }).$type<I18n>(), // 各语言标题（含机翻），见 sync/export.py
-  search: text("search"), // 各语言名称折叠后的搜索键（sync/fold.py）
+  search: text("search"), // 各语言名称折叠后的搜索键（sync/fold.py），含主要人员与角色的名字
+  credits: text("credits", { mode: "json" }).$type<Credits>(), // 主要人员与角色（只有有地标的作品），见 sync/export.py 的 load_credits
 });
+
+/** 人名、角色名：n 原名，cn 简体中文名，tw 繁体中文名，en 英文名（或罗马字） */
+export interface CreditName {
+  n?: string;
+  cn?: string;
+  tw?: string;
+  en?: string;
+}
+
+/** 作品的主要人员（按职位，顺序固定）与角色（主角在前，带声优） */
+export interface Credits {
+  staff: { r: "original" | "director" | "composition" | "studio" | "originalDesign" | "characterDesign" | "music"; p: CreditName[] }[];
+  cast: (CreditName & { cv?: CreditName[] })[];
+}
 
 export const point = sqliteTable(
   "point",

@@ -64,6 +64,13 @@
       "when": 1792822897368,
       "tag": "20261024062137_optimal_amazoness",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1792830053863,
+      "tag": "20261024082053_nice_jubilee",
+      "breakpoints": true
     }
   ]
 }

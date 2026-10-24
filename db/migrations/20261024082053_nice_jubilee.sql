@@ -1,0 +1,1 @@
+ALTER TABLE `bangumi` ADD `credits` text;

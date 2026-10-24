@@ -1,3 +1,4 @@
+import type { CreditName, Credits } from "@schema";
 import type { HeadDescriptor } from "void";
 import { cityFor, type Locale, LOCALES, localNameFor, localePath, markFor, pickNameFor, spotNames, subNameFor, translate, workNames } from "../i18n";
 import { formatEpisode, formatTime, imageUrl } from "../format";
@@ -119,6 +120,20 @@ function clip(text: string, max: number) {
   return `${(space > max / 2 ? head.slice(0, space) : head).trim()}…`;
 }
 
+/** schema.org 的人员：原作（author）、监督（director）、动画制作（productionCompany）、角色（character） */
+function creditsLd(locale: Locale, c: Credits | null | undefined) {
+  if (!c) return {};
+  const name = (e: CreditName) => (locale === "zh-Hans" ? e.cn : locale === "zh-Hant" ? (e.tw ?? e.cn) : locale === "en" ? e.en : null) ?? e.n;
+  const people = (r: Credits["staff"][number]["r"], type: string) =>
+    c.staff.find((s) => s.r === r)?.p.map((e) => ({ "@type": type, name: name(e), alternateName: e.n !== name(e) ? e.n : undefined }));
+  return {
+    author: people("original", "Person"),
+    director: people("director", "Person"),
+    productionCompany: people("studio", "Organization"),
+    character: c.cast.length ? c.cast.map((e) => ({ "@type": "Person", name: name(e), alternateName: e.n !== name(e) ? e.n : undefined })) : undefined,
+  };
+}
+
 /** 地标页的标题：地名在前（搜地名的人先看到），再是作品名，各语言按习惯写「圣地巡礼」 */
 function spotTitle(locale: Locale, spot: string, work: string) {
   switch (locale) {
@@ -214,7 +229,7 @@ export function bangumiHead(locale: Locale, g: Group, filter: number | null): He
       name: `${name} · ${translate(locale, "brand")}`,
       url,
       inLanguage: locale,
-      about: { "@type": "CreativeWork", name: d.title ?? name, alternateName: [d.cn, d.en].filter(Boolean), sameAs: `https://bgm.tv/subject/${d.id}` },
+      about: { "@type": "CreativeWork", name: d.title ?? name, alternateName: [d.cn, d.en].filter(Boolean), sameAs: `https://bgm.tv/subject/${d.id}`, ...creditsLd(locale, d.credits) },
       numberOfItems: d.points.length,
       itemListElement: d.points.slice(0, 200).map((p, i) => ({
         "@type": "ListItem",
