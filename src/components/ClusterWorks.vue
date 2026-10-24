@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// 气泡弹出卡片的内容（ClusterPopover 的插槽）：气泡里的地标按作品分组，列出作品名、在这里的地标数和一张截图。
-// 点作品打开它（选中作品）；「放大查看」由用户主动点，地图不自动缩放。
+// 气泡弹出卡片的内容（ClusterPopover 的插槽）：气泡里的地标按系列分组（和首页卡片一样，同一系列的各季合成一项），
+// 列出系列名、在这里的地标数和一张截图。点一项打开整个系列；「放大查看」由用户主动点，地图不自动缩放。
 import type { Feature } from "geojson";
 import { computed, shallowRef, watch } from "vue";
 import { fetchDetail } from "../detail";
 import { imageUrl } from "../format";
 import { useI18n, workNames } from "../i18n";
+import { groupOf } from "../series";
 
 const props = defineProps<{ features: Feature[]; count: number }>();
 const emit = defineEmits<{ pick: [bangumiId: number]; zoomIn: [] }>();
@@ -13,23 +14,36 @@ const emit = defineEmits<{ pick: [bangumiId: number]; zoomIn: [] }>();
 const { t, pickName } = useI18n();
 
 /** 作品 id → 这个气泡里属于它的地标 id（取出的地标有上限，数量按取出的算） */
-const groups = computed(() => {
+const byWork = computed(() => {
   const m = new Map<number, string[]>();
   for (const f of props.features) {
     const b = Number(f.properties?.b);
     m.set(b, [...(m.get(b) ?? []), String(f.properties?.p)]);
   }
-  return [...m.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 8);
+  return m;
 });
 
+/** 系列（key 是系列代表作的 id，单独的作品就是它自己）：名称、地标数、一张截图 */
 const works = shallowRef<{ id: number; name: string; image: string | null; n: number }[]>([]);
-watch(groups, async (gs) => {
-  const out = await Promise.all(gs.map(async ([id, points]) => {
-    const d = await fetchDetail(id).catch(() => null);
-    const image = d?.points.find((p) => points.includes(p.id) && p.image)?.image ?? null;
-    return { id, name: d ? pickName(workNames(d)) : `#${id}`, image: image ? imageUrl(image) : null, n: points.length };
-  }));
-  if (gs === groups.value) works.value = out;
+watch(byWork, async (m) => {
+  const details = await Promise.all([...m.keys()].map((id) => fetchDetail(id).catch(() => null)));
+  if (m !== byWork.value) return;
+  const series = new Map<number, { id: number; name: string; image: string | null; n: number }>();
+  for (const d of details) {
+    if (!d) continue;
+    const points = m.get(d.id) ?? [];
+    const g = groupOf(d);
+    const cur = series.get(g.key);
+    const image = d.points.find((p) => points.includes(p.id) && p.image)?.image ?? null;
+    if (cur) {
+      cur.n += points.length;
+      cur.image ??= image ? imageUrl(image) : null;
+    } else {
+      const rep = g.works.find((w) => w.id === g.key) ?? d;
+      series.set(g.key, { id: g.key, name: pickName(workNames(rep)), image: image ? imageUrl(image) : null, n: points.length });
+    }
+  }
+  works.value = [...series.values()].sort((a, b) => b.n - a.n).slice(0, 8);
 }, { immediate: true });
 </script>
 
