@@ -1,7 +1,7 @@
 // junrei 的地图：底图来自 @mapette/core（参照 Apple 地图的皮肤最早就是在这里做的，后来抽成了 mapette），
-// 这里只有巡礼自己的数据源与叠加层：全部地标的热力图与圆点、选中作品的高亮与名称、当前地标。
+// 这里只有巡礼自己的数据源与叠加层：全部地标的聚合气泡与圆点、选中作品的高亮与名称、当前地标。
 // 配色由 mapette 的 CSS 变量决定（src/theme.css 只做别名）。
-import { alpha, createBasemap, FONT, FONT_BOLD, HEAT_FADE, type Palette, type StyleContext } from "@mapette/core";
+import { clusterLayers, clusterSource, createBasemap, FONT, FONT_BOLD, pointLayer, UNCLUSTERED, type Palette, type StyleContext } from "@mapette/core";
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
 
 /** 按线路配色的铁路（sync/rail.py 从 OSM 线路关系生成的 PMTiles，放在 R2）；底图的灰色铁路垫在下面，覆盖不到的地区照常显示 */
@@ -19,13 +19,12 @@ export function createStyle({ palette: c, locale }: StyleContext): StyleSpecific
     // 默认值必须与主题无关，换主题时样式才能按 diff 更新，而不是整体重载
     state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" }, adult: { default: false } },
     sources: {
-      // 全部地标：maplibre 在 worker 里抓取、解析并聚合，主线程不碰这 5 万个点
-      points: { type: "geojson", data: "/data/points.geojson" },
+      // 全部地标：maplibre 在 worker 里抓取、解析并按缩放聚合，主线程不碰这 5 万个点。
+      // 成人向地标（带 n 属性）默认隐藏，气泡要另外数一份不含它们的数量（visible）
+      points: clusterSource("/data/points.geojson", { radius: 48, maxZoom: 11, properties: { visible: ["+", ["case", ["has", "n"], 0, 1]] } }),
       // 选中作品的地标，焦点用 feature-state 标记
       selected: { type: "geojson", data: { type: "FeatureCollection", features: [] }, promoteId: "p" },
     },
-    // 热力图插在文字图层之前，地名浮在光晕上面
-    belowLabels: [heatLayer(c)],
     overlays: overlayLayers(c),
   });
 }
@@ -38,61 +37,21 @@ const IS_FOCUS: ExpressionSpecification = ["==", ["get", "p"], ["global-state", 
 const SHOWN: ExpressionSpecification = ["any", ["global-state", "adult"], ["!", ["has", "n"]]];
 
 /**
- * 缩小时的热度晕染：极低密度处透明，按密度由淡紫、品红、珊瑚橙渐变到暖金，最密集处最亮。
- * 放大到 HEAT_FADE 区间淡出，由可点击的单个地标接替。选中作品后隐藏。
- */
-function heatLayer(c: Palette): LayerSpecification {
-  const [fadeFrom, fadeTo] = HEAT_FADE;
-  return {
-    id: "heat",
-    type: "heatmap",
-    source: "points",
-    maxzoom: fadeTo + 0.5,
-    filter: ["all", ["!", SELECTED], SHOWN],
-    paint: {
-      "heatmap-weight": 1,
-      // 半径偏小，相邻城市不会连成一片
-      "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 0.02, 4, 0.04, 6, 0.08, 8, 0.18, fadeTo, 0.5],
-      "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 3, 4, 6, 6, 9, 8, 14, fadeTo, 24],
-      // 节点按指数间隔分布，相当于对密度取对数：东京上万个点、小城几十个点也能分出层次，而不是只剩「有/没有」
-      "heatmap-color": [
-        "interpolate", ["linear"], ["heatmap-density"],
-        0, alpha(c.heat1, 0),
-        0.015, alpha(c.heat1, 0),
-        0.04, alpha(c.heat1, 0.18),
-        0.1, alpha(c.heat2, 0.3),
-        0.22, alpha(c.heat3, 0.42),
-        0.45, alpha(c.heat4, 0.55),
-        1, alpha(c.heat5, 0.68),
-      ],
-      "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, fadeTo, 0],
-    },
-  };
-}
-
-/**
- * 地标与选中高亮。缩小时是柔和的热度晕染（不显示数字），放大到 HEAT_FADE 区间渐变为可点击的单个地标。
- * 选中作品后，其余作品的热度与地标直接隐藏（用过滤条件，隐藏后也点不到），只留当前作品的地标。
+ * 地标与选中高亮。缩小时相邻地标合成带数量的气泡，放大逐级拆开，点击气泡放大展开（PilgrimLayers 里的 ClusterExpand）。
+ * 选中作品后，其余作品的气泡与地标直接隐藏（用过滤条件，隐藏后也点不到），只留当前作品的地标。
  */
 function overlayLayers(c: Palette): LayerSpecification[] {
   const unselected: ExpressionSpecification = ["!", SELECTED];
-  const [fadeFrom, fadeTo] = HEAT_FADE;
   return [
-    {
-      id: "point",
-      type: "circle",
+    // 没被聚合的单个地标（任何缩放级别都显示）
+    pointLayer({ source: "points", palette: c, fade: false, filter: ["all", UNCLUSTERED, unselected, SHOWN] }),
+    // 聚合气泡：数量只算显示中的地标；全是成人向地标的气泡在开关打开前不画
+    ...clusterLayers({
       source: "points",
-      minzoom: fadeFrom - 0.5,
-      filter: ["all", unselected, SHOWN],
-      paint: {
-        "circle-color": c.accent,
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], fadeFrom, 3, 12, 5, 16, 8, 18, 10],
-        "circle-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
-        "circle-stroke-color": "#ffffff",
-        "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], fadeFrom, 1, 16, 2.5],
-        "circle-stroke-opacity": ["interpolate", ["linear"], ["zoom"], fadeFrom, 0, fadeTo, 1],
-      },
-    },
+      palette: c,
+      count: ["case", ["global-state", "adult"], ["get", "point_count"], ["get", "visible"]],
+      filter: ["all", unselected, ["any", ["global-state", "adult"], [">", ["get", "visible"], 0]]],
+    }),
     {
       id: "selected-point",
       type: "circle",

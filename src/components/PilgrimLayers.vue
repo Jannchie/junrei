@@ -2,8 +2,8 @@
 // 放在 MapExplorer 的 #map 插槽里：巡礼自己的地图逻辑——选中作品的高亮与淡化、当前地标、镜头、
 // 成人向地标的显示开关、点击地标、视野变化，以及放大后显示截图的标记。
 // 底图、比例尺、按钮、面板、留白与通用快捷键都由 @mapette/vue 的 MapExplorer 提供。
-import { HEAT_FADE, readPalette } from "@mapette/core";
-import { PhotoPins, useMap } from "@mapette/vue";
+import { readPalette } from "@mapette/core";
+import { ClusterExpand, PhotoPins, useMap } from "@mapette/vue";
 import type { GeoJSONSource, LngLatBounds, MapGeoJSONFeature } from "maplibre-gl";
 import { computed, ref, watch } from "vue";
 import { showAdult } from "../adult";
@@ -88,9 +88,10 @@ function syncCamera() {
   // 在地图上直接点的地标：它就在眼前，镜头不动
   if (key === pickedOnMap) return;
   const focus = sel.points.find((p) => p.id === props.focusPointId);
-  // 都用 easeTo（fitBounds 设 linear）：flyTo 途中会先拉远再推近，像跳了一下
+  // 选中地标：看不到才平移过去，从不改缩放（自动放大对用户是负担）。
+  // 选中作品：框住它的主要区域，用 fitBounds（linear）：flyTo 途中会先拉远再推近，像跳了一下
   if (focus) {
-    m.easeTo({ center: [focus.lng, focus.lat], zoom: Math.max(m.getZoom(), 15), duration: 800 });
+    controller.value?.reveal([focus.lng, focus.lat]);
   } else {
     m.fitBounds(coreBounds(sel.points), { padding: 80, maxZoom: 15, linear: true, duration: 800 });
   }
@@ -130,12 +131,6 @@ watch(controller, (ctrl) => {
   if (m.loaded()) reportView();
   else m.once("load", reportView);
 
-  // 热力图阶段没有可点的地标：点击地图即以该处为中心放大两级
-  m.on("click", (e) => {
-    if (m.getZoom() >= HEAT_FADE[0]) return;
-    if (m.queryRenderedFeatures(e.point, { layers: ["selected-point"] }).length) return;
-    m.easeTo({ center: e.lngLat, zoom: m.getZoom() + 2 });
-  });
   for (const layer of ["point", "selected-point"]) {
     m.on("click", layer, (e) => {
       const p = e.features?.[0]?.properties;
@@ -187,6 +182,7 @@ function onPin(f: MapGeoJSONFeature) {
 </script>
 
 <template>
+  <ClusterExpand />
   <PhotoPins
     ref="pins"
     :layers="['selected-point', 'point']"
