@@ -32,3 +32,7 @@ export const searchBangumi = (query: string, adult: boolean, limit = 20) => call
 /** 视口内有地标的系列（不在系列里的作品单独算），按视口内地标数排序 */
 export const bangumiInView = (bounds: Bounds, adult: boolean, limit = 48) =>
   call<(Card & { inView: number })[]>({ type: "inView", bounds, limit, adult });
+
+/** 每部作品的地标数（[作品 id, 数量]）→ 按系列合并的卡片，按数量排序（地图气泡菜单用，不发网络请求） */
+export const groupBangumi = (counts: [number, number][], adult: boolean) =>
+  call<(Card & { inView: number })[]>({ type: "group", counts, adult });

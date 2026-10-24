@@ -184,9 +184,9 @@ function onPin(f: MapGeoJSONFeature) {
 
 <template>
   <!-- 点气泡：不放大，弹出卡片按作品列出里面的地标 -->
-  <ClusterPopover source="points" :limit="200">
-    <template #default="{ features, count, close, zoomIn }">
-      <ClusterWorks :features="features" :count="count" @pick="(b) => { close(); emit('pick', b, ''); /* 只选作品，不选地标 */ }" @zoom-in="zoomIn" />
+  <ClusterPopover source="points">
+    <template #default="{ features, count, close }">
+      <ClusterWorks :features="features" :count="count" @pick="(b) => { close(); emit('pick', b, ''); /* 只选作品，不选地标 */ }" />
     </template>
   </ClusterPopover>
   <PhotoPins

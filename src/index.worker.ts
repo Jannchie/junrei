@@ -21,7 +21,8 @@ interface Entry extends BangumiLite {
 export type Bounds = { west: number; south: number; east: number; north: number };
 export type Request =
   | { id: number; type: "search"; query: string; limit: number; adult: boolean }
-  | { id: number; type: "inView"; bounds: Bounds; limit: number; adult: boolean };
+  | { id: number; type: "inView"; bounds: Bounds; limit: number; adult: boolean }
+  | { id: number; type: "group"; counts: [number, number][]; adult: boolean };
 
 type Raw = [number, string | null, string | null, string | null, string | null, number, string, I18n["name"] | null, number | null, 0 | 1];
 type RawSeries = [string | null, string | null, string | null, I18n["name"] | null, number, number, string | null];
@@ -128,8 +129,25 @@ async function inView({ west, south, east, north }: Bounds, limit: number, adult
   return [...merged.values()].sort((a, b) => b.inView - a.inView).slice(0, limit);
 }
 
+/** 每部作品的地标数 → 按系列合并的卡片（地图气泡菜单用），按地标数排序 */
+async function group(counts: [number, number][], adult: boolean) {
+  const ix = await index;
+  const merged = new Map<number, Card & { inView: number }>();
+  for (const [id, n] of counts) {
+    const b = ix.byId.get(id);
+    if (!b || (b.nsfw && !adult)) continue;
+    const c = card(b, ix);
+    const m = merged.get(c.id);
+    if (m) m.inView += n;
+    else merged.set(c.id, { ...c, inView: n });
+  }
+  return [...merged.values()].sort((a, b) => b.inView - a.inView);
+}
+
 self.onmessage = async (e: MessageEvent<Request>) => {
   const req = e.data;
-  const result = req.type === "search" ? await search(req.query, req.limit, req.adult) : await inView(req.bounds, req.limit, req.adult);
+  const result = req.type === "search" ? await search(req.query, req.limit, req.adult)
+    : req.type === "group" ? await group(req.counts, req.adult)
+    : await inView(req.bounds, req.limit, req.adult);
   self.postMessage({ id: req.id, result });
 };

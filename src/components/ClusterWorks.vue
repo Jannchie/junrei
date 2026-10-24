@@ -1,49 +1,34 @@
 <script setup lang="ts">
-// 气泡弹出卡片的内容（ClusterPopover 的插槽）：气泡里的地标按系列分组（和首页卡片一样，同一系列的各季合成一项），
-// 列出系列名、在这里的地标数和一张截图。点一项打开整个系列；「放大查看」由用户主动点，地图不自动缩放。
+// 气泡弹出菜单的内容（ClusterPopover 的插槽）：气泡里的全部地标按系列分组（和首页卡片一样，同一系列的各季合成一项），
+// 列出系列封面、名称和在这里的地标数。名称与系列来自页面已经加载的作品索引（index.worker），不发网络请求。
+// 点一项打开整个系列；地图不会因为点了气泡而缩放。
 import type { Feature } from "geojson";
 import { computed, shallowRef, watch } from "vue";
-import { fetchDetail } from "../detail";
+import { showAdult } from "../adult";
+import { groupBangumi } from "../bangumi-index";
 import { imageUrl } from "../format";
 import { useI18n, workNames } from "../i18n";
-import { groupOf } from "../series";
 
 const props = defineProps<{ features: Feature[]; count: number }>();
-const emit = defineEmits<{ pick: [bangumiId: number]; zoomIn: [] }>();
+const emit = defineEmits<{ pick: [bangumiId: number] }>();
 
-const { t, pickName } = useI18n();
+const { pickName } = useI18n();
 
-/** 作品 id → 这个气泡里属于它的地标 id（取出的地标有上限，数量按取出的算） */
-const byWork = computed(() => {
-  const m = new Map<number, string[]>();
+/** 每部作品在这个气泡里的地标数 */
+const counts = computed(() => {
+  const m = new Map<number, number>();
   for (const f of props.features) {
     const b = Number(f.properties?.b);
-    m.set(b, [...(m.get(b) ?? []), String(f.properties?.p)]);
+    m.set(b, (m.get(b) ?? 0) + 1);
   }
-  return m;
+  return [...m.entries()];
 });
 
-/** 系列（key 是系列代表作的 id，单独的作品就是它自己）：名称、地标数、一张截图 */
-const works = shallowRef<{ id: number; name: string; image: string | null; n: number }[]>([]);
-watch(byWork, async (m) => {
-  const details = await Promise.all([...m.keys()].map((id) => fetchDetail(id).catch(() => null)));
-  if (m !== byWork.value) return;
-  const series = new Map<number, { id: number; name: string; image: string | null; n: number }>();
-  for (const d of details) {
-    if (!d) continue;
-    const points = m.get(d.id) ?? [];
-    const g = groupOf(d);
-    const cur = series.get(g.key);
-    const image = d.points.find((p) => points.includes(p.id) && p.image)?.image ?? null;
-    if (cur) {
-      cur.n += points.length;
-      cur.image ??= image ? imageUrl(image) : null;
-    } else {
-      const rep = g.works.find((w) => w.id === g.key) ?? d;
-      series.set(g.key, { id: g.key, name: pickName(workNames(rep)), image: image ? imageUrl(image) : null, n: points.length });
-    }
-  }
-  works.value = [...series.values()].sort((a, b) => b.n - a.n).slice(0, 8);
+const works = shallowRef<{ id: number; name: string; cover: string | null; n: number }[]>([]);
+watch([counts, showAdult], async ([c, adult]) => {
+  const cards = await groupBangumi(c, adult);
+  if (c !== counts.value) return;
+  works.value = cards.map((x) => ({ id: x.id, name: pickName(workNames(x)), cover: x.cover ? imageUrl(x.cover) : null, n: x.inView }));
 }, { immediate: true });
 </script>
 
@@ -51,14 +36,12 @@ watch(byWork, async (m) => {
   <div class="cluster-works">
     <div class="head stat">{{ count.toLocaleString() }}</div>
     <button v-for="w in works" :key="w.id" type="button" class="work" @click="emit('pick', w.id)">
-      <img v-if="w.image" :src="w.image" alt="" referrerpolicy="no-referrer" />
+      <img v-if="w.cover" :src="w.cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
       <span v-else class="ph" />
       <span class="name">{{ w.name }}</span>
       <span class="n stat">{{ w.n }}</span>
     </button>
-    <div class="foot">
-      <button type="button" @click="emit('zoomIn')">{{ t("zoomIn") }}</button>
-    </div>
+
   </div>
 </template>
 
@@ -93,8 +76,8 @@ watch(byWork, async (m) => {
 .work img,
 .ph {
   flex: none;
-  width: 48px;
-  height: 27px;
+  width: 27px;
+  height: 36px;
   object-fit: cover;
   border-radius: 4px;
   background: var(--hover);
@@ -109,21 +92,5 @@ watch(byWork, async (m) => {
 .n {
   color: var(--muted);
   font-size: 12px;
-}
-.foot {
-  display: flex;
-  justify-content: flex-end;
-  padding: 6px 8px 8px;
-  border-top: 1px solid var(--line);
-}
-.foot button {
-  padding: 4px 10px;
-  font: inherit;
-  font-size: 12px;
-  color: var(--fg);
-  background: var(--hover);
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
 }
 </style>

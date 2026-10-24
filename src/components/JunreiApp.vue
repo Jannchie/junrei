@@ -2,7 +2,7 @@
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import type { KeyHandler, SheetSnap, StyleContext } from "@mapette/core";
-import { MapExplorer, MapPopover } from "@mapette/vue";
+import { MapExplorer, MapFooter, MapPopover, useThemePref } from "@mapette/vue";
 import type { PaddingOptions } from "maplibre-gl";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatDate, formatEpisode, formatTime, imageUrl } from "../format";
@@ -12,7 +12,6 @@ import { recoverImages, retryImage } from "../image-retry";
 import LogoMark from "./LogoMark.vue";
 import PilgrimLayers from "./PilgrimLayers.vue";
 import { createStyle, KEEP_SOURCES } from "../map-style";
-import { cycleTheme, initTheme, themePref } from "../theme";
 import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail, seedDetails } from "../detail";
 import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, viewPath, type ViewPoint, visibleGroup } from "../series";
@@ -49,7 +48,8 @@ const KANA = /[぀-ヿ]/;
 const setLang = (el: HTMLElement) => (KANA.test(el.textContent ?? "") ? (el.lang = "ja") : el.removeAttribute("lang"));
 const vAutoLang = { mounted: setLang, updated: setLang };
 
-const THEME_LABEL = { auto: "themeAuto", light: "themeLight", dark: "themeDark" } as const;
+// 外观偏好由 mapette 管（页脚的按钮与 T 快捷键共用一份）；存储键与 void.config.ts 的首屏脚本一致
+const { cycle: cycleTheme } = useThemePref("junrei:theme");
 
 // 图片失败重试见 src/image-retry.ts；模板里的 @error 直接用它
 const onImageError = (e: Event) => retryImage(e.target as HTMLImageElement);
@@ -391,14 +391,6 @@ const explorer = ref<InstanceType<typeof MapExplorer>>();
 const panel = computed(() => explorer.value?.panel ?? null);
 const mapPadding = ref<PaddingOptions>({ top: 0, right: 0, bottom: 0, left: 0 });
 // 来源浮层：支持 CSS 锚点定位时由样式摆放；否则打开时按按钮位置算一次
-const creditsBtn = ref<HTMLElement>();
-const creditsPop = ref<HTMLElement>();
-function onCreditsToggle(e: Event) {
-  if ((e as ToggleEvent).newState !== "open" || CSS.supports("anchor-name: --a")) return;
-  const r = creditsBtn.value!.getBoundingClientRect();
-  Object.assign(creditsPop.value!.style, { left: `${r.left - 4}px`, bottom: `${innerHeight - r.top + 8}px` });
-}
-
 type Bounds = { west: number; south: number; east: number; north: number };
 const viewBounds = shallowRef<Bounds | null>(null);
 const inBounds = (p: { lat: number; lng: number }, b: Bounds) =>
@@ -472,7 +464,8 @@ function onSearchBlur() {
 
 // ---- 键盘快捷键（按 ? 查看）----
 const searchInput = ref<HTMLInputElement>();
-const shortcutsPop = ref<HTMLElement>();
+// 页脚（mapette 的 MapFooter）：快捷键说明的开关也在它那里
+const footer = ref<InstanceType<typeof MapFooter>>();
 
 function focusSearch() {
   searchInput.value?.focus();
@@ -480,7 +473,7 @@ function focusSearch() {
 }
 /** Esc 逐层退出：清空搜索 → 离开输入框 → 取消选中地标 → 返回概览 */
 function escape(e: KeyboardEvent) {
-  if (shortcutsPop.value?.matches(":popover-open")) return false; // popover 自己会关
+  if (footer.value?.shortcutsOpen()) return false; // popover 自己会关
   if (query.value) query.value = "";
   else if (e.target === searchInput.value) searchInput.value!.blur();
   else return goBack();
@@ -521,11 +514,18 @@ const shortcuts: Record<string, KeyHandler> = {
       window.open(mapsUrl(p), "_blank", "noopener");
     },
     t: () => cycleTheme(),
-    "?": () => shortcutsPop.value?.togglePopover(),
+    "?": () => footer.value?.toggleShortcuts(),
     // 输入框里交还浏览器，撤销的是输入的文字
     "mod+z": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : e.shiftKey ? redo() : undo()),
     "mod+y": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : redo()),
 };
+
+/** 地标数据的来源（地图底图的几项由 MapFooter 自带） */
+const SOURCES = [
+  { label: "Anitabi", href: "https://www.anitabi.cn/" },
+  { label: "CC BY-NC-SA 4.0", href: "https://creativecommons.org/licenses/by-nc-sa/4.0/" },
+  { label: "Bangumi", href: "https://bgm.tv/" },
+];
 
 const SHORTCUTS = computed(() => [
   { keys: ["/", "Ctrl K"], label: t("kbSearch") },
@@ -552,7 +552,6 @@ onMounted(() => {
   visualViewport?.addEventListener("resize", onVisualViewport);
   visualViewport?.addEventListener("scroll", onVisualViewport);
   mounted.value = true;
-  initTheme();
   initAdult();
   // ?p= 定位地标（作品页）；旧链接 /?b=…&p=…
   const params = new URLSearchParams(location.search);
@@ -871,56 +870,22 @@ onBeforeUnmount(() => {
       </section>
 
       <template #footer>
-      <footer class="foot">
-        <!-- OSM 要求地图署名始终可见：署名本身就是按钮，点开是全部来源、源代码与快捷键（原生 popover，点外部或 Esc 关闭） -->
-        <button ref="creditsBtn" type="button" class="credits-btn" popovertarget="credits" :title="t('credits')">
-          <JIcon :icon="ICONS.info" :size="14" /><span class="tx">© OpenStreetMap</span>
-        </button>
-        <div id="credits" ref="creditsPop" popover class="credits-pop" @toggle="onCreditsToggle">
-          <a href="https://www.anitabi.cn/" target="_blank" rel="noopener">Anitabi</a>
-          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
-          <a href="https://bgm.tv/" target="_blank" rel="noopener">Bangumi</a>
-          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
-          <a href="https://openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
-          <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
-          <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>
-          <hr />
-          <a class="stat" href="https://github.com/Jannchie/junrei" target="_blank" rel="noopener">
-            <JIcon :icon="ICONS.github" :size="14" /><span class="tx">{{ t("source") }}</span>
-          </a>
-          <label class="stat adult-toggle">
+      <MapFooter
+        ref="footer"
+        :locale="locale"
+        theme-key="junrei:theme"
+        repo="https://github.com/Jannchie/junrei"
+        :sources="SOURCES"
+        :shortcuts="SHORTCUTS"
+        @locale="switchLocale"
+      >
+        <template #credits>
+          <label class="mapette-credits-row">
             <input type="checkbox" :checked="showAdult" @change="setShowAdult(($event.target as HTMLInputElement).checked)" />
-            <span class="tx">{{ t("adultShow") }}</span>
+            <span>{{ t("adultShow") }}</span>
           </label>
-          <button type="button" class="stat kb-btn" popovertarget="shortcuts">
-            <JIcon :icon="ICONS.keyboard" :size="14" /><span class="tx">{{ t("shortcuts") }}</span>
-          </button>
-        </div>
-        <div id="shortcuts" ref="shortcutsPop" popover class="shortcuts-pop">
-          <h3>{{ t("shortcuts") }}</h3>
-          <dl>
-            <template v-for="s in SHORTCUTS" :key="s.label">
-              <dt><kbd v-for="k in s.keys" :key="k">{{ k }}</kbd></dt>
-              <dd>{{ s.label }}</dd>
-            </template>
-          </dl>
-        </div>
-        <button
-          type="button"
-          class="icon-link"
-          :title="t(THEME_LABEL[themePref])"
-          :aria-label="t(THEME_LABEL[themePref])"
-          @click="cycleTheme"
-        >
-          <JIcon :icon="ICONS[THEME_LABEL[themePref]]" :size="14" />
-        </button>
-        <label class="lang" :title="t('language')">
-          <JIcon :icon="ICONS.language" :size="14" />
-          <select :value="locale" :aria-label="t('language')" @change="switchLocale(($event.target as HTMLSelectElement).value as Locale)">
-            <option v-for="l in LOCALES" :key="l" :value="l">{{ LOCALE_NAMES[l] }}</option>
-          </select>
-        </label>
-      </footer>
+        </template>
+      </MapFooter>
       </template>
     </MapExplorer>
 
@@ -1621,103 +1586,6 @@ figcaption a {
   color: var(--muted);
   font-weight: 400;
 }
-.foot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px 8px 16px;
-  font-size: 11px;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
-}
-.credits-btn {
-  anchor-name: --credits;
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 4px 6px;
-  margin-left: -6px;
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
-  justify-self: start;
-}
-.icon-link {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  color: inherit;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.icon-link:hover {
-  background: var(--hover);
-}
-.credits-btn:hover,
-.credits-btn:has(+ .credits-pop:popover-open) {
-  color: var(--fg);
-  background: var(--hover);
-}
-.credits-pop {
-  /* 覆盖 popover 默认的居中；位置由锚点（或 onCreditsToggle）决定 */
-  position: fixed;
-  inset: auto;
-  margin: 0 0 8px -4px;
-  position-anchor: --credits;
-  position-area: top span-right;
-  min-width: 160px;
-  padding: 10px 12px;
-  font-size: 12px;
-  color: var(--muted);
-  background: var(--bg);
-  border: 0;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  backdrop-filter: var(--glass);
-}
-.credits-pop:popover-open {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-.credits-pop hr {
-  align-self: stretch;
-  margin: 4px 0;
-}
-.credits-pop a,
-.credits-pop button {
-  padding: 0;
-  font: inherit;
-  color: inherit;
-  text-decoration: none;
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-.credits-pop a:hover,
-.credits-pop button:hover {
-  color: var(--fg);
-}
-.adult-toggle {
-  cursor: pointer;
-}
-.adult-toggle input {
-  margin: 0;
-  accent-color: var(--accent);
-}
-.adult-toggle:hover {
-  color: var(--fg);
-}
 .adult-gate {
   display: grid;
   justify-items: center;
@@ -1749,135 +1617,6 @@ figcaption a {
 .adult-actions .primary {
   color: #fff;
   background: var(--accent);
-}
-/* 触屏设备没有键盘，不显示快捷键入口 */
-@media (hover: none) {
-  .kb-btn {
-    display: none;
-  }
-}
-.shortcuts-pop {
-  padding: 16px 20px;
-  color: var(--fg);
-  background: var(--bg);
-  border: 0;
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  backdrop-filter: var(--glass);
-}
-.shortcuts-pop::backdrop {
-  background: rgb(0 0 0 / 0.15);
-}
-.shortcuts-pop h3 {
-  margin: 0 0 12px;
-  font-size: 14px;
-}
-.shortcuts-pop dl {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px 16px;
-  align-items: center;
-  margin: 0;
-  font-size: 13px;
-}
-.shortcuts-pop dt {
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-}
-.shortcuts-pop dd {
-  margin: 0;
-  color: var(--muted);
-}
-kbd {
-  min-width: 22px;
-  padding: 2px 6px;
-  font: inherit;
-  font-size: 12px;
-  line-height: 1.4;
-  text-align: center;
-  background: var(--hover);
-  border-radius: 5px;
-  box-shadow: inset 0 -1px 0 var(--line);
-}
-.foot a {
-  text-decoration: none;
-}
-.foot a:hover {
-  color: var(--fg);
-}
-.lang {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.lang:hover {
-  color: var(--fg);
-  background: var(--hover);
-}
-.lang select {
-  /* 可定制 select 的内容默认贴着顶部排，用 flex 居中，才能和图标对齐 */
-  display: inline-flex;
-  align-items: center;
-  font: inherit;
-  line-height: 1; /* 要写在 font 简写之后，否则会被它重置 */
-  color: inherit;
-  background: none;
-  border: 0;
-  outline: none;
-  cursor: pointer;
-  appearance: none;
-}
-/* 触屏设备：下拉框同样会触发 iOS 的自动放大，字号提到 16px */
-@media (hover: none) {
-  .lang select {
-    font-size: 16px;
-  }
-}
-/* 渐进增强：可定制 select（appearance: base-select）。不支持的浏览器用系统下拉，手机上即系统选择器 */
-@supports (appearance: base-select) {
-  .lang select,
-  .lang select::picker(select) {
-    appearance: base-select;
-  }
-  .lang select {
-    padding: 0;
-  }
-  .lang select::picker-icon {
-    display: none;
-  }
-  .lang select::picker(select) {
-    min-width: 132px;
-    padding: 4px;
-    margin-block: 8px;
-    color: var(--fg);
-    background: var(--bg);
-    border: 0;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    backdrop-filter: var(--glass);
-  }
-  .lang option {
-    padding: 7px 10px;
-    font-size: 13px;
-    border-radius: 8px;
-  }
-  .lang option:hover,
-  .lang option:focus-visible {
-    background: var(--hover);
-  }
-  .lang option:checked {
-    font-weight: 600;
-  }
-  .lang option::checkmark {
-    order: 1;
-    margin-left: auto;
-    color: var(--accent);
-  }
 }
 /* 地图上的地标卡片（MapPopover 的内容） */
 .point-pop {
