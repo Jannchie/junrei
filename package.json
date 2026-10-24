@@ -1,4 +1,4 @@
-﻿{
+{
   "packageManager": "pnpm@10.11.1",
   "name": "junrei",
   "private": true,
@@ -25,8 +25,8 @@
   "dependencies": {
     "@jannchie/icons": "0.12.0",
     "@jannchie/icons-vue": "0.12.0",
-    "@mapette/core": "^0.1.0",
-    "@mapette/vue": "^0.1.0",
+    "@mapette/core": "^0.1.1",
+    "@mapette/vue": "^0.1.1",
     "hono": "^4.11.9",
     "maplibre-gl": "^5.9.0",
     "pmtiles": "^4.5.0",
