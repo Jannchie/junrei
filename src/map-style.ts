@@ -38,7 +38,7 @@ export const CJK_FONT_FAMILY = "'Hiragino Sans', 'PingFang SC', 'Yu Gothic', 'Yu
 const SOURCE = "openmaptiles";
 /** 按线路配色的铁路（sync/rail.py 从 OSM 线路关系生成的 PMTiles，放在 R2）；底图的灰色铁路垫在下面，覆盖不到的地区照常显示 */
 const RAIL = "rail";
-export const RAIL_TILES = "pmtiles://https://cdn.jannchie.com/junrei/rail/rail-v3.pmtiles";
+export const RAIL_TILES = "pmtiles://https://cdn.jannchie.com/junrei/rail/rail-v4.pmtiles";
 /** AWS 开放地形瓦片（Terrarium 编码），含陆地高程与海底水深；只取到 z10，再放大就复用低层级瓦片 */
 const DEM = "terrain";
 const FONT = ["Noto Sans Regular"];

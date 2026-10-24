@@ -39,13 +39,20 @@ OVERPASS = "https://overpass-api.de/api/interpreter"
 UA = "junrei-rail/1.0 (https://junrei.jannchie.com)"
 ROOT = Path("data/rail")
 OUT = ROOT / "rail.pmtiles"
-KEY = "junrei/rail/rail-v3.pmtiles"  # 内容变了就换版本号：对象按 immutable 缓存
+KEY = "junrei/rail/rail-v4.pmtiles"  # 内容变了就换版本号：对象按 immutable 缓存
 
 # 地区按 bbox（南, 西, 北, 东）取；相邻地区重复的关系按 id 去重
 REGIONS = {
     "jp-kr": (24.0, 122.0, 46.0, 146.0),
     "tw": (21.8, 119.3, 25.4, 122.1),
 }
+BUILD_REGIONS = ["jp-kr"]  # 目前只画日本（取数仍可取各地区，切瓦片时只留 in_japan 的轨道）
+
+
+def in_japan(lng: float, lat: float) -> bool:
+    """粗略的日本范围：冲绳；九州西端（平户、佐世保约 129.5°E）以东、北纬 37.5° 以南；东经 138.5° 以东的本州北部与北海道。
+    朝鲜半岛的铁路都在 129.4°E 以西，俄罗斯远东在 138.5°E 以西或北纬 46° 以北"""
+    return (lat < 27 and lng >= 125) or (lat < 37.5 and lng >= 129.5) or (lng >= 138.5 and lat <= 46)
 ROUTES = "train|subway|light_rail|monorail|tram"
 # 线路类型的优先级（同一段轨道属于多条线路时归给谁），也是瓦片里的 k 属性
 KINDS = ["hs", "train", "subway", "light_rail", "monorail", "tram"]
@@ -155,11 +162,11 @@ def lines(regions: list[str]) -> list[dict]:
     geoms: dict[int, list] = {}
     hs: dict[int, dict] = {}
     for name in regions:
-        hs.update({int(k): v for k, v in json.loads((ROOT / f"{name}-highspeed.json").read_text(encoding="utf-8")).items()})
+        hs.update({int(k): v for k, v in json.loads((ROOT / f"{name}-highspeed.json").read_text(encoding="utf-8")).items() if in_japan(*v["g"][0])})
         for r in json.loads((ROOT / f"{name}-relations.json").read_text(encoding="utf-8")):
             rels[r["id"]] = r
         for f in sorted((ROOT / f"{name}-ways").glob("*.json")):
-            geoms.update({int(k): v for k, v in json.loads(f.read_text(encoding="utf-8")).items()})
+            geoms.update({int(k): v for k, v in json.loads(f.read_text(encoding="utf-8")).items() if v and in_japan(*v[0])})
     # route → route_master（名称与颜色以 route_master 为准，上下行两条关系合成一条线路）
     master_of = {m["ref"]: r for r in rels.values() if r["tags"].get("type") == "route_master" for m in r["members"] if m["type"] == "relation"}
     routes = [r for r in rels.values() if r["tags"].get("type") == "route" and r["tags"].get("route") in KINDS]
@@ -294,12 +301,12 @@ def main() -> None:
     setup_stdout()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=["fetch", "build", "upload"])
-    ap.add_argument("--regions", nargs="*", default=list(REGIONS))
+    ap.add_argument("--regions", nargs="*", default=None, help="默认：fetch 取全部地区，build 只用 BUILD_REGIONS")
     a = ap.parse_args()
     if a.cmd == "fetch":
-        fetch(a.regions)
+        fetch(a.regions or list(REGIONS))
     elif a.cmd == "build":
-        build(a.regions)
+        build(a.regions or BUILD_REGIONS)
     else:
         upload()
 
