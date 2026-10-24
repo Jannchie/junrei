@@ -227,7 +227,8 @@ async function focus(pointId: string | null) {
   if (index >= visibleCount.value) visibleCount.value = index + PAGE;
   sheet.value = "half"; // 选中后回到半屏，地图上要看得到它
   await nextTick(); // 新作品的列表要等渲染后才能滚动到选中项
-  if (pointId) document.getElementById(`p-${pointId}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  // 切换地标时列表直接跳到选中项，不做滚动动画：连按 J / K 时动画跟不上，也拖慢视线
+  if (pointId) document.getElementById(`p-${pointId}`)?.scrollIntoView({ block: "nearest", behavior: "instant" });
 }
 
 function clearSelection() {
