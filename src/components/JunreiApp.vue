@@ -217,6 +217,69 @@ function clearSelection() {
   headHidden.value = false;
 }
 
+// ---- 撤销 / 重做：面板显示的内容（作品、筛选、地标、最近更新）每变一次记一步。
+// Ctrl+Z 撤销、Ctrl+Y 或 Ctrl+Shift+Z 重做；返回（Esc、返回按钮）之后另有一个「撤销」提示，误按了能马上回去 ----
+type Snapshot = { key: number | null; filter: number | null; point: string | null; recent: boolean };
+const HISTORY = 50;
+const snapshot = (): Snapshot => ({ key: group.value?.key ?? null, filter: filter.value, point: focusPointId.value, recent: !!recent.value });
+const sameView = (a: Snapshot, b: Snapshot) => a.key === b.key && a.filter === b.filter && a.point === b.point && a.recent === b.recent;
+const undoStack: Snapshot[] = [];
+const redoStack: Snapshot[] = [];
+let current = snapshot();
+let restoring = false; // 恢复中途的状态（先打开最近更新、再加载作品…）不记成新的一步
+watch(snapshot, (next) => {
+  if (sameView(next, current)) return;
+  if (!restoring) {
+    undoStack.push(current);
+    if (undoStack.length > HISTORY) undoStack.shift();
+    redoStack.length = 0;
+  }
+  current = next;
+});
+async function restore(s: Snapshot) {
+  restoring = true;
+  try {
+    query.value = "";
+    if (s.recent && !recent.value) openRecent();
+    else if (!s.recent && recent.value) closeRecent();
+    if (s.key != null) await open(s.key, s.filter, s.point);
+    else if (group.value) clearSelection();
+    await nextTick();
+  } finally {
+    restoring = false;
+    current = snapshot();
+  }
+}
+function undo() {
+  const prev = undoStack.pop();
+  if (!prev) return false;
+  redoStack.push(snapshot());
+  undoHint.value = false;
+  void restore(prev);
+}
+function redo() {
+  const next = redoStack.pop();
+  if (!next) return false;
+  undoStack.push(snapshot());
+  void restore(next);
+}
+// 返回之后的提示条：几秒后自动消失
+const undoHint = ref(false);
+let undoTimer: ReturnType<typeof setTimeout> | undefined;
+function wentBack() {
+  undoHint.value = true;
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => (undoHint.value = false), 6000);
+}
+/** 返回按钮与 Esc：退一层，并提示可以撤销 */
+function goBack() {
+  if (focusPointId.value) focusPointId.value = null;
+  else if (detail.value) clearSelection();
+  else if (recent.value) closeRecent();
+  else return false;
+  wentBack();
+}
+
 // ---- 手机端底部抽屉：peek 只露出搜索框，half 半屏，full 接近全屏 ----
 // 像地图 App 一样，平时停在半屏：只有输入搜索时展开到全屏，输入结束、选中结果、碰地图都回到半屏
 type Sheet = "peek" | "half" | "full";
@@ -441,10 +504,7 @@ function escape(e: KeyboardEvent) {
   if (shortcutsPop.value?.matches(":popover-open")) return false; // popover 自己会关
   if (query.value) query.value = "";
   else if (e.target === searchInput.value) searchInput.value!.blur();
-  else if (focusPointId.value) focusPointId.value = null;
-  else if (detail.value) clearSelection();
-  else if (recent.value) closeRecent();
-  else return false;
+  else return goBack();
 }
 /** 在作品的地标之间移动；没有选中地标时从第一个开始 */
 function stepPoint(delta: number) {
@@ -488,12 +548,17 @@ function bindShortcuts() {
     l: () => mapView.value?.locate(),
     t: () => cycleTheme(),
     "?": () => shortcutsPop.value?.togglePopover(),
+    // 输入框里交还浏览器，撤销的是输入的文字
+    "mod+z": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : e.shiftKey ? redo() : undo()),
+    "mod+y": (e) => ((e.target as HTMLElement).closest?.("input, textarea") ? false : redo()),
   });
 }
 
 const SHORTCUTS = computed(() => [
   { keys: ["/", "Ctrl K"], label: t("kbSearch") },
   { keys: ["Esc"], label: t("back") },
+  { keys: ["Ctrl Z"], label: t("undo") },
+  { keys: ["Ctrl Y", "Ctrl ⇧ Z"], label: t("redo") },
   { keys: ["J", "K", "↓", "↑"], label: t("kbPoints") },
   { keys: ["O"], label: t("openInMaps") },
   { keys: ["+", "−"], label: `${t("zoomIn")} / ${t("zoomOut")}` },
@@ -583,7 +648,7 @@ onBeforeUnmount(() => {
           class="icon-btn lead"
           :title="`${t('back')} (Esc)`"
           :aria-label="t('back')"
-          @click.prevent="detail ? clearSelection() : closeRecent()"
+          @click.prevent="goBack()"
         >
           <JIcon :icon="ICONS.back" :size="18" />
         </button>
@@ -874,6 +939,14 @@ onBeforeUnmount(() => {
         </label>
       </footer>
     </aside>
+
+    <!-- 返回之后的撤销提示 -->
+    <Transition name="toast">
+      <div v-if="undoHint" class="toast" role="status">
+        <span>{{ t("wentBack") }}</span>
+        <button type="button" @click="undo()"><JIcon :icon="ICONS.undo" :size="14" /><span class="tx">{{ t("undo") }}</span></button>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -1301,7 +1374,7 @@ figcaption a {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 4px 16px 4px;
+  margin: 12px 16px 8px; /* 与概览的标题（.overview h1）对齐 */
   font-size: 18px;
 }
 /* 日期分组的标题吸顶，滚动时始终知道看到的是哪一天 */
@@ -1332,6 +1405,49 @@ figcaption a {
 }
 .recent-link:hover {
   color: var(--accent);
+}
+/* 撤销提示：地图下方居中，手机上在抽屉上方 */
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--panel-inset-bottom, 0px) + 16px);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 14px;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  backdrop-filter: var(--glass);
+  transform: translateX(-50%);
+}
+.toast button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.toast button:hover {
+  background: var(--hover);
+}
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity 0.15s, transform 0.15s;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, 8px);
 }
 .spot-link {
   color: inherit;

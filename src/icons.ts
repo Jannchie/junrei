@@ -28,6 +28,7 @@ import {
   IconSearch,
   IconSearchX,
   IconTv,
+  IconUndo,
   IconX,
 } from "@jannchie/icons";
 
@@ -42,6 +43,7 @@ export const ICONS = {
   city: IconBuilding,
   episode: IconTv,
   time: IconClock,
+  undo: IconUndo,
   updated: IconCalendar, // 地标最近一次新增或改动的日期
   credit: IconCamera,
   zoomIn: IconPlus,
