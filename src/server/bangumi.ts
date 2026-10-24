@@ -1,5 +1,5 @@
 // 作品查询，供 /v1 API、页面 loader、sitemap 与面向 LLM 的 Markdown 共用
-import { bangumi, point } from "@schema";
+import { bangumi, type I18n, point } from "@schema";
 import { and, asc, db, desc, eq, gt, inArray, sql } from "void/db";
 
 type SQL = ReturnType<typeof sql>;
@@ -105,3 +105,37 @@ export function listBangumi(limit?: number) {
 }
 
 export const displayName = (b: { cn: string | null; title: string | null }) => b.cn ?? b.title ?? "";
+
+/** 「最近更新」里的一个地标：带上所属作品的名称，列表与地图都够用 */
+export interface RecentPoint {
+  bangumiId: number;
+  id: string;
+  name: string | null;
+  cn: string | null;
+  lat: number;
+  lng: number;
+  ep: string | null;
+  image: string | null;
+  updated: number;
+  i18n: I18n | null;
+  bangumiCn: string | null;
+  bangumiTitle: string | null;
+  bangumiEn: string | null;
+  bangumiI18n: I18n | null;
+}
+
+export const RECENT_PAGE = 100;
+
+/** 全站最近新增或改动的地标，按更新时间倒序；offset 翻页（走 point_updated 索引）。成人向作品的地标 adult 为真时才包含 */
+export async function listRecent(offset: number, adult: boolean): Promise<RecentPoint[]> {
+  // 原生 SQL 不经过 Drizzle 的 json 列解析，i18n 要自己 parse
+  const rows = await db.all<Omit<RecentPoint, "i18n" | "bangumiI18n"> & { i18n: string | null; bangumiI18n: string | null }>(sql`
+    SELECT p.bangumi_id AS bangumiId, p.id, p.name, p.cn, p.lat, p.lng, p.ep, p.image, p.updated, p.i18n,
+           b.cn AS bangumiCn, b.title AS bangumiTitle, b.en AS bangumiEn, b.i18n AS bangumiI18n
+    FROM point p INDEXED BY point_updated JOIN bangumi b ON b.id = p.bangumi_id
+    WHERE p.updated IS NOT NULL ${adult ? sql`` : sql`AND b.nsfw = 0`}
+    ORDER BY p.updated DESC, p.bangumi_id, p.id
+    LIMIT ${RECENT_PAGE} OFFSET ${offset}`);
+  const parse = (s: string | null): I18n | null => (s ? JSON.parse(s) : null);
+  return rows.map((r) => ({ ...r, i18n: parse(r.i18n), bangumiI18n: parse(r.bangumiI18n) }));
+}

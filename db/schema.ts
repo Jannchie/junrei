@@ -1,4 +1,4 @@
-import { integer, primaryKey, real, sqliteTable, text } from "void/schema-d1";
+import { index, integer, primaryKey, real, sqliteTable, text } from "void/schema-d1";
 
 // 数据由 sync/ 同步自 Anitabi，再经 sync/export.py 生成 SQL 全量导入；应用只读。
 // 地标名搜索用的 FTS5 虚表 point_fts（建在 point.search 上）不在 Drizzle 里，见 db/migrations 末尾的手写部分。
@@ -57,5 +57,6 @@ export const point = sqliteTable(
     i18n: text("i18n", { mode: "json" }).$type<I18n>(), // 各语言地标名与备注（含机翻）
     search: text("search"), // 名称折叠后的搜索键，FTS5 索引建在这一列上
   },
-  (t) => [primaryKey({ columns: [t.bangumiId, t.id] })],
+  // updated 索引供「最近更新」按时间倒序翻页，只读最前面的若干行
+  (t) => [primaryKey({ columns: [t.bangumiId, t.id] }), index("point_updated").on(t.updated)],
 );

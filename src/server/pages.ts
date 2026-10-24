@@ -1,8 +1,8 @@
 // 页面 loader：简体中文页面没有语言前缀（/b/:id），其他语言带前缀（/ja/b/:id），同一套逻辑
 import { defineHandler, defineHead, type InferProps } from "void";
 import { type Locale, localeFromSegment } from "../i18n";
-import { getGroup, listCards } from "./bangumi";
-import { bangumiHead, homeHead } from "./seo";
+import { getGroup, listCards, listRecent } from "./bangumi";
+import { bangumiHead, homeHead, recentHead } from "./seo";
 
 type Params = { req: { param(name: string): string | undefined } };
 
@@ -41,3 +41,11 @@ export const groupLoader = (series: boolean) =>
 export const groupPageHead = defineHead<InferProps<ReturnType<typeof groupLoader>>>((_c, { group, filter, lang }) =>
   bangumiHead(lang, group, filter),
 );
+
+/** 最近更新：服务端渲染第一页（全站最近新增或改动的地标），其余在浏览器里翻页 */
+export const recentLoader = defineHandler(async (c) => {
+  const lang = localeOf(c);
+  if (!lang) return c.notFound();
+  return { recent: await listRecent(0, false), lang };
+});
+export const recentPageHead = defineHead<InferProps<typeof recentLoader>>((_c, { lang }) => recentHead(lang));

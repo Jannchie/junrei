@@ -40,6 +40,7 @@ export default defineConfig({
       "/": 31536000,
       "/b/*": 31536000,
       "/s/*": 31536000,
+      "/recent": 31536000,
       "/zh-hant": 31536000,
       "/zh-hant/*": 31536000,
       "/ja": 31536000,
@@ -51,7 +52,7 @@ export default defineConfig({
       "/md/*": 31536000,
       "/sitemap.xml": 31536000
     },
-    "revalidateQueryAllowlist": { "/v1/search": ["q", "adult"], "/v1/bangumi/*": ["lang"] },
+    "revalidateQueryAllowlist": { "/v1/search": ["q", "adult"], "/v1/recent": ["offset", "adult"], "/v1/bangumi/*": ["lang"] },
     "headers": {
       "/v1/*": ["Cache-Control: public, max-age=3600"],
       "/data/*": ["Cache-Control: public, max-age=3600, stale-while-revalidate=86400"],

@@ -13,6 +13,7 @@ import { bangumiInView, searchBangumi } from "../bangumi-index";
 import { fetchDetail, seedDetails } from "../detail";
 import { buildView, type Card, type Group, groupOf, missingDetails, needsAdultGate, type View, viewPath, type ViewPoint, visibleGroup } from "../series";
 import { initAdult, setShowAdult, showAdult } from "../adult";
+import type { RecentPoint } from "../server/bangumi";
 import "../theme.css";
 
 /** 首页、系列页 /s/:id 与作品页 /b/:id 共用的整个应用；服务端渲染出面板内容（利于 SEO），地图只在浏览器里挂载 */
@@ -24,6 +25,8 @@ const props = defineProps<{
   initialFilter?: number | null;
   /** 概览里展示的热门系列 */
   popular?: Card[];
+  /** 最近更新页 /recent：第一页地标 */
+  initialRecent?: RecentPoint[];
 }>();
 
 provideIconDefaults({ size: 16 });
@@ -84,7 +87,10 @@ const selected = computed(() =>
         color: detail.value.color,
         points: detail.value.points.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName(spotNames(p)), lng: p.lng, lat: p.lat })),
       }
-    : null,
+    : // 最近更新：地图上高亮列表里的地标
+      !detail.value && recent.value?.length
+      ? { bangumiId: 0, color: null, points: recent.value.map((p) => ({ id: p.id, b: p.bangumiId, name: pickName(spotNames(p)), lng: p.lng, lat: p.lat })) }
+      : null,
 );
 
 // 地标列表分批渲染：首屏（含服务端渲染）只出前一批，滚到底再追加；上千个地标的作品也不卡
@@ -92,10 +98,8 @@ const PAGE = 60;
 const visibleCount = ref(PAGE);
 // 放大到局部时，列表只列出视野内的地标（选中的那个总算在内），视野外的折叠在最后，点开才列出
 const outOpen = ref(false);
-const sortRecent = ref(false); // 按更新时间排序（最近的在前）；不知道时间的排在最后
 const split = computed(() => {
-  const all = detail.value?.points ?? [];
-  const points = sortRecent.value ? [...all].sort((a, b) => (b.updated ?? 0) - (a.updated ?? 0)) : all;
+  const points = detail.value?.points ?? [];
   const b = viewBounds.value;
   const inside: typeof points = [];
   const outside: typeof points = [];
@@ -114,6 +118,51 @@ watch(moreSentinel, (el) => {
     if (e.isIntersecting) visibleCount.value += PAGE * 2;
   }, { rootMargin: "400px" });
   moreObserver.observe(el);
+});
+
+// ---- 最近更新：全站按更新时间倒序的地标，按日期分组；从这里打开的作品，返回时回到这里 ----
+const RECENT_PAGE = 100; // 同 src/server/bangumi.ts
+const recent = shallowRef<RecentPoint[] | null>(props.initialRecent ?? null);
+const recentDone = ref((props.initialRecent?.length ?? 0) < RECENT_PAGE);
+let recentSeq = 0;
+async function loadRecent(reset: boolean) {
+  const id = ++recentSeq;
+  const offset = String(reset ? 0 : (recent.value?.length ?? 0));
+  const { points } = await fetch("/v1/recent", { query: showAdult.value ? { offset, adult: "1" as const } : { offset } });
+  if (id !== recentSeq || !recent.value) return;
+  recent.value = reset ? points : [...recent.value, ...points];
+  recentDone.value = points.length < RECENT_PAGE;
+}
+function openRecent() {
+  clearSelection();
+  query.value = "";
+  if (recent.value) return;
+  recent.value = [];
+  recentDone.value = false;
+  void loadRecent(true);
+}
+function closeRecent() {
+  recent.value = null;
+  recentSeq++;
+}
+const recentDays = computed(() => {
+  const days: { date: string; points: RecentPoint[] }[] = [];
+  for (const p of recent.value ?? []) {
+    const date = formatDate(p.updated);
+    if (days.at(-1)?.date !== date) days.push({ date, points: [] });
+    days.at(-1)!.points.push(p);
+  }
+  return days;
+});
+const recentSentinel = ref<HTMLElement>();
+let recentObserver: IntersectionObserver | undefined;
+watch(recentSentinel, (el) => {
+  recentObserver?.disconnect();
+  if (!el) return;
+  recentObserver = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) void loadRecent(false);
+  }, { rootMargin: "400px" });
+  recentObserver.observe(el);
 });
 
 // 作品标题区滚出可视范围时，列表顶部浮出作品名
@@ -275,9 +324,9 @@ const cardPath = (c: Card) => localePath(locale.value, c.series ? `/s/${c.id}` :
 
 // 状态写进 URL，链接即可分享、收藏：路径是作品（/b/:id 由服务端渲染，可被收录），?p 是地标，
 // ?q 是搜索词（也是 OpenSearch 的入口），#map 是地图视野（由 maplibre 维护，这里原样保留）
-watch([detail, focusPointId, debouncedQuery], () => {
+watch([detail, focusPointId, debouncedQuery, () => !!recent.value], () => {
   const d = detail.value;
-  const path = d ? viewPath(d) : "/";
+  const path = d ? viewPath(d) : recent.value ? "/recent" : "/";
   const url = new URL(localePath(locale.value, path), location.origin);
   if (focusPointId.value) url.searchParams.set("p", focusPointId.value);
   if (debouncedQuery.value) url.searchParams.set("q", debouncedQuery.value);
@@ -285,7 +334,7 @@ watch([detail, focusPointId, debouncedQuery], () => {
   history.replaceState(null, "", url);
   document.title = detail.value
     ? `${pickName(workNames(detail.value))} · ${t("brand")}`
-    : t("brand");
+    : recent.value ? `${t("recent")} · ${t("brand")}` : t("brand");
 });
 
 // 面板浮在地图上：量出它挡住的区域，交给地图做 padding，并给地图控件留出位置
@@ -319,6 +368,7 @@ async function onView(bounds: Bounds) {
 watch(showAdult, () => {
   if (lastBounds) void onView(lastBounds);
   if (group.value) void open(group.value.key, filter.value, focusPointId.value);
+  if (recent.value) void loadRecent(true);
 });
 /** 确认后显示这一个系列里的成人向作品（不改变全局开关） */
 function revealAdult() {
@@ -387,6 +437,7 @@ function escape(e: KeyboardEvent) {
   else if (e.target === searchInput.value) searchInput.value!.blur();
   else if (focusPointId.value) focusPointId.value = null;
   else if (detail.value) clearSelection();
+  else if (recent.value) closeRecent();
   else return false;
 }
 /** 在作品的地标之间移动；没有选中地标时从第一个开始 */
@@ -488,6 +539,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   panelObserver?.disconnect();
   moreObserver?.disconnect();
+  recentObserver?.disconnect();
   offShortcuts?.();
   visualViewport?.removeEventListener("resize", onVisualViewport);
   visualViewport?.removeEventListener("scroll", onVisualViewport);
@@ -520,12 +572,12 @@ onBeforeUnmount(() => {
       />
       <label class="search" @touchend="onSearchTouch">
         <button
-          v-if="detail && !query.trim()"
+          v-if="(detail || recent) && !query.trim()"
           type="button"
           class="icon-btn lead"
           :title="`${t('back')} (Esc)`"
           :aria-label="t('back')"
-          @click.prevent="clearSelection"
+          @click.prevent="detail ? clearSelection() : closeRecent()"
         >
           <JIcon :icon="ICONS.back" :size="18" />
         </button>
@@ -652,10 +704,6 @@ onBeforeUnmount(() => {
           </a>
         </nav>
         <p v-if="!detail.points.length" class="empty no-spots">{{ t("noSpots") }}</p>
-        <div v-if="detail.points.length > 1" class="sort" role="group">
-          <button type="button" :aria-pressed="!sortRecent" @click="sortRecent = false">{{ t("sortDefault") }}</button>
-          <button type="button" :aria-pressed="sortRecent" @click="sortRecent = true">{{ t("sortRecent") }}</button>
-        </div>
         <ol class="points">
           <template v-for="(p, i) in visiblePoints" :key="p.id">
           <li v-if="outOpen && i === split.inside.length" class="fold" @click="outOpen = false">
@@ -724,9 +772,38 @@ onBeforeUnmount(() => {
         </template>
       </section>
 
+      <!-- 最近更新 -->
+      <section v-else-if="recent" class="scroll recent">
+        <h2 class="recent-title"><JIcon :icon="ICONS.updated" :size="18" /><span class="tx">{{ t("recent") }}</span></h2>
+        <div v-if="!recent.length && !recentDone" class="empty"><JIcon :icon="ICONS.loading" :size="28" /></div>
+        <template v-for="day in recentDays" :key="day.date">
+          <h3 class="day"><time :datetime="day.date">{{ day.date }}</time></h3>
+          <a
+            v-for="p in day.points"
+            :key="`${p.bangumiId}:${p.id}`"
+            :href="`${localePath(locale, `/b/${p.bangumiId}`)}?p=${p.id}`"
+            class="row"
+            @click.prevent="select(p.bangumiId, p.id)"
+          >
+            <img @error="onImageError" v-if="p.image" :src="imageUrl(p.image)" class="thumb-sm" loading="lazy" referrerpolicy="no-referrer" alt="" />
+            <span v-else class="thumb-sm placeholder"><JIcon :icon="ICONS.point" /></span>
+            <span class="row-main">
+              <strong v-auto-lang>{{ pickName(spotNames(p)) }}</strong>
+              <small v-auto-lang>{{ pickName({ cn: p.bangumiCn, original: p.bangumiTitle, en: p.bangumiEn, i18n: p.bangumiI18n }) }}</small>
+            </span>
+            <span v-if="p.ep" class="row-stats"><span class="stat"><JIcon :icon="ICONS.episode" :size="14" /><span class="tx">{{ formatEpisode(p.ep) }}</span></span></span>
+          </a>
+        </template>
+        <div v-if="!recentDone && recent.length" ref="recentSentinel" class="more" />
+      </section>
+
       <!-- 概览 -->
       <section v-else class="scroll overview">
         <h1><LogoMark :size="24" /><span class="tx">{{ t("brand") }}</span></h1>
+        <!-- 全站最近更新的地标：单独的一页 /recent -->
+        <a class="recent-link" :href="localePath(locale, '/recent')" @click.prevent="openRecent">
+          <JIcon :icon="ICONS.updated" :size="16" /><span class="tx">{{ t("recent") }}</span>
+        </a>
         <!-- 起初是热门作品（服务端渲染的真实链接，爬虫能走到每个作品页）；地图一动就换成视野内的作品 -->
         <h2 class="section-label">{{ t(inView ? "inView" : "popular") }}</h2>
         <ul v-if="overviewList.length" class="popular">
@@ -1214,23 +1291,40 @@ figcaption a {
 .more {
   height: 1px;
 }
-.sort {
+.recent-title {
   display: flex;
-  gap: 4px;
-  padding: 8px 16px 4px;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 16px 4px;
+  font-size: 18px;
 }
-.sort button {
-  padding: 2px 10px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
+/* 日期分组的标题吸顶，滚动时始终知道看到的是哪一天 */
+.recent .day {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 10px 16px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-solid);
 }
-.sort button[aria-pressed="true"] {
-  border-color: var(--accent);
+.recent a.row {
+  text-decoration: none;
+}
+.recent-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--hover);
+  border-radius: 10px;
+}
+.recent-link:hover {
   color: var(--accent);
 }
 .points li.fold {

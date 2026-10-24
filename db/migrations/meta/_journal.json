@@ -57,6 +57,13 @@
       "when": 1792818511128,
       "tag": "20261024050831_free_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1792822897368,
+      "tag": "20261024062137_optimal_amazoness",
+      "breakpoints": true
     }
   ]
 }

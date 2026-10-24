@@ -1,0 +1,1 @@
+CREATE INDEX `point_updated` ON `point` (`updated`);

@@ -98,6 +98,15 @@ export function homeHead(locale: Locale): HeadDescriptor {
   });
 }
 
+const RECENT: Record<Locale, { title: string; description: string }> = {
+  "zh-Hans": { title: "最近更新的取景地 · 圣地巡礼地图", description: "圣地巡礼地图最近新增和更新的动画、游戏取景地，按更新日期排列。" },
+  "zh-Hant": { title: "最近更新的取景地 · 聖地巡禮地圖", description: "聖地巡禮地圖最近新增和更新的動畫、遊戲取景地，按更新日期排列。" },
+  ja: { title: "最近更新されたスポット · 聖地巡礼マップ", description: "聖地巡礼マップに最近追加・更新されたアニメ・ゲームの舞台を、更新日順に掲載。" },
+  en: { title: "Recently updated spots · Anime Pilgrimage Map", description: "Anime and game locations recently added or updated on the Anime Pilgrimage Map, sorted by date." },
+};
+
+export const recentHead = (locale: Locale): HeadDescriptor => siteHead(locale, "/recent", RECENT[locale]);
+
 /**
  * 作品页与系列页：筛选到某部作品时路径是 /b/:id，系列「全部」时是 /s/:key。
  * 按默认（不显示成人向）的样子组装；成人向作品页不让搜索引擎收录，也不带封面和地标。
