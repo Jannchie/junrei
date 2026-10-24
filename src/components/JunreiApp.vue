@@ -2,7 +2,7 @@
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import { kitText, type KeyHandler, type SheetSnap, type StyleContext } from "@mapette/core";
-import { MapExplorer, MapFooter, MapPopover, useThemePref } from "@mapette/vue";
+import { MapExplorer, MapFooter, MapPopover, UpdateToast, useThemePref } from "@mapette/vue";
 import type { PaddingOptions } from "maplibre-gl";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatDate, formatEpisode, formatTime, imageUrl } from "../format";
@@ -353,8 +353,10 @@ const workName = (id: number) => {
   const w = detail.value?.series.find((s) => s.id === id);
   return w ? pickName(workNames(w)) : "";
 };
+/** 只在正式环境注册 service worker：开发服务器的页面不能被缓存住 */
+const isProd = import.meta.env.PROD;
 /** 来源没写名字时显示网址的域名（模板里拿不到全局的 URL） */
-const hostOf = (url: string) => new URL(url).hostname;
+const hostOf =(url: string) => new URL(url).hostname;
 /** 报告地标问题：预填好作品、地标、坐标与来源的 GitHub issue */
 function reportUrl(p: ViewPoint) {
   const work = detail.value?.series.find((w) => w.id === p.bangumiId);
@@ -576,7 +578,6 @@ onMounted(() => {
     query.value = q;
     sheet.value = "full";
   }
-  if (import.meta.env.PROD && "serviceWorker" in navigator) void navigator.serviceWorker.register("/sw.js");
 });
 onBeforeUnmount(() => {
   moreObserver?.disconnect();
@@ -924,6 +925,8 @@ onBeforeUnmount(() => {
       </MapFooter>
       </template>
     </MapExplorer>
+    <!-- 新版本下载好时在顶部提示刷新（也负责注册 service worker）；面板有 backdrop-filter，fixed 定位要放在它外面 -->
+    <UpdateToast :locale="locale" :register="isProd" />
 
     <!-- 返回之后的撤销提示 -->
     <Transition name="toast">

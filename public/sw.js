@@ -1,6 +1,9 @@
 // junrei 的 Service Worker：让应用可安装、弱网可用，并缓存去过的地方（巡礼现场常常信号不好）。
 // 策略：页面先走网络、失败回退缓存；带哈希的静态资源只取缓存；数据与地图瓦片先给缓存再后台更新。
 const VERSION = "v3";
+// 构建号：构建时由 vite.config.ts 的 swBuildStamp 按打包产物算出来写进这里。代码变了它就变，
+// 浏览器据此发现新版本，页面弹出「有新版本」提示（mapette 的 UpdateToast）。缓存名不跟着它变，免得每次部署清空地图瓦片
+const BUILD = "__BUILD__";
 const PAGES = `pages-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const DATA = `data-${VERSION}`;
@@ -14,9 +17,13 @@ const POOLS = [
 // 截图、封面不进 SW：<img> 拿到的是 opaque 响应，每条按约 7 MB 计入存储配额，攒多了整个站点的缓存会被浏览器清掉。
 // 它们走浏览器自己的 HTTP 缓存
 
+// 新版本装好后先等着，用户点了更新提示里的「刷新」（发来 SKIP_WAITING）才接管
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/"])));
-  self.skipWaiting();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
