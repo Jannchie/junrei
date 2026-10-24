@@ -2,6 +2,7 @@
 import { JIcon } from "@jannchie/icons-vue";
 import type { Point } from "geojson";
 import maplibregl, { type GeoJSONSource, type LngLatLike, type PaddingOptions } from "maplibre-gl";
+import { Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "../i18n";
@@ -219,7 +220,14 @@ async function syncPhotos() {
   }
 }
 
+// 铁路图层是单个 PMTiles 文件，按 HTTP Range 读取其中的瓦片
+let pmtilesAdded = false;
+
 onMounted(() => {
+  if (!pmtilesAdded) {
+    maplibregl.addProtocol("pmtiles", new Protocol().tile);
+    pmtilesAdded = true;
+  }
   const m = (map = new maplibregl.Map({
     container: el.value!,
     style: createStyle(readPalette(), locale.value),

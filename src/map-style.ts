@@ -36,6 +36,9 @@ export function readPalette(): Palette {
 export const CJK_FONT_FAMILY = "'Hiragino Sans', 'PingFang SC', 'Yu Gothic', 'YuGothic', 'Noto Sans JP', 'Noto Sans CJK JP', sans-serif";
 
 const SOURCE = "openmaptiles";
+/** 按线路配色的铁路（sync/rail.py 从 OSM 线路关系生成的 PMTiles，放在 R2）；底图的灰色铁路垫在下面，覆盖不到的地区照常显示 */
+const RAIL = "rail";
+export const RAIL_TILES = "pmtiles://https://cdn.jannchie.com/junrei/rail/rail-v3.pmtiles";
 /** AWS 开放地形瓦片（Terrarium 编码），含陆地高程与海底水深；只取到 z10，再放大就复用低层级瓦片 */
 const DEM = "terrain";
 const FONT = ["Noto Sans Regular"];
@@ -55,6 +58,19 @@ const NAME_FIELDS: Record<Locale, string[]> = {
   ja: ["name:ja"],
   en: ["name:en", "name:latin"],
 };
+/** 铁路图层的线路名：n 是当地名称，en、ja、zh 是各语言名称 */
+const RAIL_NAME_FIELDS: Record<Locale, string[]> = { "zh-Hans": ["zh"], "zh-Hant": ["zh"], ja: ["ja"], en: ["en"] };
+
+/** 没有标注颜色的高铁 */
+const HS_COLOR = "#1f5fbf";
+/** 按线路配色的铁路线宽：高铁 > 普通铁路 > 地铁、轻轨、单轨 > 路面电车 */
+const railWidth = (casing: number[] = [0, 0, 0, 0]): ExpressionSpecification => [
+  "interpolate", ["exponential", 1.5], ["zoom"],
+  4, ["+", casing[0], ["match", ["get", "k"], "hs", 1.6, 0.5]],
+  8, ["+", casing[1], ["match", ["get", "k"], "hs", 2.4, "train", 1, 0.6]],
+  12, ["+", casing[2], ["match", ["get", "k"], "hs", 3, "train", 2, "tram", 1, 1.6]],
+  16, ["+", casing[3], ["match", ["get", "k"], "hs", 5, "train", 4, "tram", 2, 3]],
+];
 
 /** 线宽随缩放指数增长 */
 const width = (pairs: [number, number][]): ExpressionSpecification =>
@@ -68,6 +84,7 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     ["!=", ["get", "brunnel"], "tunnel"],
   ];
   const railClasses = roadClasses(["rail", "transit"]);
+  const RAIL_NAME: ExpressionSpecification = ["coalesce", ...RAIL_NAME_FIELDS[locale].map((f): ExpressionSpecification => ["get", f]), ["get", "n"]];
   const line = (id: string, minzoom: number, filter: ExpressionSpecification, color: string, w: [number, number][]): LayerSpecification => ({
     id,
     type: "line",
@@ -179,8 +196,30 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     line("road-major", 8, roadClasses(["primary", "secondary", "tertiary"]), c.major, [[8, 0.5], [10, 1], [13, 2.4], [16, 7], [19, 24]]),
     line("road-motorway", 5, roadClasses(["motorway", "trunk"]), c.motorway, [[5, 0.6], [7, 1], [10, 1.8], [13, 3.2], [16, 9], [19, 28]]),
 
-    // ---- 铁路：细灰线，车站带圆点 ----
+    // ---- 铁路：底图的细灰线垫底，上面是按线路配色的线（高铁粗一些、地铁与路面电车细一些），车站带圆点 ----
     line("rail", 7, railClasses, c.rail, [[7, 0.4], [11, 0.9], [14, 1.6], [18, 3]]),
+    {
+      id: "rail-line-casing",
+      type: "line",
+      source: RAIL,
+      "source-layer": "rail",
+      minzoom: 9,
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": c.land, "line-width": railWidth([0.6, 0.6, 1.2, 2]), "line-opacity": 0.9 },
+    },
+    {
+      id: "rail-line",
+      type: "line",
+      source: RAIL,
+      "source-layer": "rail",
+      layout: { "line-cap": "round", "line-join": "round", "line-sort-key": ["match", ["get", "k"], "hs", 3, "train", 2, 1] },
+      paint: {
+        "line-color": ["coalesce", ["get", "c"], ["match", ["get", "k"], "hs", HS_COLOR, c.labelMuted]],
+        "line-width": railWidth(),
+        // 不压过地标：缩小时淡一些，地铁（多在地下）始终淡一些
+        "line-opacity": ["interpolate", ["linear"], ["zoom"], 4, ["match", ["get", "k"], "hs", 0.9, 0.7], 10, ["match", ["get", "k"], "subway", 0.7, 0.9]],
+      },
+    },
 
     // ---- 文字 ----
     {
@@ -207,6 +246,27 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
       filter: ["match", ["get", "class"], ["primary", "secondary", "tertiary", "minor"], true, false],
       layout: { "text-field": NAME, "text-font": FONT, "text-size": 10, "symbol-placement": "line" },
       paint: { "text-color": c.labelMuted, "text-halo-color": c.land, "text-halo-width": 1.2 },
+    },
+    {
+      id: "rail-name",
+      type: "symbol",
+      source: RAIL,
+      "source-layer": "rail",
+      minzoom: 11,
+      filter: ["any", ["match", ["get", "k"], ["hs", "train"], true, false], [">=", ["zoom"], 13]],
+      layout: {
+        "text-field": RAIL_NAME,
+        "text-font": FONT_BOLD,
+        "text-size": 10,
+        "symbol-placement": "line",
+        "symbol-spacing": 420,
+        "text-letter-spacing": 0.05,
+      },
+      paint: {
+        "text-color": ["coalesce", ["get", "c"], ["match", ["get", "k"], "hs", HS_COLOR, c.labelMuted]],
+        "text-halo-color": c.land,
+        "text-halo-width": 1.6,
+      },
     },
     {
       id: "station-dot",
@@ -296,6 +356,7 @@ export function createStyle(c: Palette, locale: Locale): StyleSpecification {
     state: { selected: { default: false }, selectedColor: { default: "#000000" }, focus: { default: "" }, adult: { default: false } },
     sources: {
       [SOURCE]: { type: "vector", url: "https://tiles.openfreemap.org/planet" },
+      [RAIL]: { type: "vector", url: RAIL_TILES, attribution: "© OpenStreetMap contributors" },
       [DEM]: {
         type: "raster-dem",
         tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
