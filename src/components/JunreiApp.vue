@@ -2,7 +2,7 @@
 import { JIcon, provideIconDefaults } from "@jannchie/icons-vue";
 import { fetch } from "void/client";
 import type { KeyHandler, SheetSnap, StyleContext } from "@mapette/core";
-import { MapExplorer } from "@mapette/vue";
+import { MapExplorer, MapPopover } from "@mapette/vue";
 import type { PaddingOptions } from "maplibre-gl";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { formatDate, formatEpisode, formatTime, imageUrl } from "../format";
@@ -84,6 +84,8 @@ const detail = computed<View | null>(() =>
   group.value ? buildView(visibleGroup(group.value, adultFor(group.value), filter.value), filter.value) : null,
 );
 const focusPointId = ref<string | null>(props.initialPoint ?? null);
+/** 当前地标（地图上的弹出卡片用） */
+const focusedPoint = computed(() => detail.value?.points.find((p) => p.id === focusPointId.value) ?? null);
 const query = ref("");
 const results = shallowRef<SearchResult | null>(null);
 const searching = ref(false);
@@ -586,7 +588,17 @@ onBeforeUnmount(() => {
       @padding="mapPadding = $event"
     >
       <template #map>
-        <PilgrimLayers :selected="selected" :focus-point-id="focusPointId" @pick="(b, p) => select(b, p)" @view="onView" />
+        <PilgrimLayers :selected="selected" :focus-point-id="focusPointId" @pick="(b, p) => select(b, p || null)" @view="onView" />
+        <!-- 当前地标的弹出卡片：截图、地标名与集数；关掉就是退回作品（同 Esc） -->
+        <MapPopover :lng-lat="focusedPoint ? [focusedPoint.lng, focusedPoint.lat] : null" :close-label="t('back')" @close="goBack()">
+          <div v-if="focusedPoint" class="point-pop">
+            <img v-if="focusedPoint.image" :src="imageUrl(focusedPoint.image)" alt="" referrerpolicy="no-referrer" @error="onImageError" />
+            <div class="point-pop-text">
+              <strong v-auto-lang>{{ pickName(spotNames(focusedPoint)) }}</strong>
+              <span v-if="focusedPoint.ep" class="muted stat">{{ formatEpisode(focusedPoint.ep) }}</span>
+            </div>
+          </div>
+        </MapPopover>
       </template>
       <template #header>
       <label class="search" @touchend="onSearchTouch">
@@ -1865,5 +1877,28 @@ kbd {
     margin-left: auto;
     color: var(--accent);
   }
+}
+/* 地图上的地标卡片（MapPopover 的内容） */
+.point-pop {
+  width: 240px;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.point-pop img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.point-pop-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.point-pop-text strong {
+  font-weight: 600;
 }
 </style>

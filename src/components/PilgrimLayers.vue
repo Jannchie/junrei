@@ -3,7 +3,8 @@
 // 成人向地标的显示开关、点击地标、视野变化，以及放大后显示截图的标记。
 // 底图、比例尺、按钮、面板、留白与通用快捷键都由 @mapette/vue 的 MapExplorer 提供。
 import { readPalette } from "@mapette/core";
-import { ClusterExpand, PhotoPins, useMap } from "@mapette/vue";
+import { ClusterPopover, PhotoPins, useMap } from "@mapette/vue";
+import ClusterWorks from "./ClusterWorks.vue";
 import type { GeoJSONSource, LngLatBounds, MapGeoJSONFeature } from "maplibre-gl";
 import { computed, ref, watch } from "vue";
 import { showAdult } from "../adult";
@@ -182,7 +183,12 @@ function onPin(f: MapGeoJSONFeature) {
 </script>
 
 <template>
-  <ClusterExpand />
+  <!-- 点气泡：不放大，弹出卡片按作品列出里面的地标 -->
+  <ClusterPopover source="points" :limit="200">
+    <template #default="{ features, count, close, zoomIn }">
+      <ClusterWorks :features="features" :count="count" @pick="(b) => { close(); emit('pick', b, ''); /* 只选作品，不选地标 */ }" @zoom-in="zoomIn" />
+    </template>
+  </ClusterPopover>
   <PhotoPins
     ref="pins"
     :layers="['selected-point', 'point']"
