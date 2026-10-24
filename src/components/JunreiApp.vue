@@ -356,7 +356,7 @@ const workName = (id: number) => {
 /** 只在正式环境注册 service worker：开发服务器的页面不能被缓存住 */
 const isProd = import.meta.env.PROD;
 /** 来源没写名字时显示网址的域名（模板里拿不到全局的 URL） */
-const hostOf =(url: string) => new URL(url).hostname;
+const hostOf = (url: string) => new URL(url).hostname;
 /** 报告地标问题：预填好作品、地标、坐标与来源的 GitHub issue */
 function reportUrl(p: ViewPoint) {
   const work = detail.value?.series.find((w) => w.id === p.bangumiId);
