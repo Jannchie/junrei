@@ -74,7 +74,7 @@ const text = TEXT[props.lang];
       <h2>{{ title }}</h2>
       <p>{{ body }}</p>
     </section>
-    <p>{{ text.contact }}：<a :href="ISSUES">{{ ISSUES }}</a></p>
+    <p>{{ text.contact }}：<a :href="ISSUES" target="_blank" rel="noopener">{{ ISSUES }}</a></p>
   </main>
 </template>
 
