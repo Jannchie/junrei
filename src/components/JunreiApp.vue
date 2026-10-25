@@ -449,7 +449,7 @@ function onSearchTouch(e: TouchEvent) {
   const el = panel.value;
   if (!el) return;
   el.style.transition = "none";
-  el.style.height = "calc(100dvh - 48px - env(safe-area-inset-top))"; // 同 .mapette-sheet-full：同步撑开，聚焦时布局已经是展开后的
+  el.style.height = "calc(100% - 48px - env(safe-area-inset-top))"; // 同 .mapette-sheet-full（按容器算，不用 dvh）：同步撑开，聚焦时布局已经是展开后的
   sheet.value = "full";
   searchInput.value!.focus({ preventScroll: true });
   void nextTick(() => {
